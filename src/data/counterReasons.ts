@@ -14,8 +14,8 @@ export const heroCounterAbilities: Record<string, { abilityZh: string; abilityEn
     abilityEn: 'Defense Matrix absorbs projectiles / Boosters for pursuit'
   },
   doomfist: {
-    abilityZh: '高机动性突脸/控制技能打断',
-    abilityEn: 'High mobility dive / CC abilities interrupt'
+    abilityZh: '高机动性突脸/上勾拳击飞',
+    abilityEn: 'High mobility dive / Uppercut knockup'
   },
   hazard: {
     abilityZh: '区域控制能力/毒素伤害',
@@ -195,8 +195,8 @@ export const heroWeaknesses: Record<string, { weaknessZh: string; weaknessEn: st
     weaknessEn: 'Large mech hitbox easy to target'
   },
   doomfist: {
-    weaknessZh: '技能依赖高，被限制后无力',
-    weaknessEn: 'Ability-reliant, weak when disabled'
+    weaknessZh: '技能CD长，被限制后无力',
+    weaknessEn: 'Long cooldowns, weak when disabled'
   },
   hazard: {
     weaknessZh: '机动性有限，远程压制',
