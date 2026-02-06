@@ -12,15 +12,15 @@ import { counterRelations, getRoleName, heroes, type Hero } from '@/data/heroDat
 import { useI18n } from '@/i18n';
 import * as d3 from 'd3';
 import {
+  Check,
+  Copy,
+  FileText,
+  HelpCircle,
+  Info,
   RotateCcw,
   Swords,
   ZoomIn,
-  ZoomOut,
-  FileText,
-  Copy,
-  Check,
-  HelpCircle,
-  Info
+  ZoomOut
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -68,7 +68,8 @@ const ForceGraph = ({
       hero: heroes.find(h => h.id === r.source),
       strength: r.strength || 1
     }))
-    .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined) : [];
+    .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
+    .sort((a, b) => b.strength - a.strength) : [];
   
   const counters = displayedHero ? counterRelations
     .filter(r => r.source === displayedHero.id)
@@ -76,7 +77,8 @@ const ForceGraph = ({
       hero: heroes.find(h => h.id === r.target),
       strength: r.strength || 1
     }))
-    .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined) : [];
+    .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
+    .sort((a, b) => b.strength - a.strength) : [];
 
   const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
   const [isDraggingPanel, setIsDraggingPanel] = useState(false);
@@ -386,11 +388,19 @@ const ForceGraph = ({
                       <span className="text-xs font-semibold text-slate-300">{activeCounterTab === 'counteredBy' ? '被克制文本模板' : '克制文本模板'}</span>
                     </div>
                     {(activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 && (
-                      <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-slate-400 hover:text-cyan-400" onClick={() => {
+                      <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-slate-400 hover:text-cyan-400" onClick={(e) => {
+                        e.stopPropagation();
                         const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
-                        const names = list.sort((a,b) => b.strength - a.strength).map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、');
                         const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                        const text = activeCounterTab === 'counteredBy' ? `${names}\n克制\n${hName}` : `${hName}\n克制\n${names} 等英雄`;
+                        const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                        list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                        const formatGroup = (arr: typeof list, prefix: string) => 
+                          arr.length > 0 ? `${prefix}${arr.map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}` : '';
+                        const strong3 = formatGroup(grouped[3], '★★★强: ');
+                        const strong2 = formatGroup(grouped[2], '★★中: ');
+                        const strong1 = formatGroup(grouped[1], '★弱: ');
+                        const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
+                        const text = `${hName}\n${groups}`;
                         handleCopyToClipboard(text);
                       }}>
                         {isCopied ? <><Check className="w-3.5 h-3.5 text-green-500" /><span>已复制</span></> : <><Copy className="w-3.5 h-3.5" /><span>复制</span></>}

@@ -11,6 +11,7 @@ import {
 import {
   ChevronDown,
   ChevronRight,
+  Copy,
   Crosshair,
   Github,
   Globe,
@@ -36,6 +37,15 @@ function AppContent() {
   const [selectedMap, setSelectedMap] = useState<string | null>(null);
   const [mapSearch, setMapSearch] = useState('');
   const [activeMapType, setActiveMapType] = useState<string>('all');
+  const [isMapCopied, setIsMapCopied] = useState(false);
+
+  const handleMapCopyToClipboard = (text: string) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      setIsMapCopied(true);
+      setTimeout(() => setIsMapCopied(false), 2000);
+    });
+  };
 
   const mapTypes = [
     { id: 'all', name: language === 'zh' ? '全部' : 'All' },
@@ -96,7 +106,7 @@ function AppContent() {
                     <h1 className="text-lg font-black bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent leading-none mb-1">
                       {t('title')}
                     </h1>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">{t('subtitle')}</p>
+                    <p className="text-[10px] text-white uppercase tracking-widest font-bold">{t('subtitle')}</p>
                   </div>
                 </div>
 
@@ -104,24 +114,24 @@ function AppContent() {
                   <div className="flex flex-col">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-lg font-black text-cyan-400 font-mono tracking-tighter">{heroes.length}</span>
-                      <span className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">{t('totalHeroes')}</span>
+                      <span className="text-[9px] text-white uppercase tracking-widest font-bold">{t('totalHeroes')}</span>
                     </div>
                   </div>
                   <div className="flex flex-col">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-lg font-black text-red-500 font-mono tracking-tighter">400+</span>
-                      <span className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">{t('counterRelations')}</span>
+                      <span className="text-[9px] text-white uppercase tracking-widest font-bold">{t('counterRelations')}</span>
                     </div>
                   </div>
                 </div>
               </div>
               
               <div className="flex items-center gap-3">
-                <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-slate-300 hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={toggleLanguage}>
+                <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={toggleLanguage}>
                   <Globe className="w-3.5 h-3.5 text-cyan-500" />
                   <span className="text-xs font-bold">{language === 'zh' ? 'EN' : '中文'}</span>
                 </Button>
-                <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-slate-300 hover:text-white h-8 w-8 p-0 rounded-full transition-all" onClick={() => window.open('https://github.com/cyrus123456/Overwatch-2-Hero-Counters', '_blank')}>
+                <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white h-8 w-8 p-0 rounded-full transition-all" onClick={() => window.open('https://github.com/cyrus123456/Overwatch-2-Hero-Counters', '_blank')}>
                   <Github className="w-3.5 h-3.5" />
                 </Button>
               </div>
@@ -135,23 +145,23 @@ function AppContent() {
           <div className="absolute left-4 top-4 bottom-4 z-10 flex flex-col w-[440px] pointer-events-none">
             <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
               <Card className="p-6 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col rounded-xl border border-slate-800/50">
-                <div className="flex items-center justify-between mb-6 flex-shrink-0 border-b border-slate-700/50 pb-4">
+                <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4">
                   <div className="flex items-center gap-3">
                     <MapPin className="w-6 h-6 text-cyan-400" />
                     <h3 className="text-xl font-bold text-slate-100 uppercase tracking-wide">{t('mapRecommendations')}</h3>
                   </div>
-                  <Badge variant="outline" className="text-xs border-slate-700 text-slate-400 font-mono px-3">
+                  <Badge variant="outline" className="text-xs border-slate-700 text-white font-mono px-3">
                     {filteredMaps.length}
                   </Badge>
                 </div>
 
                 {/* 地图搜索与分类 */}
-                <div className="space-y-4 mb-6 flex-shrink-0">
+                <div className="space-y-2 mb-1 flex-shrink-0">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white" />
                     <Input 
                       placeholder={language === 'zh' ? "快速查找地图..." : "Search maps..."} 
-                      className="h-11 pl-11 bg-slate-950/60 border-slate-800 text-sm rounded-lg focus-visible:ring-cyan-500/30 placeholder:text-slate-600 transition-all" 
+                      className="h-11 pl-11 bg-slate-950/60 border-slate-800 text-white text-sm rounded-lg focus-visible:ring-cyan-500/30 placeholder:text-white transition-all" 
                       value={mapSearch} 
                       onChange={(e) => setMapSearch(e.target.value)} 
                     />
@@ -164,7 +174,7 @@ function AppContent() {
                         className={`px-4 py-2 rounded-md text-xs font-bold transition-all duration-300 ${
                           activeMapType === type.id 
                             ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-900/20 scale-105' 
-                            : 'bg-slate-800/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                            : 'bg-slate-800/50 text-white hover:text-white hover:bg-slate-800'
                         }`}
                       >
                         {type.name}
@@ -191,7 +201,7 @@ function AppContent() {
                           {selectedMap === map.id ? (
                             <ChevronDown className="w-5 h-5 text-cyan-400 flex-shrink-0" />
                           ) : (
-                            <ChevronRight className="w-5 h-5 text-slate-700 group-hover:text-slate-400 flex-shrink-0 transition-colors" />
+                            <ChevronRight className="w-5 h-5 text-slate-700 group-hover:text-white flex-shrink-0 transition-colors" />
                           )}
                           <div className="flex flex-col min-w-0">
                             <span className="text-base font-bold text-slate-100 truncate group-hover:text-cyan-400 transition-colors">
@@ -214,9 +224,9 @@ function AppContent() {
                                           <span className="text-sm font-black text-cyan-400 tracking-wider uppercase border-b border-slate-800 pb-1">
                                             {language === 'zh' ? hero.name : hero.nameEn}
                                           </span>
-                                          <p className="text-xs text-slate-300 leading-relaxed">
-                                            {map.heroReasons[heroId]}
-                                          </p>
+                                         <p className="text-xs text-white leading-relaxed">
+                                             {map.heroReasons[heroId]}
+                                           </p>
                                         </div>
                                       </TooltipContent>
                                     </Tooltip>
@@ -228,37 +238,100 @@ function AppContent() {
                         </div>
                         <Badge 
                           variant="outline" 
-                          className="text-xs font-bold h-7 px-3 flex-shrink-0 border-slate-800 text-slate-400 group-hover:border-slate-700" 
+                          className="text-xs font-bold h-7 px-3 flex-shrink-0 border-slate-800 text-white group-hover:border-slate-700" 
                           style={{ color: getMapTypeColor(map.type), borderColor: `${getMapTypeColor(map.type)}44` }}
                         >
                           {getMapTypeName(map.type, language)}
                         </Badge>
+                       </div>
+                       {selectedMap === map.id && (
+                         <div className="mt-5 pt-5 border-t border-slate-800/50 pl-6 space-y-3">
+                           <div className="mb-2">
+                             <span className="text-xs font-semibold text-white">{language === 'zh' ? '首发阵容' : 'Starting Lineup'}</span>
+                            </div>
+                             <div className="flex items-center justify-between">
+                               <span className="text-[10px] text-white">{language === 'zh' ? '复制阵容发送到聊天框帮助队友选择英雄' : 'Copy lineup to chat to help teammates'}</span>
+                               <Tooltip>
+                                 <TooltipTrigger asChild>
+                                   <div 
+                                     className="cursor-pointer"
+                                     onClick={(e) => {
+                                       e.stopPropagation();
+                                       const heroNames = map.recommendedHeroes.map(heroId => {
+                                         const hero = heroes.find(h => h.id === heroId);
+                                         return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
+                                       }).filter(Boolean);
+                                       
+                                       const reasons = map.recommendedHeroes.map(heroId => {
+                                         const hero = heroes.find(h => h.id === heroId);
+                                         const reason = map.heroReasons[heroId];
+                                         if (!hero || !reason) return '';
+                                         return `${hero.name}: ${reason}`;
+                                       }).filter(Boolean);
+                                       
+                                       const mapName = language === 'zh' ? map.name : map.nameEn;
+                                       const text = `${mapName}\n${language === 'zh' ? '推荐首发阵容' : 'Recommended Lineup'}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
+                                       handleMapCopyToClipboard(text);
+                                     }}
+                                   >
+                                     <Button 
+                                       variant="ghost" 
+                                       size="sm" 
+                                       className="h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-white hover:text-cyan-400"
+                                     >
+                                       {isMapCopied ? <Copy className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                       <span>{isMapCopied ? (language === 'zh' ? '已复制' : 'Copied') : (language === 'zh' ? '复制' : 'Copy')}</span>
+                                     </Button>
+                                   </div>
+                                 </TooltipTrigger>
+                                 <TooltipContent side="top" className="p-3 bg-slate-900 border-slate-700 max-w-lg z-[100]">
+                                  <div className="space-y-2">
+                                    <p className="text-xs font-bold text-cyan-400">{language === 'zh' ? '预览完整复制内容' : 'Preview Full Content'}</p>
+                                    <div className="text-[10px] text-white whitespace-pre-wrap bg-slate-800 p-2 rounded max-h-64 overflow-y-auto">
+                                      {(() => {
+                                        const heroNames = map.recommendedHeroes.map(heroId => {
+                                          const hero = heroes.find(h => h.id === heroId);
+                                          return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
+                                        }).filter(Boolean);
+                                        
+                                        const reasons = map.recommendedHeroes.map(heroId => {
+                                          const hero = heroes.find(h => h.id === heroId);
+                                          const reason = map.heroReasons[heroId];
+                                          if (!hero || !reason) return '';
+                                          return `${language === 'zh' ? hero.name : hero.nameEn}: ${reason}`;
+                                        }).filter(Boolean);
+                                        
+                                        const mapName = language === 'zh' ? map.name : map.nameEn;
+                                         return `${mapName}\n${language === 'zh' ? '推荐首发阵容' : 'Recommended Lineup'}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
+                                       })()}
+                                     </div>
+                                   </div>
+                                 </TooltipContent>
+                               </Tooltip>
+                             </div>
+                            {map.recommendedHeroes.map(heroId => {
+                              const hero = heroes.find(h => h.id === heroId);
+                              if (!hero) return null;
+                              return (
+                                <div 
+                                  key={heroId} 
+                                  className="flex items-start gap-4 p-2.5 rounded-lg hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-slate-700/50" 
+                                  onClick={(e) => { e.stopPropagation(); setSelectedHero(heroId); }}
+                                >
+                                  <div className="w-5 h-5 rounded-full overflow-hidden border border-slate-800 shadow-md flex-shrink-0 ring-1 ring-cyan-500/20">
+                                    <img src={hero.image} alt="" className="w-full h-full object-cover" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
+                                    <p className="text-[11px] text-white leading-tight mt-1 line-clamp-2 font-medium">{map.heroReasons[heroId] || ''}</p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
-                      {selectedMap === map.id && (
-                        <div className="mt-5 pt-5 border-t border-slate-800/50 pl-6 space-y-3">
-                          {map.recommendedHeroes.map(heroId => {
-                            const hero = heroes.find(h => h.id === heroId);
-                            if (!hero) return null;
-                            return (
-                              <div 
-                                key={heroId} 
-                                className="flex items-start gap-4 p-2.5 rounded-lg hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-slate-700/50" 
-                                onClick={(e) => { e.stopPropagation(); setSelectedHero(heroId); }}
-                              >
-                                <div className="w-5 h-5 rounded-full overflow-hidden border border-slate-800 shadow-md flex-shrink-0 ring-1 ring-cyan-500/20">
-                                  <img src={hero.image} alt="" className="w-full h-full object-cover" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
-                                  <p className="text-[11px] text-slate-400 leading-tight mt-1 line-clamp-2 font-medium">{map.heroReasons[heroId] || ''}</p>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </Card>
             </div>
@@ -274,7 +347,7 @@ function AppContent() {
                 className={`rounded-full px-5 gap-2 transition-all duration-300 h-9 ${
                   selectedRole === null 
                     ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-900/40 scale-105' 
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    : 'text-white hover:text-white hover:bg-slate-800'
                 }`} 
                 onClick={() => setSelectedRole(null)}
               >
@@ -290,7 +363,7 @@ function AppContent() {
                   className={`rounded-full px-5 gap-2 transition-all duration-300 h-9 ${
                     selectedRole === role.id 
                       ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-900/40 scale-105' 
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      : 'text-white hover:text-white hover:bg-slate-800'
                   }`} 
                   onClick={() => setSelectedRole(role.id)}
                 >
@@ -299,7 +372,7 @@ function AppContent() {
                   <Badge 
                     variant="secondary" 
                     className={`ml-1 text-[10px] h-4.5 px-2 font-mono font-black ${
-                      selectedRole === role.id ? 'bg-white/20 text-white border-transparent' : 'bg-slate-900 text-slate-600 border-slate-800'
+                      selectedRole === role.id ? 'bg-white/20 text-white border-transparent' : 'bg-slate-900 text-white border-slate-800'
                     }`}
                   >
                     {heroes.filter(h => h.role === role.id).length}

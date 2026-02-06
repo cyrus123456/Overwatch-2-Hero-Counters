@@ -135,12 +135,20 @@ export const heroCounterAbilities: Record<string, { abilityZh: string; abilityEn
     abilityZh: '钻地突袭/高机动近战',
     abilityEn: 'Burrow ambush / Mobile melee'
   },
-  widowmaker: {
-    abilityZh: '狙击秒杀/红外探敌',
-    abilityEn: 'Sniper one-shots / Infra-Sight reveals'
-  },
-  
-  // 支援
+   widowmaker: {
+     abilityZh: '狙击秒杀/红外探敌',
+     abilityEn: 'Sniper one-shots / Infra-Sight reveals'
+   },
+    vendetta: {
+      abilityZh: '连锁刃远程输出/锁链控制',
+      abilityEn: 'Chain blade ranged damage / Chain hook CC'
+    },
+    anran: {
+      abilityZh: '高爆发连招/机动位移',
+      abilityEn: 'High burst combos / Mobility dash'
+    },
+    
+    // 支援
   ana: {
     abilityZh: '睡眠针控制/生化手雷禁疗',
     abilityEn: 'Sleep Dart CC / Anti-nade blocks healing'
@@ -312,16 +320,20 @@ export const heroWeaknesses: Record<string, { weaknessZh: string; weaknessEn: st
     weaknessZh: '血量极低',
     weaknessEn: 'Extremely low HP'
   },
-  venture: {
-    weaknessZh: '被远程风筝',
-    weaknessEn: 'Kited by range'
-  },
-  widowmaker: {
-    weaknessZh: '被突脸后无力',
-    weaknessEn: 'Weak when dived'
-  },
-  
-  // 支援
+   venture: {
+     weaknessZh: '被远程风筝',
+     weaknessEn: 'Kited by range'
+   },
+   widowmaker: {
+     weaknessZh: '被突脸后无力',
+     weaknessEn: 'Weak when dived'
+   },
+   vendetta: {
+     weaknessZh: '远程poke/钩子/控制/区域封锁',
+     weaknessEn: 'Ranged poke / Hooks / CC / Area denial'
+   },
+   
+   // 支援
   ana: {
     weaknessZh: '无位移技能',
     weaknessEn: 'No mobility abilities'
@@ -350,22 +362,22 @@ export const heroWeaknesses: Record<string, { weaknessZh: string; weaknessEn: st
     weaknessZh: '输出能力较弱',
     weaknessEn: 'Weak offensive output'
   },
-  lucio: {
-    weaknessZh: '单目标治疗弱',
-    weaknessEn: 'Poor single-target healing'
-  },
-  mercy: {
-    weaknessZh: '自保能力最弱',
-    weaknessEn: 'Weakest self-sustain'
-  },
-  moira: {
-    weaknessZh: '消散CD后脆弱',
-    weaknessEn: 'Vulnerable when Fade on CD'
-  },
-  zenyatta: {
-    weaknessZh: '无位移，血量低',
-    weaknessEn: 'No mobility, low HP'
-  },
+   lucio: {
+     weaknessZh: '单目标治疗弱',
+     weaknessEn: 'Poor single-target healing'
+   },
+   mercy: {
+     weaknessZh: '自保能力最弱',
+     weaknessEn: 'Weakest self-sustain'
+   },
+    moira: {
+      weaknessZh: '消散CD后脆弱',
+      weaknessEn: 'Vulnerable when Fade on CD'
+    },
+    anran: {
+     weaknessZh: '技能可被中断，依赖精准度',
+     weaknessEn: 'Abilities interruptible, relies on accuracy'
+   },
 };
 
 // 获取克制原因
