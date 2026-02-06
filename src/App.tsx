@@ -121,7 +121,7 @@ function AppContent() {
                   <Globe className="w-3.5 h-3.5 text-cyan-500" />
                   <span className="text-xs font-bold">{language === 'zh' ? 'EN' : '中文'}</span>
                 </Button>
-                <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-slate-300 hover:text-white h-8 w-8 p-0 rounded-full transition-all" onClick={() => window.open('https://github.com', '_blank')}>
+                <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-slate-300 hover:text-white h-8 w-8 p-0 rounded-full transition-all" onClick={() => window.open('https://github.com/cyrus123456/Overwatch-2-Hero-Counters', '_blank')}>
                   <Github className="w-3.5 h-3.5" />
                 </Button>
               </div>
