@@ -301,8 +301,11 @@ function AppContent() {
                                           return `${language === 'zh' ? hero.name : hero.nameEn}: ${reason[language] || reason.zh}`;
                                         }).filter(Boolean);
                                        
-                                        const mapName = language === 'zh' ? map.name : map.nameEn;
-                                        const text = `${mapName}\n${t('recommendedLineup')}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
+                                         const mapName = language === 'zh' ? map.name : map.nameEn;
+                                        let text = `${mapName}\n${t('recommendedLineup')}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
+                                        if (text.length > 150) {
+                                          text = text.substring(0, 147) + '...';
+                                        }
                                         handleMapCopyToClipboard(text);
                                      }}
                                    >
@@ -333,9 +336,13 @@ function AppContent() {
                                            return `${language === 'zh' ? hero.name : hero.nameEn}: ${reason[language] || reason.zh}`;
                                          }).filter(Boolean);
                                         
-                                        const mapName = language === 'zh' ? map.name : map.nameEn;
-                                         return `${mapName}\n${t('recommendedLineup')}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
-                                       })()}
+                                         const mapName = language === 'zh' ? map.name : map.nameEn;
+                                          let preview = `${mapName}\n${t('recommendedLineup')}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
+                                          if (preview.length > 150) {
+                                            preview = preview.substring(0, 147) + '...';
+                                          }
+                                          return preview;
+                                        })()}
                                      </div>
                                    </div>
                                  </TooltipContent>

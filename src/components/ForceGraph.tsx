@@ -498,15 +498,22 @@ const ForceGraph = ({
                         e.stopPropagation();
                         const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
                         const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                        const hNameWithNickname = language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : hName;
                         const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
                         list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
                         const formatGroup = (arr: typeof list, prefix: string) => 
-                          arr.length > 0 ? `${prefix}${arr.map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}` : '';
+                          arr.length > 0 ? `${prefix}${arr.map(i => {
+                            const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                            if (language === 'zh' && i.hero.nickname) {
+                              return `${name}（${i.hero.nickname}）`;
+                            }
+                            return name;
+                          }).join('、')}` : '';
                         const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
                         const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
                         const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
                          const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
-                         const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
+                         const header = activeCounterTab === 'counteredBy' ? `${hNameWithNickname}${t('counteredByHeader')}` : `${hNameWithNickname}${t('countersHeader')}`;
                          const text = `${header}\n${groups}`;
                          handleCopyToClipboard(text);
                        }}>
@@ -521,34 +528,48 @@ const ForceGraph = ({
                       e.stopPropagation();
                       const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
                       if (list.length > 0) {
-                        const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                        const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
-                        list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
-                        const formatGroup = (arr: typeof list, prefix: string) => 
-                          arr.length > 0 ? `${prefix}${arr.map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}` : '';
-                        const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
-                        const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
-                        const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
-                         const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
-                         const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
-                         const text = `${header}\n${groups}`;
-                         handleCopyToClipboard(text);
-                       }
-                     }}
-                   >
+                         const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                         const hNameWithNickname = language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : hName;
+                         const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                         list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                         const formatGroup = (arr: typeof list, prefix: string) => 
+                           arr.length > 0 ? `${prefix}${arr.map(i => {
+                            const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                            if (language === 'zh' && i.hero.nickname) {
+                              return `${name}（${i.hero.nickname}）`;
+                            }
+                            return name;
+                          }).join('、')}` : '';
+                         const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
+                         const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
+                         const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
+                          const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
+                          const header = activeCounterTab === 'counteredBy' ? `${hNameWithNickname}${t('counteredByHeader')}` : `${hNameWithNickname}${t('countersHeader')}`;
+                          const text = `${header}\n${groups}`;
+                          handleCopyToClipboard(text);
+                        }
+                      }}
+                    >
                     {(activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 ? (
                       (() => {
-                        const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
-                        const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
-                        list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
-                        const formatDisplay = (arr: typeof list, prefix: string, colorClass: string) => 
-                          arr.length > 0 ? <div className={`font-medium ${colorClass}`}>{prefix}{arr.map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}</div> : null;
-                         const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                         if (activeCounterTab === 'counteredBy') {
-                            return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-cyan-400 font-bold text-2xl">{hName}</div></>;
-                          } else {
-                            return <><div className="text-cyan-400 font-bold text-2xl">{hName}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
-                          }
+                         const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
+                         const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                         list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                         const formatDisplay = (arr: typeof list, prefix: string, colorClass: string) => 
+                           arr.length > 0 ? <div className={`font-medium ${colorClass}`}>{prefix}{arr.map(i => {
+                             const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                             if (language === 'zh' && i.hero.nickname) {
+                               return `${name}（${i.hero.nickname}）`;
+                             }
+                             return name;
+                           }).join('、')}</div> : null;
+                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                          const hNameWithNickname = language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : hName;
+                          if (activeCounterTab === 'counteredBy') {
+                             return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-cyan-400 font-bold text-2xl">{hNameWithNickname}</div></>;
+                           } else {
+                             return <><div className="text-cyan-400 font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
+                           }
                       })()
                     ) : t('noCounterData')}
                      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"><span className="text-[10px] text-slate-200 bg-slate-900 px-1 rounded">{t('doubleClickToCopy')}</span></div>

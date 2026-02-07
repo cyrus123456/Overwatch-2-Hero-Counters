@@ -3,6 +3,7 @@ export interface Hero {
   id: string;
   name: string;
   nameEn: string;
+  nickname?: string;
   role: 'tank' | 'damage' | 'support';
   color: string;
   image: string;
@@ -74,55 +75,55 @@ const heroImages: Record<string, string> = {
 // 英雄数据
 export const heroes: Hero[] = [
   // 坦克英雄
-  { id: 'dva', name: 'D.Va', nameEn: 'D.Va', role: 'tank', color: '#f59e0b', image: heroImages.dva },
-  { id: 'doomfist', name: '末日铁拳', nameEn: 'Doomfist', role: 'tank', color: '#f59e0b', image: heroImages.doomfist },
+  { id: 'dva', name: 'D.Va', nameEn: 'D.Va', nickname: '宋哈娜', role: 'tank', color: '#f59e0b', image: heroImages.dva },
+  { id: 'doomfist', name: '末日铁拳', nameEn: 'Doomfist', nickname: '铁拳', role: 'tank', color: '#f59e0b', image: heroImages.doomfist },
   { id: 'hazard', name: '骇灾', nameEn: 'Hazard', role: 'tank', color: '#f59e0b', image: heroImages.hazard },
   { id: 'junker_queen', name: '渣客女王', nameEn: 'Junker Queen', role: 'tank', color: '#f59e0b', image: heroImages.junker_queen },
   { id: 'mauga', name: '毛加', nameEn: 'Mauga', role: 'tank', color: '#f59e0b', image: heroImages.mauga },
-  { id: 'orisa', name: '奥丽莎', nameEn: 'Orisa', role: 'tank', color: '#f59e0b', image: heroImages.orisa },
-  { id: 'ramattra', name: '拉玛刹', nameEn: 'Ramattra', role: 'tank', color: '#f59e0b', image: heroImages.ramattra },
-  { id: 'reinhardt', name: '莱因哈特', nameEn: 'Reinhardt', role: 'tank', color: '#f59e0b', image: heroImages.reinhardt },
-  { id: 'roadhog', name: '路霸', nameEn: 'Roadhog', role: 'tank', color: '#f59e0b', image: heroImages.roadhog },
+  { id: 'orisa', name: '奥丽莎', nameEn: 'Orisa', nickname: '美羊羊', role: 'tank', color: '#f59e0b', image: heroImages.orisa },
+  { id: 'ramattra', name: '拉玛刹', nameEn: 'Ramattra', nickname: '喜之郎', role: 'tank', color: '#f59e0b', image: heroImages.ramattra },
+  { id: 'reinhardt', name: '莱因哈特', nameEn: 'Reinhardt', nickname: '大锤', role: 'tank', color: '#f59e0b', image: heroImages.reinhardt },
+  { id: 'roadhog', name: '路霸', nameEn: 'Roadhog', nickname: '猪', role: 'tank', color: '#f59e0b', image: heroImages.roadhog },
   { id: 'sigma', name: '西格玛', nameEn: 'Sigma', role: 'tank', color: '#f59e0b', image: heroImages.sigma },
-  { id: 'winston', name: '温斯顿', nameEn: 'Winston', role: 'tank', color: '#f59e0b', image: heroImages.winston },
-  { id: 'wrecking_ball', name: '破坏球', nameEn: 'Wrecking Ball', role: 'tank', color: '#f59e0b', image: heroImages.wrecking_ball },
-  { id: 'zarya', name: '查莉娅', nameEn: 'Zarya', role: 'tank', color: '#f59e0b', image: heroImages.zarya },
+  { id: 'winston', name: '温斯顿', nameEn: 'Winston', nickname: '猩猩', role: 'tank', color: '#f59e0b', image: heroImages.winston },
+  { id: 'wrecking_ball', name: '破坏球', nameEn: 'Wrecking Ball', nickname: '球', role: 'tank', color: '#f59e0b', image: heroImages.wrecking_ball },
+  { id: 'zarya', name: '查莉娅', nameEn: 'Zarya', nickname: '毛妹', role: 'tank', color: '#f59e0b', image: heroImages.zarya },
   
   // 输出英雄
   { id: 'ashe', name: '艾什', nameEn: 'Ashe', role: 'damage', color: '#ef4444', image: heroImages.ashe },
-  { id: 'bastion', name: '堡垒', nameEn: 'Bastion', role: 'damage', color: '#ef4444', image: heroImages.bastion },
-  { id: 'cassidy', name: '卡西迪', nameEn: 'Cassidy', role: 'damage', color: '#ef4444', image: heroImages.cassidy },
+  { id: 'bastion', name: '堡垒', nameEn: 'Bastion', nickname: '按Q键回城的那个', role: 'damage', color: '#ef4444', image: heroImages.bastion },
+  { id: 'cassidy', name: '卡西迪', nameEn: 'Cassidy', nickname: '麦爹', role: 'damage', color: '#ef4444', image: heroImages.cassidy },
   { id: 'echo', name: '回声', nameEn: 'Echo', role: 'damage', color: '#ef4444', image: heroImages.echo },
   { id: 'freja', name: '芙蕾雅', nameEn: 'Freja', role: 'damage', color: '#ef4444', image: heroImages.freja },
-  { id: 'genji', name: '源氏', nameEn: 'Genji', role: 'damage', color: '#ef4444', image: heroImages.genji },
-  { id: 'hanzo', name: '半藏', nameEn: 'Hanzo', role: 'damage', color: '#ef4444', image: heroImages.hanzo },
+  { id: 'genji', name: '源氏', nameEn: 'Genji', nickname: '源', role: 'damage', color: '#ef4444', image: heroImages.genji },
+  { id: 'hanzo', name: '半藏', nameEn: 'Hanzo', nickname: '随缘箭', role: 'damage', color: '#ef4444', image: heroImages.hanzo },
   { id: 'junkrat', name: '狂鼠', nameEn: 'Junkrat', role: 'damage', color: '#ef4444', image: heroImages.junkrat },
-  { id: 'mei', name: '美', nameEn: 'Mei', role: 'damage', color: '#ef4444', image: heroImages.mei },
-  { id: 'pharah', name: '法老之鹰', nameEn: 'Pharah', role: 'damage', color: '#ef4444', image: heroImages.pharah },
-  { id: 'reaper', name: '死神', nameEn: 'Reaper', role: 'damage', color: '#ef4444', image: heroImages.reaper },
+  { id: 'mei', name: '美', nameEn: 'Mei', nickname: '小美', role: 'damage', color: '#ef4444', image: heroImages.mei },
+  { id: 'pharah', name: '法老之鹰', nameEn: 'Pharah', nickname: '法鸡', role: 'damage', color: '#ef4444', image: heroImages.pharah },
+  { id: 'reaper', name: '死神', nameEn: 'Reaper', nickname: '活神', role: 'damage', color: '#ef4444', image: heroImages.reaper },
   { id: 'sojourn', name: '索杰恩', nameEn: 'Sojourn', role: 'damage', color: '#ef4444', image: heroImages.sojourn },
   { id: 'soldier76', name: '士兵:76', nameEn: 'Soldier: 76', role: 'damage', color: '#ef4444', image: heroImages.soldier76 },
   { id: 'sombra', name: '黑影', nameEn: 'Sombra', role: 'damage', color: '#ef4444', image: heroImages.sombra },
-  { id: 'symmetra', name: '秩序之光', nameEn: 'Symmetra', role: 'damage', color: '#ef4444', image: heroImages.symmetra },
-  { id: 'torbjorn', name: '托比昂', nameEn: 'Torbjörn', role: 'damage', color: '#ef4444', image: heroImages.torbjorn },
-  { id: 'tracer', name: '猎空', nameEn: 'Tracer', role: 'damage', color: '#ef4444', image: heroImages.tracer },
+  { id: 'symmetra', name: '秩序之光', nameEn: 'Symmetra', nickname: '阿三', role: 'damage', color: '#ef4444', image: heroImages.symmetra },
+  { id: 'torbjorn', name: '托比昂', nameEn: 'Torbjörn', nickname: '炮台', role: 'damage', color: '#ef4444', image: heroImages.torbjorn },
+  { id: 'tracer', name: '猎空', nameEn: 'Tracer', nickname: '闪光', role: 'damage', color: '#ef4444', image: heroImages.tracer },
   { id: 'venture', name: '探奇', nameEn: 'Venture', role: 'damage', color: '#ef4444', image: heroImages.venture },
-   { id: 'widowmaker', name: '黑百合', nameEn: 'Widowmaker', role: 'damage', color: '#ef4444', image: heroImages.widowmaker },
-   { id: 'vendetta', name: '斩仇', nameEn: 'VENDETTA', role: 'damage', color: '#ef4444', image: heroImages.vendetta },
-   { id: 'anran', name: '安燃', nameEn: 'Anran', role: 'damage', color: '#ef4444', image: heroImages.anran },
-   
-   // 支援英雄
-  { id: 'ana', name: '安娜', nameEn: 'Ana', role: 'support', color: '#22c55e', image: heroImages.ana },
+  { id: 'widowmaker', name: '黑百合', nameEn: 'Widowmaker', nickname: '寡妇', role: 'damage', color: '#ef4444', image: heroImages.widowmaker },
+  { id: 'vendetta', name: '斩仇', nameEn: 'VENDETTA', role: 'damage', color: '#ef4444', image: heroImages.vendetta },
+  { id: 'anran', name: '安燃', nameEn: 'Anran', role: 'damage', color: '#ef4444', image: heroImages.anran },
+  
+  // 支援英雄
+  { id: 'ana', name: '安娜', nameEn: 'Ana', nickname: '安娜奶奶', role: 'support', color: '#22c55e', image: heroImages.ana },
   { id: 'baptiste', name: '巴蒂斯特', nameEn: 'Baptiste', role: 'support', color: '#22c55e', image: heroImages.baptiste },
   { id: 'brigitte', name: '布丽吉塔', nameEn: 'Brigitte', role: 'support', color: '#22c55e', image: heroImages.brigitte },
   { id: 'illari', name: '伊拉锐', nameEn: 'Illari', role: 'support', color: '#22c55e', image: heroImages.illari },
-  { id: 'juno', name: '朱诺', nameEn: 'Juno', role: 'support', color: '#22c55e', image: heroImages.juno },
+  { id: 'juno', name: '朱诺', nameEn: 'Juno', nickname: '火星妹', role: 'support', color: '#22c55e', image: heroImages.juno },
   { id: 'kiriko', name: '雾子', nameEn: 'Kiriko', role: 'support', color: '#22c55e', image: heroImages.kiriko },
-  { id: 'lifeweaver', name: '生命之梭', nameEn: 'Lifeweaver', role: 'support', color: '#22c55e', image: heroImages.lifeweaver },
-  { id: 'lucio', name: '卢西奥', nameEn: 'Lúcio', role: 'support', color: '#22c55e', image: heroImages.lucio },
-  { id: 'mercy', name: '天使', nameEn: 'Mercy', role: 'support', color: '#22c55e', image: heroImages.mercy },
-  { id: 'moira', name: '莫伊拉', nameEn: 'Moira', role: 'support', color: '#22c55e', image: heroImages.moira },
-  { id: 'zenyatta', name: '禅雅塔', nameEn: 'Zenyatta', role: 'support', color: '#22c55e', image: heroImages.zenyatta },
+  { id: 'lifeweaver', name: '生命之梭', nameEn: 'Lifeweaver', nickname: '花男', role: 'support', color: '#22c55e', image: heroImages.lifeweaver },
+  { id: 'lucio', name: '卢西奥', nameEn: 'Lúcio', nickname: 'DJ', role: 'support', color: '#22c55e', image: heroImages.lucio },
+  { id: 'mercy', name: '天使', nameEn: 'Mercy', nickname: '医生', role: 'support', color: '#22c55e', image: heroImages.mercy },
+  { id: 'moira', name: '莫伊拉', nameEn: 'Moira', nickname: '阿姨', role: 'support', color: '#22c55e', image: heroImages.moira },
+  { id: 'zenyatta', name: '禅雅塔', nameEn: 'Zenyatta', nickname: '和尚', role: 'support', color: '#22c55e', image: heroImages.zenyatta },
 ];
 
 // 被克制关系数据 - 基于参考图片整理
