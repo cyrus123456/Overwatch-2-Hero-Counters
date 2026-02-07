@@ -6,7 +6,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,7 +16,6 @@ import {
 } from "@/components/ui/tooltip";
 import {
   ChevronDown,
-  ChevronDownIcon,
   ChevronRight,
   Copy,
   Crosshair,
@@ -86,18 +84,18 @@ function AppContent() {
     { id: 'support', name: t('support'), nameEn: 'Support', icon: Heart, color: '#22c55e' },
   ];
 
-  const languages: { value: Language; label: string; nativeName: string }[] = [
-    { value: 'zh', label: 'Chinese', nativeName: '中文' },
-    { value: 'en', label: 'English', nativeName: 'English' },
-    { value: 'ja', label: 'Japanese', nativeName: '日本語' },
-    { value: 'ko', label: 'Korean', nativeName: '한국어' },
-    { value: 'zh-TW', label: 'Chinese (Traditional)', nativeName: '繁體中文' },
-    { value: 'es', label: 'Spanish', nativeName: 'Español' },
-    { value: 'fr', label: 'French', nativeName: 'Français' },
-    { value: 'de', label: 'German', nativeName: 'Deutsch' },
-    { value: 'pt', label: 'Portuguese', nativeName: 'Português' },
-    { value: 'ru', label: 'Russian', nativeName: 'Русский' },
-    { value: 'it', label: 'Italian', nativeName: 'Italiano' },
+  const languages: { value: Language; nativeName: string }[] = [
+    { value: 'zh', nativeName: '中文' },
+    { value: 'en', nativeName: 'English' },
+    { value: 'ja', nativeName: '日本語' },
+    { value: 'ko', nativeName: '한국어' },
+    { value: 'zh-TW', nativeName: '繁體中文' },
+    { value: 'es', nativeName: 'Español' },
+    { value: 'fr', nativeName: 'Français' },
+    { value: 'de', nativeName: 'Deutsch' },
+    { value: 'pt', nativeName: 'Português' },
+    { value: 'ru', nativeName: 'Русский' },
+    { value: 'it', nativeName: 'Italiano' },
   ];
 
   return (
@@ -146,15 +144,14 @@ function AppContent() {
               </div>
                
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                     <span className="text-xs text-slate-400 whitespace-nowrap">{t('selectLanguage')}</span>
                     <Select value={language} onValueChange={(v) => setLanguage(v as Language)}>
-                      <SelectTrigger className="w-[140px] border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-white h-8 px-2 rounded-full transition-all data-[state=open]:bg-slate-700">
-                        <Globe className="w-4 h-4 mr-1.5 text-cyan-400 flex-shrink-0" />
-                        <SelectValue className="truncate text-xs flex-1 overflow-hidden" />
-                        <ChevronDownIcon className="w-3.5 h-3.5 text-slate-400 flex-shrink-0 ml-1" />
+                      <SelectTrigger className="border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-white h-8 px-3 rounded-full transition-all data-[state=open]:bg-slate-700 flex items-center gap-2 min-w-[100px]">
+                        <Globe className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                        <span className="truncate text-xs">{languages.find(l => l.value === language)?.nativeName}</span>
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-700 text-white min-w-[140px] max-w-[180px]" position="popper">
+                      <SelectContent className="bg-slate-800 border-slate-700 text-white" position="popper">
                         {languages.map((lang) => (
                           <SelectItem key={lang.value} value={lang.value} className="focus:bg-cyan-500/30 hover:bg-cyan-500/20 cursor-pointer py-2 px-3 text-white transition-colors data-[highlighted]:text-cyan-300">
                             <div className="flex items-center gap-2">
