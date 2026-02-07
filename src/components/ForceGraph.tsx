@@ -18,6 +18,7 @@ import {
   HelpCircle,
   Info,
   RotateCcw,
+  ShieldAlert,
   Swords,
   ZoomIn,
   ZoomOut
@@ -184,6 +185,23 @@ const ForceGraph = ({
       defs.append('marker').attr('id', shade.id).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 8).attr('markerHeight', 8).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', shade.color).attr('opacity', shade.opacity);
     });
 
+    // Animated arrow heads
+    ['red', 'green'].forEach(color => {
+      [1, 2, 3].forEach(s => {
+        defs.append('marker').attr('id', `arrow-${color}-${s}-anim`).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 10).attr('markerHeight', 10).attr('orient', 'auto').append('path')
+          .attr('d', 'M0,-5L10,0L0,5')
+          .attr('fill', color === 'red' ? (s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#f87171') : (s === 3 ? '#15803d' : s === 2 ? '#22c55e' : '#86efac'))
+          .attr('opacity', 0.9);
+      });
+    });
+
+    // Animated flowing circle markers
+    ['red', 'green'].forEach(color => {
+      [1, 2, 3].forEach(s => {
+        defs.append('marker').attr('id', `arrow-${color}-${s}-flow`).attr('viewBox', '0 -3 6 6').attr('refX', 3).attr('refY', 0).attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto').append('circle').attr('r', 2.5).attr('fill', color === 'red' ? (s === 3 ? '#ff6b6b' : s === 2 ? '#ff8a8a' : '#ffa8a8') : (s === 3 ? '#4ade80' : s === 2 ? '#6ee7a0' : '#a3f7bc'));
+      });
+    });
+
     const filter = defs.append('filter').attr('id', 'glow').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
     filter.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'coloredBlur');
     const feMerge = filter.append('feMerge');
@@ -201,13 +219,54 @@ const ForceGraph = ({
     });
 
     const simulation = d3.forceSimulation<NodeDatum>(nodes)
-      .force('link', d3.forceLink<NodeDatum, LinkDatum>(links).id(d => d.id).distance(100))
+      .force('link', d3.forceLink<NodeDatum, LinkDatum>(links).id(d => d.id).distance(d => {
+        if (!selectedHero) return 100;
+        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        if (!rel) return 100;
+        const isRelated = activeCounterTab === 'counteredBy' ? 
+          (targetId === selectedHero || sourceId === selectedHero) : 
+          (sourceId === selectedHero || targetId === selectedHero);
+        if (!isRelated) return 100;
+        return rel.strength === 3 ? 80 : rel.strength === 2 ? 100 : 120;
+      }))
       .force('charge', d3.forceManyBody().strength(-500))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(d => (d as NodeDatum).radius + 15));
     simulationRef.current = simulation;
 
     const link = g.append('g').attr('class', 'links').selectAll('line').data(links).enter().append('line').attr('stroke-width', 1.5);
+    
+    // Animated flowing particles group
+    const particleGroup = g.append('g').attr('class', 'particles');
+    
+    // Create particles for each link
+    particleGroup.selectAll('circle')
+      .data(links)
+      .enter()
+      .append('circle')
+      .attr('class', 'particle')
+      .attr('r', (d: LinkDatum) => {
+        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const s = rel?.strength || 1;
+        return s === 3 ? 4 : s === 2 ? 3 : 2;
+      })
+      .attr('fill', (d: LinkDatum) => {
+        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const s = rel?.strength || 1;
+        const color = activeCounterTab === 'counteredBy' ? 
+          (targetId === selectedHero ? 'red' : 'green') : 
+          (sourceId === selectedHero ? 'green' : 'red');
+        return s === 3 ? (color === 'red' ? '#ff6b6b' : '#4ade80') : 
+               s === 2 ? (color === 'red' ? '#ff8a8a' : '#6ee7a0') : 
+               (color === 'red' ? '#ffa8a8' : '#a3f7bc');
+      })
+      .attr('opacity', 0);
     
     const nodeGroup = g.append('g').attr('class', 'nodes').selectAll('g').data(nodes).enter().append('g').attr('class', 'node-group').style('cursor', 'pointer').call(d3.drag<SVGGElement, NodeDatum>()
       .on('start', (event, d) => { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
@@ -221,12 +280,59 @@ const ForceGraph = ({
 
     nodeGroup.on('click', (event, d) => { event.stopPropagation(); onHeroSelect(d.id === selectedHero ? null : d.id); });
 
+    // Track particle animation progress
+    let particleProgress = 0;
+    const particleSpeed = 0.015;
+
     simulation.on('tick', () => {
       link.attr('x1', d => (d.source as NodeDatum).x || 0).attr('y1', d => (d.source as NodeDatum).y || 0).attr('x2', d => (d.target as NodeDatum).x || 0).attr('y2', d => (d.target as NodeDatum).y || 0);
       nodeGroup.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
+      
+      // Animate particles flowing along links
+      particleProgress += particleSpeed;
+      if (particleProgress > 1) particleProgress = 0;
+      
+      particleGroup.selectAll<SVGCircleElement, LinkDatum>('.particle')
+        .attr('opacity', (d) => {
+          const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+          const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+          const isRelevant = selectedHero ? 
+            (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) : 
+            false;
+          if (!isRelevant) return 0;
+          return 0.9;
+        })
+        .attr('cx', (d) => {
+          const source = d.source as NodeDatum;
+          const target = d.target as NodeDatum;
+          const sourceId = source.id;
+          const targetId = target.id;
+          const isRelevant = selectedHero ? 
+            (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) : 
+            false;
+          if (!isRelevant) return 0;
+          const dx = (target.x || 0) - (source.x || 0);
+          const pos = (particleProgress + (links.indexOf(d) * 0.1)) % 1;
+          return (source.x || 0) + dx * pos;
+        })
+        .attr('cy', (d) => {
+          const source = d.source as NodeDatum;
+          const target = d.target as NodeDatum;
+          const sourceId = source.id;
+          const targetId = target.id;
+          const isRelevant = selectedHero ? 
+            (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) : 
+            false;
+          if (!isRelevant) return 0;
+          const dy = (target.y || 0) - (source.y || 0);
+          const pos = (particleProgress + (links.indexOf(d) * 0.1)) % 1;
+          return (source.y || 0) + dy * pos;
+        });
     });
 
     if (selectedHero) {
+      simulation.alpha(0.5).restart();
+      
       nodeGroup.transition().duration(300).attr('opacity', d => {
         if (d.id === selectedHero) return 1;
         const isRelated = activeCounterTab === 'counteredBy' ? counterRelations.some(r => r.source === d.id && r.target === selectedHero) : counterRelations.some(r => r.source === selectedHero && r.target === d.id);
@@ -277,6 +383,8 @@ const ForceGraph = ({
         return `url(#arrow-${activeCounterTab === 'counteredBy' ? 'red' : 'green'}-${s})`;
       });
     } else {
+      simulation.alpha(0.3).restart();
+      
       nodeGroup.transition().duration(300).attr('opacity', 1);
       nodeGroup.each(function(d) {
         const group = d3.select(this);
@@ -320,33 +428,31 @@ const ForceGraph = ({
       {/* 英雄详情面板 */}
       <div className="absolute z-10 w-96 flex flex-col" style={{ top: '1rem', right: '1rem', bottom: '1rem', transform: `translate(${panelPosition.x}px, ${panelPosition.y}px)`, cursor: isDraggingPanel ? 'grabbing' : 'default', pointerEvents: 'none' }}>
         <div className="flex-1 overflow-hidden pointer-events-auto h-full">
-          <Card className="p-4 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col">
+          <Card className="p-3 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col gap-1">
             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-700/50 flex-shrink-0">
-              <img 
-                src="https://static.wikia.nocookie.net/overwatch_gamepedia/images/4/4b/Overwatch_Circle_Logo.png" 
-                alt="" 
-                className="w-5 h-5 object-contain flex-shrink-0"
-              />
+              <ShieldAlert className="w-5 h-5 text-cyan-400 flex-shrink-0" />
               <h3 className="text-lg font-bold text-slate-100">{t('heroCounterPanel')}</h3>
             </div>
             
             {displayedHero ? (
               <div className="flex flex-col flex-1 min-h-0">
-                <div className="flex items-center gap-4 mb-2 cursor-grab active:cursor-grabbing flex-shrink-0" onMouseDown={handlePanelDragStart} title={t('dragToMove') || "Drag to move"}>
-                  <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `3px solid ${displayedHero.color}`, backgroundColor: '#1a1a2e' }}>
-                    <img src={displayedHero.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-100 leading-tight">{language === 'zh' ? displayedHero?.name : displayedHero?.nameEn}</h3>
-                    <p className="text-xs text-slate-400 leading-tight mt-0.5">{language === 'zh' ? displayedHero?.nameEn : displayedHero?.name}</p>
-                    <Badge variant="outline" className="mt-1.5 text-xs px-2 py-0" style={{ borderColor: displayedHero.color, color: displayedHero.color }}>{getRoleName(displayedHero.role)}</Badge>
-                  </div>
+                <div className="flex items-center gap-4 mb-4 cursor-grab active:cursor-grabbing flex-shrink-0" onMouseDown={handlePanelDragStart} title={t('dragToMove') || "Drag to move"}>
+                   <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `3px solid ${displayedHero.color}`, backgroundColor: '#1a1a2e' }}>
+                     <img src={displayedHero.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
+                   </div>
+                   <div className="flex-1">
+                     <div className="flex items-center gap-2">
+                       <h3 className="text-base font-bold text-slate-100 leading-tight">{language === 'zh' ? displayedHero?.name : displayedHero?.nameEn}</h3>
+                       <Badge variant="outline" className="text-xs px-2 py-0" style={{ borderColor: displayedHero.color, color: displayedHero.color }}>{getRoleName(displayedHero.role)}</Badge>
+                     </div>
+                     <p className="text-xs text-slate-200 leading-tight mt-0.5">{language === 'zh' ? displayedHero?.nameEn : displayedHero?.name}</p>
+                   </div>
                 </div>
                 
                 <Tabs value={activeCounterTab} onValueChange={(v) => setActiveCounterTab(v as any)} className="flex-1 flex flex-col min-h-0">
                   <TabsList className="grid w-full grid-cols-2 mb-2 bg-slate-800/50 p-1 h-9 flex-shrink-0">
                     <TabsTrigger value="counteredBy" className="text-white data-[state=active]:bg-red-600 flex items-center justify-center gap-2 px-2 h-7">
-                      <img src="https://static.wikia.nocookie.net/overwatch_gamepedia/images/4/4b/Overwatch_Circle_Logo.png" alt="" className="w-3.5 h-3.5 object-contain invert brightness-200" />
+                      <ShieldAlert className="w-3.5 h-3.5" />
                       <span className="text-[11px]">{t('counteredBy')}</span>
                     </TabsTrigger>
                     <TabsTrigger value="counters" className="text-white data-[state=active]:bg-green-600 flex items-center justify-center gap-2 px-2 h-7"><Swords className="w-3.5 h-3.5" /><span className="text-[11px]">{t('counters')}</span></TabsTrigger>
@@ -358,13 +464,13 @@ const ForceGraph = ({
                         <div className="flex items-center gap-2">
                           <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-800 flex-shrink-0"><img src={hero.image} alt="" className="w-full h-full object-cover" /></div>
                           <span className="text-sm font-bold text-red-100">{language === 'zh' ? hero.name : hero.nameEn}</span>
-                          <Badge variant="secondary" className={`text-[9px] px-1 py-0 ml-auto text-white shadow-sm border-none ${strength === 3 ? 'bg-red-500' : strength === 2 ? 'bg-orange-500' : 'bg-slate-600'}`}>{strength === 3 ? '硬克制' : strength === 2 ? '强力' : '轻微'} LV.{strength}</Badge>
-                        </div>
-                        <p className="text-[11px] text-slate-300 leading-tight pl-7">{getCounterReason(hero.id, displayedHero.id, language)}</p>
-                      </div>
-                    ))}
-                    {counteredBy.length === 0 && <div className="text-center py-6 text-slate-500 text-xs">暂未被任何英雄克制</div>}
-                  </TabsContent>
+                           <Badge variant="secondary" className={`text-[9px] px-1 py-0 ml-auto text-white shadow-sm border-none ${strength === 3 ? 'bg-red-500' : strength === 2 ? 'bg-orange-500' : 'bg-slate-600'}`}>{strength === 3 ? t('hardCounter') : strength === 2 ? t('strongCounter') : t('softCounter')} LV.{strength}</Badge>
+                         </div>
+                         <p className="text-[11px] text-white leading-tight pl-7">{getCounterReason(hero.id, displayedHero.id, language)}</p>
+                       </div>
+                     ))}
+                      {counteredBy.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('notCounteredByAny')}</div>}
+                   </TabsContent>
                   
                   <TabsContent value="counters" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-green-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
                     {counters.map(({ hero, strength }) => (
@@ -372,12 +478,12 @@ const ForceGraph = ({
                         <div className="flex items-center gap-2">
                           <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-800 flex-shrink-0"><img src={hero.image} alt="" className="w-full h-full object-cover" /></div>
                           <span className="text-sm font-bold text-green-100">{language === 'zh' ? hero.name : hero.nameEn}</span>
-                          <Badge variant="secondary" className={`text-[9px] px-1 py-0 ml-auto text-white shadow-sm border-none ${strength === 3 ? 'bg-red-500' : strength === 2 ? 'bg-orange-500' : 'bg-slate-600'}`}>{strength === 3 ? '硬克制' : strength === 2 ? '强力' : '轻微'} LV.{strength}</Badge>
+                           <Badge variant="secondary" className={`text-[9px] px-1 py-0 ml-auto text-white shadow-sm border-none ${strength === 3 ? 'bg-red-500' : strength === 2 ? 'bg-orange-500' : 'bg-slate-600'}`}>{strength === 3 ? t('hardCounter') : strength === 2 ? t('strongCounter') : t('softCounter')} LV.{strength}</Badge>
                         </div>
-                        <p className="text-[11px] text-slate-300 leading-tight pl-7">{getCounterReason(displayedHero.id, hero.id, language)}</p>
+                         <p className="text-[11px] text-white leading-tight pl-7">{getCounterReason(displayedHero.id, hero.id, language)}</p>
                       </div>
                     ))}
-                    {counters.length === 0 && <div className="text-center py-6 text-slate-500 text-xs">暂无克制的英雄</div>}
+                     {counters.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('noCounters')}</div>}
                   </TabsContent>
                 </Tabs>
                 
@@ -385,10 +491,10 @@ const ForceGraph = ({
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
                       <FileText className="w-4 h-4 text-cyan-400" />
-                      <span className="text-xs font-semibold text-slate-300">{activeCounterTab === 'counteredBy' ? '被克制文本模板' : '克制文本模板'}</span>
+                       <span className="text-xs font-semibold text-white">{activeCounterTab === 'counteredBy' ? t('counteredByTemplate') : t('countersTemplate')}</span>
                     </div>
                     {(activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 && (
-                      <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-slate-400 hover:text-cyan-400" onClick={(e) => {
+                       <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-slate-200 hover:text-cyan-400" onClick={(e) => {
                         e.stopPropagation();
                         const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
                         const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
@@ -396,38 +502,54 @@ const ForceGraph = ({
                         list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
                         const formatGroup = (arr: typeof list, prefix: string) => 
                           arr.length > 0 ? `${prefix}${arr.map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}` : '';
-                        const strong3 = formatGroup(grouped[3], '★★★强: ');
-                        const strong2 = formatGroup(grouped[2], '★★中: ');
-                        const strong1 = formatGroup(grouped[1], '★弱: ');
+                        const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
+                        const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
+                        const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
                         const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
                         const text = `${hName}\n${groups}`;
                         handleCopyToClipboard(text);
                       }}>
-                        {isCopied ? <><Check className="w-3.5 h-3.5 text-green-500" /><span>已复制</span></> : <><Copy className="w-3.5 h-3.5" /><span>复制</span></>}
+                        {isCopied ? <><Check className="w-3.5 h-3.5 text-green-500" /><span>{t('copied')}</span></> : <><Copy className="w-3.5 h-3.5" /><span>{t('copy')}</span></>}
                       </Button>
                     )}
                   </div>
-                  <p className="text-[10px] text-slate-500 mb-2 leading-tight">双击文本或点击按钮复制，发送攻略到队友聊天窗口帮助队友选择英雄</p>
+                   <p className="text-[10px] text-slate-200 mb-2 leading-tight">{t('copyTip')}</p>
                   <div 
-                    className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs leading-relaxed text-slate-400 select-all cursor-pointer hover:border-slate-700 relative group transition-colors" 
-                    onDoubleClick={() => {
+                     className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs leading-relaxed text-slate-200 select-all cursor-pointer hover:border-slate-700 relative group transition-colors"
+                    onDoubleClick={(e) => {
+                      e.stopPropagation();
                       const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
                       if (list.length > 0) {
-                        const names = list.sort((a,b) => b.strength - a.strength).map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、');
                         const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                        const text = activeCounterTab === 'counteredBy' ? `${names}\n克制\n${hName}` : `${hName}\n克制\n${names} 等英雄`;
+                        const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                        list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                        const formatGroup = (arr: typeof list, prefix: string) => 
+                          arr.length > 0 ? `${prefix}${arr.map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}` : '';
+                        const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
+                        const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
+                        const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
+                        const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
+                        const text = `${hName}\n${groups}`;
                         handleCopyToClipboard(text);
                       }
                     }}
                   >
                     {(activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 ? (
-                      activeCounterTab === 'counteredBy' ? (
-                        <><div className="text-red-400 font-medium">{counteredBy.sort((a,b) => b.strength - a.strength).map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}</div><div className="my-1 font-bold text-slate-300">克制</div><div className="text-cyan-400 font-bold">{language === 'zh' ? displayedHero?.name : displayedHero?.nameEn}</div></>
-                      ) : (
-                        <><div className="text-cyan-400 font-bold">{language === 'zh' ? displayedHero?.name : displayedHero?.nameEn}</div><div className="my-1 font-bold text-slate-300">克制</div><div className="text-green-400 font-medium">{counters.sort((a,b) => b.strength - a.strength).map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}<span className="text-slate-500 text-[10px] ml-1">等英雄</span></div></>
-                      )
-                    ) : "暂无足够的克制数据生成模板"}
-                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"><span className="text-[10px] text-slate-500 bg-slate-900 px-1 rounded">双击复制</span></div>
+                      (() => {
+                        const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
+                        const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                        list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                        const formatDisplay = (arr: typeof list, prefix: string, colorClass: string) => 
+                          arr.length > 0 ? <div className={`font-medium ${colorClass}`}>{prefix}{arr.map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}</div> : null;
+                        const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                        if (activeCounterTab === 'counteredBy') {
+                           return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white">● 克制 →</div><div className="text-cyan-400 font-bold">{hName}</div></>;
+                         } else {
+                           return <><div className="text-cyan-400 font-bold">{hName}</div><div className="my-1 font-bold text-white">● 克制 →</div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
+                         }
+                      })()
+                    ) : t('noCounterData')}
+                     <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"><span className="text-[10px] text-slate-200 bg-slate-900 px-1 rounded">{t('doubleClickToCopy')}</span></div>
                   </div>
                 </div>
               </div>
@@ -435,7 +557,7 @@ const ForceGraph = ({
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
                   <Swords className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-400 text-sm">{t('selectHeroPrompt')}</p>
+                   <p className="text-slate-200 text-sm">{t('selectHeroPrompt')}</p>
                 </div>
               </div>
             )}
@@ -470,21 +592,21 @@ const ForceGraph = ({
                     <div className="w-3 h-3 rounded-full bg-amber-500 mt-1 shadow-[0_0_8px_rgba(245,158,11,0.4)] flex-shrink-0"></div>
                     <div>
                       <p className="text-sm font-bold text-slate-200 leading-none">{t('tank')}</p>
-                      <p className="text-[11px] text-slate-500 mt-1">{t('tankBrief')}</p>
+                       <p className="text-[11px] text-slate-300 mt-1">{t('tankBrief')}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-3 h-3 rounded-full bg-red-500 mt-1 shadow-[0_0_8px_rgba(239,68,68,0.4)] flex-shrink-0"></div>
                     <div>
                       <p className="text-sm font-bold text-slate-200 leading-none">{t('damage')}</p>
-                      <p className="text-[11px] text-slate-500 mt-1">{t('damageBrief')}</p>
+                       <p className="text-[11px] text-slate-300 mt-1">{t('damageBrief')}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-3 h-3 rounded-full bg-green-500 mt-1 shadow-[0_0_8px_rgba(34,197,94,0.4)] flex-shrink-0"></div>
                     <div>
                       <p className="text-sm font-bold text-slate-200 leading-none">{t('support')}</p>
-                      <p className="text-[11px] text-slate-500 mt-1">{t('supportBrief')}</p>
+                       <p className="text-[11px] text-slate-300 mt-1">{t('supportBrief')}</p>
                     </div>
                   </div>
                 </div>
@@ -506,7 +628,7 @@ const ForceGraph = ({
                 </div>
 
                 {/* 交互说明 */}
-                <div className="space-y-1.5 pt-3 border-t border-slate-800/50 text-[11px] text-slate-400">
+                <div className="space-y-1.5 pt-3 border-t border-slate-800/50 text-[11px] text-slate-200">
                   <p className="flex items-center gap-2 italic">
                     <span className="text-red-500 font-black">A → B</span> {t('whoCountersWho')}
                   </p>
@@ -515,19 +637,19 @@ const ForceGraph = ({
                       <span className="w-1 h-1 bg-cyan-500 rounded-full"></span>
                       {t('clickDesc')}
                     </p>
-                    <p className="text-slate-400 flex items-center gap-2">
+                     <p className="text-slate-200 flex items-center gap-2">
                       <span className="w-1 h-1 bg-cyan-800 rounded-full"></span>
                       {t('hoverDesc')}
                     </p>
-                    <p className="text-slate-500 flex items-center gap-2">
-                      <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
-                      {t('dragDesc')}
-                    </p>
-                    <p className="text-slate-500 flex items-center gap-2">
-                      <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
-                      {t('zoomDesc')}
-                    </p>
-                    <p className="text-slate-500 flex items-center gap-2">
+                     <p className="text-slate-300 flex items-center gap-2">
+                       <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
+                       {t('dragDesc')}
+                     </p>
+                     <p className="text-slate-300 flex items-center gap-2">
+                       <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
+                       {t('zoomDesc')}
+                     </p>
+                     <p className="text-slate-300 flex items-center gap-2">
                       <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
                       {t('panDesc')}
                     </p>

@@ -48,12 +48,12 @@ function AppContent() {
   };
 
   const mapTypes = [
-    { id: 'all', name: language === 'zh' ? '全部' : 'All' },
-    { id: 'control', name: language === 'zh' ? '占领' : 'Control' },
-    { id: 'hybrid', name: language === 'zh' ? '混合' : 'Hybrid' },
-    { id: 'escort', name: language === 'zh' ? '运载' : 'Escort' },
-    { id: 'push', name: language === 'zh' ? '推进' : 'Push' },
-    { id: 'flashpoint', name: language === 'zh' ? '闪点' : 'Flash' },
+    { id: 'all', name: t('all') },
+    { id: 'control', name: t('control') },
+    { id: 'hybrid', name: t('hybrid') },
+    { id: 'escort', name: t('escort') },
+    { id: 'push', name: t('push') },
+    { id: 'flashpoint', name: t('flashpoint') },
   ];
 
   const filteredMaps = useMemo(() => {
@@ -131,8 +131,9 @@ function AppContent() {
                   <Globe className="w-3.5 h-3.5 text-cyan-500" />
                   <span className="text-xs font-bold">{language === 'zh' ? 'EN' : '中文'}</span>
                 </Button>
-                <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white h-8 w-8 p-0 rounded-full transition-all" onClick={() => window.open('https://github.com/cyrus123456/Overwatch-2-Hero-Counters', '_blank')}>
+                <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={() => window.open('https://github.com/cyrus123456/Overwatch-2-Hero-Counters', '_blank')}>
                   <Github className="w-3.5 h-3.5" />
+                  <span className="text-xs font-bold">{t('github')}</span>
                 </Button>
               </div>
             </div>
@@ -144,7 +145,7 @@ function AppContent() {
           {/* 左侧地图卡片面板 */}
           <div className="absolute left-4 top-4 bottom-4 z-10 flex flex-col w-[440px] pointer-events-none">
             <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
-              <Card className="p-6 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col rounded-xl border border-slate-800/50">
+              <Card className="p-6 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col gap-1 rounded-xl border border-slate-800/50">
                 <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4">
                   <div className="flex items-center gap-3">
                     <MapPin className="w-6 h-6 text-cyan-400" />
@@ -159,8 +160,8 @@ function AppContent() {
                 <div className="space-y-2 mb-1 flex-shrink-0">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white" />
-                    <Input 
-                      placeholder={language === 'zh' ? "快速查找地图..." : "Search maps..."} 
+                     <Input 
+                       placeholder={t('searchMapsPlaceholder')} 
                       className="h-11 pl-11 bg-slate-950/60 border-slate-800 text-white text-sm rounded-lg focus-visible:ring-cyan-500/30 placeholder:text-white transition-all" 
                       value={mapSearch} 
                       onChange={(e) => setMapSearch(e.target.value)} 
@@ -225,8 +226,8 @@ function AppContent() {
                                             {language === 'zh' ? hero.name : hero.nameEn}
                                           </span>
                                          <p className="text-xs text-white leading-relaxed">
-                                             {map.heroReasons[heroId]}
-                                           </p>
+                                              {map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.zh}
+                                            </p>
                                         </div>
                                       </TooltipContent>
                                     </Tooltip>
@@ -245,12 +246,12 @@ function AppContent() {
                         </Badge>
                        </div>
                        {selectedMap === map.id && (
-                         <div className="mt-5 pt-5 border-t border-slate-800/50 pl-6 space-y-3">
+                         <div className="mt-2 pt-1 border-t border-slate-800/50 pl-6 space-y-3">
                            <div className="mb-2">
-                             <span className="text-xs font-semibold text-white">{language === 'zh' ? '首发阵容' : 'Starting Lineup'}</span>
+                             <span className="text-xs font-semibold text-white">{t('startingLineup')}</span>
                             </div>
                              <div className="flex items-center justify-between">
-                               <span className="text-[10px] text-white">{language === 'zh' ? '复制阵容发送到聊天框帮助队友选择英雄' : 'Copy lineup to chat to help teammates'}</span>
+                               <span className="text-[10px] text-white">{t('copyLineupTip')}</span>
                                <Tooltip>
                                  <TooltipTrigger asChild>
                                    <div 
@@ -262,16 +263,16 @@ function AppContent() {
                                          return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
                                        }).filter(Boolean);
                                        
-                                       const reasons = map.recommendedHeroes.map(heroId => {
-                                         const hero = heroes.find(h => h.id === heroId);
-                                         const reason = map.heroReasons[heroId];
-                                         if (!hero || !reason) return '';
-                                         return `${hero.name}: ${reason}`;
-                                       }).filter(Boolean);
+                                        const reasons = map.recommendedHeroes.map(heroId => {
+                                          const hero = heroes.find(h => h.id === heroId);
+                                          const reason = map.heroReasons[heroId];
+                                          if (!hero || !reason) return '';
+                                          return `${language === 'zh' ? hero.name : hero.nameEn}: ${reason[language] || reason.zh}`;
+                                        }).filter(Boolean);
                                        
-                                       const mapName = language === 'zh' ? map.name : map.nameEn;
-                                       const text = `${mapName}\n${language === 'zh' ? '推荐首发阵容' : 'Recommended Lineup'}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
-                                       handleMapCopyToClipboard(text);
+                                        const mapName = language === 'zh' ? map.name : map.nameEn;
+                                        const text = `${mapName}\n${t('recommendedLineup')}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
+                                        handleMapCopyToClipboard(text);
                                      }}
                                    >
                                      <Button 
@@ -280,13 +281,13 @@ function AppContent() {
                                        className="h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-white hover:text-cyan-400"
                                      >
                                        {isMapCopied ? <Copy className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
-                                       <span>{isMapCopied ? (language === 'zh' ? '已复制' : 'Copied') : (language === 'zh' ? '复制' : 'Copy')}</span>
+                                        <span>{isMapCopied ? t('copied') : t('copy')}</span>
                                      </Button>
                                    </div>
                                  </TooltipTrigger>
                                  <TooltipContent side="top" className="p-3 bg-slate-900 border-slate-700 max-w-lg z-[100]">
                                   <div className="space-y-2">
-                                    <p className="text-xs font-bold text-cyan-400">{language === 'zh' ? '预览完整复制内容' : 'Preview Full Content'}</p>
+                                     <p className="text-xs font-bold text-cyan-400">{t('previewContent')}</p>
                                     <div className="text-[10px] text-white whitespace-pre-wrap bg-slate-800 p-2 rounded max-h-64 overflow-y-auto">
                                       {(() => {
                                         const heroNames = map.recommendedHeroes.map(heroId => {
@@ -294,15 +295,15 @@ function AppContent() {
                                           return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
                                         }).filter(Boolean);
                                         
-                                        const reasons = map.recommendedHeroes.map(heroId => {
-                                          const hero = heroes.find(h => h.id === heroId);
-                                          const reason = map.heroReasons[heroId];
-                                          if (!hero || !reason) return '';
-                                          return `${language === 'zh' ? hero.name : hero.nameEn}: ${reason}`;
-                                        }).filter(Boolean);
+                                         const reasons = map.recommendedHeroes.map(heroId => {
+                                           const hero = heroes.find(h => h.id === heroId);
+                                           const reason = map.heroReasons[heroId];
+                                           if (!hero || !reason) return '';
+                                           return `${language === 'zh' ? hero.name : hero.nameEn}: ${reason[language] || reason.zh}`;
+                                         }).filter(Boolean);
                                         
                                         const mapName = language === 'zh' ? map.name : map.nameEn;
-                                         return `${mapName}\n${language === 'zh' ? '推荐首发阵容' : 'Recommended Lineup'}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
+                                         return `${mapName}\n${t('recommendedLineup')}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
                                        })()}
                                      </div>
                                    </div>
@@ -321,10 +322,10 @@ function AppContent() {
                                   <div className="w-5 h-5 rounded-full overflow-hidden border border-slate-800 shadow-md flex-shrink-0 ring-1 ring-cyan-500/20">
                                     <img src={hero.image} alt="" className="w-full h-full object-cover" />
                                   </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
-                                    <p className="text-[11px] text-white leading-tight mt-1 line-clamp-2 font-medium">{map.heroReasons[heroId] || ''}</p>
-                                  </div>
+                                   <div className="flex-1 min-w-0">
+                                     <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
+                                      <p className="text-[11px] text-white leading-tight mt-1 font-medium">{map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.zh || ''}</p>
+                                   </div>
                                 </div>
                               );
                             })}
