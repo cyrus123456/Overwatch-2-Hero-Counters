@@ -89,10 +89,53 @@ const ForceGraph = ({
 
   const handleCopyToClipboard = (text: string) => {
     if (!text) return;
-    navigator.clipboard.writeText(text).then(() => {
+    const sanitized = text
+      .replace(/（/g, '(')
+      .replace(/）/g, ')')
+      .replace(/、/g, ', ')
+      .replace(/★★★/g, '[Strong]')
+      .replace(/★★/g, '[Medium]')
+      .replace(/★/g, '[Weak]')
+      .replace(/：/g, ': ')
+      .replace(/→/g, '->')
+      .replace(/●/g, '*')
+      .trim();
+    navigator.clipboard.writeText(sanitized).then(() => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     });
+  };
+
+  const roleOrder: Record<string, number> = { tank: 0, damage: 1, support: 2 };
+
+  const sortByRole = <T extends { hero: { role: string } }>(items: T[]): T[] => {
+    return [...items].sort((a, b) => roleOrder[a.hero.role] - roleOrder[b.hero.role]);
+  };
+
+  const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroId: string) => {
+    const filtered = items.filter(i => i.strength === strength);
+    const sorted = sortByRole(filtered);
+    return sorted.map(({ hero, strength: s }) => (
+      <div key={hero.id} className={`flex flex-col gap-1 p-2 rounded-lg border backdrop-blur-sm mb-2 ${colorClass}`}>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-800 flex-shrink-0 ring-1 ring-white/10">
+            <img src={hero.image} alt="" className="w-full h-full object-cover" />
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm font-bold text-white">{language === 'zh' ? hero.name : hero.nameEn}</span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
+              {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
+            </span>
+          </div>
+          <Badge variant="secondary" className={`text-[9px] px-1 py-0 ml-auto text-white shadow-sm border-none ${s === 3 ? 'bg-red-500' : s === 2 ? 'bg-orange-500' : 'bg-slate-600'}`}>
+            {s === 3 ? t('hardCounter') : s === 2 ? t('strongCounter') : t('softCounter')} LV.{s}
+          </Badge>
+        </div>
+        <p className="text-[11px] text-slate-300 leading-relaxed pl-10">
+          {getCounterReason(hero.id, targetHeroId, language)}
+        </p>
+      </div>
+    ));
   };
 
   useEffect(() => {
@@ -144,21 +187,36 @@ const ForceGraph = ({
   const prepareData = useCallback(() => {
     const nodes: NodeDatum[] = heroes
       .filter(h => !selectedRole || h.role === selectedRole)
-      .map(h => ({
-        id: h.id,
-        name: h.name,
-        nameEn: h.nameEn,
-        role: h.role,
-        color: h.role === 'tank' ? '#f59e0b' : h.role === 'damage' ? '#ef4444' : '#22c55e',
-        image: h.image,
-        radius: h.role === 'tank' ? 32 : 28,
-      }));
+      .map(h => {
+        const radiusByStrength = (heroId: string, targetId: string | null): number => {
+          if (!targetId) return h.role === 'tank' ? 32 : 28;
+          if (heroId === targetId) return 42;
+          const relation = counterRelations.find(r => 
+            (r.source === heroId && r.target === targetId) || 
+            (r.target === heroId && r.source === targetId)
+          );
+          if (!relation) return h.role === 'tank' ? 28 : 24;
+          const strength = relation.strength || 1;
+          if (strength === 3) return h.role === 'tank' ? 40 : 36;
+          if (strength === 2) return h.role === 'tank' ? 34 : 30;
+          return h.role === 'tank' ? 28 : 24;
+        };
+        return {
+          id: h.id,
+          name: h.name,
+          nameEn: h.nameEn,
+          role: h.role,
+          color: h.role === 'tank' ? '#f59e0b' : h.role === 'damage' ? '#ef4444' : '#22c55e',
+          image: h.image,
+          radius: radiusByStrength(h.id, selectedHero),
+        };
+      });
     const nodeIds = new Set(nodes.map(n => n.id));
     const links: LinkDatum[] = counterRelations
       .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target))
       .map(l => ({ source: l.source, target: l.target }));
     return { nodes, links };
-  }, [selectedRole]);
+  }, [selectedRole, selectedHero]);
 
   useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
@@ -166,7 +224,7 @@ const ForceGraph = ({
     d3.select(svgRef.current).selectAll('*').remove();
     const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
     const defs = svg.append('defs');
-
+  
     // Arrow defs
     const redShades = [
       { id: 'arrow-red-1', color: '#f87171', opacity: 0.4 },
@@ -174,7 +232,7 @@ const ForceGraph = ({
       { id: 'arrow-red-3', color: '#b91c1c', opacity: 1.0 },
     ];
     redShades.forEach(shade => {
-      defs.append('marker').attr('id', shade.id).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 8).attr('markerHeight', 8).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', shade.color).attr('opacity', shade.opacity);
+      defs.append('marker').attr('id', shade.id).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 4).attr('markerHeight', 4).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', shade.color).attr('opacity', shade.opacity);
     });
     const greenShades = [
       { id: 'arrow-green-1', color: '#86efac', opacity: 0.4 },
@@ -182,13 +240,13 @@ const ForceGraph = ({
       { id: 'arrow-green-3', color: '#15803d', opacity: 1.0 },
     ];
     greenShades.forEach(shade => {
-      defs.append('marker').attr('id', shade.id).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 8).attr('markerHeight', 8).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', shade.color).attr('opacity', shade.opacity);
+      defs.append('marker').attr('id', shade.id).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 4).attr('markerHeight', 4).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', shade.color).attr('opacity', shade.opacity);
     });
-
+  
     // Animated arrow heads
     ['red', 'green'].forEach(color => {
       [1, 2, 3].forEach(s => {
-        defs.append('marker').attr('id', `arrow-${color}-${s}-anim`).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 10).attr('markerHeight', 10).attr('orient', 'auto').append('path')
+        defs.append('marker').attr('id', `arrow-${color}-${s}-anim`).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 4).attr('markerHeight', 4).attr('orient', 'auto').append('path')
           .attr('d', 'M0,-5L10,0L0,5')
           .attr('fill', color === 'red' ? (s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#f87171') : (s === 3 ? '#15803d' : s === 2 ? '#22c55e' : '#86efac'))
           .attr('opacity', 0.9);
@@ -233,7 +291,18 @@ const ForceGraph = ({
       }))
       .force('charge', d3.forceManyBody().strength(-500))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(d => (d as NodeDatum).radius + 15));
+      .force('collision', d3.forceCollide().radius(d => (d as NodeDatum).radius + 15))
+      .force('x', d3.forceX<NodeDatum>().x(d => {
+        if (selectedRole && selectedRole !== 'all') return width / 2;
+        const centerX = width / 2;
+        if (d.role === 'tank') return centerX - 180;
+        if (d.role === 'damage') return centerX;
+        return centerX + 180;
+      }).strength(0.3))
+      .force('y', d3.forceY<NodeDatum>().y(() => {
+        if (selectedRole && selectedRole !== 'all') return height / 2;
+        return height / 2;
+      }).strength(0.1));
     simulationRef.current = simulation;
 
     const link = g.append('g').attr('class', 'links').selectAll('line').data(links).enter().append('line').attr('stroke-width', 1.5);
@@ -252,7 +321,7 @@ const ForceGraph = ({
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
-        return s === 3 ? 4 : s === 2 ? 3 : 2;
+        return s === 3 ? 6 : s === 2 ? 4.5 : 3;
       })
       .attr('fill', (d: LinkDatum) => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
@@ -268,7 +337,15 @@ const ForceGraph = ({
       })
       .attr('opacity', 0);
     
-    const nodeGroup = g.append('g').attr('class', 'nodes').selectAll('g').data(nodes).enter().append('g').attr('class', 'node-group').style('cursor', 'pointer').call(d3.drag<SVGGElement, NodeDatum>()
+     const nodeGroup = g.append('g').attr('class', 'nodes').selectAll('g').data(nodes).enter().append('g').attr('class', 'node-group').style('cursor', 'pointer').style('opacity', d => {
+        if (!selectedHero) return 1;
+        if (d.id === selectedHero) return 1;
+        const hasConnection = counterRelations.some(r => 
+          (r.source === d.id && r.target === selectedHero) || 
+          (r.target === d.id && r.source === selectedHero)
+        );
+        return hasConnection ? 1 : 0.65;
+      }).call(d3.drag<SVGGElement, NodeDatum>()
       .on('start', (event, d) => { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
       .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
       .on('end', (event, d) => { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
@@ -276,7 +353,7 @@ const ForceGraph = ({
     nodeGroup.append('circle').attr('r', d => d.radius + 4).attr('fill', 'none').attr('stroke', d => d.color).attr('stroke-width', 2).attr('opacity', 0.3).attr('class', 'glow-ring');
     nodeGroup.append('circle').attr('r', d => d.radius).attr('fill', '#1a1a2e').attr('stroke', d => d.color).attr('stroke-width', 3).attr('class', 'node-circle');
     nodeGroup.append('image').attr('xlink:href', d => d.image).attr('x', d => -(d.radius - 2)).attr('y', d => -(d.radius - 2)).attr('width', d => (d.radius - 2) * 2).attr('height', d => (d.radius - 2) * 2).attr('clip-path', d => `url(#clip-${d.id})`).attr('preserveAspectRatio', 'xMidYMid slice').style('pointer-events', 'none');
-    nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 18).attr('fill', '#e2e8f0').attr('font-size', '10px').attr('font-weight', '600').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 1px 3px rgba(0,0,0,0.8)');
+    nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', '12px').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 1px 3px rgba(0,0,0,0.8)').style('opacity', '1');
 
     nodeGroup.on('click', (event, d) => { event.stopPropagation(); onHeroSelect(d.id === selectedHero ? null : d.id); });
 
@@ -333,11 +410,13 @@ const ForceGraph = ({
     if (selectedHero) {
       simulation.alpha(0.5).restart();
       
-      nodeGroup.transition().duration(300).attr('opacity', d => {
+      nodeGroup.transition().duration(300).style('opacity', d => {
         if (d.id === selectedHero) return 1;
         const isRelated = activeCounterTab === 'counteredBy' ? counterRelations.some(r => r.source === d.id && r.target === selectedHero) : counterRelations.some(r => r.source === selectedHero && r.target === d.id);
-        return isRelated ? 1 : 0.3;
+        return isRelated ? 1 : 0.7;
       });
+
+      nodeGroup.select('.node-name').transition().duration(300).style('opacity', 1);
 
       nodeGroup.each(function(d) {
         const group = d3.select(this);
@@ -351,7 +430,7 @@ const ForceGraph = ({
         group.select('.glow-ring').transition().duration(300).attr('r', r + 4);
         group.select('image').transition().duration(300).attr('x', -imgR).attr('y', -imgR).attr('width', imgR * 2).attr('height', imgR * 2);
         d3.select(`#clip-${d.id} circle`).transition().duration(300).attr('r', imgR);
-        group.select('.node-name').transition().duration(300).attr('dy', r + 18);
+        group.select('.node-name').transition().duration(300).attr('dy', r + 20);
       });
 
       link.attr('stroke-opacity', d => {
@@ -361,11 +440,15 @@ const ForceGraph = ({
         if (!isRelevant) return 0.01;
         const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
-        return s === 3 ? 1.0 : s === 2 ? 0.4 : 0.15;
+        return s === 3 ? 1.0 : s === 2 ? 0.5 : 0.25;
       }).attr('stroke-width', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        return (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) ? 3 : 1;
+        const isRelevant = activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero;
+        if (!isRelevant) return 1;
+        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const s = rel?.strength || 1;
+        return s === 3 ? 15 : s === 2 ? 9 : 4.5;
       }).attr('stroke', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
@@ -385,14 +468,15 @@ const ForceGraph = ({
     } else {
       simulation.alpha(0.3).restart();
       
-      nodeGroup.transition().duration(300).attr('opacity', 1);
+      nodeGroup.transition().duration(300).style('opacity', 1);
+      nodeGroup.select('.node-name').transition().duration(300).style('opacity', 1);
       nodeGroup.each(function(d) {
         const group = d3.select(this);
         group.select('.node-circle').transition().duration(300).attr('r', d.radius);
         group.select('.glow-ring').transition().duration(300).attr('r', d.radius + 4);
         group.select('image').transition().duration(300).attr('x', -(d.radius - 2)).attr('y', -(d.radius - 2)).attr('width', (d.radius - 2) * 2).attr('height', (d.radius - 2) * 2);
         d3.select(`#clip-${d.id} circle`).transition().duration(300).attr('r', d.radius - 2);
-        group.select('.node-name').transition().duration(300).attr('dy', d.radius + 18);
+        group.select('.node-name').transition().duration(300).attr('dy', d.radius + 20);
       });
       link.attr('stroke-opacity', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
@@ -458,33 +542,27 @@ const ForceGraph = ({
                     <TabsTrigger value="counters" className="text-white data-[state=active]:bg-green-600 flex items-center justify-center gap-2 px-2 h-7"><Swords className="w-3.5 h-3.5" /><span className="text-[11px]">{t('counters')}</span></TabsTrigger>
                   </TabsList>
                   
-                  <TabsContent value="counteredBy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-red-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
-                    {counteredBy.map(({ hero, strength }) => (
-                      <div key={hero.id} className="flex flex-col gap-1 p-2 rounded-lg bg-red-900/30 border border-red-700/50 backdrop-blur-sm mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-800 flex-shrink-0"><img src={hero.image} alt="" className="w-full h-full object-cover" /></div>
-                          <span className="text-sm font-bold text-red-100">{language === 'zh' ? hero.name : hero.nameEn}</span>
-                           <Badge variant="secondary" className={`text-[9px] px-1 py-0 ml-auto text-white shadow-sm border-none ${strength === 3 ? 'bg-red-500' : strength === 2 ? 'bg-orange-500' : 'bg-slate-600'}`}>{strength === 3 ? t('hardCounter') : strength === 2 ? t('strongCounter') : t('softCounter')} LV.{strength}</Badge>
-                         </div>
-                         <p className="text-[11px] text-white leading-tight pl-7">{getCounterReason(hero.id, displayedHero.id, language)}</p>
-                       </div>
-                     ))}
-                      {counteredBy.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('notCounteredByAny')}</div>}
-                   </TabsContent>
-                  
-                  <TabsContent value="counters" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-green-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
-                    {counters.map(({ hero, strength }) => (
-                      <div key={hero.id} className="flex flex-col gap-1 p-2 rounded-lg bg-green-900/30 border border-green-700/50 backdrop-blur-sm mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-800 flex-shrink-0"><img src={hero.image} alt="" className="w-full h-full object-cover" /></div>
-                          <span className="text-sm font-bold text-green-100">{language === 'zh' ? hero.name : hero.nameEn}</span>
-                           <Badge variant="secondary" className={`text-[9px] px-1 py-0 ml-auto text-white shadow-sm border-none ${strength === 3 ? 'bg-red-500' : strength === 2 ? 'bg-orange-500' : 'bg-slate-600'}`}>{strength === 3 ? t('hardCounter') : strength === 2 ? t('strongCounter') : t('softCounter')} LV.{strength}</Badge>
-                        </div>
-                         <p className="text-[11px] text-white leading-tight pl-7">{getCounterReason(displayedHero.id, hero.id, language)}</p>
-                      </div>
-                    ))}
+                   <TabsContent value="counteredBy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-red-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
+                     {displayedHero && (
+                       <>
+                         {renderHeroList(counteredBy, 3, 'bg-red-900/30 border-red-700/50', displayedHero.id)}
+                         {renderHeroList(counteredBy, 2, 'bg-red-800/20 border-red-600/40', displayedHero.id)}
+                         {renderHeroList(counteredBy, 1, 'bg-red-700/10 border-red-500/30', displayedHero.id)}
+                       </>
+                     )}
+                     {counteredBy.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('notCounteredByAny')}</div>}
+                    </TabsContent>
+                   
+                   <TabsContent value="counters" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-green-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
+                     {displayedHero && (
+                       <>
+                         {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', displayedHero.id)}
+                         {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', displayedHero.id)}
+                         {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', displayedHero.id)}
+                       </>
+                     )}
                      {counters.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('noCounters')}</div>}
-                  </TabsContent>
+                    </TabsContent>
                 </Tabs>
                 
                 <div className="mt-4 pt-4 border-t border-slate-700/50 flex-shrink-0">
@@ -633,20 +711,71 @@ const ForceGraph = ({
                     </div>
                   </div>
                 </div>
-
-                {/* 克制强度说明 */}
-                <div className="space-y-2 pt-3 border-t border-slate-800/50">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-1 bg-red-800 rounded-full"></div>
-                    <span className="text-[11px] text-slate-300 font-bold">{t('lv3Desc')}</span>
+               
+                {/* 克制强度说明 - 节点尺寸 + 连线箭头 */}
+                <div className="space-y-3 pt-3 border-t border-slate-800/50">
+                  <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider">{t('nodeSizeTip')}</p>
+                  <div className="flex items-center justify-center gap-6 px-2">
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-red-500/50">
+                        <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-[9px] text-red-400 font-medium">{t('nodeSizeLv3')}</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-orange-500/50">
+                        <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-[9px] text-orange-400 font-medium">{t('nodeSizeLv2')}</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-5 h-5 rounded-full overflow-hidden ring-2 ring-slate-500/50 opacity-70">
+                        <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-[9px] text-slate-400 font-medium">{t('nodeSizeLv1')}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-0.5 bg-red-500 rounded-full"></div>
-                    <span className="text-[11px] text-slate-300 font-bold">{t('lv2Desc')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-0.5 bg-red-300 rounded-full opacity-60"></div>
-                    <span className="text-[11px] text-slate-300 font-bold">{t('lv1Desc')}</span>
+                  
+                  <p className="text-[10px] text-green-400 font-semibold uppercase tracking-wider mt-2">{t('arrowDirection')}</p>
+                  <div className="flex items-center justify-center gap-4 px-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center">
+                        <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-red-500/50">
+                          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
+                        </div>
+                        <svg className="w-6 h-3 -mx-1" viewBox="0 0 24 12">
+                          <defs>
+                            <marker id="intro-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                              <path d="M0,0 L0,6 L9,3 z" fill="#ef4444" />
+                            </marker>
+                          </defs>
+                          <line x1="0" y1="6" x2="15" y2="6" stroke="#ef4444" strokeWidth="2" markerEnd="url(#intro-red)" />
+                        </svg>
+                        <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-red-500/50">
+                          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/4edf5ea6d58c449a2aeb619a3fda9fff36a069dfbe4da8bc5d8ec1c758ddb8dc.png" alt="" className="w-full h-full object-cover" />
+                        </div>
+                      </div>
+                      <span className="text-[9px] text-slate-300">{t('counteredByHeader').trim()}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center">
+                        <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-green-500/50">
+                          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
+                        </div>
+                        <svg className="w-6 h-3 -mx-1" viewBox="0 0 24 12">
+                          <defs>
+                            <marker id="intro-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                              <path d="M0,0 L0,6 L9,3 z" fill="#22c55e" />
+                            </marker>
+                          </defs>
+                          <line x1="0" y1="6" x2="15" y2="6" stroke="#22c55e" strokeWidth="2" markerEnd="url(#intro-green)" />
+                        </svg>
+                        <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-green-500/50">
+                          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/4edf5ea6d58c449a2aeb619a3fda9fff36a069dfbe4da8bc5d8ec1c758ddb8dc.png" alt="" className="w-full h-full object-cover" />
+                        </div>
+                      </div>
+                      <span className="text-[9px] text-slate-300">{t('countersHeader').trim()}</span>
+                    </div>
                   </div>
                 </div>
 

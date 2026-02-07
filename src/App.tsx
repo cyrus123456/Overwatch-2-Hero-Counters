@@ -46,9 +46,31 @@ function AppContent() {
   const [activeMapType, setActiveMapType] = useState<string>('all');
   const [isMapCopied, setIsMapCopied] = useState(false);
 
+  const roleOrder = { tank: 0, damage: 1, support: 2 };
+
+  const sortHeroesByRole = (heroIds: string[]): string[] => {
+    return [...heroIds].sort((a, b) => {
+      const heroA = heroes.find(h => h.id === a);
+      const heroB = heroes.find(h => h.id === b);
+      if (!heroA || !heroB) return 0;
+      return roleOrder[heroA.role] - roleOrder[heroB.role];
+    });
+  };
+
+  const sanitizeText = (text: string): string => {
+    return text
+      .replace(/（/g, '(')
+      .replace(/）/g, ')')
+      .replace(/、/g, ', ')
+      .replace(/：/g, ': ')
+      .replace(/：/g, ': ')
+      .trim();
+  };
+
   const handleMapCopyToClipboard = (text: string) => {
     if (!text) return;
-    navigator.clipboard.writeText(text).then(() => {
+    const sanitized = sanitizeText(text);
+    navigator.clipboard.writeText(sanitized).then(() => {
       setIsMapCopied(true);
       setTimeout(() => setIsMapCopied(false), 2000);
     });
@@ -241,7 +263,7 @@ function AppContent() {
                             </span>
                             {selectedMap !== map.id && (
                               <div className="flex flex-wrap gap-2 mt-2">
-                                {map.recommendedHeroes.map(heroId => {
+                                  {sortHeroesByRole(map.recommendedHeroes).map(heroId => {
                                   const hero = heroes.find(h => h.id === heroId);
                                   if (!hero) return null;
                                   return (
@@ -287,14 +309,15 @@ function AppContent() {
                                  <TooltipTrigger asChild>
                                    <div 
                                      className="cursor-pointer"
-                                     onClick={(e) => {
-                                       e.stopPropagation();
-                                       const heroNames = map.recommendedHeroes.map(heroId => {
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
+                                        const heroNames = sortedHeroes.map(heroId => {
                                          const hero = heroes.find(h => h.id === heroId);
                                          return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
                                        }).filter(Boolean);
                                        
-                                        const reasons = map.recommendedHeroes.map(heroId => {
+                                         const reasons = sortedHeroes.map(heroId => {
                                           const hero = heroes.find(h => h.id === heroId);
                                           const reason = map.heroReasons[heroId];
                                           if (!hero || !reason) return '';
@@ -322,14 +345,15 @@ function AppContent() {
                                  <TooltipContent side="top" className="p-3 bg-slate-900 border-slate-700 max-w-lg z-[100]">
                                   <div className="space-y-2">
                                      <p className="text-xs font-bold text-cyan-400">{t('previewContent')}</p>
-                                    <div className="text-[10px] text-white whitespace-pre-wrap bg-slate-800 p-2 rounded max-h-64 overflow-y-auto">
-                                      {(() => {
-                                        const heroNames = map.recommendedHeroes.map(heroId => {
+                                     <div className="text-[10px] text-white whitespace-pre-wrap bg-slate-800 p-2 rounded max-h-64 overflow-y-auto">
+                                       {(() => {
+                                         const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
+                                         const heroNames = sortedHeroes.map(heroId => {
                                           const hero = heroes.find(h => h.id === heroId);
                                           return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
                                         }).filter(Boolean);
                                         
-                                         const reasons = map.recommendedHeroes.map(heroId => {
+                                         const reasons = sortedHeroes.map(heroId => {
                                            const hero = heroes.find(h => h.id === heroId);
                                            const reason = map.heroReasons[heroId];
                                            if (!hero || !reason) return '';
@@ -348,25 +372,40 @@ function AppContent() {
                                  </TooltipContent>
                                </Tooltip>
                              </div>
-                            {map.recommendedHeroes.map(heroId => {
-                              const hero = heroes.find(h => h.id === heroId);
-                              if (!hero) return null;
-                              return (
-                                <div 
-                                  key={heroId} 
-                                  className="flex items-start gap-4 p-2.5 rounded-lg hover:bg-slate-800/60 cursor-pointer transition-all border border-transparent hover:border-slate-700/50" 
-                                  onClick={(e) => { e.stopPropagation(); setSelectedHero(heroId); }}
-                                >
-                                  <div className="w-5 h-5 rounded-full overflow-hidden border border-slate-800 shadow-md flex-shrink-0 ring-1 ring-cyan-500/20">
-                                    <img src={hero.image} alt="" className="w-full h-full object-cover" />
+                              {sortHeroesByRole(map.recommendedHeroes).map(heroId => {
+                                const hero = heroes.find(h => h.id === heroId);
+                                if (!hero) return null;
+                                const roleColors = {
+                                  tank: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+                                  damage: 'bg-red-500/20 text-red-400 border-red-500/30',
+                                  support: 'bg-green-500/20 text-green-400 border-green-500/30',
+                                };
+                                const roleNames = {
+                                  tank: t('tank'),
+                                  damage: t('damage'),
+                                  support: t('support'),
+                                };
+                                return (
+                                  <div 
+                                    key={heroId} 
+                                    className="flex items-start gap-4 p-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 cursor-pointer transition-all border border-slate-600/30 hover:border-slate-500/50" 
+                                    onClick={(e) => { e.stopPropagation(); setSelectedHero(heroId); }}
+                                  >
+                                    <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-700 shadow-md flex-shrink-0 ring-1 ring-cyan-500/30">
+                                      <img src={hero.image} alt="" className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
+                                        <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
+                                          {roleNames[hero.role]}
+                                        </span>
+                                      </div>
+                                      <p className="text-[11px] text-slate-300 leading-relaxed mt-1">{map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.zh || ''}</p>
+                                    </div>
                                   </div>
-                                   <div className="flex-1 min-w-0">
-                                     <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
-                                      <p className="text-[11px] text-white leading-tight mt-1 font-medium">{map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.zh || ''}</p>
-                                   </div>
-                                </div>
-                              );
-                            })}
+                                );
+                              })}
                           </div>
                         )}
                       </div>
