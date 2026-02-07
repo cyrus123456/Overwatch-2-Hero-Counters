@@ -76,7 +76,7 @@ export const heroes: Hero[] = [
   // 坦克英雄
   { id: 'dva', name: 'D.Va', nameEn: 'D.Va', role: 'tank', color: '#f59e0b', image: heroImages.dva },
   { id: 'doomfist', name: '末日铁拳', nameEn: 'Doomfist', role: 'tank', color: '#f59e0b', image: heroImages.doomfist },
-  { id: 'hazard', name: '哈扎德', nameEn: 'Hazard', role: 'tank', color: '#f59e0b', image: heroImages.hazard },
+  { id: 'hazard', name: '骇灾', nameEn: 'Hazard', role: 'tank', color: '#f59e0b', image: heroImages.hazard },
   { id: 'junker_queen', name: '渣客女王', nameEn: 'Junker Queen', role: 'tank', color: '#f59e0b', image: heroImages.junker_queen },
   { id: 'mauga', name: '毛加', nameEn: 'Mauga', role: 'tank', color: '#f59e0b', image: heroImages.mauga },
   { id: 'orisa', name: '奥丽莎', nameEn: 'Orisa', role: 'tank', color: '#f59e0b', image: heroImages.orisa },
