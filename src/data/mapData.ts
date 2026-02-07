@@ -1,23 +1,23 @@
-// 地图数据 - 各地图适合首发的强势英雄推荐
+export type MapLanguage = 'zh' | 'en' | 'ja' | 'ko' | 'zh-TW' | 'es' | 'fr' | 'de' | 'pt' | 'ru' | 'it';
+
 export interface Map {
   id: string;
   name: string;
   nameEn: string;
   type: 'control' | 'hybrid' | 'escort' | 'push' | 'flashpoint';
-  recommendedHeroes: string[]; // 英雄ID数组
-  heroReasons: Record<string, { zh: string; en: string }>; // 英雄推荐理由，key为heroId
+  recommendedHeroes: string[];
+  heroReasons: Record<string, Partial<Record<MapLanguage, string>>>;
 }
 
-// 地图类型名称
-export const getMapTypeName = (type: string, language: 'zh' | 'en' = 'zh'): string => {
-  const typeNames: Record<string, Record<string, string>> = {
-    control: { zh: '占领要点', en: 'Control' },
-    hybrid: { zh: '混合模式', en: 'Hybrid' },
-    escort: { zh: '运载目标', en: 'Escort' },
-    push: { zh: '推进模式', en: 'Push' },
-    flashpoint: { zh: '闪点模式', en: 'Flashpoint' },
+export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): string => {
+  const typeNames: Record<string, Partial<Record<MapLanguage, string>>> = {
+    control: { zh: '占领要点', en: 'Control', ja: 'コントロール', ko: '점령', 'zh-TW': '佔領要點', es: 'Control', fr: 'Contrôle', de: 'Kontrolle', pt: 'Controle', ru: 'Контроль', it: 'Controllo' },
+    hybrid: { zh: '混合模式', en: 'Hybrid', ja: 'ハイブリッド', ko: '혼합', 'zh-TW': '混合模式', es: 'Híbrido', fr: 'Hybride', de: 'Hybrid', pt: 'Híbrido', ru: 'Гибрид', it: 'Ibrido' },
+    escort: { zh: '运载目标', en: 'Escort', ja: 'エスコート', ko: '호위', 'zh-TW': '運載目標', es: 'Escorta', fr: 'Escorte', de: 'Begleitschutz', pt: 'Escolta', ru: 'Сопровождение', it: 'Scorta' },
+    push: { zh: '推进模式', en: 'Push', ja: 'プッシュ', ko: '진격', 'zh-TW': '推進模式', es: 'Empuje', fr: 'Poussée', de: 'Vorstoß', pt: 'Impulso', ru: 'Продвижение', it: 'Spingi' },
+    flashpoint: { zh: '闪点模式', en: 'Flashpoint', ja: 'フラッシュポイント', ko: '플래시포인트', 'zh-TW': '閃點模式', es: 'Punto Flash', fr: 'Point Flash', de: 'Blitzpunkt', pt: 'Ponto Flash', ru: 'Точка', it: 'Flashpoint' },
   };
-  return typeNames[type]?.[language] || type;
+  return typeNames[type]?.[language] || typeNames[type]?.en || type;
 };
 
 // 地图数据

@@ -55,7 +55,7 @@ const heroImages: Record<string, string> = {
    venture: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/5d87623006ccc77578396831d4629f91b5162235a553b3f442e1a43161898e94.png`,
    widowmaker: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/a714f1cb33cc91c6b5b3e89ffe7e325b99e7c89cc8e8feced594f81305147efe.png`,
    vendetta: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/62f32041c5bdcb11bdaff6581fee2a9a372d8f61e117b36a1dc8ff6d0c8a1ead.png`,
-   anran: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/1a2b3c4d5e6f7890abcdef1234567890abcdef12.png`,
+   anran: `https://bnetcmsus-a.akamaihd.net/cms/gallery/D39TJ14ICPR11770142338293.png`,
    
    // 支援
   ana: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/3429c394716364bbef802180e9763d04812757c205e1b4568bc321772096ed86.png`,
@@ -928,15 +928,15 @@ export const getRoleColor = (role: string): string => {
     default: return '#6b7280';
   }
 };
-
+   
 // 获取角色名称
-export const getRoleName = (role: string): string => {
-  switch (role) {
-    case 'tank': return '坦克';
-    case 'damage': return '输出';
-    case 'support': return '支援';
-    default: return '未知';
-  }
+export const getRoleName = (role: string, language: string = 'zh'): string => {
+  const roleNames: Record<string, Record<string, string>> = {
+    tank: { zh: '坦克', en: 'Tank', ja: 'タンク', ko: '탱크', 'zh-TW': '坦克', es: 'Tanque', fr: 'Tank', de: 'Tank', pt: 'Tanque', ru: 'Танк', it: 'Tank' },
+    damage: { zh: '输出', en: 'Damage', ja: 'ダメージ', ko: '딜러', 'zh-TW': '輸出', es: 'Daño', fr: 'Dégâts', de: 'Schaden', pt: 'Dano', ru: 'ДПС', it: 'Danno' },
+    support: { zh: '支援', en: 'Support', ja: 'サポート', ko: '서포터', 'zh-TW': '支援', es: 'Apoyo', fr: 'Support', de: 'Support', pt: 'Suporte', ru: 'Поддержка', it: 'Support' },
+  };
+  return roleNames[role]?.[language] || roleNames[role]?.['en'] || role;
 };
 
 // 获取角色英文名称

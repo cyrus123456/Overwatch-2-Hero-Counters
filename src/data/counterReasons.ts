@@ -1,13 +1,34 @@
-// 克制原因数据 - 为每个英雄定义他能克制别人的主要原因
+export type CounterLanguage = 'zh' | 'en' | 'ja' | 'ko' | 'zh-TW' | 'es' | 'fr' | 'de' | 'pt' | 'ru' | 'it';
 
-export interface CounterReasonData {
-  reasonZh: string;  // 中文克制原因
-  reasonEn: string;  // 英文克制原因
+export interface CounterAbilityData {
+  abilityZh: string;
+  abilityEn: string;
+  abilityJa?: string;
+  abilityKo?: string;
+  abilityZhTW?: string;
+  abilityEs?: string;
+  abilityFr?: string;
+  abilityDe?: string;
+  abilityPt?: string;
+  abilityRu?: string;
+  abilityIt?: string;
 }
 
-// 英雄克制能力原因模板
-// 当英雄A克制英雄B时，会基于A的能力来说明原因
-export const heroCounterAbilities: Record<string, { abilityZh: string; abilityEn: string }> = {
+export interface WeaknessData {
+  weaknessZh: string;
+  weaknessEn: string;
+  weaknessJa?: string;
+  weaknessKo?: string;
+  weaknessZhTW?: string;
+  weaknessEs?: string;
+  weaknessFr?: string;
+  weaknessDe?: string;
+  weaknessPt?: string;
+  weaknessRu?: string;
+  weaknessIt?: string;
+}
+
+export const heroCounterAbilities: Record<string, CounterAbilityData> = {
   // 坦克
   dva: {
     abilityZh: '防御矩阵吞噬弹药/推进追击',
@@ -196,7 +217,7 @@ export const heroCounterAbilities: Record<string, { abilityZh: string; abilityEn
 };
 
 // 被克制英雄的弱点描述，用于生成更详细的克制理由
-export const heroWeaknesses: Record<string, { weaknessZh: string; weaknessEn: string }> = {
+export const heroWeaknesses: Record<string, WeaknessData> = {
   // 坦克
   dva: {
     weaknessZh: '机甲外体积大易被针对',
@@ -378,38 +399,45 @@ export const heroWeaknesses: Record<string, { weaknessZh: string; weaknessEn: st
      weaknessZh: '技能可被中断，依赖精准度',
      weaknessEn: 'Abilities interruptible, relies on accuracy'
    },
+ };
+ 
+export type SupportedLanguage = 'zh' | 'en' | 'ja' | 'ko' | 'zh-TW' | 'es' | 'fr' | 'de' | 'pt' | 'ru' | 'it';
+
+export const fallbackMessages: Record<SupportedLanguage, string> = {
+  zh: '存在克制关系',
+  en: 'Counter relationship exists',
+  ja: '相克関係があります',
+  ko: '상성이 있습니다',
+  'zh-TW': '存在剋制關係',
+  es: 'Relación de contra existe',
+  fr: 'Relation de contre existe',
+  de: 'Gegner-Beziehung existiert',
+  pt: 'Relação de contra existe',
+  ru: 'Отношение контра существует',
+  it: 'Relazione contro esiste',
 };
 
-// 获取克制原因
-export function getCounterReason(sourceId: string, targetId: string, language: 'zh' | 'en'): string {
+export function getCounterReason(sourceId: string, targetId: string, language: SupportedLanguage): string {
   const sourceAbility = heroCounterAbilities[sourceId];
   const targetWeakness = heroWeaknesses[targetId];
-  
+
   if (!sourceAbility || !targetWeakness) {
-    return language === 'zh' ? '存在克制关系' : 'Counter relationship exists';
+    return fallbackMessages[language];
   }
-  
-  if (language === 'zh') {
-    return `${sourceAbility.abilityZh}，${targetWeakness.weaknessZh}`;
-  } else {
-    return `${sourceAbility.abilityEn}, ${targetWeakness.weaknessEn}`;
+
+  const abilityZh = sourceAbility.abilityZh;
+  const abilityEn = sourceAbility.abilityEn;
+  const weaknessZh = targetWeakness.weaknessZh;
+  const weaknessEn = targetWeakness.weaknessEn;
+
+  switch (language) {
+    case 'zh':
+      return `${abilityZh} → ${weaknessZh}`;
+    case 'zh-TW':
+      return `${abilityZh} → ${weaknessZh}`;
+    default:
+      return `${abilityEn} → ${weaknessEn}`;
   }
 }
 
-// 获取克制能力描述
-export function getCounterAbility(heroId: string, language: 'zh' | 'en'): string {
-  const ability = heroCounterAbilities[heroId];
-  if (!ability) {
-    return language === 'zh' ? '未知' : 'Unknown';
-  }
-  return language === 'zh' ? ability.abilityZh : ability.abilityEn;
-}
 
-// 获取弱点描述
-export function getWeakness(heroId: string, language: 'zh' | 'en'): string {
-  const weakness = heroWeaknesses[heroId];
-  if (!weakness) {
-    return language === 'zh' ? '未知' : 'Unknown';
-  }
-  return language === 'zh' ? weakness.weaknessZh : weakness.weaknessEn;
-}

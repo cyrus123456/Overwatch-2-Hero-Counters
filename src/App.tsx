@@ -1,6 +1,13 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import {
   Tooltip,
@@ -10,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import {
   ChevronDown,
+  ChevronDownIcon,
   ChevronRight,
   Copy,
   Crosshair,
@@ -19,7 +27,7 @@ import {
   MapPin,
   Search,
   Shield,
-  Target
+  Target,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -28,6 +36,7 @@ import { heroes } from '@/data/heroData';
 import { getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
 
 import { useI18n } from '@/i18n';
+import type { Language } from '@/i18n';
 import './App.css';
 
 function AppContent() {
@@ -77,9 +86,19 @@ function AppContent() {
     { id: 'support', name: t('support'), nameEn: 'Support', icon: Heart, color: '#22c55e' },
   ];
 
-  const toggleLanguage = () => {
-    setLanguage(language === 'zh' ? 'en' : 'zh');
-  };
+  const languages: { value: Language; label: string; nativeName: string }[] = [
+    { value: 'zh', label: 'Chinese', nativeName: '中文' },
+    { value: 'en', label: 'English', nativeName: 'English' },
+    { value: 'ja', label: 'Japanese', nativeName: '日本語' },
+    { value: 'ko', label: 'Korean', nativeName: '한국어' },
+    { value: 'zh-TW', label: 'Chinese (Traditional)', nativeName: '繁體中文' },
+    { value: 'es', label: 'Spanish', nativeName: 'Español' },
+    { value: 'fr', label: 'French', nativeName: 'Français' },
+    { value: 'de', label: 'German', nativeName: 'Deutsch' },
+    { value: 'pt', label: 'Portuguese', nativeName: 'Português' },
+    { value: 'ru', label: 'Russian', nativeName: 'Русский' },
+    { value: 'it', label: 'Italian', nativeName: 'Italiano' },
+  ];
 
   return (
     <TooltipProvider>
@@ -125,12 +144,27 @@ function AppContent() {
                   </div>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-3">
-                <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={toggleLanguage}>
-                  <Globe className="w-3.5 h-3.5 text-cyan-500" />
-                  <span className="text-xs font-bold">{language === 'zh' ? 'EN' : '中文'}</span>
-                </Button>
+               
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 whitespace-nowrap">{t('selectLanguage')}</span>
+                    <Select value={language} onValueChange={(v) => setLanguage(v as Language)}>
+                      <SelectTrigger className="w-[140px] border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-white h-8 px-2 rounded-full transition-all data-[state=open]:bg-slate-700">
+                        <Globe className="w-4 h-4 mr-1.5 text-cyan-400 flex-shrink-0" />
+                        <SelectValue className="truncate text-xs flex-1 overflow-hidden" />
+                        <ChevronDownIcon className="w-3.5 h-3.5 text-slate-400 flex-shrink-0 ml-1" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-800 border-slate-700 text-white min-w-[140px] max-w-[180px]" position="popper">
+                        {languages.map((lang) => (
+                          <SelectItem key={lang.value} value={lang.value} className="focus:bg-cyan-500/30 hover:bg-cyan-500/20 cursor-pointer py-2 px-3 text-white transition-colors data-[highlighted]:text-cyan-300">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-xs">{lang.nativeName}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={() => window.open('https://github.com/cyrus123456/Overwatch-2-Hero-Counters', '_blank')}>
                   <Github className="w-3.5 h-3.5" />
                   <span className="text-xs font-bold">{t('github')}</span>
@@ -226,7 +260,7 @@ function AppContent() {
                                             {language === 'zh' ? hero.name : hero.nameEn}
                                           </span>
                                          <p className="text-xs text-white leading-relaxed">
-                                              {map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.zh}
+                                              {map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || map.heroReasons[heroId]?.zh || ''}
                                             </p>
                                         </div>
                                       </TooltipContent>

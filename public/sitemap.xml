@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://cyrus123456.github.io/Overwatch-2-Hero-Counters/</loc>
+    <lastmod>2025-02-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://cyrus123456.github.io/Overwatch-2-Hero-Counters/" />
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://cyrus123456.github.io/Overwatch-2-Hero-Counters/zh-TW/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://cyrus123456.github.io/Overwatch-2-Hero-Counters/en/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://cyrus123456.github.io/Overwatch-2-Hero-Counters/ja/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://cyrus123456.github.io/Overwatch-2-Hero-Counters/ko/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cyrus123456.github.io/Overwatch-2-Hero-Counters/" />
+  </url>
+  
+  <url>
+    <loc>https://cyrus123456.github.io/Overwatch-2-Hero-Counters/zh/</loc>
+    <lastmod>2025-02-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <url>
+    <loc>https://cyrus123456.github.io/Overwatch-2-Hero-Counters/en/</loc>
+    <lastmod>2025-02-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <url>
+    <loc>https://cyrus123456.github.io/Overwatch-2-Hero-Counters/ja/</loc>
+    <lastmod>2025-02-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://cyrus123456.github.io/Overwatch-2-Hero-Counters/ko/</loc>
+    <lastmod>2025-02-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://cyrus123456.github.io/Overwatch-2-Hero-Counters/zh-TW/</loc>
+    <lastmod>2025-02-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+</urlset>

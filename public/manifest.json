@@ -1,0 +1,22 @@
+{
+  "name": "守望先锋英雄克制关系图 | Overwatch 2 Hero Counters",
+  "short_name": "OW2 Counters",
+  "description": "交互式网络图可视化展示守望先锋2英雄之间的克制关系",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "entertainment", "utilities"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}
