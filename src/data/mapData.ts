@@ -32,7 +32,7 @@ export const maps: Map[] = [
     heroReasons: {
       lucio: { zh: '地形复杂，音障可以配合队友在站点区域打团，滑行能利用高低差快速转点', en: 'Complex terrain allows Sound Barrier for team fights in the objective area; skating leverages elevation changes for fast rotations' },
       pharah: { zh: '多张高低差明显的子图，火箭弹幕可以压制站点区域', en: 'Multiple submaps with significant elevation changes; Rocket Barrage can suppress the objective area' },
-      winston: { zh: '机动性强，能快速转点和支援队友，适合占领要点的快节奏', en: 'High mobility enables quick rotations and teammate support; ideal for the fast-paced Control point节奏' },
+       winston: { zh: '机动性强，能快速转点和支援队友，适合占领要点的快节奏', en: 'High mobility enables quick rotations and teammate support; ideal for the fast-paced Control points' },
       dva: { zh: '推进器可以快速转点，自爆在封闭的站点区域威胁大', en: 'Boosters enable fast rotations; Self-Destruct is highly threatening in enclosed objective areas' },
       kiriko: { zh: '瞬可以帮助队友快速转点，铃铛在站点团战中保命能力强', en: 'Swift Step helps teammates rotate quickly; Protection Suzu has strong survivability in team fights' },
       genji: { zh: '机动性强，可以灵活转点，龙刃在站点团战中收割能力强', en: 'High mobility allows flexible rotations; Dragonblade has strong cleanup potential in team fights' },

@@ -505,10 +505,11 @@ const ForceGraph = ({
                         const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
                         const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
                         const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
-                        const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
-                        const text = `${hName}\n${groups}`;
-                        handleCopyToClipboard(text);
-                      }}>
+                         const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
+                         const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
+                         const text = `${header}\n${groups}`;
+                         handleCopyToClipboard(text);
+                       }}>
                         {isCopied ? <><Check className="w-3.5 h-3.5 text-green-500" /><span>{t('copied')}</span></> : <><Copy className="w-3.5 h-3.5" /><span>{t('copy')}</span></>}
                       </Button>
                     )}
@@ -528,12 +529,13 @@ const ForceGraph = ({
                         const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
                         const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
                         const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
-                        const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
-                        const text = `${hName}\n${groups}`;
-                        handleCopyToClipboard(text);
-                      }
-                    }}
-                  >
+                         const groups = [strong3, strong2, strong1].filter(Boolean).join('\n');
+                         const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
+                         const text = `${header}\n${groups}`;
+                         handleCopyToClipboard(text);
+                       }
+                     }}
+                   >
                     {(activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 ? (
                       (() => {
                         const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
@@ -541,12 +543,12 @@ const ForceGraph = ({
                         list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
                         const formatDisplay = (arr: typeof list, prefix: string, colorClass: string) => 
                           arr.length > 0 ? <div className={`font-medium ${colorClass}`}>{prefix}{arr.map(i => language === 'zh' ? i.hero.name : i.hero.nameEn).join('、')}</div> : null;
-                        const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                        if (activeCounterTab === 'counteredBy') {
-                           return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white">● 克制 →</div><div className="text-cyan-400 font-bold">{hName}</div></>;
-                         } else {
-                           return <><div className="text-cyan-400 font-bold">{hName}</div><div className="my-1 font-bold text-white">● 克制 →</div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
-                         }
+                         const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                         if (activeCounterTab === 'counteredBy') {
+                            return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>克制</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-cyan-400 font-bold">{hName}</div></>;
+                          } else {
+                            return <><div className="text-cyan-400 font-bold">{hName}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>克制</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
+                          }
                       })()
                     ) : t('noCounterData')}
                      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"><span className="text-[10px] text-slate-200 bg-slate-900 px-1 rounded">{t('doubleClickToCopy')}</span></div>
