@@ -7,6 +7,7 @@ export interface Map {
   type: 'control' | 'hybrid' | 'escort' | 'push' | 'flashpoint';
   recommendedHeroes: string[];
   heroReasons: Record<string, Partial<Record<MapLanguage, string>>>;
+  description?: Partial<Record<MapLanguage, string>>;
 }
 
 export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): string => {
@@ -43,6 +44,12 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
         zarya: { zh: '护盾吸收伤害充能，高能量输出可观', en: 'Bubble absorbs damage to charge; high energy damage is significant' },
         roadhog: { zh: '钩子可以拉单体，自身生存能力强', en: 'Hook singles out enemies; strong self-sustain' },
       },
+      description: {
+        zh: '三张子图：寺庙、市集、MEKA基地。地形复杂，高低差大，机动型英雄优势明显',
+        en: 'Three submaps: Shrine, Market, MEKA Base. Complex terrain with large elevation changes; mobile heroes excel',
+        ja: '3つのサブマップ:  Shrine、Market、MEKA Base。地形が複雑で高低差が大きく、機動力のあるヒーローが有利',
+        ko: '3개의 서브맵: Shrine, Market, MEKA Base. 지형이 복잡하고 고저차가 커서 기동성 영웅이 유리',
+      },
     },
     {
       id: 'ilios',
@@ -64,6 +71,12 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
         genji: { zh: '机动性强，可以利用地形穿梭', en: 'High mobility; can weave through terrain' },
         tracer: { zh: '极致机动，快速转点和骚扰', en: 'Extreme mobility; fast rotations and harassment' },
       },
+      description: {
+        zh: '三张子图：深井、废墟、灯塔。狭窄地形，钩子类英雄威胁大',
+        en: 'Three submaps: Well, Ruins, Lighthouse. Narrow terrain; hook heroes are highly threatening',
+        ja: '3つのサブマップ:  Well、Ruins、Lighthouse。地形が狭く、フック系ヒーローが脅威',
+        ko: '3개의 서브맵: Well, Ruins, Lighthouse. 지형이 좁고 훅系 영웅이 위협적',
+      },
     },
     {
       id: 'lijiang',
@@ -83,11 +96,17 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
         reaper: { zh: '近距离爆发高，适合贴脸', en: 'High close-range burst; ideal for face-to-face' },
         zarya: { zh: '护盾可以自保，高能量输出强', en: 'Bubble self-protection; high energy damage is strong' },
         roadhog: { zh: '钩子可以拉人，配合队友击杀', en: 'Hook pulls enemies; combo with teammates for kills' },
-        cassidy: { zh: '中距离稳定输出，翻滚保命', en: 'Stable mid-range damage; Combat Roll for survival' },
-      },
-    },
-    {
-      id: 'nepal',
+         cassidy: { zh: '中距离稳定输出，翻滚保命', en: 'Stable mid-range damage; Combat Roll for survival' },
+       },
+       description: {
+         zh: '三张子图：夜市、控制室、花园。站点区域紧凑，机动和地推阵容都适用',
+         en: 'Three submaps: Night Market, Control Center, Gardens. Compact objective areas; both mobile and brawl compositions work',
+         ja: '3つのサブマップ: Night Market、Control Center、Garden。站点エリアがコンパクトで、機動力と地押し阵容の両方が适用可能',
+         ko: '3개의 서브맵: Night Market, Control Center, Garden.站点区域紧凑, 기동성과 브롤 조합 모두適用',
+       },
+     },
+     {
+       id: 'nepal',
       name: '尼泊尔',
       nameEn: 'Nepal',
       type: 'control',
@@ -105,6 +124,12 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
         zarya: { zh: '护盾吸收伤害充能', en: 'Bubble absorbs damage to charge' },
         genji: { zh: '机动性强，快速转点和骚扰', en: 'High mobility; fast rotations and harassment' },
         roadhog: { zh: '钩子单体控制，生存能力强', en: 'Hook single target control; strong self-sustain' },
+      },
+      description: {
+        zh: '三张子图：村庄、圣所、圣殿。封闭空间多，适合高机动英雄',
+        en: 'Three submaps: Village, Sanctuary, Temple. Many enclosed spaces; mobile heroes excel',
+        ja: '3つのサブマップ: Village、Sanctuary、Temple。閉鎖空間が多く、機動力のあるヒーローが有利',
+        ko: '3개의 서브맵: Village, Sanctuary, Temple. 폐쇄 공간이 많고 기동성 영웅이 유리',
       },
     },
     {
@@ -126,6 +151,12 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
         reaper: { zh: '近距离爆发高', en: 'High close-range burst' },
         zarya: { zh: '护盾充能，高能量输出强', en: 'Bubble charges; high energy damage is strong' },
         tracer: { zh: '弹跳台配合闪现超快转点', en: 'Jump pads combined with Blink enable ultra-fast rotations' },
+      },
+      description: {
+        zh: '三张子图：城市中心、花园、大学。有弹跳台机制，机动型英雄优势',
+        en: 'Three submaps: City Center, Gardens, University. Has jump pad mechanics; mobile heroes excel',
+        ja: '3つのサブマップ: City Center、Gardens、University。ジャンプ台があり、機動力のあるヒーローが有利',
+        ko: '3개의 서브맵: City Center, Gardens, University. 점프대 메커닉이 있고 기동성 영웅이 유리',
       },
     },
 
@@ -150,6 +181,12 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       roadhog: { zh: '钩子可以拉取单独敌人，自疗能力强', en: 'Hook pulls isolated enemies; strong self-heal' },
       junkrat: { zh: '狭窄街道适合榴弹输出，轮胎可以骚扰后排', en: 'Narrow streets suit grenade damage; Tire harasses backline' },
     },
+    description: {
+      zh: '推车+占点图。狭窄街道和开阔A点，地形多样',
+      en: 'Payload + Control. Narrow streets and open point A; diverse terrain',
+      ja: 'ペイロード+コントロール。狭いストリートと開けたA点、多様な地形',
+      ko: '팰로드 + 점령. 좁은 거리와 열린 A점, 다양한 지형',
+    },
   },
   {
     id: 'eichenwalde',
@@ -170,6 +207,12 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       zarya: { zh: '护盾吸收伤害充能，高能量在开阔区域输出强', en: 'Bubble charges damage; high energy damage strong in open areas' },
       roadhog: { zh: '钩子可以拉人过桥或配合地形', en: 'Hook can pull enemies across bridge or combo with terrain' },
       junkrat: { zh: '榴弹可以在城堡和桥上反弹', en: 'Grenades can bounce on castle and bridge' },
+    },
+    description: {
+      zh: '推车+占点图。有桥上推车的经典场景，高低差明显',
+      en: 'Payload + Control. Classic payload on bridge scene; significant elevation changes',
+      ja: 'ペイロード+コントロール。ブリッジでのペイロードの名場面、高低差が明らか',
+      ko: '팰로드 + 점령. 다리 위에서 팰로드 운반하는 고전 장면, 고저차가 뚜렷함',
     },
   },
   {
@@ -192,6 +235,12 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       roadhog: { zh: '钩子可以拉取高台敌人', en: 'Hook can pull high ground enemies' },
       junkrat: { zh: '榴弹适合狭窄街道，轮胎可以骚扰', en: 'Grenades suit narrow streets; Tire for harassment' },
     },
+    description: {
+      zh: '推车+占点图。A点有多个高台，狙击和远程英雄优势',
+      en: 'Payload + Control. Point A has multiple high grounds; snipers and ranged heroes excel',
+      ja: 'ペイロード+コントロール。A点に複数の高台があり、スナイパーと遠距離ヒーローが有利',
+      ko: '팰로드 + 점령. A점에 여러 고지가 있고 스나이퍼와 원거리 영웅이 유리',
+    },
   },
   {
     id: 'kings_row',
@@ -210,12 +259,18 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       bastion: { zh: '架点输出高，推车时是很好火力点', en: 'High sentry damage; excellent firepower during payload' },
       sigma: { zh: '可以利用掩体消耗，引力乱流覆盖街道', en: 'Can use cover for poke; Gravitic Flux covers street' },
       zarya: { zh: '护盾可以保护自己和队友', en: 'Bubble protects self and teammates' },
-      roadhog: { zh: '钩子适合狭窄街道，拉人配合队友', en: 'Hook suits narrow streets; pulls enemies for team combos' },
-      junkrat: { zh: '榴弹在狭窄街道反弹伤害高', en: 'Grenade bounce damage is high in narrow streets' },
-    },
-  },
-  {
-    id: 'midtown',
+       roadhog: { zh: '钩子适合狭窄街道，拉人配合队友', en: 'Hook suits narrow streets; pulls enemies for team combos' },
+       junkrat: { zh: '榴弹在狭窄街道反弹伤害高', en: 'Grenade bounce damage is high in narrow streets' },
+     },
+     description: {
+       zh: '推车+占点图。经典地推图，狭窄街道多，地推阵容优势大',
+       en: 'Payload + Control. Classic brawl map with many narrow streets; brawl compositions excel',
+       ja: 'ペイロード+コントロール。经典的な地押しマップ、狭いストリートが多く、地押し阵容が有利',
+       ko: '팰로드 + 점령. 고전적인 브롤 맵, 좁은 거리 많음, 브롤 조합 유리',
+     },
+   },
+   {
+     id: 'midtown',
     name: '中城',
     nameEn: 'Midtown',
     type: 'hybrid',
@@ -233,6 +288,12 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       zarya: { zh: '护盾充能快，高能量输出强', en: 'Bubble charges quickly; high energy damage is strong' },
       roadhog: { zh: '钩子可以拉取掩体后的敌人', en: 'Hook can pull enemies from behind cover' },
       junkrat: { zh: '榴弹适合宽阔街道和地铁站', en: 'Grenades suit wide streets and subway station' },
+    },
+    description: {
+      zh: '推车+占点图。有地铁站结构，掩体多',
+      en: 'Payload + Control. Has subway station structure; many cover points',
+      ja: 'ペイロード+コントロール。地下鉄駅の構造があり、カバーが多い',
+      ko: '팰로드 + 점령. 지하철 역 구조가 있고 엄폐물이 많음',
     },
   },
   {
@@ -252,12 +313,18 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       brigitte: { zh: '狭窄区域盾击有效，群体护甲加成强', en: 'Shield Bash effective in narrow areas; group armor boost is strong' },
       reaper: { zh: '近距离爆发高，适合贴脸战斗', en: 'High close-range burst; ideal for face-to-face combat' },
       mei: { zh: '冰墙可以分割战场，限制敌方移动', en: 'Ice Wall divides fights; limits enemy movement' },
-      zarya: { zh: '护盾可以吸收伤害，高能量输出强', en: 'Bubble absorbs damage; high energy damage is strong' },
-      roadhog: { zh: '钩子单体控制，自身生存能力强', en: 'Hook single target control; strong self-sustain' },
-    },
-  },
-  {
-    id: 'paraiso',
+       zarya: { zh: '护盾可以吸收伤害，高能量输出强', en: 'Bubble absorbs damage; high energy damage is strong' },
+       roadhog: { zh: '钩子单体控制，自身生存能力强', en: 'Hook single target control; strong self-sustain' },
+     },
+     description: {
+       zh: '推车+占点图。A点和推车路段都有狭窄区域，机动型英雄发挥空间大',
+       en: 'Payload + Control. Both point A and payload sections have narrow areas; mobile heroes excel',
+       ja: 'ペイロード+コントロール。A点とペイロード区間に狭いエリアがあり、機動力のあるヒーローが発揮',
+       ko: '팰로드 + 점령. A점과 팰로드 구간 모두 좁은 영역, 기동성 영웅发展空间大',
+     },
+   },
+   {
+     id: 'paraiso',
     name: '帕拉伊苏',
     nameEn: 'Paraíso',
     type: 'hybrid',
@@ -274,11 +341,17 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       hanzo: { zh: '龙可以覆盖宽阔的街道区域', en: 'Dragonstrike covers wide street areas' },
       cassidy: { zh: '中距离输出稳定，翻滚保命', en: 'Stable mid-range damage; Combat Roll for survival' },
       sigma: { zh: '开阔空间可以利用引力球消耗', en: 'Can use Graviton Sphere for poke in open spaces' },
-      zarya: { zh: '护盾保护队友，高能量在开阔区域输出强', en: 'Bubble protects teammates; high energy damage strong in open' },
+       zarya: { zh: '护盾保护队友，高能量在开阔区域输出强', en: 'Bubble protects teammates; high energy damage strong in open' },
     },
-  },
-  
-  // 运载目标地图
+    description: {
+      zh: '推车+占点图。开阔空间多，远程和飞行英雄优势',
+      en: 'Payload + Control. Many open spaces; ranged and flying heroes excel',
+      ja: 'ペイロード+コントロール。開けたスペースが多く、遠距離と飛行ヒーローが有利',
+      ko: '팰로드 + 점령. 열린 공간이 많고 원거리와 비행 영웅이 유리',
+    },
+    },
+
+   // 运载目标地图
   {
     id: 'circuit_royal',
     name: '皇家赛道',
@@ -297,7 +370,13 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       genji: { zh: '机动性强，可以快速转点和骚扰', en: 'High mobility for quick rotations and harassment' },
       tracer: { zh: '闪现快速转点，骚扰后排', en: 'Blink for fast rotations; harasses backline' },
       zarya: { zh: '护盾可以吸收伤害', en: 'Bubble absorbs damage' },
-      roadhog: { zh: '钩子可以拉取敌人', en: 'Hook can pull enemies' },
+       roadhog: { zh: '钩子可以拉取敌人', en: 'Hook can pull enemies' },
+    },
+    description: {
+      zh: '纯推车图。长直道多，远程狙击优势',
+      en: 'Pure escort. Many long straights; snipers excel',
+      ja: '純粋なエスコット。長いが多くなり、スナイパーが有利',
+      ko: '순수 팰로드. 긴 직선 구간이 많고 스나이퍼가 유리',
     },
   },
   {
@@ -318,11 +397,17 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       ashe: { zh: '高点可以狙击， Dynamite可以逼走位', en: 'High points for sniping; Dynamite forces positioning' },
       sigma: { zh: '可以利用掩体消耗', en: 'Can use cover for poke' },
       zarya: { zh: '护盾可以吸收钩子等技能', en: 'Bubble can absorb Hook and other abilities' },
-      roadhog: { zh: '狭窄的角落可以钩人', en: 'Can hook enemies in narrow corners' },
-    },
-  },
-  {
-    id: 'havana',
+       roadhog: { zh: '狭窄的角落可以钩人', en: 'Can hook enemies in narrow corners' },
+     },
+     description: {
+       zh: '纯运载图。墨西哥风格建筑，多长直道，狙击和远程英雄优势',
+       en: 'Pure escort. Mexican-style architecture; many long straights; snipers and ranged heroes excel',
+       ja: '純粋なエスコット。メキシコ風建築、長いストレートが多い、スナイパーと遠距離が有利',
+       ko: '순수 팰로드. 멕시코 스타일 건축물, 긴 직선 구간 많음, 스나이퍼와 원거리 영웅 유리',
+     },
+   },
+   {
+     id: 'havana',
     name: '哈瓦那',
     nameEn: 'Havana',
     type: 'escort',
@@ -339,7 +424,13 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       genji: { zh: '机动性强，可以快速转点', en: 'High mobility for quick rotations' },
       tracer: { zh: '闪现快速转点骚扰', en: 'Blink for fast rotations and harassment' },
       zarya: { zh: '护盾充能，高能量输出强', en: 'Bubble charges; high energy damage is strong' },
-      roadhog: { zh: '钩子可以拉取敌人', en: 'Hook can pull enemies' },
+       roadhog: { zh: '钩子可以拉取敌人', en: 'Hook can pull enemies' },
+    },
+    description: {
+      zh: '纯推车图。古巴风格建筑，街道狭窄',
+      en: 'Pure escort. Cuban-style architecture; narrow streets',
+      ja: '純粋なエスコット。キューバンスタイルの建築、狭いストリート',
+      ko: '순수 팰로드. 쿠바 스타일 건축물, 좁은 거리',
     },
   },
   {
@@ -360,11 +451,17 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       sigma: { zh: '可以利用掩体poke', en: 'Can use cover for poke' },
       zarya: { zh: '护盾吸收伤害', en: 'Bubble absorbs damage' },
       genji: { zh: '机动性强，可以快速转点', en: 'High mobility for quick rotations' },
-      tracer: { zh: '闪现快速转点', en: 'Blink for fast rotations' },
-    },
-  },
-  {
-    id: 'rialto',
+       tracer: { zh: '闪现快速转点', en: 'Blink for fast rotations' },
+     },
+     description: {
+       zh: '纯运载图。废土风格澳大利亚，多开阔区域和室内建筑',
+       en: 'Pure escort. Wasteland Australian style; many open areas and indoor buildings',
+       ja: '純粋なエスコット。オーストリアの廃墟スタイル、広いエリアと屋内建築が多い',
+       ko: '순수 팰로드. 호주 풍 황폐한 지역, 열린 구역과 실내 건물이 많음',
+     },
+   },
+   {
+     id: 'rialto',
     name: '里阿尔托',
     nameEn: 'Rialto',
     type: 'escort',
@@ -381,7 +478,13 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       ashe: { zh: '高点可以狙击， Dynamite逼走位', en: 'High points for sniping; Dynamite forces positioning' },
       sigma: { zh: '可以利用掩体poke', en: 'Can use cover for poke' },
       zarya: { zh: '护盾吸收伤害', en: 'Bubble absorbs damage' },
-      roadhog: { zh: '钩子可以拉取河道敌人', en: 'Hook can pull canal enemies' },
+       roadhog: { zh: '钩子可以拉取河道敌人', en: 'Hook can pull canal enemies' },
+    },
+    description: {
+      zh: '纯推车图。意大利水城风格，有河道机制',
+      en: 'Pure escort. Italian water city style; has canal mechanics',
+      ja: '純粋なエスコット。イタリア水都スタイル、運河メカニクスあり',
+      ko: '순수 팰로드. 이탈리아 물도시 스타일, 운하 메커닉 있음',
     },
   },
   {
@@ -402,11 +505,17 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       tracer: { zh: '峡谷通道可以快速转点', en: 'Canyon passages allow fast rotations' },
       sojourn: { zh: '长直道可以发挥超频', en: 'Long straights maximize Overclock' },
       zarya: { zh: '护盾吸收伤害', en: 'Bubble absorbs damage' },
-      roadhog: { zh: '钩子可以拉取峡谷敌人', en: 'Hook can pull canyon enemies' },
-    },
-  },
-  {
-    id: 'gibraltar',
+       roadhog: { zh: '钩子可以拉取峡谷敌人', en: 'Hook can pull canyon enemies' },
+     },
+     description: {
+       zh: '纯运载图。美国西部峡谷风格，多狭窄峡谷通道和室内建筑',
+       en: 'Pure escort. American Western canyon style; many narrow canyon passages and indoor buildings',
+       ja: '純粋なエスコット。アメリカ西部の峡谷スタイル、狭い峡谷通路と屋内建築が多い',
+       ko: '순수 팰로드. 미국 서부 카니언 스타일, 좁은 카니언 통로와 실내 건물이 많음',
+     },
+   },
+   {
+     id: 'gibraltar',
     name: '直布罗陀',
     nameEn: 'Watchpoint: Gibraltar',
     type: 'escort',
@@ -423,7 +532,13 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       kiriko: { zh: '瞬可以快速支援', en: 'Swift Step for fast support' },
       sojourn: { zh: '长廊可以发挥超频', en: 'Long corridors maximize Overclock' },
       widowmaker: { zh: '有多个狙击位置', en: 'Multiple sniper positions available' },
-      hanzo: { zh: '龙可以覆盖长廊', en: 'Dragonstrike covers long corridors' },
+       hanzo: { zh: '龙可以覆盖长廊', en: 'Dragonstrike covers long corridors' },
+    },
+    description: {
+      zh: '纯推车图。太空舱内部场景，室内空间大',
+      en: 'Pure escort. Space舱 interior scenes; large indoor spaces',
+      ja: '純粋なエスコット。宇宙船内部シーン、屋内スペースが大きい',
+      ko: '순수 팰로드. 우주선 내부 장면, 실내 공간이 큼',
     },
   },
   {
@@ -444,11 +559,17 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       cassidy: { zh: '中距离输出稳定', en: 'Stable mid-range damage' },
       sigma: { zh: '可以利用掩体poke', en: 'Can use cover for poke' },
       zarya: { zh: '护盾吸收伤害', en: 'Bubble absorbs damage' },
-      roadhog: { zh: '钩子单体控制', en: 'Hook single target control' },
-    },
-  },
+       roadhog: { zh: '钩子单体控制', en: 'Hook single target control' },
+     },
+     description: {
+       zh: '纯运载图。秘鲁印加风格城市，多室内建筑和楼梯',
+       en: 'Pure escort. Peruvian Inca-style city; many indoor buildings and staircases',
+       ja: '純粋なエスコット。ペルーインカスタイルシティ、屋内建築と階段が多い',
+       ko: '순수 팰로드. 페루 잉카 스타일 도시, 실내 건물과 계단이 많음',
+     },
+   },
 
-  // 推进模式地图
+   // 推进模式地图
   {
     id: 'colosseo',
     name: '斗兽场',
@@ -467,7 +588,13 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       sigma: { zh: '可以利用掩体poke', en: 'Can use cover for poke' },
       zarya: { zh: '护盾充能，高能量输出强', en: 'Bubble charges; high energy damage is strong' },
       roadhog: { zh: '钩子单体控制', en: 'Hook single target control' },
-      tracer: { zh: '极致机动性快速转点', en: 'Extreme mobility for fast rotations' },
+       tracer: { zh: '极致机动性快速转点', en: 'Extreme mobility for fast rotations' },
+    },
+    description: {
+      zh: '推进模式图。古罗马斗兽场风格，开阔区域多',
+      en: 'Push map. Ancient Roman Colosseo style; many open areas',
+      ja: 'プッシュマップ。古代ローマコロッセオスタイル、開けたエリアが多い',
+      ko: '푸시 맵. 고대 로마 콜로세오 스타일, 열린 공간이 많음',
     },
   },
   {
@@ -488,11 +615,17 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       sigma: { zh: '可以利用掩体poke', en: 'Can use cover for poke' },
       zarya: { zh: '护盾充能', en: 'Bubble charges' },
       roadhog: { zh: '钩子单体控制', en: 'Hook single target control' },
-      tracer: { zh: '快速转点骚扰', en: 'Fast rotations and harassment' },
-    },
-  },
-  {
-    id: 'new_queen_street',
+       tracer: { zh: '快速转点骚扰', en: 'Fast rotations and harassment' },
+     },
+     description: {
+       zh: '推进模式图。巴西风格城市，开阔街道和建筑混合',
+       en: 'Push map. Brazilian-style city; mix of open streets and buildings',
+       ja: 'プッシュマップ。ブラジル風シティ、オープンストリートと建物の混合',
+       ko: '푸시 맵. 브라질 스타일 도시, 열린 거리와 건물 혼합',
+     },
+   },
+   {
+     id: 'new_queen_street',
     name: '新皇后街',
     nameEn: 'New Queen Street',
     type: 'push',
@@ -509,10 +642,16 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       sigma: { zh: '可以利用掩体poke', en: 'Can use cover for poke' },
       zarya: { zh: '护盾吸收伤害', en: 'Bubble absorbs damage' },
       roadhog: { zh: '钩子单体控制', en: 'Hook single target control' },
-      tracer: { zh: '快速转点', en: 'Fast rotations' },
+       tracer: { zh: '快速转点', en: 'Fast rotations' },
+    },
+    description: {
+      zh: '推进模式图。巴西风格街道，开阔和狭窄交替',
+      en: 'Push map. Brazilian street style; alternates between open and narrow',
+      ja: 'プッシュマップ。ブラジル風ストリート、開きと狭さが交互に変化',
+      ko: '푸시 맵. 브라질 스타일 거리, 열린 곳과 좁은 곳이 교대',
     },
   },
-  
+
   // 闪点模式地图
   {
     id: 'antarctic_peninsula',
@@ -534,6 +673,12 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       zarya: { zh: '护盾吸收伤害', en: 'Bubble absorbs damage' },
       roadhog: { zh: '钩子单体控制', en: 'Hook single target control' },
     },
+    description: {
+      zh: '闪点模式图。前南极研究站，冰雪覆盖，多掩体',
+      en: 'Flashpoint map. Former Antarctic research station, snow-covered with multiple covers',
+      ja: 'フラッシュポイントマップ。元南極研究基地、雪に覆われ多数のマスキング',
+      ko: '플래시포인트 맵. 남극 연구소 유적, 눈으로 덮여 있고 매복 지점 다수',
+    },
   },
   {
     id: 'new_junk_city',
@@ -553,7 +698,13 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       sigma: { zh: '可以利用掩体poke', en: 'Can use cover for poke' },
       zarya: { zh: '护盾吸收钩子', en: 'Bubble absorbs Hook' },
       genji: { zh: '机动性穿梭', en: 'Mobile skirmishing' },
-      tracer: { zh: '快速转点', en: 'Fast rotations' },
+       tracer: { zh: '快速转点', en: 'Fast rotations' },
+    },
+    description: {
+      zh: '闪点模式图。废土风格的渣客城街道，狭窄和开阔交替',
+      en: 'Flashpoint map. Junkertown-style wasteland streets; alternates between narrow and open',
+      ja: 'フラッシュポイントマップ。ジャウンカウンティ風の廃墟ストリート、狭さと開けた所が交互に変化',
+      ko: '플래시포인트 맵. 잭커타운 스타일의 황폐한 거리, 좁은 곳과 열린 곳이 교대',
     },
   },
   {
@@ -574,7 +725,13 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       sigma: { zh: '可以利用掩体poke', en: 'Can use cover for poke' },
       zarya: { zh: '护盾吸收伤害', en: 'Bubble absorbs damage' },
       roadhog: { zh: '钩子单体控制', en: 'Hook single target control' },
-      pharah: { zh: '开阔空间飞行轰炸', en: 'Open spaces for flight and bombing' },
+       pharah: { zh: '开阔空间飞行轰炸', en: 'Open spaces for flight and bombing' },
+    },
+    description: {
+      zh: '闪点模式图。印度风格的古老城市，高低差大，多室内建筑',
+      en: 'Flashpoint map. Ancient city with Indian-style architecture; large elevation changes with many indoor buildings',
+      ja: 'フラッシュポイントマップ。インド風の古代都市、高低差が大きく屋内建築が多い',
+      ko: '플래시포인트 맵. 인도풍 고대 도시, 고저차가 크고 실내 건물이 많음',
     },
   },
 ];

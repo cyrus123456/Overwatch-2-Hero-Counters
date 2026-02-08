@@ -334,17 +334,22 @@ function AppContent() {
                           {getMapTypeName(map.type, language)}
                         </Badge>
                        </div>
-                       {selectedMap === map.id && (
-                         <div className="mt-2 pt-1 border-t border-slate-800/50 pl-6 space-y-3">
-                           <div className="mb-2">
-                             <span className="text-xs font-semibold text-white">{t('startingLineup')}</span>
-                            </div>
-                             <div className="flex items-center justify-between">
-                               <span className="text-[10px] text-white">{t('copyLineupTip')}</span>
-                               <Tooltip>
-                                 <TooltipTrigger asChild>
-                                    <div 
-                                       className="cursor-pointer"
+                        {selectedMap === map.id && (
+                          <div className="mt-2 pt-1 border-t border-slate-800/50 pl-6 space-y-3">
+                            {map.description && (
+                              <div className="mb-2 text-xs text-slate-400">
+                                {map.description[language] || map.description.en || ''}
+                              </div>
+                            )}
+                            <div className="mb-2 flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs font-semibold text-white">{t('startingLineup')}</span>
+                                <span className="text-[10px] text-slate-400">{t('copyLineupTip')}</span>
+                              </div>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div 
+                                    className="cursor-pointer"
                                        onClick={(e) => {
                                          e.stopPropagation();
                                          const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
@@ -363,8 +368,9 @@ function AppContent() {
                                            return `${heroName}: ${sanitizeMapTextChinese(reasonText)}`;
                                          }).filter(Boolean);
                                          
-                                         const mapName = language === 'zh' ? map.name : map.nameEn;
-                                         const text = `${mapName} - ${t('recommendedLineup')}: ${heroNames.join(', ')} | ${reasons.join(' | ')}`;
+                                          const mapName = language === 'zh' ? map.name : map.nameEn;
+                                          const mapDesc = map.description?.[language] || map.description?.en || '';
+                                          const text = `${mapName} - ${mapDesc} | ${t('recommendedLineup')}: ${heroNames.join(', ')} | ${reasons.join(' | ')}`;
                                          handleMapCopyToClipboard(text);
                                        }}
                                    >
@@ -398,9 +404,10 @@ function AppContent() {
                                               return `${heroName}: ${sanitizeMapTextChinese(reasonText)}`;
                                             }).filter(Boolean);
                                             
-                                            const mapName = language === 'zh' ? map.name : map.nameEn;
-                                            const preview = `${mapName} - ${t('recommendedLineup')}: ${heroNames.join(', ')} | ${reasons.join(' | ')}`;
-                                            return preview;
+                                             const mapName = language === 'zh' ? map.name : map.nameEn;
+                                             const mapDesc = map.description?.[language] || map.description?.en || '';
+                                             const preview = `${mapName} - ${mapDesc} | ${t('recommendedLineup')}: ${heroNames.join(', ')} | ${reasons.join(' | ')}`;
+                                             return preview;
                                           })()}
                                        </div>
                                     </div>
