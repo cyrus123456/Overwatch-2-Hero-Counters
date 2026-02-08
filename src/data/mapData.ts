@@ -426,7 +426,28 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       hanzo: { zh: '龙可以覆盖长廊', en: 'Dragonstrike covers long corridors' },
     },
   },
-  
+  {
+    id: 'runasapi',
+    name: '鲁纳塞彼',
+    nameEn: 'Runasapi',
+    type: 'escort',
+    recommendedHeroes: ['winston', 'dva', 'genji', 'tracer', 'kiriko', 'lucio', 'sojourn', 'hanzo', 'cassidy', 'sigma', 'zarya', 'roadhog'],
+    heroReasons: {
+      winston: { zh: '机动性强，可以快速转点，跳跃盾在推车路段效果显著', en: 'High mobility enables quick rotations; Jump Pack is effective on payload sections' },
+      dva: { zh: '推进器可以快速转点，自爆在站点区域威胁大', en: 'Boosters enable fast rotations; Self-Destruct threatening in objective areas' },
+      genji: { zh: '机动性强，可以快速转点和骚扰', en: 'High mobility for quick rotations and harassment' },
+      tracer: { zh: '闪现快速转点，骚扰后排能力强', en: 'Blink for fast rotations; strong backline harassment' },
+      kiriko: { zh: '瞬可以快速支援队友', en: 'Swift Step for fast teammate support' },
+      lucio: { zh: '滑板鞋可以快速转点', en: 'Skates enable fast rotations' },
+      sojourn: { zh: '长直道可以发挥超频', en: 'Long straights maximize Overclock' },
+      hanzo: { zh: '龙可以覆盖推车路线', en: 'Dragonstrike covers payload routes' },
+      cassidy: { zh: '中距离输出稳定', en: 'Stable mid-range damage' },
+      sigma: { zh: '可以利用掩体poke', en: 'Can use cover for poke' },
+      zarya: { zh: '护盾吸收伤害', en: 'Bubble absorbs damage' },
+      roadhog: { zh: '钩子单体控制', en: 'Hook single target control' },
+    },
+  },
+
   // 推进模式地图
   {
     id: 'colosseo',

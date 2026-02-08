@@ -62,8 +62,51 @@ function AppContent() {
       .replace(/（/g, '(')
       .replace(/）/g, ')')
       .replace(/、/g, ', ')
-      .replace(/：/g, ': ')
-      .replace(/：/g, ': ')
+      .replace(/：/g, ':')
+      .replace(/:/g, ':')
+      .replace(/→/g, '->')
+      .replace(/●/g, '*')
+      .replace(/★★★/g, '[Strong]')
+      .replace(/★★/g, '[Medium]')
+      .replace(/★/g, '[Weak]')
+      .replace(/【/g, '[')
+      .replace(/】/g, ']')
+      .replace(/《/g, '[')
+      .replace(/》/g, ']')
+      .replace(/「/g, '"')
+      .replace(/」/g, '"')
+      .replace(/『/g, '"')
+      .replace(/』/g, '"')
+      .replace(/——/g, '-')
+      .replace(/…/g, '...')
+      .replace(/　/g, ' ')
+      .replace(/\n/g, ' | ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  const sanitizeTextSimple = (text: string): string => {
+    return text
+      .replace(/（/g, '(')
+      .replace(/）/g, ')')
+      .replace(/、/g, ', ')
+      .replace(/：/g, ':')
+      .replace(/:/g, ':')
+      .replace(/→/g, '->')
+      .replace(/●/g, '*')
+      .replace(/【/g, '[')
+      .replace(/】/g, ']')
+      .replace(/《/g, '[')
+      .replace(/》/g, ']')
+      .replace(/「/g, '"')
+      .replace(/」/g, '"')
+      .replace(/『/g, '"')
+      .replace(/』/g, '"')
+      .replace(/——/g, '-')
+      .replace(/…/g, '...')
+      .replace(/　/g, ' ')
+      .replace(/\n/g, ' ')
+      .replace(/\s+/g, ' ')
       .trim();
   };
 
@@ -307,30 +350,29 @@ function AppContent() {
                                <span className="text-[10px] text-white">{t('copyLineupTip')}</span>
                                <Tooltip>
                                  <TooltipTrigger asChild>
-                                   <div 
-                                     className="cursor-pointer"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
-                                        const heroNames = sortedHeroes.map(heroId => {
-                                         const hero = heroes.find(h => h.id === heroId);
-                                         return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
-                                       }).filter(Boolean);
-                                       
+                                    <div 
+                                       className="cursor-pointer"
+                                       onClick={(e) => {
+                                         e.stopPropagation();
+                                         const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
+                                         const heroNames = sortedHeroes.map(heroId => {
+                                           const hero = heroes.find(h => h.id === heroId);
+                                           return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
+                                         }).filter(Boolean);
+                                         
                                          const reasons = sortedHeroes.map(heroId => {
-                                          const hero = heroes.find(h => h.id === heroId);
-                                          const reason = map.heroReasons[heroId];
-                                          if (!hero || !reason) return '';
-                                          return `${language === 'zh' ? hero.name : hero.nameEn}: ${reason[language] || reason.zh}`;
-                                        }).filter(Boolean);
-                                       
+                                           const hero = heroes.find(h => h.id === heroId);
+                                           const reason = map.heroReasons[heroId];
+                                           if (!hero || !reason) return '';
+                                           const heroName = language === 'zh' ? hero.name : hero.nameEn;
+                                           const reasonText = reason[language] || reason.en || reason.zh || '';
+                                           return `${heroName}: ${sanitizeTextSimple(reasonText)}`;
+                                         }).filter(Boolean);
+                                         
                                          const mapName = language === 'zh' ? map.name : map.nameEn;
-                                        let text = `${mapName}\n${t('recommendedLineup')}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
-                                        if (text.length > 150) {
-                                          text = text.substring(0, 147) + '...';
-                                        }
-                                        handleMapCopyToClipboard(text);
-                                     }}
+                                         const text = `${mapName} - ${t('recommendedLineup')}: ${heroNames.join(', ')} | ${reasons.join(' | ')}`;
+                                         handleMapCopyToClipboard(text);
+                                       }}
                                    >
                                      <Button 
                                        variant="ghost" 
@@ -342,34 +384,33 @@ function AppContent() {
                                      </Button>
                                    </div>
                                  </TooltipTrigger>
-                                 <TooltipContent side="top" className="p-3 bg-slate-900 border-slate-700 max-w-lg z-[100]">
-                                  <div className="space-y-2">
-                                     <p className="text-xs font-bold text-cyan-400">{t('previewContent')}</p>
-                                     <div className="text-[10px] text-white whitespace-pre-wrap bg-slate-800 p-2 rounded max-h-64 overflow-y-auto">
-                                       {(() => {
-                                         const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
-                                         const heroNames = sortedHeroes.map(heroId => {
-                                          const hero = heroes.find(h => h.id === heroId);
-                                          return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
-                                        }).filter(Boolean);
-                                        
-                                         const reasons = sortedHeroes.map(heroId => {
-                                           const hero = heroes.find(h => h.id === heroId);
-                                           const reason = map.heroReasons[heroId];
-                                           if (!hero || !reason) return '';
-                                           return `${language === 'zh' ? hero.name : hero.nameEn}: ${reason[language] || reason.zh}`;
-                                         }).filter(Boolean);
-                                        
-                                         const mapName = language === 'zh' ? map.name : map.nameEn;
-                                          let preview = `${mapName}\n${t('recommendedLineup')}: ${heroNames.join('、')}\n\n${reasons.join('\n')}`;
-                                          if (preview.length > 150) {
-                                            preview = preview.substring(0, 147) + '...';
-                                          }
-                                          return preview;
-                                        })()}
-                                     </div>
-                                   </div>
-                                 </TooltipContent>
+                                  <TooltipContent side="top" className="p-3 bg-slate-900 border-slate-700 max-w-lg z-[100]">
+                                   <div className="space-y-2">
+                                      <p className="text-xs font-bold text-cyan-400">{t('previewContent')}</p>
+                                       <div className="text-[10px] text-white whitespace-pre-wrap bg-slate-800 p-2 rounded max-h-64 overflow-y-auto">
+                                         {(() => {
+                                           const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
+                                           const heroNames = sortedHeroes.map(heroId => {
+                                             const hero = heroes.find(h => h.id === heroId);
+                                             return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
+                                           }).filter(Boolean);
+                                           
+                                           const reasons = sortedHeroes.map(heroId => {
+                                             const hero = heroes.find(h => h.id === heroId);
+                                             const reason = map.heroReasons[heroId];
+                                             if (!hero || !reason) return '';
+                                             const heroName = language === 'zh' ? hero.name : hero.nameEn;
+                                             const reasonText = reason[language] || reason.en || reason.zh || '';
+                                             return `${heroName}: ${sanitizeTextSimple(reasonText)}`;
+                                           }).filter(Boolean);
+                                           
+                                           const mapName = language === 'zh' ? map.name : map.nameEn;
+                                           const preview = `${mapName} - ${t('recommendedLineup')}: ${heroNames.join(', ')} | ${reasons.join(' | ')}`;
+                                           return preview;
+                                         })()}
+                                       </div>
+                                    </div>
+                                  </TooltipContent>
                                </Tooltip>
                              </div>
                               {sortHeroesByRole(map.recommendedHeroes).map(heroId => {
