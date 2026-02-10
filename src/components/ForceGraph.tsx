@@ -57,11 +57,12 @@ const ForceGraph = ({
 }: ForceGraphProps) => {
   const { t, language } = useI18n();
   const svgRef = useRef<SVGSVGElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const simulationRef = useRef<d3.Simulation<NodeDatum, LinkDatum> | null>(null);
-  const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
-  
-  const displayedHero = selectedHero ? heroes.find(h => h.id === selectedHero) : null;
+   const containerRef = useRef<HTMLDivElement>(null);
+   const simulationRef = useRef<d3.Simulation<NodeDatum, LinkDatum> | null>(null);
+   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+   const animationRef = useRef<number | null>(null);
+   
+   const displayedHero = selectedHero ? heroes.find(h => h.id === selectedHero) : null;
   
   const counteredBy = displayedHero ? counterRelations
     .filter(r => r.target === displayedHero.id)
@@ -365,57 +366,65 @@ const ForceGraph = ({
     nodeGroup.append('image').attr('xlink:href', d => d.image).attr('x', d => -(d.radius - 2)).attr('y', d => -(d.radius - 2)).attr('width', d => (d.radius - 2) * 2).attr('height', d => (d.radius - 2) * 2).attr('clip-path', d => `url(#clip-${d.id})`).attr('preserveAspectRatio', 'xMidYMid slice').style('pointer-events', 'none');
     nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', '12px').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 1px 3px rgba(0,0,0,0.8)').style('opacity', '1');
 
-    nodeGroup.on('click', (event, d) => { event.stopPropagation(); onHeroSelect(d.id === selectedHero ? null : d.id); });
-
-    // Track particle animation progress
-    let particleProgress = 0;
-    const particleSpeed = 0.015;
-
-    simulation.on('tick', () => {
-      link.attr('x1', d => (d.source as NodeDatum).x || 0).attr('y1', d => (d.source as NodeDatum).y || 0).attr('x2', d => (d.target as NodeDatum).x || 0).attr('y2', d => (d.target as NodeDatum).y || 0);
-      nodeGroup.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
-      
-      // Animate particles flowing along links
-      particleProgress += particleSpeed;
-      if (particleProgress > 1) particleProgress = 0;
-      
-      particleGroup.selectAll<SVGCircleElement, LinkDatum>('.particle')
-        .attr('opacity', (d) => {
-          const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-          const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-          const isRelevant = selectedHero ? 
-            (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) : 
-            false;
-          if (!isRelevant) return 0;
-          return 0.9;
-        })
-        .attr('cx', (d) => {
-          const source = d.source as NodeDatum;
-          const target = d.target as NodeDatum;
-          const sourceId = source.id;
-          const targetId = target.id;
-          const isRelevant = selectedHero ? 
-            (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) : 
-            false;
-          if (!isRelevant) return 0;
-          const dx = (target.x || 0) - (source.x || 0);
-          const pos = (particleProgress + (links.indexOf(d) * 0.1)) % 1;
-          return (source.x || 0) + dx * pos;
-        })
-        .attr('cy', (d) => {
-          const source = d.source as NodeDatum;
-          const target = d.target as NodeDatum;
-          const sourceId = source.id;
-          const targetId = target.id;
-          const isRelevant = selectedHero ? 
-            (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) : 
-            false;
-          if (!isRelevant) return 0;
-          const dy = (target.y || 0) - (source.y || 0);
-          const pos = (particleProgress + (links.indexOf(d) * 0.1)) % 1;
-          return (source.y || 0) + dy * pos;
-        });
-    });
+     nodeGroup.on('click', (event, d) => { event.stopPropagation(); onHeroSelect(d.id === selectedHero ? null : d.id); });
+ 
+     // Track particle animation progress
+     let particleProgress = 0;
+     const particleSpeed = 0.015;
+ 
+     // Separate animation loop for particles - runs independently of simulation
+     const particleAnimation = () => {
+       particleProgress += particleSpeed;
+       if (particleProgress > 1) particleProgress = 0;
+       
+       particleGroup.selectAll<SVGCircleElement, LinkDatum>('.particle')
+         .attr('opacity', (d) => {
+           const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+           const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+           const isRelevant = selectedHero ? 
+             (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) : 
+             false;
+           if (!isRelevant) return 0;
+           return 0.9;
+         })
+         .attr('cx', (d) => {
+           const source = d.source as NodeDatum;
+           const target = d.target as NodeDatum;
+           const sourceId = source.id;
+           const targetId = target.id;
+           const isRelevant = selectedHero ? 
+             (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) : 
+             false;
+           if (!isRelevant) return 0;
+           const dx = (target.x || 0) - (source.x || 0);
+           const pos = (particleProgress + (links.indexOf(d) * 0.1)) % 1;
+           return (source.x || 0) + dx * pos;
+         })
+         .attr('cy', (d) => {
+           const source = d.source as NodeDatum;
+           const target = d.target as NodeDatum;
+           const sourceId = source.id;
+           const targetId = target.id;
+           const isRelevant = selectedHero ? 
+             (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) : 
+             false;
+           if (!isRelevant) return 0;
+           const dy = (target.y || 0) - (source.y || 0);
+           const pos = (particleProgress + (links.indexOf(d) * 0.1)) % 1;
+           return (source.y || 0) + dy * pos;
+         });
+       
+       // Continue animation loop
+        animationRef.current = requestAnimationFrame(particleAnimation);
+     };
+     
+     // Start particle animation loop
+      animationRef.current = requestAnimationFrame(particleAnimation);
+ 
+     simulation.on('tick', () => {
+       link.attr('x1', d => (d.source as NodeDatum).x || 0).attr('y1', d => (d.source as NodeDatum).y || 0).attr('x2', d => (d.target as NodeDatum).x || 0).attr('y2', d => (d.target as NodeDatum).y || 0);
+       nodeGroup.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
+     });
 
     if (selectedHero) {
       simulation.alpha(0.5).restart();
