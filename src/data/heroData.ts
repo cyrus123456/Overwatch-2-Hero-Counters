@@ -165,6 +165,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'brigitte', target: 'doomfist', strength: 3 },
   
   // 3. 莱因哈特被克制
+  { source: 'orisa', target: 'reinhardt', strength: 3 },
   { source: 'winston', target: 'reinhardt', strength: 3 },
   { source: 'ramattra', target: 'reinhardt', strength: 3 },
   { source: 'pharah', target: 'reinhardt', strength: 3 },
