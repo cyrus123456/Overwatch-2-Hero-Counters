@@ -592,6 +592,21 @@ export const counterRelations: CounterRelation[] = [
   { source: 'baptiste', target: 'pharah', strength: 3 },
   { source: 'illari', target: 'pharah', strength: 3 },
   
+  // ========== 芙蕾雅（Freja）克制关系 ==========
+  // 芙蕾雅被克制 - 强化弩箭滞空输出，惧怕反弹和突进
+  // 1. 源氏（核心克制 - 反弹弩箭）
+  { source: 'genji', target: 'freja', strength: 3 },
+  
+  // 2. 高机动突进英雄
+  { source: 'tracer', target: 'freja', strength: 3 },
+  { source: 'sombra', target: 'freja', strength: 3 },
+  
+  // 3. 即时命中长枪（针对滞空）
+  { source: 'widowmaker', target: 'freja', strength: 3 },
+  { source: 'ashe', target: 'freja', strength: 3 },
+  { source: 'soldier76', target: 'freja', strength: 3 },
+  { source: 'cassidy', target: 'freja', strength: 3 },
+  
   // ========== 斩仇（Vendetta/Zhanchou）克制关系 ==========
   // 斩仇被克制 - 纯近战英雄，缺乏远程能力
   // 1. 空中/飞行单位（天克）

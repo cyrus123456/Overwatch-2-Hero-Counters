@@ -101,8 +101,8 @@ export const heroCounterAbilities: Record<string, CounterAbilityData> = {
     abilityEn: 'Flight pursuit / Sticky bomb burst'
   },
   freja: {
-    abilityZh: '远程精准输出/战术位置优势',
-    abilityEn: 'Long-range precision / Tactical positioning'
+    abilityZh: '强化弩箭/滞空能力/高爆发伤害',
+    abilityEn: 'Enhanced crossbow / Air mobility / High burst damage'
   },
   genji: {
     abilityZh: '高机动骚扰/反弹技能',
@@ -160,14 +160,18 @@ export const heroCounterAbilities: Record<string, CounterAbilityData> = {
      abilityZh: '狙击秒杀/红外探敌',
      abilityEn: 'Sniper one-shots / Infra-Sight reveals'
    },
-    vendetta: {
-      abilityZh: '连锁刃远程输出/锁链控制',
-      abilityEn: 'Chain blade ranged damage / Chain hook CC'
-    },
+     vendetta: {
+       abilityZh: '巨剑近战/高机动切入/爆发连招',
+       abilityEn: 'Greatsword melee / High mobility dive / Burst combos'
+     },
     anran: {
-      abilityZh: '高爆发连招/机动位移',
-      abilityEn: 'High burst combos / Mobility dash'
-    },
+       abilityZh: '火焰突进/无敌反击/燃烧被动',
+       abilityEn: 'Flame dash / Invulnerable counter / Burn passive'
+     },
+     emrey: {
+       abilityZh: '三连发步枪/虹吸生命/终极变身',
+       abilityEn: 'Burst rifle / Life drain / Ultimate transformation'
+     },
     
     // 支援
   ana: {
@@ -213,6 +217,18 @@ export const heroCounterAbilities: Record<string, CounterAbilityData> = {
   zenyatta: {
     abilityZh: '不和之珠增伤/高输出',
     abilityEn: 'Discord Orb amplifies damage / High DPS'
+  },
+  wuyang: {
+    abilityZh: '水元素治疗/节奏截断/位移技能',
+    abilityEn: 'Water healing / Rhythm interruption / Mobility'
+  },
+  ruixi: {
+    abilityZh: '治疗镰刃/纸人位移/护魂结界/束缚锁链',
+    abilityEn: 'Healing scythe / Paper dash / Spirit barrier / Chain bind'
+  },
+  feitianmao: {
+    abilityZh: '永久飞行/扩散弹/救生索拖拽/击退治疗',
+    abilityEn: 'Permanent flight / Spread shots / Lifeline drag / Knockback heal'
   },
 };
 
@@ -271,7 +287,11 @@ export const heroWeaknesses: Record<string, WeaknessData> = {
     weaknessZh: '低能量时输出低',
     weaknessEn: 'Low damage at low charge'
   },
-  
+  jinyu: {
+    weaknessZh: '腿短近战弱，惧怕突脸/狙击/EMP',
+    weaknessEn: 'Low mobility, weak in melee, vulnerable to dive/snipers/EMP'
+  },
+
   // 输出
   ashe: {
     weaknessZh: '被突脸后难以自保',
@@ -290,8 +310,8 @@ export const heroWeaknesses: Record<string, WeaknessData> = {
     weaknessEn: 'Vulnerable while flying'
   },
   freja: {
-    weaknessZh: '被近身后无力',
-    weaknessEn: 'Weak when dived'
+    weaknessZh: '弩箭可被源氏反弹，滞空时被长枪点射',
+    weaknessEn: 'Arrows deflectable by Genji, vulnerable to hitscan while airborne'
   },
   genji: {
     weaknessZh: '反弹被骗则无力',
@@ -350,11 +370,15 @@ export const heroWeaknesses: Record<string, WeaknessData> = {
      weaknessEn: 'Weak when dived'
    },
    vendetta: {
-     weaknessZh: '远程poke/钩子/控制/区域封锁',
-     weaknessEn: 'Ranged poke / Hooks / CC / Area denial'
-   },
-   
-   // 支援
+       weaknessZh: '纯近战无远程，飞行单位天敌，冲深被集火',
+       weaknessEn: 'Pure melee no range, countered by flyers, vulnerable when overextended'
+     },
+  emrey: {
+    weaknessZh: '缺乏位移自保，惧怕刺客突脸/强控/长枪',
+    weaknessEn: 'No mobility, vulnerable to assassins/CC/long-range'
+  },
+
+    // 支援
   ana: {
     weaknessZh: '无位移技能',
     weaknessEn: 'No mobility abilities'
@@ -391,14 +415,26 @@ export const heroWeaknesses: Record<string, WeaknessData> = {
      weaknessZh: '自保能力最弱',
      weaknessEn: 'Weakest self-sustain'
    },
-    moira: {
-      weaknessZh: '消散CD后脆弱',
-      weaknessEn: 'Vulnerable when Fade on CD'
+     moira: {
+       weaknessZh: '消散CD后脆弱',
+       weaknessEn: 'Vulnerable when Fade on CD'
+     },
+     anran: {
+      weaknessZh: '手短缺乏远程，惧怕冰冻/风筝/禁疗/强盾拦截',
+      weaknessEn: 'Short range, vulnerable to freeze/kiting/anti-heal/shields'
     },
-    anran: {
-     weaknessZh: '技能可被中断，依赖精准度',
-     weaknessEn: 'Abilities interruptible, relies on accuracy'
-   },
+    wuyang: {
+      weaknessZh: '依赖技能生存，惧怕黑客/突脸/穿透伤害',
+      weaknessEn: 'Skill-dependent survival, vulnerable to hack/dive/penetration'
+    },
+    ruixi: {
+      weaknessZh: '机动性差无爬墙，惧怕高台长枪/光束穿透',
+      weaknessEn: 'Low mobility, no wall climb, vulnerable to high ground/beams'
+    },
+    feitianmao: {
+      weaknessZh: '飞行速度慢血低，惧怕即时命中/EMP/空对空',
+      weaknessEn: 'Slow flight, low HP, vulnerable to hitscan/EMP/aerial combat'
+    },
  };
  
 export type SupportedLanguage = 'zh' | 'en' | 'ja' | 'ko' | 'zh-TW' | 'es' | 'fr' | 'de' | 'pt' | 'ru' | 'it';
