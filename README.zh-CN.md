@@ -1,3 +1,4 @@
+![alt text](image-1.png)
 # 守望先锋英雄克制关系可视化
 
 一个基于 React + TypeScript + Vite 的交互式可视化应用，用于展示《守望先锋 2》中英雄之间的克制关系。
