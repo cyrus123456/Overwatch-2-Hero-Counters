@@ -909,26 +909,33 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // 如果用户没有保存语言设置，则自动检测
     if (!savedLanguage) {
-      const detectLanguage = async () => {
-        try {
-          const response = await fetch('https://ipapi.co/json/');
-          const data = await response.json();
-          
-          const isChina = 
-            data.country_code === 'CN' || 
-            data.country_name === 'China' ||
-            data.region === 'China';
-          
-          const detectedLanguage: Language = isChina ? 'zh' : 'en';
-          setLanguageState(detectedLanguage);
-          localStorage.setItem('language', detectedLanguage);
-        } catch (error) {
-          setLanguageState('en');
-          localStorage.setItem('language', 'en');
-        }
-      };
+      // 使用浏览器语言设置
+      const browserLang = navigator.language || 'en';
+      let detectedLanguage: Language = 'en';
       
-      detectLanguage();
+      // 匹配浏览器语言到支持的语言
+      if (browserLang.startsWith('zh')) {
+        detectedLanguage = browserLang.includes('TW') || browserLang.includes('HK') ? 'zh-TW' : 'zh';
+      } else if (browserLang.startsWith('ja')) {
+        detectedLanguage = 'ja';
+      } else if (browserLang.startsWith('ko')) {
+        detectedLanguage = 'ko';
+      } else if (browserLang.startsWith('es')) {
+        detectedLanguage = 'es';
+      } else if (browserLang.startsWith('fr')) {
+        detectedLanguage = 'fr';
+      } else if (browserLang.startsWith('de')) {
+        detectedLanguage = 'de';
+      } else if (browserLang.startsWith('pt')) {
+        detectedLanguage = 'pt';
+      } else if (browserLang.startsWith('ru')) {
+        detectedLanguage = 'ru';
+      } else if (browserLang.startsWith('it')) {
+        detectedLanguage = 'it';
+      }
+      
+      setLanguageState(detectedLanguage);
+      localStorage.setItem('language', detectedLanguage);
     }
   }, [savedLanguage]);
 
