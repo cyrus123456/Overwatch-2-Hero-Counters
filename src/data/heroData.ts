@@ -34,6 +34,8 @@ const heroImages: Record<string, string> = {
   winston: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/bd9c8e634d89488459dfc1aeb21b602fa5c39aa05601a4167682f3a3fed4e0ee.png`,
   wrecking_ball: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/5c18e39ce567ee8a84078f775b9f76a2ba891de601c059a3d2b46b61ae4afb42.png`,
   zarya: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png`,
+  jinyu: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/1161c112292c56c052c0ae711792fcde06e3251b98bc9709e582dd7585b5dcd6.png`,
+
   
   // 输出
   ashe: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/8dc2a024c9b7d95c7141b2ef065590dbc8d9018d12ad15f76b01923986702228.png`,
@@ -56,8 +58,8 @@ const heroImages: Record<string, string> = {
    venture: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/5d87623006ccc77578396831d4629f91b5162235a553b3f442e1a43161898e94.png`,
    widowmaker: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/a714f1cb33cc91c6b5b3e89ffe7e325b99e7c89cc8e8feced594f81305147efe.png`,
    vendetta: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/62f32041c5bdcb11bdaff6581fee2a9a372d8f61e117b36a1dc8ff6d0c8a1ead.png`,
-    anran: `https://ld5.res.netease.com/images/20260209/1770631695373_a16c36b46c.png`,
-    emrey: `https://ld5.res.netease.com/images/20260209/1770631708319_e1a169b629.png`,
+    anran: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/2cdf460c6080a031258e513713d1d635a8e68799cb5d7e27774be8963e95f6a3.png`,
+    emrey: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/c51e2f698138861c0e3b6cfab3c3ca9d67fd709be175e7c397aa6f2649712a30.png`,
     
     // 支援
   ana: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/3429c394716364bbef802180e9763d04812757c205e1b4568bc321772096ed86.png`,
@@ -72,9 +74,8 @@ const heroImages: Record<string, string> = {
   moira: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/000beeb5606e01497897fa9210dd3b1e78e1159ebfd8afdc9e989047d7d3d08f.png`,
   zenyatta: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/71cabc939c577581f66b952f9c70891db779251e8e70f29de3c7bf494edacfe4.png`,
   wuyang: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/e4157a71bb307b4ca910d901773f43d187c22101c5f4284a0a5f3caba8ec4bdd.png`,
-  ruixi: `https://ld5.res.netease.com/images/20260209/1770631731028_60cf4c8ec9.png`,
-  feitianmao: `https://ld5.res.netease.com/images/20260209/1770631719720_0dceb846dc.png`,
-  jinyu: `https://ld5.res.netease.com/images/20260209/1770631803333_d7b37e7aeb.png`,
+  ruixi: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/a2c8dd2fdc10e5b5110062e2bd5dc3fc56e692a812f35f0fcea3b580fd01f578.png`,
+  feitianmao: `src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/03a184cd0de27091e0099ac22635ad9615a8f6997881a5c25cc5f2444764f729.png"`,
 };
 
 // 英雄数据
