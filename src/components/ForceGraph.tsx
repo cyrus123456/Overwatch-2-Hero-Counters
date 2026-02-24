@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { getCounterReason } from '@/data/counterReasons';
 import { counterRelations, getRoleName, heroes, type Hero } from '@/data/heroData';
 import { useI18n } from '@/i18n';
@@ -20,6 +20,7 @@ import {
   RotateCcw,
   ShieldAlert,
   Swords,
+  X,
   ZoomIn,
   ZoomOut
 } from 'lucide-react';
@@ -56,6 +57,15 @@ const ForceGraph = ({
   onHeroSelect 
 }: ForceGraphProps) => {
   const { t, language } = useI18n();
+
+  // Helper to split translation by colon safely
+  const splitDesc = (desc: string) => {
+    const parts = desc.split(':');
+    return {
+      title: parts[0],
+      content: parts[1]?.trim() || ''
+    };
+  };
   const svgRef = useRef<SVGSVGElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
    const simulationRef = useRef<d3.Simulation<NodeDatum, LinkDatum> | null>(null);
@@ -87,6 +97,7 @@ const ForceGraph = ({
   const dragStartRef = useRef({ x: 0, y: 0 });
   const [activeCounterTab, setActiveCounterTab] = useState<'counteredBy' | 'counters'>('counteredBy');
   const [isCopied, setIsCopied] = useState(false);
+  const [isIntroOpen, setIsIntroOpen] = useState(false);
 
   const handleCopyToClipboard = (text: string) => {
     if (!text) return;
@@ -163,6 +174,15 @@ const ForceGraph = ({
       y: e.clientY - panelPosition.y
     };
   };
+
+  // Check if first visit and open intro popover
+  useEffect(() => {
+    const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
+    if (!hasVisitedBefore) {
+      setIsIntroOpen(true);
+      localStorage.setItem('hasVisitedBefore', 'true');
+    }
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -278,7 +298,14 @@ const ForceGraph = ({
     feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
 
     const g = svg.append('g');
-    const zoom = d3.zoom<SVGSVGElement, unknown>().scaleExtent([0.3, 3]).on('zoom', (event) => g.attr('transform', event.transform));
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.3, 3])
+      .filter((event) => {
+        // 允许左键拖拽、滚轮缩放、鼠标中键拖拽平移
+        if (event.button === 0 || event.button === 1) return true;
+        return false;
+      })
+      .on('zoom', (event) => g.attr('transform', event.transform));
     svg.call(zoom);
     zoomRef.current = zoom;
 
@@ -289,20 +316,20 @@ const ForceGraph = ({
 
     const simulation = d3.forceSimulation<NodeDatum>(nodes)
       .force('link', d3.forceLink<NodeDatum, LinkDatum>(links).id(d => d.id).distance(d => {
-        if (!selectedHero) return 100;
+        if (!selectedHero) return 140;
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
-        if (!rel) return 100;
+        if (!rel) return 140;
         const isRelated = activeCounterTab === 'counteredBy' ? 
           (targetId === selectedHero || sourceId === selectedHero) : 
           (sourceId === selectedHero || targetId === selectedHero);
-        if (!isRelated) return 100;
-        return rel.strength === 3 ? 80 : rel.strength === 2 ? 100 : 120;
+        if (!isRelated) return 140;
+        return rel.strength === 3 ? 100 : rel.strength === 2 ? 120 : 140;
       }))
-      .force('charge', d3.forceManyBody().strength(-500))
+      .force('charge', d3.forceManyBody().strength(-600))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(d => (d as NodeDatum).radius + 15))
+      .force('collision', d3.forceCollide().radius(d => (d as NodeDatum).radius + 20))
       .force('x', d3.forceX<NodeDatum>().x(d => {
         if (selectedRole && selectedRole !== 'all') return width / 2;
         const centerX = width / 2;
@@ -680,51 +707,35 @@ const ForceGraph = ({
       {/* 缩放与介绍控制 - 进一步右移，避免贴合过紧 */}
       <div className="absolute bottom-6 left-[480px] z-10 flex flex-col gap-3 pointer-events-auto">
         {/* 网络节点介绍 - 问号图标 */}
-        <Tooltip>
-          <TooltipTrigger asChild>
+        <Popover open={isIntroOpen} onOpenChange={setIsIntroOpen}>
+          <PopoverTrigger asChild>
             <Button 
               variant="secondary" 
               size="icon" 
               className="bg-slate-800/95 hover:bg-slate-700 border-slate-500 shadow-lg w-10 h-10 rounded-full transition-all flex items-center justify-center"
+              onMouseEnter={() => setIsIntroOpen(true)}
             >
               <HelpCircle className="w-6 h-6 text-cyan-400" />
             </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="p-0 border-none bg-transparent shadow-none mb-3">
-            <Card className="p-5 bg-slate-950/95 backdrop-blur-md border border-slate-700/50 shadow-2xl rounded-2xl w-80 text-left">
-              <div className="flex items-center gap-2 mb-4 border-b border-slate-800 pb-2">
-                <Info className="w-5 h-5 text-cyan-400" />
-                <span className="text-base font-black text-slate-200 uppercase tracking-widest">{t('networkNodeIntro')}</span>
+          </PopoverTrigger>
+          <PopoverContent side="top" className="p-0 border-none bg-transparent shadow-none mb-3">
+            <Card className="p-5 bg-slate-950/95 backdrop-blur-md border border-slate-700/50 shadow-2xl rounded-2xl w-96 text-left">
+              <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
+                <div className="flex items-center gap-2">
+                  <Info className="w-5 h-5 text-cyan-400" />
+                  <span className="text-base font-black text-slate-200 uppercase tracking-widest">{t('networkNodeIntro')}</span>
+                </div>
+                <button 
+                  onClick={() => setIsIntroOpen(false)}
+                  className="text-slate-400 hover:text-slate-200 transition-colors p-1"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
               
               <div className="space-y-4">
-                {/* 职能说明 */}
-                <div className="space-y-2">
-                  <div className="flex items-start gap-3">
-                    <div className="w-3 h-3 rounded-full bg-amber-500 mt-1 shadow-[0_0_8px_rgba(245,158,11,0.4)] flex-shrink-0"></div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-200 leading-none">{t('tank')}</p>
-                       <p className="text-[11px] text-slate-300 mt-1">{t('tankBrief')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-3 h-3 rounded-full bg-red-500 mt-1 shadow-[0_0_8px_rgba(239,68,68,0.4)] flex-shrink-0"></div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-200 leading-none">{t('damage')}</p>
-                       <p className="text-[11px] text-slate-300 mt-1">{t('damageBrief')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-3 h-3 rounded-full bg-green-500 mt-1 shadow-[0_0_8px_rgba(34,197,94,0.4)] flex-shrink-0"></div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-200 leading-none">{t('support')}</p>
-                       <p className="text-[11px] text-slate-300 mt-1">{t('supportBrief')}</p>
-                    </div>
-                  </div>
-                </div>
-               
                 {/* 克制强度说明 - 节点尺寸 + 连线箭头 */}
-                <div className="space-y-3 pt-3 border-t border-slate-800/50">
+                <div className="space-y-3">
                   <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider">{t('nodeSizeTip')}</p>
                   <div className="flex items-center justify-center gap-6 px-2">
                     <div className="flex flex-col items-center gap-1">
@@ -747,81 +758,80 @@ const ForceGraph = ({
                     </div>
                   </div>
                   
-                  <p className="text-[10px] text-green-400 font-semibold uppercase tracking-wider mt-2">{t('arrowDirection')}</p>
-                  <div className="flex items-center justify-center gap-4 px-2">
+                  <p className="text-[10px] text-green-400 font-semibold uppercase tracking-wider mt-2">{t('arrowDirection')} <span className="text-slate-400 normal-case font-normal">({t('whoCountersWho')})</span></p>
+                  <div className="flex items-center gap-4 px-2">
                     <div className="flex items-center gap-2">
                       <div className="flex items-center">
                         <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-red-500/50">
                           <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
                         </div>
-                        <svg className="w-6 h-3 -mx-1" viewBox="0 0 24 12">
+                        <svg className="w-10 h-3 -mx-1" viewBox="0 0 40 12">
                           <defs>
                             <marker id="intro-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
                               <path d="M0,0 L0,6 L9,3 z" fill="#ef4444" />
                             </marker>
                           </defs>
-                          <line x1="0" y1="6" x2="15" y2="6" stroke="#ef4444" strokeWidth="2" markerEnd="url(#intro-red)" />
+                          <line x1="0" y1="6" x2="40" y2="6" stroke="#ef4444" strokeWidth="2" markerEnd="url(#intro-red)" />
                         </svg>
                         <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-red-500/50">
                           <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/4edf5ea6d58c449a2aeb619a3fda9fff36a069dfbe4da8bc5d8ec1c758ddb8dc.png" alt="" className="w-full h-full object-cover" />
                         </div>
                       </div>
-                      <span className="text-[9px] text-slate-300">{t('counteredByHeader').trim()}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="flex items-center">
                         <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-green-500/50">
                           <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
                         </div>
-                        <svg className="w-6 h-3 -mx-1" viewBox="0 0 24 12">
+                        <svg className="w-10 h-3 -mx-1" viewBox="0 0 40 12">
                           <defs>
                             <marker id="intro-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
                               <path d="M0,0 L0,6 L9,3 z" fill="#22c55e" />
                             </marker>
                           </defs>
-                          <line x1="0" y1="6" x2="15" y2="6" stroke="#22c55e" strokeWidth="2" markerEnd="url(#intro-green)" />
+                          <line x1="0" y1="6" x2="40" y2="6" stroke="#22c55e" strokeWidth="2" markerEnd="url(#intro-green)" />
                         </svg>
                         <div className="w-6 h-6 rounded-full overflow-hidden ring-2 ring-green-500/50">
                           <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/4edf5ea6d58c449a2aeb619a3fda9fff36a069dfbe4da8bc5d8ec1c758ddb8dc.png" alt="" className="w-full h-full object-cover" />
                         </div>
                       </div>
-                      <span className="text-[9px] text-slate-300">{t('countersHeader').trim()}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* 交互说明 */}
                 <div className="space-y-1.5 pt-3 border-t border-slate-800/50 text-[11px] text-slate-200">
-                  <p className="flex items-center gap-2 italic">
-                    <span className="text-red-500 font-black">A → B</span> {t('whoCountersWho')}
-                  </p>
-                  <div className="space-y-1 mt-2">
-                    <p className="text-slate-300 font-medium flex items-center gap-2">
-                      <span className="w-1 h-1 bg-cyan-500 rounded-full"></span>
-                      {t('clickDesc')}
-                    </p>
-                     <p className="text-slate-200 flex items-center gap-2">
-                      <span className="w-1 h-1 bg-cyan-800 rounded-full"></span>
-                      {t('hoverDesc')}
-                    </p>
-                     <p className="text-slate-300 flex items-center gap-2">
-                       <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
-                       {t('dragDesc')}
-                     </p>
-                     <p className="text-slate-300 flex items-center gap-2">
-                       <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
-                       {t('zoomDesc')}
-                     </p>
-                     <p className="text-slate-300 flex items-center gap-2">
-                      <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
-                      {t('panDesc')}
-                    </p>
+                  <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('interactionGuide')}</p>
+                  <div className="space-y-1.5 mt-2">
+                    <div className="text-slate-300 flex items-start gap-2">
+                      <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
+                      <span><span className="font-medium">{splitDesc(t('clickDesc')).title}:</span><span className="text-slate-400"> {splitDesc(t('clickDesc')).content}</span></span>
+                    </div>
+                    <div className="text-slate-200 flex items-start gap-2">
+                      <span className="w-1 h-1 bg-cyan-800 rounded-full mt-1 flex-shrink-0"></span>
+                      <span><span className="font-medium">{splitDesc(t('hoverDesc')).title}:</span><span className="text-slate-400"> {splitDesc(t('hoverDesc')).content}</span></span>
+                    </div>
+                    <div className="text-slate-300 flex items-start gap-2">
+                      <span className="w-1 h-1 bg-slate-600 rounded-full mt-1 flex-shrink-0"></span>
+                      <span><span className="font-medium">{splitDesc(t('dragDesc')).title}:</span><span className="text-slate-400"> {splitDesc(t('dragDesc')).content}</span></span>
+                    </div>
+                    <div className="text-slate-300 flex items-start gap-2">
+                      <span className="w-1 h-1 bg-slate-600 rounded-full mt-1 flex-shrink-0"></span>
+                      <span><span className="font-medium">{splitDesc(t('zoomDesc')).title}:</span><span className="text-slate-400"> {splitDesc(t('zoomDesc')).content}</span></span>
+                    </div>
+                    <div className="text-slate-300 flex items-start gap-2">
+                      <span className="w-1 h-1 bg-slate-600 rounded-full mt-1 flex-shrink-0"></span>
+                      <span>
+                        <span className="font-medium">{splitDesc(t('panDesc')).title}:</span>
+                        <span className="text-slate-400"> {splitDesc(t('panDesc')).content}</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </Card>
-          </TooltipContent>
-        </Tooltip>
+          </PopoverContent>
+        </Popover>
 
         {/* 缩放按钮横向排列 */}
         <div className="flex flex-row gap-2">
@@ -831,7 +841,7 @@ const ForceGraph = ({
         </div>
       </div>
 
-      <svg ref={svgRef} className="w-full h-full" style={{ background: 'transparent' }} />
+      <svg ref={svgRef} className="w-full h-full cursor-move" style={{ background: 'transparent' }} />
     </div>
   );
 };

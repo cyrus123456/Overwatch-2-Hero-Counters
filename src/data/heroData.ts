@@ -978,6 +978,50 @@ export const counterRelations: CounterRelation[] = [
   { source: 'zarya', target: 'feitianmao', strength: 3 },
   { source: 'pharah', target: 'feitianmao', strength: 3 },
   { source: 'echo', target: 'feitianmao', strength: 3 },
+  
+  // 新英雄克制关系 - 补全缺失数据
+  // 瑞希 (Ruixi) - 支援英雄，克制突进英雄
+  { source: 'ruixi', target: 'genji', strength: 2 },
+  { source: 'ruixi', target: 'tracer', strength: 2 },
+  { source: 'ruixi', target: 'doomfist', strength: 2 },
+  { source: 'ruixi', target: 'winston', strength: 1 },
+  { source: 'ruixi', target: 'dva', strength: 1 },
+  { source: 'ruixi', target: 'wrecking_ball', strength: 1 },
+  
+  // 飞天猫 (Feitianmao) - 输出英雄，克制脆皮
+  { source: 'feitianmao', target: 'mercy', strength: 3 },
+  { source: 'feitianmao', target: 'zenyatta', strength: 2 },
+  { source: 'feitianmao', target: 'kiriko', strength: 2 },
+  { source: 'feitianmao', target: 'ana', strength: 2 },
+  { source: 'feitianmao', target: 'tracer', strength: 2 },
+  { source: 'feitianmao', target: 'bastion', strength: 1 },
+  
+  // 武神 (Wuyang) - 支援英雄，克制敌方输出
+  { source: 'wuyang', target: 'widowmaker', strength: 2 },
+  { source: 'wuyang', target: 'hanzo', strength: 2 },
+  { source: 'wuyang', target: 'ashe', strength: 2 },
+  { source: 'wuyang', target: 'cassidy', strength: 1 },
+  { source: 'wuyang', target: 'soldier76', strength: 1 },
+  
+  // 金驭 (Jinyu) - 坦克英雄
+  { source: 'jinyu', target: 'reinhardt', strength: 2 },
+  { source: 'jinyu', target: 'zarya', strength: 2 },
+  { source: 'jinyu', target: 'sigma', strength: 1 },
+  { source: 'jinyu', target: 'roadhog', strength: 1 },
+  
+  // Emrey - 输出英雄
+  { source: 'emrey', target: 'mercy', strength: 3 },
+  { source: 'emrey', target: 'ana', strength: 2 },
+  { source: 'emrey', target: 'kiriko', strength: 2 },
+  { source: 'emrey', target: 'zenyatta', strength: 2 },
+  { source: 'emrey', target: 'widowmaker', strength: 1 },
+  
+  // Freja - 输出英雄
+  { source: 'freja', target: 'mercy', strength: 3 },
+  { source: 'freja', target: 'ana', strength: 2 },
+  { source: 'freja', target: 'kiriko', strength: 2 },
+  { source: 'freja', target: 'lucio', strength: 2 },
+  { source: 'freja', target: 'pharah', strength: 1 },
   ];
 
 // 获取角色颜色
