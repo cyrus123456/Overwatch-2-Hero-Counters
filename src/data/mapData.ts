@@ -572,7 +572,7 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
     id: 'runasapi',
     name: '鲁纳塞彼',
     nameEn: 'Runasapi',
-    type: 'escort',
+    type: 'push',
     recommendedHeroes: ['winston', 'dva', 'genji', 'tracer', 'kiriko', 'lucio', 'sojourn', 'hanzo', 'cassidy', 'sigma', 'zarya', 'roadhog'],
     heroReasons: {
       winston: { zh: '机动性强，可以快速转点，跳跃盾在推车路段效果显著', en: 'High mobility enables quick rotations; Jump Pack is effective on payload sections' },

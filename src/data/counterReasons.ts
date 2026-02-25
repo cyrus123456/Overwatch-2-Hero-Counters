@@ -35,8 +35,8 @@ export const heroCounterAbilities: Record<string, CounterAbilityData> = {
     abilityEn: 'Defense Matrix absorbs projectiles / Boosters for pursuit'
   },
   doomfist: {
-    abilityZh: '高机动性突脸/上勾拳击飞',
-    abilityEn: 'High mobility dive / Uppercut knockup'
+    abilityZh: '高机动性突脸/火箭重拳击飞',
+    abilityEn: 'High mobility dive / Rocket Punch knockup'
   },
   hazard: {
     abilityZh: '区域控制能力/毒素伤害',
