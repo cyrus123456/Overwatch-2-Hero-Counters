@@ -134,7 +134,7 @@ const ForceGraph = ({
     return [...items].sort((a, b) => roleOrder[a.hero.role] - roleOrder[b.hero.role]);
   };
 
-  const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroId: string) => {
+  const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroId: string, swapSourceTarget = false) => {
     const filtered = items.filter(i => i.strength === strength);
     const sorted = sortByRole(filtered);
     return sorted.map(({ hero, strength: s }) => (
@@ -154,7 +154,7 @@ const ForceGraph = ({
           </Badge>
         </div>
         <p className="text-[11px] text-slate-300 leading-relaxed pl-10">
-          {getCounterReason(hero.id, targetHeroId, language)}
+          {getCounterReason(swapSourceTarget ? targetHeroId : hero.id, swapSourceTarget ? hero.id : targetHeroId, language)}
         </p>
       </div>
     ));
@@ -605,9 +605,9 @@ const ForceGraph = ({
                    <TabsContent value="counters" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-green-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
                      {displayedHero && (
                        <>
-                         {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', displayedHero.id)}
-                         {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', displayedHero.id)}
-                         {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', displayedHero.id)}
+                         {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', displayedHero.id, true)}
+                         {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', displayedHero.id, true)}
+                         {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', displayedHero.id, true)}
                        </>
                      )}
                      {counters.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('noCounters')}</div>}
