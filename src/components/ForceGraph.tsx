@@ -1,12 +1,12 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getCounterReason } from '@/data/counterReasons';
 import { counterRelations, getRoleName, heroes, type Hero } from '@/data/heroData';
 import { useI18n } from '@/i18n';
@@ -209,7 +209,7 @@ const ForceGraph = ({
       if (!containerRef.current || !svgRef.current || !simulationRef.current) return;
       const { width, height } = containerRef.current.getBoundingClientRect();
       d3.select(svgRef.current).attr('width', width).attr('height', height);
-      simulationRef.current.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.3).restart();
+      simulationRef.current.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.08).restart();
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -315,6 +315,9 @@ const ForceGraph = ({
     });
 
     const simulation = d3.forceSimulation<NodeDatum>(nodes)
+      .velocityDecay(0.6)
+      .alphaDecay(0.02)
+      .velocityDecay(0.6)
       .force('link', d3.forceLink<NodeDatum, LinkDatum>(links).id(d => d.id).distance(d => {
         if (!selectedHero) return 140;
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
@@ -327,16 +330,16 @@ const ForceGraph = ({
         if (!isRelated) return 140;
         return rel.strength === 3 ? 100 : rel.strength === 2 ? 120 : 140;
       }))
-      .force('charge', d3.forceManyBody().strength(-600))
+      .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(d => (d as NodeDatum).radius + 20))
       .force('x', d3.forceX<NodeDatum>().x(d => {
         if (selectedRole && selectedRole !== 'all') return width / 2;
         const centerX = width / 2;
-        if (d.role === 'tank') return centerX - 180;
+        if (d.role === 'tank') return centerX - 340;
         if (d.role === 'damage') return centerX;
-        return centerX + 180;
-      }).strength(0.3))
+        return centerX + 340;
+      }).strength(1.0))
       .force('y', d3.forceY<NodeDatum>().y(() => {
         if (selectedRole && selectedRole !== 'all') return height / 2;
         return height / 2;
@@ -454,7 +457,7 @@ const ForceGraph = ({
      });
 
     if (selectedHero) {
-      simulation.alpha(0.5).restart();
+      simulation.alpha(0.1).restart();
       
       nodeGroup.transition().duration(300).style('opacity', d => {
         if (d.id === selectedHero) return 1;
@@ -512,7 +515,7 @@ const ForceGraph = ({
         return `url(#arrow-${activeCounterTab === 'counteredBy' ? 'red' : 'green'}-${s})`;
       });
     } else {
-      simulation.alpha(0.3).restart();
+      simulation.alpha(0.08).restart();
       
       nodeGroup.transition().duration(300).style('opacity', 1);
       nodeGroup.select('.node-name').transition().duration(300).style('opacity', 1);
