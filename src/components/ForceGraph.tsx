@@ -559,7 +559,7 @@ const ForceGraph = ({
   return (
     <div ref={containerRef} className="relative w-full h-full">
       {/* 英雄详情面板 */}
-      <div className="absolute z-10 w-96 flex flex-col" style={{ top: '1rem', right: '1rem', bottom: '1rem', transform: `translate(${panelPosition.x}px, ${panelPosition.y}px)`, cursor: isDraggingPanel ? 'grabbing' : 'default', pointerEvents: 'none' }}>
+      <div className="absolute z-10 w-96 flex flex-col" style={{ top: '1rem', right: '1rem', bottom: '1rem' }}>
         <div className="flex-1 overflow-hidden pointer-events-auto h-full">
           <Card className="p-3 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col gap-1">
             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-700/50 flex-shrink-0">
@@ -569,7 +569,7 @@ const ForceGraph = ({
             
             {displayedHero ? (
               <div className="flex flex-col flex-1 min-h-0">
-                <div className="flex items-center gap-4 mb-4 cursor-grab active:cursor-grabbing flex-shrink-0" onMouseDown={handlePanelDragStart} title={t('dragToMove') || "Drag to move"}>
+                <div className="flex items-center gap-4 mb-4 flex-shrink-0" onMouseDown={handlePanelDragStart}>
                    <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `3px solid ${displayedHero.color}`, backgroundColor: '#1a1a2e' }}>
                      <img src={displayedHero.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
                    </div>
