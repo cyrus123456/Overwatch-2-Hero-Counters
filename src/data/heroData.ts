@@ -961,7 +961,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ashe', target: 'ruixi', strength: 3 },
   { source: 'soldier76', target: 'ruixi', strength: 3 },
   { source: 'genji', target: 'ruixi', strength: 3 },
-  { source: 'doomfist', target: 'ruixi', strength: 3 },
+
   { source: 'wrecking_ball', target: 'ruixi', strength: 3 },
   { source: 'winston', target: 'ruixi', strength: 3 },
   { source: 'zarya', target: 'ruixi', strength: 3 },

@@ -1,317 +1,56 @@
 1. D.Va (D.Va)
 被这些英雄克制：
-
-渣客女王 (Junker Queen)
-
-西格玛 (Sigma)
-
-查莉娅 (Zarya)
-
-莫伊拉 (Moira)
-
-禅雅塔 (Zenyatta)
-
-安娜 (Ana)
-
-秩序之光 (Symmetra)
-
-回声 (Echo)
-
-黑影 (Sombra)
-
-黑百合 (Widowmaker)
-
-小美 (Mei)
-
-半藏 (Hanzo)
+ 渣客女王 (Junker Queen) 西格玛 (Sigma) 查莉娅 (Zarya) 莫伊拉 (Moira) 禅雅塔 (Zenyatta) 安娜 (Ana) 秩序之光 (Symmetra) 回声 (Echo) 黑影 (Sombra) 黑百合 (Widowmaker) 小美 (Mei) 半藏 (Hanzo)
 
 2. 末日铁拳 (Doomfist)
 被这些英雄克制：
 
-路霸 (Roadhog)
-
-查莉娅 (Zarya)
-
-奥丽莎 (Orisa)
-
-黑影 (Sombra)
-
-卡西迪 (Cassidy)
-
-猎空 (Tracer)
-
-安娜 (Ana)
-
-朱诺
-
-布丽吉塔 (Brigitte)
+ 路霸 (Roadhog) 查莉娅 (Zarya) 奥丽莎 (Orisa) 黑影 (Sombra) 卡西迪 (Cassidy) 猎空 (Tracer) 安娜 (Ana) 朱诺 布丽吉塔 (Brigitte)
 
 3. 莱因哈特 (Reinhardt)
 被这些英雄克制：
 
-温斯顿 (Winston)
-
-拉玛刹 (Ramattra)
-
-法老之鹰 (Pharah)
-
-艾什 (Ashe)
-
-回声 (Echo)
-
-堡垒 (Bastion)
-
-小美 (Mei)
-
-狂鼠
-
-托比昂
-
-安娜 (Ana)
-
-巴蒂斯特 (Baptiste)
-
-布丽吉塔 (Brigitte)
-
-禅雅塔 (Zenyatta)
-
-卢西奥 (Lúcio)
-
-伊拉锐 (Illari)
+ 温斯顿 (Winston) 拉玛刹 (Ramattra) 法老之鹰 (Pharah) 艾什 (Ashe) 回声 (Echo) 堡垒 (Bastion) 小美 (Mei) 狂鼠 托比昂 安娜 (Ana) 巴蒂斯特 (Baptiste) 布丽吉塔 (Brigitte) 禅雅塔 (Zenyatta) 卢西奥 (Lúcio) 伊拉锐 (Illari)
 
 4. 骇灾
 被这些英雄克制：
 
-D.Va
-
-西格玛 (Sigma)
-
-末日铁拳 (Doomfist)
-
-路霸 (Roadhog)
-
-奥丽莎 (Orisa)
-
-查莉娅 (Zarya)
-
-裂空
-
-索杰恩
-
-托比昂 (Torbjörn)
-
-回声 (Echo)
-
-安娜 (Ana)
-
-禅雅塔 (Zenyatta)
+ D.Va 西格玛 (Sigma) 末日铁拳 (Doomfist) 路霸 (Roadhog) 奥丽莎 (Orisa) 查莉娅 (Zarya) 裂空 索杰恩 托比昂 (Torbjörn) 回声 (Echo) 安娜 (Ana) 禅雅塔 (Zenyatta)
 
 5. 路霸 (Roadhog)
 被这些英雄克制：
 
-渣客女王 (Junker Queen)
-
-查莉娅 (Zarya)
-
-奥丽莎 (Orisa)
-
-末日铁拳 (Doomfist)
-
-毛加 (Mauga)
-
-莱因哈特 (Reinhardt)
-
-回声 (Echo)
-
-黑百合 (Widowmaker)
-
-小美 (Mei)
-
-法老之鹰 (Pharah)
-
-死神 (Reaper)
-
-索杰恩 (Sojourn)
-
-源氏 (Genji)
-
-艾什 (Ashe)
-
-半藏 (Hanzo)
-
-黑影 (Sombra)
-
-禅雅塔 (Zenyatta)
-
-安娜 (Ana)
-
-巴蒂斯特 (Baptiste)
-
-布丽吉塔 (Brigitte)
+ 渣客女王 (Junker Queen) 查莉娅 (Zarya) 奥丽莎 (Orisa) 末日铁拳 (Doomfist) 毛加 (Mauga) 莱因哈特 (Reinhardt) 回声 (Echo) 黑百合 (Widowmaker) 小美 (Mei) 法老之鹰 (Pharah) 死神 (Reaper) 索杰恩 (Sojourn) 源氏 (Genji) 艾什 (Ashe) 半藏 (Hanzo) 黑影 (Sombra) 禅雅塔 (Zenyatta) 安娜 (Ana) 巴蒂斯特 (Baptiste) 布丽吉塔 (Brigitte)
 
 6. 渣客女王 (Junker Queen)
 被这些英雄克制：
 
-奥丽莎 (Orisa)
-
-末日铁拳 (Doomfist)
-
-毛加 (Mauga)
-
-骇灾
-
-查莉娅 (Zarya)
-
-法老之鹰 (Pharah)
-
-小美 (Mei)
-
-托比昂 
-
-索杰恩
-
-回声
-
-朱诺
-
-安娜
-
-卢西奥
-
-雾子
+ 奥丽莎 (Orisa) 末日铁拳 (Doomfist) 毛加 (Mauga) 骇灾 查莉娅 (Zarya) 法老之鹰 (Pharah) 小美 (Mei) 托比昂  索杰恩 回声 朱诺 安娜 卢西奥 雾子
 
 7. 西格玛
 被这些英雄克制：
 
-铁拳
-
-温斯顿 (Winston)
-
-莱因哈特 (Reinhardt)
-
-拉玛刹 (Ramattra)
-
-秩序之光
-
-小美
-
-黑影 (Sombra)
-
-法老之鹰 (Pharah)
-
-雾子 (Kiriko)
-
-布丽吉塔 (Brigitte)
-
-禅雅塔 (Zenyatta)
-
-生命之梭
-
-莫伊拉 (Moira)
+ 铁拳 温斯顿 (Winston) 莱因哈特 (Reinhardt) 拉玛刹 (Ramattra) 秩序之光 小美 黑影 (Sombra) 法老之鹰 (Pharah) 雾子 (Kiriko) 布丽吉塔 (Brigitte) 禅雅塔 (Zenyatta) 生命之梭 莫伊拉 (Moira)
 
 8. 毛加
 被这些英雄克制：
 
-西格玛 (Sigma)
-
-查莉娅 (Zarya)
-
-奥丽莎 (Orisa)
-
-法老之鹰 (Pharah)
-
-回声 (Echo)
-
-死神
-
-索杰恩 (Sojourn)
-
-黑百合
-
-禅雅塔 (Zenyatta)
-
-安娜
-
-朱诺
+ 西格玛 (Sigma) 查莉娅 (Zarya) 奥丽莎 (Orisa) 法老之鹰 (Pharah) 回声 (Echo) 死神 索杰恩 (Sojourn) 黑百合 禅雅塔 (Zenyatta) 安娜 朱诺
 
 9. 温斯顿
 被这些英雄克制：
 
-骇灾 毛加 渣克女王
-
-D.va
-
-托比昂
-
-堡垒 (Bastion)
-
-死神 卡西迪 回声
-
-狂鼠
-
-卢西奥 (Lúcio)
-
-伊拉锐 安娜 布丽吉塔
-
-禅雅塔 (Zenyatta)
+ 骇灾 毛加 渣克女王 D.va 托比昂 堡垒 (Bastion) 死神 卡西迪 回声 狂鼠 卢西奥 (Lúcio) 伊拉锐 安娜 布丽吉塔 禅雅塔 (Zenyatta)
 
 10. 奥丽莎 (Orisa)
 被这些英雄克制：
 
-西格玛 (Sigma)
-
-温斯顿 (Winston)
-
-查莉娅 (Zarya)
-
-破坏球 (Wrecking Ball)
-
-巴蒂斯特 (Baptiste)
-
-半藏 (Hanzo)
-
-艾什
-
-索杰恩 (Sojourn)
-
-猎空
-
-狂鼠
-
-回声 (Echo)
-
-黑百合
-
-法老之鹰
-
-堡垒
-
-安娜 (Ana)
-
-伊拉锐
-
-禅雅塔
+ 西格玛 (Sigma) 温斯顿 (Winston) 查莉娅 (Zarya) 破坏球 (Wrecking Ball) 巴蒂斯特 (Baptiste) 半藏 (Hanzo) 艾什 索杰恩 (Sojourn) 猎空 狂鼠 回声 (Echo) 黑百合 法老之鹰 堡垒 安娜 (Ana) 伊拉锐 禅雅塔
 
 11. 破坏球
 被这些英雄克制：
 
-奥丽莎
-
-D.va
-
-末日铁拳 (Doomfist)
-
-毛加
-
-路霸
-
-黑影 卡西迪 猎空
-
-索杰恩 托比昂 安娜
-
-布丽吉塔 (Brigitte)
-
-卢西奥 (Lúcio)
+ 奥丽莎 D.va 末日铁拳 (Doomfist) 毛加 路霸 黑影 卡西迪 猎空 索杰恩 托比昂 安娜 布丽吉塔 (Brigitte) 卢西奥 (Lúcio)
 
 12. 拉玛刹
 被这些英雄克制：

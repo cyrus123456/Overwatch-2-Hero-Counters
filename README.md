@@ -1,6 +1,8 @@
 ![alt text](image-2.png)
 # Overwatch 2 Hero Counter Relationships
 
+[**简体中文**](README.zh-CN.md) | English
+
 An interactive visualization application built with React + TypeScript + Vite to display hero counter relationships in Overwatch 2.
 
 ## Live Demo
