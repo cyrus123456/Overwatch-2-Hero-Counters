@@ -134,7 +134,7 @@ export const heroes: Hero[] = [
   { id: 'zenyatta', name: '禅雅塔', nameEn: 'Zenyatta', nickname: '和尚', role: 'support', color: '#22c55e', image: heroImages.zenyatta },
   { id: 'wuyang', name: '无漾', nameEn: 'Wuyang', role: 'support', color: '#22c55e', image: heroImages.wuyang },
   { id: 'ruixi', name: '瑞稀', nameEn: 'Ruixi', role: 'support', color: '#22c55e', image: heroImages.ruixi },
-  { id: 'feitianmao', name: '飞天猫', nameEn: 'Feitianmao', role: 'support', color: '#22c55e', image: heroImages.feitianmao },
+  { id: 'feitianmao', name: '飞天猫', nameEn: 'Jetpack Cat', role: 'support', color: '#22c55e', image: heroImages.feitianmao },
 ];
 
 // 被克制关系数据 - 基于参考图片整理
