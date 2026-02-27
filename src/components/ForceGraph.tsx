@@ -236,15 +236,17 @@ const ForceGraph = ({
           if (!targetId) return h.role === 'tank' ? 32 : 28;
           if (heroId === targetId) return 42;
           
+          // For synergy: only check if heroId -> targetId (hero is target's partner)
+          // For counter: check both directions
           let relation;
           if (activeCounterTab === 'synergy') {
-            // 检查最佳拍档关系
-            relation = synergyRelations.find(r =>
-              (r.source === heroId && r.target === targetId) ||
-              (r.target === heroId && r.source === targetId)
+            // 只检查 heroId 作为 source (即 heroId 是 targetId 的拍档)
+            // 格式: source=拍档方, target=被配对方
+            relation = synergyRelations.find(r => 
+              r.source === heroId && r.target === targetId
             );
           } else {
-            // 检查克制关系
+            // 克制关系检查双向
             relation = counterRelations.find(r =>
               (r.source === heroId && r.target === targetId) ||
               (r.target === heroId && r.source === targetId)
@@ -507,9 +509,9 @@ const ForceGraph = ({
         
         let isRelated;
         if (activeCounterTab === 'synergy') {
+          // 只检查 d.id 作为 source
           isRelated = synergyRelations.some(r => 
-            (r.source === d.id && r.target === selectedHero) ||
-            (r.target === d.id && r.source === selectedHero)
+            r.source === d.id && r.target === selectedHero
           );
         } else {
           isRelated = activeCounterTab === 'counteredBy' 
@@ -526,9 +528,9 @@ const ForceGraph = ({
         
         let relation;
         if (activeCounterTab === 'synergy') {
+          // 只检查 d.id 作为 source (即 d.id 是 selectedHero 的拍档)
           relation = synergyRelations.find(r =>
-            (r.source === d.id && r.target === selectedHero) ||
-            (r.target === d.id && r.source === selectedHero)
+            r.source === d.id && r.target === selectedHero
           );
         } else {
           relation = activeCounterTab === 'counteredBy' 
