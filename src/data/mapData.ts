@@ -569,6 +569,33 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
     },
   },
   {
+    id: 'shambali_monastery',
+    name: '香巴里寺院',
+    nameEn: 'Shambali Monastery',
+    type: 'escort',
+    recommendedHeroes: ['sigma', 'widowmaker', 'hanzo', 'baptiste', 'kiriko', 'ramattra', 'cassidy', 'genji', 'mei', 'zarya', 'roadhog', 'ana'],
+    heroReasons: {
+      sigma: { zh: '长直道多，护盾可以稳步推进，引力乱流覆盖范围广', en: 'Many long straights; barrier enables steady pushing; Gravitic Flux has wide coverage' },
+      widowmaker: { zh: 'A点防守和推车路段有长直道和高台', en: 'Point A defense and payload sections have long straights and high ground' },
+      hanzo: { zh: '龙可以覆盖狭窄的上坡路段', en: 'Dragonstrike covers narrow uphill sections' },
+      baptiste: { zh: '高台有利，增幅矩阵在长直道效果显著', en: 'High ground advantage; Amplification Matrix is highly effective on long straights' },
+      kiriko: { zh: '瞬可以快速支援，铃铛保命', en: 'Swift Step for fast support; Protection Suzu for survival' },
+      ramattra: { zh: '天罚形态在狭窄路段威慑力强', en: 'Nemesis Form has strong deterrent effect in narrow sections' },
+      cassidy: { zh: '中距离输出稳定，克制高机动英雄', en: 'Stable mid-range damage; counters high mobility heroes' },
+      genji: { zh: '可以利用高台绕后骚扰', en: 'Can use high ground to flank and harass' },
+      mei: { zh: '冰墙可以分割狭窄路段', en: 'Ice Wall can divide narrow sections' },
+      zarya: { zh: '护盾吸收伤害，高能量推进', en: 'Bubble absorbs damage; pushes with high energy' },
+      roadhog: { zh: '钩子在狭窄路段很容易命中', en: 'Hook is easy to land in narrow sections' },
+      ana: { zh: '长直道视野好，禁疗瓶效果极佳', en: 'Good sightlines on long straights; Biotic Grenade is extremely effective' }
+    },
+    description: {
+      zh: '纯运载图。智械寺院，有很多上坡和蜿蜒的室内外路段',
+      en: 'Pure escort. Omnic monastery; many uphill and winding indoor/outdoor sections',
+      ja: '純粋なエスコット。オムニックの僧院、上り坂や曲がりくねった屋内外の道が多い',
+      ko: '순수 팰로드. 옴닉 수도원, 오르막길과 구불구불한 실내외 구간이 많음',
+    },
+  },
+  {
     id: 'runasapi',
     name: '鲁纳塞彼',
     nameEn: 'Runasapi',
