@@ -232,7 +232,7 @@ function AppContent() {
         {/* Main Content */}
         <main className="flex-1 flex flex-row overflow-hidden relative">
           {/* 左侧地图卡片面板 */}
-          <div className="absolute left-4 top-4 bottom-4 z-10 flex flex-col w-[440px] pointer-events-none">
+          <div className="absolute left-4 top-4 bottom-4 z-10 flex flex-col w-96 pointer-events-none">
             <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
               <Card className="p-3 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col gap-1 rounded-xl border border-slate-800/50">
                 <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4">
