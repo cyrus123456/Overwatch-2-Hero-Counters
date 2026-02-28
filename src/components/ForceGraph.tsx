@@ -409,6 +409,10 @@ const ForceGraph = ({
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
+        // Synergy模式使用高饱和cyan色系粒子
+        if (activeCounterTab === 'synergy') {
+          return s === 3 ? '#22d3ee' : s === 2 ? '#67e8f9' : '#a5f3fc';
+        }
         const color = activeCounterTab === 'counteredBy' ?
           (targetId === selectedHero ? 'red' : 'green') :
           (sourceId === selectedHero ? 'green' : 'red');
@@ -449,11 +453,12 @@ const ForceGraph = ({
 
       particleGroup.selectAll<SVGCircleElement, LinkDatum>('.particle')
         .attr('opacity', (d) => {
+          // Synergy模式下取消流动粒子
+          if (activeCounterTab === 'synergy') return 0;
           const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
           const targetId = typeof d.target === 'string' ? d.target : d.target.id;
           const isRelevant = selectedHero ?
-            (activeCounterTab === 'synergy' ? (targetId === selectedHero || sourceId === selectedHero) :
-              activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) :
+            (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) :
             false;
           if (!isRelevant) return 0;
           return 0.9;

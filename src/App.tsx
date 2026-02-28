@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import {
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Copy,
   Crosshair,
@@ -44,8 +45,8 @@ function AppContent() {
   const [selectedMap, setSelectedMap] = useState<string | null>(null);
   const [mapSearch, setMapSearch] = useState('');
   const [activeMapType, setActiveMapType] = useState<string>('all');
-  const [isMapCopied, setIsMapCopied] = useState(false);
-
+const [isMapCopied, setIsMapCopied] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const roleOrder = { tank: 0, damage: 1, support: 2 };
 
   const sortHeroesByRole = (heroIds: string[]): string[] => {
@@ -231,8 +232,16 @@ function AppContent() {
 
         {/* Main Content */}
         <main className="flex-1 flex flex-row overflow-hidden relative">
-          {/* 左侧地图卡片面板 */}
-          <div className="absolute left-4 top-4 bottom-4 z-10 flex flex-col w-96 pointer-events-none">
+{/* 左侧地图卡片面板 - 抽屉 */}
+          <div className={`absolute top-4 bottom-4 z-10 flex flex-col w-96 pointer-events-none transition-all duration-300 ease-in-out ${isDrawerOpen ? 'left-4' : '-left-80'}`}>
+            {/* 抽屉Toggle按钮 - 放在面板右侧外面 */}
+            <button
+              onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+              className="absolute -right-12 top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-900/95 hover:bg-slate-800 border border-slate-700/50 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
+              title={isDrawerOpen ? '收起面板' : '展开面板'}
+            >
+              <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isDrawerOpen ? '' : 'rotate-180'}`} />
+            </button>
             <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
               <Card className="p-3 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col gap-1 rounded-xl border border-slate-800/50">
                 <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4">
@@ -457,6 +466,7 @@ function AppContent() {
             </div>
           </div>
 
+          {/* 右侧可视化区域 */}
           {/* 右侧可视化区域 */}
           <div className="flex-1 relative overflow-hidden bg-slate-950/20">
             {/* 顶部工具栏容器 - 筛选模块 视觉居中优化（对齐左右面板间隙） */}
