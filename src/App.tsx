@@ -1,13 +1,13 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import {
   Tooltip,
   TooltipContent,
@@ -33,8 +33,8 @@ import ForceGraph from '@/components/ForceGraph';
 import { heroes } from '@/data/heroData';
 import { getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
 
-import { useI18n } from '@/i18n';
 import type { Language } from '@/i18n';
+import { useI18n } from '@/i18n';
 import './App.css';
 
 function AppContent() {
@@ -234,7 +234,7 @@ function AppContent() {
           {/* 左侧地图卡片面板 */}
           <div className="absolute left-4 top-4 bottom-4 z-10 flex flex-col w-[440px] pointer-events-none">
             <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
-              <Card className="p-6 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col gap-1 rounded-xl border border-slate-800/50">
+              <Card className="p-3 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col gap-1 rounded-xl border border-slate-800/50">
                 <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4">
                   <div className="flex items-center gap-3">
                     <MapPin className="w-6 h-6 text-cyan-400" />
@@ -278,7 +278,7 @@ function AppContent() {
                     {filteredMaps.map(map => (
                       <div 
                         key={map.id} 
-                        className={`p-5 rounded-xl cursor-pointer transition-all border group ${
+                        className={`p-2 rounded-xl cursor-pointer transition-all border group ${
                           selectedMap === map.id 
                             ? 'bg-cyan-500/10 border-cyan-500/40 shadow-lg shadow-cyan-900/20' 
                             : 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-700/40 hover:border-slate-600/50 shadow-sm'
