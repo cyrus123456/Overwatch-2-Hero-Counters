@@ -7,5 +7,6 @@
     "titleBar.inactiveBackground": "#d0f5ff99",
     "titleBar.inactiveForeground": "#15202b99"
   },
-  "peacock.color": "#d0f5ff"
+  "peacock.color": "#d0f5ff",
+  "Codegeex.RepoIndex": true
 }

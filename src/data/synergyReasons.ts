@@ -24,6 +24,22 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: 'D.Va的高机动性配合索杰恩的右键高爆发，能快速集火秒杀', 
     reasonEn: 'D.Va\'s mobility pairs with Sojourn\'s railgun for quick picks' 
   },
+  'baptiste-dva': {
+    reasonZh: '巴蒂斯特的群体治疗和免死能保护D.Va的持续作战', 
+    reasonEn: 'Baptiste\'s AOE healing and immortality protect D.Va\'s sustained fight' 
+  },
+  'genji-dva': {
+    reasonZh: 'D.Va矩阵保护源氏切入，两者高机动形成交叉火力', 
+    reasonEn: 'D.Va matrix protects Genji, both highly mobile create crossfire' 
+  },
+  'tracer-dva': {
+    reasonZh: 'D.Va矩阵保护猎空切入，快速建立人数优势', 
+    reasonEn: 'D.Va matrix protects Tracer dives for quick number advantage' 
+  },
+  'echo-dva': {
+    reasonZh: 'D.Va的矩阵能保护回声飞行时的脆弱期', 
+    reasonEn: 'D.Va\'s matrix protects Echo while flying' 
+  },
 
   // 末日铁拳的最佳拍档
   'kiriko-doomfist': { 
@@ -37,6 +53,18 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'reaper-doomfist': { 
     reasonZh: '两者都是近战高爆发，铁拳先手控住，死神瞬间补足伤害', 
     reasonEn: 'Both melee burst - Fist sets up, Reaper finishes' 
+  },
+  'ana-doomfist': {
+    reasonZh: '安娜的纳米激素能增强铁拳的伤害，大招配合击杀效率极高', 
+    reasonEn: 'Ana\'s Nano boosts Doomfist\'s damage for lethal combos' 
+  },
+  'genji-doomfist': {
+    reasonZh: '源氏和铁拳都是高机动近战，能快速切入秒杀', 
+    reasonEn: 'Both highly mobile melees - quick dive kills' 
+  },
+  'baptiste-doomfist': {
+    reasonZh: '巴蒂斯特的免死保护铁拳入场后的生存', 
+    reasonEn: 'Baptiste\'s immortality protects Doomfist after engaging' 
   },
 
   // 骇灾的最佳拍档
@@ -52,6 +80,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '艾什的狙击和视野优势能帮助骇灾发现侧面切入的敌人', 
     reasonEn: 'Ashe\'s long-range vision helps Hazard track flankers' 
   },
+  'genji-hazard': {
+    reasonZh: '源氏高机动配合骇灾的控制能快速建立优势', 
+    reasonEn: 'Genji\'s mobility pairs well with Hazard\'s control' 
+  },
 
   // 渣客女王的最佳拍档
   'kiriko-junker_queen': { 
@@ -65,6 +97,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'cassidy-junker_queen': { 
     reasonZh: '卡西迪的磁雷能留住敌人，为女王的近战输出创造机会', 
     reasonEn: 'Cassidy\'s grenade sets up Junker Queen\'s melee damage' 
+  },
+  'zarya-junker_queen': {
+    reasonZh: '查莉娅的能量配合女王的冲锋能快速击杀', 
+    reasonEn: 'Zarya\'s energy + Junker Queen\'s charge = quick kills' 
+  },
+  'reaper-junker_queen': {
+    reasonZh: '死神配合女王的近战能快速建立优势', 
+    reasonEn: 'Reaper pairs well with Junker Queen\'s melee aggression' 
   },
 
   // 毛加的最佳拍档
@@ -80,6 +120,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '卡西迪的远程支援能补充毛加的中距离输出空缺', 
     reasonEn: 'Cassidy fills Mauga\'s mid-range gap with reliable damage' 
   },
+  'zarya-mauga': {
+    reasonZh: '查莉娅的护盾保护毛加的持续输出', 
+    reasonEn: 'Zarya\'s bubble protects Mauga\'s sustained damage' 
+  },
+  'reaper-mauga': {
+    reasonZh: '死神配合毛加的高输出能快速击杀', 
+    reasonEn: 'Reaper pairs well with Mauga\'s high damage output' 
+  },
 
   // 奥丽莎的最佳拍档
   'kiriko-orisa': { 
@@ -93,6 +141,18 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'junkrat-orisa': { 
     reasonZh: '狂鼠的范围伤害配合奥丽莎的定点控制，形成封锁阵线', 
     reasonEn: 'Junkrat\'s area denial + Orisa\'s hold creates defensive line' 
+  },
+  'sigma-orisa': {
+    reasonZh: '西格玛的护盾配合奥丽莎的控制能形成坚固防线', 
+    reasonEn: 'Sigma\'s shield + Orisa\'s control = solid defense' 
+  },
+  'baptiste-orisa': {
+    reasonZh: '巴蒂斯特的免死保护奥丽莎的架枪位置', 
+    reasonEn: 'Baptiste\'s immortality protects Orisa\'s set-up position' 
+  },
+  'hanzo-orisa': {
+    reasonZh: '半藏的视野箭帮助奥丽莎发现远处目标', 
+    reasonEn: 'Hanzo\'s sonar helps Orisa spot distant targets' 
   },
 
   // 拉玛刹的最佳拍档
@@ -108,6 +168,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '半藏的视野箭能帮助拉玛刹发现远处的威胁', 
     reasonEn: 'Hanzo\'s sonar arrow helps Ramattra spot distant threats' 
   },
+  'zarya-ramattra': {
+    reasonZh: '查莉娅配合拉玛刹形成强力前排', 
+    reasonEn: 'Zarya pairs well with Ramattra for strong frontline' 
+  },
 
   // 莱因哈特的最佳拍档
   'zarya-reinhardt': { 
@@ -121,6 +185,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'baptiste-reinhardt': { 
     reasonZh: '巴蒂斯特的护盾矩阵能保护大锤冲锋时的安全', 
     reasonEn: 'Baptiste\'s matrix protects Reinhardt during charges' 
+  },
+  'brigitte-reinhardt': {
+    reasonZh: '布丽吉塔的击晕配合大锤冲锋能打出完美Combo', 
+    reasonEn: 'Brigitte\'s stun + Reinhardt charge = perfect combo' 
+  },
+  'reaper-reinhardt': {
+    reasonZh: '死神配合大锤冲锋能快速击杀', 
+    reasonEn: 'Reaper follows Reinhardt charge for quick kills' 
   },
 
   // 路霸的最佳拍档
@@ -136,6 +208,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '卡西迪的磁雷能留住被路霸钩中的敌人', 
     reasonEn: 'Cassidy\'s grenade secures Roadhog\'s hook targets' 
   },
+  'zarya-roadhog': {
+    reasonZh: '查莉娅的护盾保护路霸的钩子先手', 
+    reasonEn: 'Zarya\'s bubble protects Roadhog\'s hook plays' 
+  },
 
   // 西格玛的最佳拍档
   'kiriko-sigma': { 
@@ -149,6 +225,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'cassidy-sigma': { 
     reasonZh: '卡西迪的中距离输出弥补西格玛的输出空窗期', 
     reasonEn: 'Cassidy covers Sigma\'s damage gaps at mid-range' 
+  },
+  'baptiste-sigma': {
+    reasonZh: '巴蒂斯特的免死保护西格玛的输出位置', 
+    reasonEn: 'Baptiste\'s immortality protects Sigma\'s positioning' 
+  },
+  'bastion-sigma': {
+    reasonZh: '西格玛护盾保护架枪状态的堡垒', 
+    reasonEn: 'Sigma\'s shield protects stationary Bastion' 
   },
 
   // 温斯顿的最佳拍档
@@ -164,6 +248,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '猎空的高机动配合温斯顿的跳跃，能快速转移战场', 
     reasonEn: 'Both highly mobile - Winston jumps, Tracer blinks' 
   },
+  'zarya-winston': {
+    reasonZh: '查莉娅的护盾保护温斯顿的切入', 
+    reasonEn: 'Zarya\'s bubble protects Winston\'s dives' 
+  },
+  'dva-winston': {
+    reasonZh: 'D.Va配合温斯顿形成双跳，敌方后排难以应对', 
+    reasonEn: 'D.Va + Winston double dive overwhelms backline' 
+  },
 
   // 破坏球的最佳拍档
   'kiriko-wrecking_ball': { 
@@ -177,6 +269,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'genji-wrecking_ball': { 
     reasonZh: '源氏能跟进破坏球的入场进行收割', 
     reasonEn: 'Genji can follow Wrecking Ball\'s engage for cleanup' 
+  },
+  'zarya-wrecking_ball': {
+    reasonZh: '查莉娅的护盾保护破坏球的入场', 
+    reasonEn: 'Zarya\'s bubble protects Wrecking Ball\'s engage' 
   },
 
   // 查莉娅的最佳拍档
@@ -221,6 +317,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '禅雅塔的增伤让艾什的狙击伤害更致命', 
     reasonEn: 'Zenyatta\'s Discord makes Ashe\'s snipes lethal' 
   },
+  'sigma-ashe': {
+    reasonZh: '西格玛的护盾保护艾什的架枪位置', 
+    reasonEn: 'Sigma\'s shield protects Ashe\'s positioning' 
+  },
+  'orisa-ashe': {
+    reasonZh: '奥丽莎的保护配合艾什的高点输出', 
+    reasonEn: 'Orisa\'s protection enables Ashe\'s high ground dominance' 
+  },
 
   // 堡垒的最佳拍档
   'sigma-bastion': { 
@@ -234,6 +338,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'baptiste-bastion': { 
     reasonZh: '巴蒂斯特的免死矩阵能让堡垒完成架枪输出的关键时机', 
     reasonEn: 'Baptiste\'s matrix gives Bastion crucial setup time' 
+  },
+  'zarya-bastion': {
+    reasonZh: '查莉娅的护盾保护堡垒的架枪位置', 
+    reasonEn: 'Zarya\'s bubble protects Bastion\'s positioning' 
   },
 
   // 卡西迪的最佳拍档
@@ -249,6 +357,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '巴蒂斯特的治疗和位移让卡西迪更敢主动出击', 
     reasonEn: 'Baptiste enables Cassidy\'s aggressive plays' 
   },
+  'ana-cassidy': {
+    reasonZh: '安娜的纳米激素增强卡西迪的输出', 
+    reasonEn: 'Ana\'s Nano boosts Cassidy\'s damage' 
+  },
+  'brigitte-cassidy': {
+    reasonZh: '布丽吉塔的击晕帮助卡西迪留住敌人', 
+    reasonEn: 'Brigitte\'s stun helps Cassidy secure kills' 
+  },
 
   // 回声的最佳拍档
   'dva-echo': { 
@@ -262,6 +378,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'zenyatta-echo': { 
     reasonZh: '禅雅塔的增伤让回声的爆发伤害更高', 
     reasonEn: 'Zenyatta\'s boost makes Echo\'s burst damage lethal' 
+  },
+  'genji-echo': {
+    reasonZh: '源氏配合回声高机动切入收割', 
+    reasonEn: 'Genji follows Echo\'s high mobility for cleanup' 
   },
 
   // 源氏的最佳拍档
@@ -277,6 +397,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '雾子的治疗和位移与源氏的高机动完美契合', 
     reasonEn: 'Kiriko enables Genji\'s aggressive dive strategy' 
   },
+  'ana-genji': {
+    reasonZh: '安娜的纳米激素增强源氏龙刃伤害', 
+    reasonEn: 'Ana\'s Nano boosts Genji\'s blade damage' 
+  },
+  'dva-genji': {
+    reasonZh: 'D.Va矩阵保护源氏的切入', 
+    reasonEn: 'D.Va matrix protects Genji\'s dives' 
+  },
 
   // 半藏的最佳拍档
   'zarya-hanzo': { 
@@ -290,6 +418,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'kiriko-hanzo': { 
     reasonZh: '雾子保护半藏在中远距离的输出位置', 
     reasonEn: 'Kiriko protects Hanzo\'s long-range position' 
+  },
+  'widowmaker-hanzo': {
+    reasonZh: '黑百合和半藏形成双狙击，压制力极强', 
+    reasonEn: 'Widow + Hanzo double sniper = overwhelming pressure' 
   },
 
   // 狂鼠的最佳拍档
@@ -319,6 +451,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '禅雅塔的增伤让法老之鹰的火箭伤害爆表', 
     reasonEn: 'Zenyatta\'s Discord makes Pharah\'s rockets lethal' 
   },
+  'baptiste-pharah': {
+    reasonZh: '巴蒂斯特的免死保护法老之鹰的飞行', 
+    reasonEn: 'Baptiste\'s immortality protects Pharah in air' 
+  },
 
   // 死神的最佳拍档
   'zarya-reaper': { 
@@ -332,6 +468,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'zenyatta-reaper': { 
     reasonZh: '禅雅塔的增伤让死神的近战爆发更高', 
     reasonEn: 'Zenyatta\'s Discord makes Reaper\'s melee lethal' 
+  },
+  'moira-reaper': {
+    reasonZh: '莫伊拉的治疗保障死神的持续作战', 
+    reasonEn: 'Moira\'s healing enables Reaper\'s sustained fights' 
   },
 
   // 士兵76的最佳拍档
@@ -347,6 +487,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '禅雅塔的增伤提升士兵76的T裸射伤害', 
     reasonEn: 'Zenyatta\'s Discord boosts Soldier\'s rifle damage' 
   },
+  'ana-soldier76': {
+    reasonZh: '安娜的纳米激素增强士兵76的输出', 
+    reasonEn: 'Ana\'s Nano boosts Soldier\'s damage' 
+  },
 
   // 索杰恩的最佳拍档
   'dva-sojourn': { 
@@ -360,6 +504,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'zenyatta-sojourn': { 
     reasonZh: '禅雅塔的增伤让索杰恩的右键秒杀线更高', 
     reasonEn: 'Zenyatta\'s Discord raises Sojourn\'s one-shot threshold' 
+  },
+  'zarya-sojourn': {
+    reasonZh: '查莉娅配合索杰恩能快速充能', 
+    reasonEn: 'Zarya helps Sojourn charge railgun quickly' 
   },
 
   // 秩序之光的最佳拍档
@@ -488,7 +636,6 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonEn: 'Genji complements Emrey\'s double-dive strategy' 
   },
 
-  // ========== Support heroes 最佳拍档理由 ==========
   // 安娜的最佳拍档
   'dva-ana': { 
     reasonZh: 'D.Va的高机动性能让安娜安全转移位置', 
@@ -501,6 +648,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'zarya-ana': { 
     reasonZh: '查莉娅的护盾能保护安娜不被秒倒', 
     reasonEn: 'Zarya\'s bubble protects Ana from being picked' 
+  },
+  'sigma-ana': {
+    reasonZh: '西格玛的护盾保护安娜的狙击位置', 
+    reasonEn: 'Sigma\'s shield protects Ana\'s sniping position' 
   },
 
   // 巴蒂斯特的最佳拍档
@@ -516,6 +667,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '卡西迪的中距离输出弥补巴蒂斯特的输出空缺', 
     reasonEn: 'Cassidy covers Baptiste\'s mid-range gaps' 
   },
+  'soldier76-baptiste': {
+    reasonZh: '士兵76配合巴蒂斯特形成双DPS', 
+    reasonEn: 'Soldier pairs with Baptiste for double DPS' 
+  },
+  'orisa-baptiste': {
+    reasonZh: '奥丽莎配合巴蒂斯特形成双前排', 
+    reasonEn: 'Orisa pairs with Baptiste for double tank' 
+  },
 
   // 布丽吉塔的最佳拍档
   'dva-brigitte': { 
@@ -529,6 +688,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'zarya-brigitte': { 
     reasonZh: '查莉娅和布丽吉塔都是前排，形成强力阵线', 
     reasonEn: 'Zarya + Brigitte create strong frontline' 
+  },
+  'tracer-brigitte': {
+    reasonZh: '猎空配合布丽吉塔的前排压制', 
+    reasonEn: 'Tracer pairs with Brigitte for aggressive frontline' 
   },
 
   // 雾子的最佳拍档
@@ -544,6 +707,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '猎空和雾子的高机动组合能快速建立优势', 
     reasonEn: 'High mobility duo - quick advantage generation' 
   },
+  'winston-kiriko': {
+    reasonZh: '温斯顿跳入敌阵时雾子能及时治疗', 
+    reasonEn: 'Kiriko enables Winston\'s diving strategy' 
+  },
+  'doomfist-kiriko': {
+    reasonZh: '雾子保护铁拳的突进', 
+    reasonEn: 'Kiriko protects Doomfist\'s engages' 
+  },
 
   // 生命之梭的最佳拍档
   'dva-lifeweaver': { 
@@ -557,6 +728,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'cassidy-lifeweaver': { 
     reasonZh: '卡西迪的中距离压制配合生命之梭的远程辅助', 
     reasonEn: 'Cassidy pressure + Lifeweaver range support' 
+  },
+  'mei-lifeweaver': {
+    reasonZh: '小美的冰墙配合花男的花瓣平台能创造超高狙击点', 
+    reasonEn: 'Mei ice wall + Lifeweaver platform = ultra high ground' 
   },
 
   // 卢西奥的最佳拍档
@@ -572,6 +747,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '猎空和卢西奥的加速能打出灵活的游击战', 
     reasonEn: 'Speed combo - Tracer + Lucio hit-and-run' 
   },
+  'winston-lucio': {
+    reasonZh: '温斯顿配合卢西奥加速能快速转移', 
+    reasonEn: 'Winston + Lucio speed = rapid rotation' 
+  },
 
   // 天使的最佳拍档
   'pharah-mercy': { 
@@ -585,6 +764,14 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'widowmaker-mercy': { 
     reasonZh: '天使保护黑百合的狙击位置不被切入', 
     reasonEn: 'Mercy protects Widowmaker\'s sniping position' 
+  },
+  'genji-mercy': {
+    reasonZh: '天使保护源氏的切入位置', 
+    reasonEn: 'Mercy protects Genji\'s positioning' 
+  },
+  'tracer-mercy': {
+    reasonZh: '天使保护猎空的侧翼', 
+    reasonEn: 'Mercy protects Tracer\'s flanks' 
   },
 
   // 莫伊拉的最佳拍档
@@ -600,6 +787,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '查莉娅需要持续治疗来维持高能量', 
     reasonEn: 'Moira maintains Zarya\'s high energy' 
   },
+  'roadhog-moira': {
+    reasonZh: '路霸配合莫伊拉形成强力前排', 
+    reasonEn: 'Roadhog + Moira = strong frontline' 
+  },
 
   // 禅雅塔的最佳拍档
   'genji-zenyatta': { 
@@ -613,6 +804,10 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   'dva-zenyatta': { 
     reasonZh: 'D.Va保护禅雅塔的站位，矩阵吸收伤害', 
     reasonEn: 'D.Va protects Zenyatta\'s positioning' 
+  },
+  'winston-zenyatta': {
+    reasonZh: '温斯顿配合禅雅塔能保护后排', 
+    reasonEn: 'Winston + Zenyatta protects backline' 
   },
 
   // 无漾的最佳拍档
@@ -643,18 +838,28 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonEn: 'High mobility duo - quick number advantage' 
   },
 
-  // 飞天猫的最佳拍档
-  'kiriko-feitianmao': { 
-    reasonZh: '两位都是支援高机动，能快速互相支援', 
-    reasonEn: 'Both mobile supports - mutual protection' 
+  // 黑影的最佳拍档
+  'zarya-sombra': {
+    reasonZh: '查莉娅配合黑影的黑客入侵能快速击杀', 
+    reasonEn: 'Zarya + Sombra hack = quick eliminations' 
   },
-  'zenyatta-feitianmao': { 
-    reasonZh: '禅雅塔增伤飞天猫的输出', 
-    reasonEn: 'Zenyatta\'s Discord boosts Feitianmao\'s damage' 
+  'genji-sombra': {
+    reasonZh: '源氏配合黑影的黑客入侵能形成双重威胁', 
+    reasonEn: 'Genji + Sombra double threat' 
   },
-  'genji-feitianmao': { 
-    reasonZh: '源氏能配合飞天猫进行双切入', 
-    reasonEn: 'Genji follows Feitianmao for double dive' 
+  'tracer-sombra': {
+    reasonZh: '猎空配合黑影形成双侧翼', 
+    reasonEn: 'Tracer + Sombra double flank' 
+  },
+
+  // 小美的最佳拍档
+  'zarya-mei': {
+    reasonZh: '查莉娅配合小美的控制能形成Combo', 
+    reasonEn: 'Zarya + Mei control combo' 
+  },
+  'baptiste-mei': {
+    reasonZh: '巴蒂斯特的免死保护小美的关键技能', 
+    reasonEn: 'Baptiste immortality protects Mei\'s key abilities' 
   },
 
   // 伊拉锐的最佳拍档
@@ -684,6 +889,25 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonZh: '猎空配合朱诺的加速能达到超高机动', 
     reasonEn: 'Tracer + Juno speed ring = extreme mobility' 
   },
+  'winston-juno': {
+    reasonZh: '温斯顿配合朱诺加速能快速转移战场', 
+    reasonEn: 'Winston + Juno speed = rapid rotation' 
+  },
+
+  // 飞天猫的最佳拍档
+  'kiriko-feitianmao': { 
+    reasonZh: '两位都是支援高机动，能快速互相支援', 
+    reasonEn: 'Both mobile supports - mutual protection' 
+  },
+  'zenyatta-feitianmao': { 
+    reasonZh: '禅雅塔增伤飞天猫的输出', 
+    reasonEn: 'Zenyatta\'s Discord boosts Feitianmao\'s damage' 
+  },
+  'genji-feitianmao': { 
+    reasonZh: '源氏能配合飞天猫进行双切入', 
+    reasonEn: 'Genji follows Feitianmao for double dive' 
+  },
+
 };
 
 /**

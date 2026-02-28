@@ -279,6 +279,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'winston', strength: 3 },
   { source: 'brigitte', target: 'winston', strength: 3 },
   { source: 'zenyatta', target: 'winston', strength: 3 },
+  { source: 'hanzo', target: 'winston', strength: 3 },
   
   // 10. 奥丽莎被克制
   { source: 'sigma', target: 'orisa', strength: 3 },
