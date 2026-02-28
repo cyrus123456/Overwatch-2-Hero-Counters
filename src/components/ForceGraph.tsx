@@ -52,12 +52,14 @@ interface ForceGraphProps {
   selectedRole: string | null;
   selectedHero: string | null;
   onHeroSelect: (heroId: string | null) => void;
+  isDrawerOpen?: boolean;
 }
 
 const ForceGraph = ({
   selectedRole,
   selectedHero,
-  onHeroSelect
+  onHeroSelect,
+  isDrawerOpen = true
 }: ForceGraphProps) => {
   const { t, language } = useI18n();
 
@@ -898,7 +900,7 @@ const ForceGraph = ({
       </div>
 
       {/* 缩放与介绍控制 - 进一步右移，避免贴合过紧 */}
-      <div className="absolute bottom-6 left-[420px] z-10 flex flex-col gap-3 pointer-events-auto">
+      <div className={`absolute bottom-6 left-[420px] z-10 flex flex-col gap-3 pointer-events-auto transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
         {/* 网络节点介绍 - 问号图标 */}
         <Popover open={isIntroOpen} onOpenChange={setIsIntroOpen}>
           <PopoverTrigger asChild>

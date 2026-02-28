@@ -510,7 +510,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                 </Button>
               ))}
             </div>
-            <ForceGraph selectedRole={selectedRole} selectedHero={selectedHero} onHeroSelect={setSelectedHero} />
+            <ForceGraph selectedRole={selectedRole} selectedHero={selectedHero} onHeroSelect={setSelectedHero} isDrawerOpen={isDrawerOpen} />
           </div>
         </main>
       </div>
