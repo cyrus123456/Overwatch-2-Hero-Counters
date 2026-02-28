@@ -150,27 +150,36 @@ const ForceGraph = ({
   const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroId: string, swapSourceTarget = false) => {
     const filtered = items.filter(i => i.strength === strength);
     const sorted = sortByRole(filtered);
-    return sorted.map(({ hero, strength: s }) => (
-      <div key={hero.id} className={`flex flex-col gap-1 p-2 rounded-lg border backdrop-blur-sm mb-2 ${colorClass}`}>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-800 flex-shrink-0 ring-1 ring-white/10">
+    const targetHero = heroes.find(h => h.id === targetHeroId);
+    const targetHeroName = targetHero ? (language === 'zh' ? targetHero.name : targetHero.nameEn) : '';
+    return sorted.map(({ hero, strength: s }) => {
+      const reason = getCounterReason(swapSourceTarget ? targetHeroId : hero.id, swapSourceTarget ? hero.id : targetHeroId, language);
+      const heroName = language === 'zh' ? hero.name : hero.nameEn;
+      const formattedReason = reason.includes('→') ? reason.replace(/^(.+?) → (.+)$/, (_, ability, weakness) => `${swapSourceTarget ? targetHeroName : heroName} ${ability} → ${swapSourceTarget ? heroName : targetHeroName} ${weakness}`) : reason;
+      return (
+        <div key={hero.id} className={`flex items-start gap-3 p-2 rounded-lg border backdrop-blur-sm mb-2 ${colorClass}`}>
+          <div className={`w-10 h-10 rounded-full overflow-hidden bg-slate-800 flex-shrink-0 ring-2 ${colorClass.includes('red') ? 'ring-red-500/50' : 'ring-green-500/50'}`}>
             <img src={hero.image} alt="" className="w-full h-full object-cover" />
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-sm font-bold text-white">{language === 'zh' ? hero.name : hero.nameEn}</span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
-              {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
-            </span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-white">{heroName}</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
+                  {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
+                </span>
+              </div>
+              <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${s === 3 ? 'bg-red-400' : s === 2 ? 'bg-orange-400' : 'bg-slate-400'}`}>
+                {s === 3 ? t('hardCounter') : s === 2 ? t('strongCounter') : t('softCounter')} LV.{s}
+              </Badge>
+            </div>
+            <p className={`text-[11px] leading-relaxed mt-1 ${colorClass.includes('red') ? 'text-red-300' : 'text-green-300'}`}>
+              {formattedReason}
+            </p>
           </div>
-          <Badge variant="secondary" className={`text-[9px] px-1 py-0 ml-auto text-white shadow-sm border-none ${s === 3 ? 'bg-red-500' : s === 2 ? 'bg-orange-500' : 'bg-slate-600'}`}>
-            {s === 3 ? t('hardCounter') : s === 2 ? t('strongCounter') : t('softCounter')} LV.{s}
-          </Badge>
         </div>
-        <p className="text-[11px] text-slate-300 leading-relaxed pl-10">
-          {getCounterReason(swapSourceTarget ? targetHeroId : hero.id, swapSourceTarget ? hero.id : targetHeroId, language)}
-        </p>
-      </div>
-    ));
+      );
+    });
   };
 
   useEffect(() => {
@@ -560,16 +569,28 @@ const ForceGraph = ({
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         const isRelevant = activeCounterTab === 'synergy' ? (targetId === selectedHero || sourceId === selectedHero) : activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero;
         if (!isRelevant) return 0.01;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
+        let s = 1;
+        if (activeCounterTab === 'synergy') {
+          const synergyRel = synergyRelations.find(r => r.source === sourceId && r.target === targetId);
+          s = synergyRel?.strength || 1;
+        } else {
+          const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+          s = rel?.strength || 1;
+        }
         return s === 3 ? 1.0 : s === 2 ? 0.5 : 0.25;
       }).attr('stroke-width', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         const isRelevant = activeCounterTab === 'synergy' ? (targetId === selectedHero || sourceId === selectedHero) : activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero;
         if (!isRelevant) return 1;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
+        let s = 1;
+        if (activeCounterTab === 'synergy') {
+          const synergyRel = synergyRelations.find(r => r.source === sourceId && r.target === targetId);
+          s = synergyRel?.strength || 1;
+        } else {
+          const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+          s = rel?.strength || 1;
+        }
         return s === 3 ? 15 : s === 2 ? 9 : 4.5;
       }).attr('stroke', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
@@ -604,13 +625,32 @@ const ForceGraph = ({
         group.select('.node-name').transition().duration(300).attr('dy', d.radius + 20);
       });
       link.attr('stroke-opacity', d => {
-        // Synergy links have fixed opacity
-        if (activeCounterTab === 'synergy') return 0.6;
+        if (activeCounterTab === 'synergy') {
+          const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+          const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+          const synergyRel = synergyRelations.find(r => r.source === sourceId && r.target === targetId);
+          const s = synergyRel?.strength || 1;
+          return s === 3 ? 0.5 : s === 2 ? 0.15 : 0.05;
+        }
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
         return s === 3 ? 0.5 : s === 2 ? 0.15 : 0.05;
+      }).attr('stroke-width', d => {
+        // Synergy links use counter strength-based width
+        if (activeCounterTab === 'synergy') {
+          const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+          const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+          const synergyRel = synergyRelations.find(r => r.source === sourceId && r.target === targetId);
+          const s = synergyRel?.strength || 1;
+          return s === 3 ? 4.5 : s === 2 ? 3 : 1.5;
+        }
+        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const s = rel?.strength || 1;
+        return s === 3 ? 4.5 : s === 2 ? 3 : 1.5;
       }).attr('stroke', d => {
         // Synergy links use cyan color
         if (activeCounterTab === 'synergy') return '#06b6d4';
@@ -708,13 +748,18 @@ const ForceGraph = ({
                                 <img src={hero.image} alt="" className="w-full h-full object-cover" />
                               </div>
                               <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm font-bold text-white">{language === 'zh' ? hero.name : hero.nameEn}</span>
-                                  <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
-                                    {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
-                                  </span>
+                                <div className="flex items-center gap-2 flex-wrap justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-bold text-white">{language === 'zh' ? hero.name : hero.nameEn}</span>
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
+                                      {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
+                                    </span>
+                                  </div>
+                                  <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${partner.strength === 3 ? 'bg-cyan-400' : partner.strength === 2 ? 'bg-cyan-400' : 'bg-slate-300'}`}>
+                                    {partner.strength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : partner.strength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{partner.strength}
+                                  </Badge>
                                 </div>
-                                <p className="text-[11px] text-cyan-300 leading-relaxed">
+                                <p className="text-[11px] text-cyan-300 leading-relaxed mt-1">
                                   {getSynergyReason(hero.id, displayedHero.id, language)}
                                 </p>
                               </div>
@@ -733,24 +778,31 @@ const ForceGraph = ({
                       <FileText className="w-4 h-4 text-cyan-400" />
                       <span className="text-xs font-semibold text-white">{activeCounterTab === 'counteredBy' ? t('counteredByTemplate') : activeCounterTab === 'counters' ? t('countersTemplate') : t('synergyDesc')}</span>
                     </div>
-                    {(activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 && (
+                    {(activeCounterTab === 'synergy' ? synergyPartners.length > 0 : (activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0) && (
                       <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-slate-200 hover:text-cyan-400" onClick={(e) => {
                         e.stopPropagation();
-                        const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
-                        const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                        const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
-                        list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
-                        const formatGroup = (arr: typeof list, prefix: string) =>
-                          arr.length > 0 ? `${prefix}${arr.map(i => {
-                            const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
-                            return name;
-                          }).join(', ')}` : '';
-                        const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
-                        const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
-                        const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
-                        const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
-                        const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
-                        const text = `${header} ${groups}`;
+                        let text = '';
+                        if (activeCounterTab === 'synergy') {
+                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                          const partnerNames = synergyPartners.map(p => language === 'zh' ? p.hero.name : p.hero.nameEn).join(', ');
+                          text = `${hName} 最佳拍档 英雄 ${partnerNames}`;
+                        } else {
+                          const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
+                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                          const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                          list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                          const formatGroup = (arr: typeof list, prefix: string) =>
+                            arr.length > 0 ? `${prefix}${arr.map(i => {
+                              const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                              return name;
+                            }).join(', ')}` : '';
+                          const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
+                          const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
+                          const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
+                          const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
+                          const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
+                          text = `${header} ${groups}`;
+                        }
                         handleCopyToClipboard(text);
                       }}>
                         {isCopied ? <><Check className="w-3.5 h-3.5 text-green-500" /><span>{t('copied')}</span></> : <><Copy className="w-3.5 h-3.5" /><span>{t('copy')}</span></>}
@@ -762,27 +814,52 @@ const ForceGraph = ({
                     className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs leading-relaxed text-slate-200 select-all cursor-pointer hover:border-slate-700 relative group transition-colors"
                     onDoubleClick={(e) => {
                       e.stopPropagation();
-                      const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
-                      if (list.length > 0) {
-                        const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                        const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
-                        list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
-                        const formatGroup = (arr: typeof list, prefix: string) =>
-                          arr.length > 0 ? `${prefix}${arr.map(i => {
-                            const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
-                            return name;
-                          }).join(', ')}` : '';
-                        const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
-                        const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
-                        const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
-                        const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
-                        const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
-                        const text = `${header} ${groups}`;
-                        handleCopyToClipboard(text);
+                      let text = '';
+                      if (activeCounterTab === 'synergy') {
+                        if (synergyPartners.length > 0) {
+                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                          const partnerNames = synergyPartners.map(p => language === 'zh' ? p.hero.name : p.hero.nameEn).join(', ');
+                          text = `${hName} 最佳拍档 英雄 ${partnerNames}`;
+                          handleCopyToClipboard(text);
+                        }
+                      } else {
+                        const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
+                        if (list.length > 0) {
+                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                          const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                          list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                          const formatGroup = (arr: typeof list, prefix: string) =>
+                            arr.length > 0 ? `${prefix}${arr.map(i => {
+                              const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                              return name;
+                            }).join(', ')}` : '';
+                          const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
+                          const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
+                          const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
+                          const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
+                          const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
+                          text = `${header} ${groups}`;
+                          handleCopyToClipboard(text);
+                        }
                       }
                     }}
                   >
-                    {(activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 ? (
+                    {activeCounterTab === 'synergy' ? (
+                      synergyPartners.length > 0 ? (
+                        (() => {
+                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                          const hNameWithNickname = language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : hName;
+                          const partnerNames = synergyPartners.map(p => {
+                            const name = language === 'zh' ? p.hero.name : p.hero.nameEn;
+                            if (language === 'zh' && p.hero.nickname) {
+                              return `${name}（${p.hero.nickname}）`;
+                            }
+                            return name;
+                          }).join('、');
+                          return <><div className="text-cyan-400 font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>最佳拍档</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-cyan-300 font-medium">{partnerNames}</div></>;
+                        })()
+                      ) : t('noSynergy')
+                    ) : ((activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 ? (
                       (() => {
                         const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
                         const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
@@ -803,7 +880,7 @@ const ForceGraph = ({
                           return <><div className="text-cyan-400 font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
                         }
                       })()
-                    ) : t('noCounterData')}
+                    ) : t('noCounterData'))}
                     <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"><span className="text-[10px] text-slate-200 bg-slate-900 px-1 rounded">{t('doubleClickToCopy')}</span></div>
                   </div>
                 </div>
@@ -821,7 +898,7 @@ const ForceGraph = ({
       </div>
 
       {/* 缩放与介绍控制 - 进一步右移，避免贴合过紧 */}
-      <div className="absolute bottom-6 left-[480px] z-10 flex flex-col gap-3 pointer-events-auto">
+      <div className="absolute bottom-6 left-[420px] z-10 flex flex-col gap-3 pointer-events-auto">
         {/* 网络节点介绍 - 问号图标 */}
         <Popover open={isIntroOpen} onOpenChange={setIsIntroOpen}>
           <PopoverTrigger asChild>

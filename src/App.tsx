@@ -233,7 +233,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
         {/* Main Content */}
         <main className="flex-1 flex flex-row overflow-hidden relative">
 {/* 左侧地图卡片面板 - 抽屉 */}
-          <div className={`absolute top-4 bottom-4 z-10 flex flex-col w-96 pointer-events-none transition-all duration-300 ease-in-out ${isDrawerOpen ? 'left-4' : '-left-80'}`}>
+          <div className={`absolute top-4 bottom-4 left-4 z-10 flex flex-col w-96 pointer-events-none transition-transform duration-300 ease-in-out ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
             {/* 抽屉Toggle按钮 - 放在面板右侧外面 */}
             <button
               onClick={() => setIsDrawerOpen(!isDrawerOpen)}
