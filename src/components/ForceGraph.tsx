@@ -685,7 +685,7 @@ const ForceGraph = ({
       {/* 英雄详情面板 */}
       <div className="absolute z-10 w-96 flex flex-col" style={{ top: '1rem', right: '1rem', bottom: '1rem' }}>
         <div className="flex-1 overflow-hidden pointer-events-auto h-full">
-          <Card className="p-3 bg-slate-900/98 border-slate-700 backdrop-blur-md shadow-xl h-full flex flex-col gap-1">
+          <Card className="p-3 bg-slate-800/60 border-slate-700 backdrop-blur-md shadow-xl h-full flex flex-col gap-1">
             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-700/50 flex-shrink-0">
               <ShieldAlert className="w-5 h-5 text-cyan-400 flex-shrink-0" />
               <h3 className="text-lg font-bold text-slate-100">{t('heroCounterPanel')}</h3>
@@ -907,7 +907,7 @@ const ForceGraph = ({
             <Button
               variant="secondary"
               size="icon"
-              className="bg-slate-900/60 backdrop-blur-md hover:bg-slate-800 border border-slate-700 shadow-lg w-10 h-10 rounded-full transition-all flex items-center justify-center"
+              className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-10 h-10 rounded-full transition-all flex items-center justify-center"
               onMouseEnter={() => setIsIntroOpen(true)}
               onClick={(e) => e.preventDefault()}
             >
@@ -1051,9 +1051,9 @@ const ForceGraph = ({
 
         {/* 缩放按钮横向排列 */}
         <div className="flex flex-row gap-2">
-          <Button variant="secondary" size="icon" onClick={handleZoomIn} className="bg-slate-900/60 backdrop-blur-md hover:bg-slate-800 border border-slate-700 shadow-lg w-9 h-9" title={t('zoomIn') || "Zoom In"}><ZoomIn className="w-4 h-4 text-cyan-400" /></Button>
-          <Button variant="secondary" size="icon" onClick={handleZoomOut} className="bg-slate-900/60 backdrop-blur-md hover:bg-slate-800 border border-slate-700 shadow-lg w-9 h-9" title={t('zoomOut') || "Zoom Out"}><ZoomOut className="w-4 h-4 text-cyan-400" /></Button>
-          <Button variant="secondary" size="icon" onClick={handleReset} className="bg-slate-900/60 backdrop-blur-md hover:bg-slate-800 border border-slate-700 shadow-lg w-9 h-9" title={t('resetView') || "Reset View"}><RotateCcw className="w-4 h-4 text-cyan-400" /></Button>
+          <Button variant="secondary" size="icon" onClick={handleZoomIn} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('zoomIn') || "Zoom In"}><ZoomIn className="w-4 h-4 text-cyan-400" /></Button>
+          <Button variant="secondary" size="icon" onClick={handleZoomOut} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('zoomOut') || "Zoom Out"}><ZoomOut className="w-4 h-4 text-cyan-400" /></Button>
+          <Button variant="secondary" size="icon" onClick={handleReset} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('resetView') || "Reset View"}><RotateCcw className="w-4 h-4 text-cyan-400" /></Button>
         </div>
       </div>
 
