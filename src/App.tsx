@@ -470,7 +470,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
           {/* 右侧可视化区域 */}
           <div className="flex-1 relative overflow-hidden bg-slate-950/20">
             {/* 顶部工具栏容器 - 筛选模块 视觉居中优化（对齐左右面板间隙） */}
-            <div className="absolute top-6 left-[calc(50%+28px)] -translate-x-1/2 z-20 flex items-center gap-2 bg-slate-800/60 backdrop-blur-md border border-slate-700 p-1.5 rounded-full shadow-2xl pointer-events-auto">
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-slate-800/60 backdrop-blur-md border border-slate-700 p-1.5 rounded-full shadow-2xl pointer-events-auto">
               <Button 
                 variant={selectedRole === null ? 'default' : 'ghost'} 
                 size="sm" 
