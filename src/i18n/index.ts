@@ -64,6 +64,8 @@ const translations: Record<Language, Record<string, string>> = {
     zoomDesc: '滚轮缩放：在画布滚动鼠标中键可放大缩小',
     hoverDesc: '悬停预览：移动鼠标到头像上可查看高亮并微缩无关项',
     panDesc: '移动画板：左键或中键拖拽画布任意位置可平移整个关系图',
+    touchPanDesc: '双指平移：双指拖拽可平移画布',
+    touchZoomDesc: '双指缩放：双指捏合可放大缩小',
     interactionGuide: '交互说明',
     
     hardCounter: '硬克制',
@@ -152,6 +154,8 @@ const translations: Record<Language, Record<string, string>> = {
     zoomDesc: 'Scroll Zoom: Use mouse wheel to zoom in/out',
     hoverDesc: 'Hover Focus: Mouse over icon to highlight and focus',
     panDesc: 'Pan: Drag canvas with left or middle mouse button to move the graph',
+    touchPanDesc: 'Two-Finger Pan: Drag with two fingers to pan the canvas',
+    touchZoomDesc: 'Two-Finger Pinch: Pinch to zoom in/out',
     interactionGuide: 'Interaction Guide',
     hardCounter: 'Hard',
     strongCounter: 'Strong',

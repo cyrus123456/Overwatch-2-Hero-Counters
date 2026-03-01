@@ -352,8 +352,10 @@ const ForceGraph = ({
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.3, 3])
       .filter((event) => {
-        // 允许左键拖拽、滚轮缩放、鼠标中键拖拽平移
+        // 允许左键拖拽、滚轮缩放、鼠标中键拖拽平移 + 触摸事件(双指缩放/平移)
         if (event.button === 0 || event.button === 1) return true;
+        // 允许触摸事件 (双指缩放、双指平移)
+        if (event.type.startsWith('touch')) return true;
         return false;
       })
       .on('zoom', (event) => g.attr('transform', event.transform));
@@ -1042,6 +1044,20 @@ const ForceGraph = ({
                         <span className="text-cyan-300/80"> {splitDesc(t('panDesc')).content}</span>
                       </span>
                     </div>
+                    </div>
+                    <div className="text-purple-300 flex items-start gap-2 bg-purple-900/20 p-2 rounded-lg border border-purple-800/30">
+                      <span className="w-1 h-1 bg-purple-500 rounded-full mt-1 flex-shrink-0"></span>
+                      <span>
+                        <span className="font-medium">{splitDesc(t('touchZoomDesc')).title}:</span>
+                        <span className="text-purple-300/80"> {splitDesc(t('touchZoomDesc')).content}</span>
+                      </span>
+                    </div>
+                    <div className="text-purple-300 flex items-start gap-2 bg-purple-900/20 p-2 rounded-lg border border-purple-800/30">
+                      <span className="w-1 h-1 bg-purple-500 rounded-full mt-1 flex-shrink-0"></span>
+                      <span>
+                        <span className="font-medium">{splitDesc(t('touchPanDesc')).title}:</span>
+                        <span className="text-purple-300/80"> {splitDesc(t('touchPanDesc')).content}</span>
+                      </span>
                   </div>
                 </div>
               </div>
