@@ -161,7 +161,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     <TooltipProvider>
       <div className="h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 flex flex-col overflow-hidden font-sans">
         {/* Header */}
-        <header className="border-b border-slate-800/50 bg-slate-900/50 backdrop-blur-sm z-50 flex-shrink-0">
+        <header className="border-b border-slate-700 bg-slate-900/50 backdrop-blur-sm z-50 flex-shrink-0">
           <div className="w-full px-6 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-8">
@@ -237,13 +237,13 @@ const [isMapCopied, setIsMapCopied] = useState(false);
             {/* 抽屉Toggle按钮 - 放在面板右侧外面 */}
             <button
               onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-              className="absolute -right-12 top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-900/95 hover:bg-slate-800 border border-slate-700/50 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
+              className="absolute -right-12 top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-900/95 hover:bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
               title={isDrawerOpen ? '收起面板' : '展开面板'}
             >
               <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isDrawerOpen ? '' : 'rotate-180'}`} />
             </button>
             <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
-              <Card className="p-3 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col gap-1 rounded-xl border border-slate-800/50">
+              <Card className="p-3 bg-slate-900/95 border-slate-700 backdrop-blur-sm shadow-xl h-full flex flex-col gap-1 rounded-xl border">
                 <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4">
                   <div className="flex items-center gap-3">
                     <MapPin className="w-6 h-6 text-cyan-400" />
@@ -470,7 +470,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
           {/* 右侧可视化区域 */}
           <div className="flex-1 relative overflow-hidden bg-slate-950/20">
             {/* 顶部工具栏容器 - 筛选模块 视觉居中优化（对齐左右面板间隙） */}
-            <div className="absolute top-6 left-[calc(50%+28px)] -translate-x-1/2 z-20 flex items-center gap-2 bg-slate-950/80 backdrop-blur-md border border-slate-700/50 p-1.5 rounded-full shadow-2xl pointer-events-auto">
+            <div className="absolute top-6 left-[calc(50%+28px)] -translate-x-1/2 z-20 flex items-center gap-2 bg-slate-950/80 backdrop-blur-md border border-slate-700 p-1.5 rounded-full shadow-2xl pointer-events-auto">
               <Button 
                 variant={selectedRole === null ? 'default' : 'ghost'} 
                 size="sm" 

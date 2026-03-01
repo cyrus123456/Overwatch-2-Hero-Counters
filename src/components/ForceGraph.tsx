@@ -907,7 +907,7 @@ const ForceGraph = ({
             <Button
               variant="secondary"
               size="icon"
-              className="bg-slate-800/95 hover:bg-slate-700 border-slate-500 shadow-lg w-10 h-10 rounded-full transition-all flex items-center justify-center"
+              className="bg-slate-800/95 hover:bg-slate-700 border border-slate-700 shadow-lg w-10 h-10 rounded-full transition-all flex items-center justify-center"
               onMouseEnter={() => setIsIntroOpen(true)}
               onClick={(e) => e.preventDefault()}
             >
@@ -1051,9 +1051,9 @@ const ForceGraph = ({
 
         {/* 缩放按钮横向排列 */}
         <div className="flex flex-row gap-2">
-          <Button variant="secondary" size="icon" onClick={handleZoomIn} className="bg-slate-800/95 hover:bg-slate-700 border-slate-500 shadow-lg w-9 h-9" title={t('zoomIn') || "Zoom In"}><ZoomIn className="w-4 h-4 text-cyan-400" /></Button>
-          <Button variant="secondary" size="icon" onClick={handleZoomOut} className="bg-slate-800/95 hover:bg-slate-700 border-slate-500 shadow-lg w-9 h-9" title={t('zoomOut') || "Zoom Out"}><ZoomOut className="w-4 h-4 text-cyan-400" /></Button>
-          <Button variant="secondary" size="icon" onClick={handleReset} className="bg-slate-800/95 hover:bg-slate-700 border-slate-500 shadow-lg w-9 h-9" title={t('resetView') || "Reset View"}><RotateCcw className="w-4 h-4 text-cyan-400" /></Button>
+          <Button variant="secondary" size="icon" onClick={handleZoomIn} className="bg-slate-800/95 hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('zoomIn') || "Zoom In"}><ZoomIn className="w-4 h-4 text-cyan-400" /></Button>
+          <Button variant="secondary" size="icon" onClick={handleZoomOut} className="bg-slate-800/95 hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('zoomOut') || "Zoom Out"}><ZoomOut className="w-4 h-4 text-cyan-400" /></Button>
+          <Button variant="secondary" size="icon" onClick={handleReset} className="bg-slate-800/95 hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('resetView') || "Reset View"}><RotateCcw className="w-4 h-4 text-cyan-400" /></Button>
         </div>
       </div>
 
