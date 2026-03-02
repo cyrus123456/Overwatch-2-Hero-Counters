@@ -788,6 +788,33 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
       ko: '플래시포인트 맵. 인도풍 고대 도시, 고저차가 크고 실내 건물이 많음',
     },
   },
+  {
+    id: 'aatlis',
+    name: '阿特利斯',
+    nameEn: 'Aatlis',
+    type: 'flashpoint',
+    recommendedHeroes: ['pharah', 'winston', 'dva', 'kiriko', 'lucio', 'genji', 'cassidy', 'hanzo', 'sigma', 'zarya', 'roadhog', 'junkrat'],
+    heroReasons: {
+      pharah: { zh: '开阔空间飞行轰炸', en: 'Open spaces for flight and bombing' },
+      winston: { zh: '机动性强快速转点', en: 'High mobility for fast rotations' },
+      dva: { zh: '推进器快速支援，自爆威胁大', en: 'Boosters for fast support; Self-Destruct is threatening' },
+      kiriko: { zh: '瞬快速支援，铃铛保命', en: 'Swift Step for fast support; Protection Suzu for survival' },
+      lucio: { zh: '滑板鞋快速转点', en: 'Skates for fast rotations' },
+      genji: { zh: '机动性穿梭作战', en: 'Mobile skirmishing' },
+      cassidy: { zh: '中距离输出稳定', en: 'Stable mid-range damage' },
+      hanzo: { zh: '龙覆盖站点区域', en: 'Dragonstrike covers objective areas' },
+      sigma: { zh: '掩体消耗，引力乱流开团', en: 'Cover poke; Gravitic Flux for team engages' },
+      zarya: { zh: '护盾吸收伤害', en: 'Bubble absorbs damage' },
+      roadhog: { zh: '钩子单体控制', en: 'Hook single target control' },
+      junkrat: { zh: '榴弹在狭窄区域效果好', en: 'Grenades effective in narrow areas' },
+    },
+    description: {
+      zh: '闪点模式图。摩洛哥风格古城，集市和街道交错，多垂直地形',
+      en: 'Flashpoint map. Moroccan-style ancient city; marketplace and streets interweave with vertical terrain',
+      ja: 'フラッシュポイントマップ。モロッコ風の古代都市、市場と通りが交差し、垂直地形が多い',
+      ko: '플래시포인트 맵. 모로코풍 고대 도시, 시장과 거리가 교차하고 수직 지형이 많음',
+    },
+  }
 ];
 
 // 获取地图类型颜色
