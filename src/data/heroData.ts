@@ -153,6 +153,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'widowmaker', target: 'dva', strength: 3 },
   { source: 'mei', target: 'dva', strength: 3 },
   { source: 'hanzo', target: 'dva', strength: 3 },
+  { source: 'anran', target: 'dva', strength: 3 }, // 补充：D.Va还被安燃克制
+  { source: 'vendetta', target: 'dva', strength: 3 }, // 补充：D.Va还被斩仇克制
   
   // 2. 末日铁拳被克制
   { source: 'roadhog', target: 'doomfist', strength: 3 },
@@ -164,6 +166,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'doomfist', strength: 3 },
   { source: 'juno', target: 'doomfist', strength: 3 },
   { source: 'brigitte', target: 'doomfist', strength: 3 },
+  { source: 'ruixi', target: 'doomfist', strength: 3 }, // 补充：末日铁拳还被瑞稀克制
+  { source: 'feitianmao', target: 'doomfist', strength: 3 }, // 补充：末日铁拳还被飞天猫克制
   
   // 3. 莱因哈特被克制
   { source: 'orisa', target: 'reinhardt', strength: 3 },
@@ -182,6 +186,10 @@ export const counterRelations: CounterRelation[] = [
   { source: 'zenyatta', target: 'reinhardt', strength: 3 },
   { source: 'lucio', target: 'reinhardt', strength: 3 },
   { source: 'illari', target: 'reinhardt', strength: 3 },
+  { source: 'anran', target: 'reinhardt', strength: 3 }, // 补充：莱因哈特还被安燃克制
+  { source: 'feitianmao', target: 'reinhardt', strength: 3 }, // 补充：莱因哈特还被飞天猫克制
+  { source: 'wuyang', target: 'reinhardt', strength: 3 }, // 补充：莱因哈特还被无漾克制
+  { source: 'juno', target: 'reinhardt', strength: 3 }, // 补充：莱因哈特还被朱诺克制
   
   // 4. 骇灾被克制
   { source: 'dva', target: 'hazard', strength: 3 },
@@ -196,6 +204,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'echo', target: 'hazard', strength: 3 },
   { source: 'ana', target: 'hazard', strength: 3 },
   { source: 'zenyatta', target: 'hazard', strength: 3 },
+  { source: 'brigitte', target: 'hazard', strength: 3 }, // 补充：骇灾还被布丽吉塔克制
   
   // 5. 路霸被克制
   { source: 'junker_queen', target: 'roadhog', strength: 3 },
@@ -218,6 +227,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'roadhog', strength: 3 },
   { source: 'baptiste', target: 'roadhog', strength: 3 },
   { source: 'brigitte', target: 'roadhog', strength: 3 },
+  { source: 'anran', target: 'roadhog', strength: 3 }, // 补充：路霸还被安燃克制
   
   // 6. 渣客女王被克制
   { source: 'orisa', target: 'junker_queen', strength: 3 },
@@ -249,6 +259,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'zenyatta', target: 'sigma', strength: 3 },
   { source: 'lifeweaver', target: 'sigma', strength: 3 },
   { source: 'moira', target: 'sigma', strength: 3 },
+  { source: 'jinyu', target: 'sigma', strength: 3 }, // 补充：西格玛还被金驭克制
+  { source: 'wuyang', target: 'sigma', strength: 3 }, // 补充：西格玛还被无漾克制
   
   // 8. 毛加被克制
   { source: 'sigma', target: 'mauga', strength: 3 },
@@ -280,6 +292,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'brigitte', target: 'winston', strength: 3 },
   { source: 'zenyatta', target: 'winston', strength: 3 },
   { source: 'hanzo', target: 'winston', strength: 3 },
+  { source: 'ruixi', target: 'winston', strength: 3 }, // 补充：温斯顿还被瑞稀克制
   
   // 10. 奥丽莎被克制
   { source: 'sigma', target: 'orisa', strength: 3 },
@@ -314,6 +327,9 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'wrecking_ball', strength: 3 },
   { source: 'brigitte', target: 'wrecking_ball', strength: 3 },
   { source: 'lucio', target: 'wrecking_ball', strength: 3 },
+  { source: 'jinyu', target: 'wrecking_ball', strength: 3 }, // 补充：破坏球还被金驭克制
+  { source: 'feitianmao', target: 'wrecking_ball', strength: 3 }, // 补充：破坏球还被飞天猫克制
+  { source: 'ruixi', target: 'wrecking_ball', strength: 3 }, // 补充：破坏球还被瑞稀克制
   
   // 12. 拉玛刹被克制
   { source: 'sigma', target: 'ramattra', strength: 3 },
@@ -335,6 +351,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'baptiste', target: 'ramattra', strength: 3 },
   { source: 'illari', target: 'ramattra', strength: 3 },
   { source: 'zenyatta', target: 'ramattra', strength: 3 },
+  { source: 'jinyu', target: 'ramattra', strength: 3 }, // 补充：拉玛刹还被金驭克制
+  { source: 'feitianmao', target: 'ramattra', strength: 3 }, // 补充：拉玛刹还被飞天猫克制
   
   // 13. 查莉娅被克制
   { source: 'winston', target: 'zarya', strength: 3 },
@@ -358,6 +376,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'sojourn', target: 'ashe', strength: 3 },
   { source: 'zenyatta', target: 'ashe', strength: 3 },
   { source: 'illari', target: 'ashe', strength: 3 },
+  { source: 'freja', target: 'ashe', strength: 3 }, // 补充：艾什还被芙蕾雅克制
   
   // 2. 死神被克制
   { source: 'sigma', target: 'reaper', strength: 3 },
@@ -381,6 +400,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'lucio', target: 'reaper', strength: 3 },
   { source: 'illari', target: 'reaper', strength: 3 },
   { source: 'juno', target: 'reaper', strength: 3 },
+  { source: 'anran', target: 'reaper', strength: 3 }, // 补充：死神还被安燃克制
   
   // 3. 堡垒被克制
   { source: 'sigma', target: 'bastion', strength: 3 },
@@ -400,6 +420,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'bastion', strength: 3 },
   { source: 'zenyatta', target: 'bastion', strength: 3 },
   { source: 'illari', target: 'bastion', strength: 3 },
+  { source: 'jinyu', target: 'bastion', strength: 3 }, // 补充：堡垒还被金驭克制
+  { source: 'wuyang', target: 'bastion', strength: 3 }, // 补充：堡垒还被无漾克制
   
   // 4. 索杰恩被克制
   { source: 'winston', target: 'sojourn', strength: 3 },
@@ -424,6 +446,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'baptiste', target: 'cassidy', strength: 3 },
   { source: 'ana', target: 'cassidy', strength: 3 },
   { source: 'illari', target: 'cassidy', strength: 3 },
+  { source: 'emrey', target: 'cassidy', strength: 3 }, // 补充：卡西迪还被埃姆雷克制
+  { source: 'vendetta', target: 'cassidy', strength: 3 }, // 补充：卡西迪还被斩仇克制
   
   // 6. 士兵76被克制
   { source: 'sigma', target: 'soldier76', strength: 3 },
@@ -443,6 +467,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'zenyatta', target: 'soldier76', strength: 3 },
   { source: 'baptiste', target: 'soldier76', strength: 3 },
   { source: 'illari', target: 'soldier76', strength: 3 },
+  { source: 'emrey', target: 'soldier76', strength: 3 }, // 补充：士兵76还被埃姆雷克制
+  { source: 'vendetta', target: 'soldier76', strength: 3 }, // 补充：士兵76还被斩仇克制
   
   // 7. 回声被克制
   { source: 'winston', target: 'echo', strength: 3 },
@@ -490,6 +516,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'brigitte', target: 'genji', strength: 3 },
   { source: 'zenyatta', target: 'genji', strength: 3 },
   { source: 'moira', target: 'genji', strength: 3 },
+  { source: 'emrey', target: 'genji', strength: 3 }, // 补充：源氏还被埃姆雷克制
+  { source: 'ruixi', target: 'genji', strength: 3 }, // 补充：源氏还被瑞稀克制
   
   // 11. 托比昂被克制
   { source: 'orisa', target: 'torbjorn', strength: 3 },
@@ -521,6 +549,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'juno', target: 'hanzo', strength: 3 },
   { source: 'kiriko', target: 'hanzo', strength: 3 },
   { source: 'moira', target: 'hanzo', strength: 3 },
+  { source: 'emrey', target: 'hanzo', strength: 3 }, // 补充：半藏还被埃姆雷克制
+  { source: 'freja', target: 'hanzo', strength: 3 }, // 补充：半藏还被芙蕾雅克制
   
   // 13. 猎空被克制
   { source: 'dva', target: 'tracer', strength: 3 },
@@ -541,6 +571,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'genji', target: 'junkrat', strength: 3 },
   { source: 'juno', target: 'junkrat', strength: 3 },
   { source: 'zenyatta', target: 'junkrat', strength: 3 },
+  { source: 'jinyu', target: 'junkrat', strength: 3 }, // 补充：狂鼠还被金驭克制
   
   // 15. 探奇被克制
   { source: 'roadhog', target: 'venture', strength: 3 },
@@ -594,6 +625,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'widowmaker', target: 'pharah', strength: 3 },
   { source: 'baptiste', target: 'pharah', strength: 3 },
   { source: 'illari', target: 'pharah', strength: 3 },
+  { source: 'feitianmao', target: 'pharah', strength: 3 }, // 补充：法老之鹰还被飞天猫克制
   
   // ========== 芙蕾雅（Freja）克制关系 ==========
   // 芙蕾雅被克制 - 强化弩箭滞空输出，惧怕反弹和突进
@@ -670,6 +702,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'genji', target: 'ana', strength: 3 },
   { source: 'kiriko', target: 'ana', strength: 3 },
   { source: 'zenyatta', target: 'ana', strength: 3 },
+  { source: 'vendetta', target: 'ana', strength: 3 }, // 补充：安娜还被斩仇克制
+  { source: 'freja', target: 'ana', strength: 3 }, // 补充：安娜还被芙蕾雅克制
   
   // 2. 生命之梭被克制
   { source: 'mauga', target: 'lifeweaver', strength: 3 },
@@ -695,6 +729,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'baptiste', strength: 3 },
   { source: 'zenyatta', target: 'baptiste', strength: 3 },
   { source: 'moira', target: 'baptiste', strength: 3 },
+  { source: 'freja', target: 'baptiste', strength: 3 }, // 补充：巴蒂斯特还被芙蕾雅克制
   
   // 4. 卢西奥被克制
   { source: 'pharah', target: 'lucio', strength: 3 },
@@ -725,6 +760,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'zenyatta', target: 'brigitte', strength: 3 },
   { source: 'ana', target: 'brigitte', strength: 3 },
   { source: 'baptiste', target: 'brigitte', strength: 3 },
+  { source: 'wuyang', target: 'brigitte', strength: 3 }, // 补充：布丽吉塔还被无漾克制
   
   // 6. 天使被克制
   { source: 'dva', target: 'mercy', strength: 3 },
@@ -748,6 +784,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'tracer', target: 'kiriko', strength: 3 },
   { source: 'sojourn', target: 'kiriko', strength: 3 },
   { source: 'zenyatta', target: 'kiriko', strength: 3 },
+  { source: 'vendetta', target: 'kiriko', strength: 3 }, // 补充：雾子还被斩仇克制
   
   // 8. 朱诺被克制
   { source: 'junker_queen', target: 'juno', strength: 3 },
@@ -792,6 +829,9 @@ export const counterRelations: CounterRelation[] = [
   { source: 'tracer', target: 'zenyatta', strength: 3 },
   { source: 'sojourn', target: 'zenyatta', strength: 3 },
   { source: 'kiriko', target: 'zenyatta', strength: 3 },
+  { source: 'vendetta', target: 'zenyatta', strength: 3 }, // 补充：禅雅塔还被斩仇克制
+  { source: 'freja', target: 'zenyatta', strength: 3 }, // 补充：禅雅塔还被芙蕾雅克制
+  { source: 'anran', target: 'zenyatta', strength: 3 }, // 补充：禅雅塔还被安燃克制
    
    // ========== 斩仇（Vendetta）克制他人 ==========
    // 斩仇作为高机动近战刺客，克制缺乏自保能力的脆皮和机动性差的目标
@@ -906,81 +946,71 @@ export const counterRelations: CounterRelation[] = [
      { source: 'torbjorn', target: 'anran', strength: 2 },
   
   // ========== 新英雄克制关系 ==========
-  // 一、金驭（Jinyu）被克制
+  // 一、金驭（Jinyu）被克制 - 完全修改
   { source: 'winston', target: 'jinyu', strength: 3 },
-  { source: 'dva', target: 'jinyu', strength: 3 },
   { source: 'wrecking_ball', target: 'jinyu', strength: 3 },
-  { source: 'ramattra', target: 'jinyu', strength: 3 },
-  { source: 'reinhardt', target: 'jinyu', strength: 3 },
   { source: 'reaper', target: 'jinyu', strength: 3 },
-  { source: 'tracer', target: 'jinyu', strength: 3 },
-  { source: 'genji', target: 'jinyu', strength: 3 },
-  { source: 'widowmaker', target: 'jinyu', strength: 3 },
-  { source: 'hanzo', target: 'jinyu', strength: 3 },
-  { source: 'sojourn', target: 'jinyu', strength: 3 },
+  { source: 'bastion', target: 'jinyu', strength: 3 },
+  { source: 'junkrat', target: 'jinyu', strength: 3 },
   { source: 'sombra', target: 'jinyu', strength: 3 },
-  { source: 'illari', target: 'jinyu', strength: 3 },
-  { source: 'roadhog', target: 'jinyu', strength: 3 },
-  { source: 'zarya', target: 'jinyu', strength: 3 },
-  { source: 'pharah', target: 'jinyu', strength: 3 },
+  { source: 'dva', target: 'jinyu', strength: 3 },
+  { source: 'tracer', target: 'jinyu', strength: 3 },
+  { source: 'vendetta', target: 'jinyu', strength: 3 },
+  { source: 'wuyang', target: 'jinyu', strength: 3 },
   
-  // 二、埃姆雷（Emrey）被克制
-  { source: 'widowmaker', target: 'emrey', strength: 3 },
-  { source: 'hanzo', target: 'emrey', strength: 3 },
-  { source: 'ashe', target: 'emrey', strength: 3 },
+  // 二、埃姆雷（Emrey）被克制 - 完全修改
   { source: 'genji', target: 'emrey', strength: 3 },
   { source: 'tracer', target: 'emrey', strength: 3 },
   { source: 'roadhog', target: 'emrey', strength: 3 },
-  { source: 'mauga', target: 'emrey', strength: 3 },
-  { source: 'orisa', target: 'emrey', strength: 3 },
-  { source: 'illari', target: 'emrey', strength: 3 },
+  { source: 'jinyu', target: 'emrey', strength: 3 },
+  { source: 'anran', target: 'emrey', strength: 3 },
   { source: 'ana', target: 'emrey', strength: 3 },
+  { source: 'reinhardt', target: 'emrey', strength: 3 },
+  { source: 'sigma', target: 'emrey', strength: 3 },
+  { source: 'hanzo', target: 'emrey', strength: 3 },
+  { source: 'blackwidow', target: 'emrey', strength: 3 },
   
-  // 三、安燃（Anran）被克制
+  // 三、安燃（Anran）被克制 - 完全修改
+  { source: 'roadhog', target: 'anran', strength: 3 },
+  { source: 'orisa', target: 'anran', strength: 3 },
   { source: 'pharah', target: 'anran', strength: 3 },
   { source: 'echo', target: 'anran', strength: 3 },
-  { source: 'widowmaker', target: 'anran', strength: 3 },
   { source: 'cassidy', target: 'anran', strength: 3 },
-  { source: 'roadhog', target: 'anran', strength: 3 },
-  { source: 'sombra', target: 'anran', strength: 3 },
-  { source: 'mei', target: 'anran', strength: 3 },
-  { source: 'reinhardt', target: 'anran', strength: 3 },
-  { source: 'orisa', target: 'anran', strength: 3 },
+  { source: 'ana', target: 'anran', strength: 3 },
+  { source: 'zenyatta', target: 'anran', strength: 3 },
+  { source: 'moira', target: 'anran', strength: 3 },
   
-  // 四、无漾（Wuyang）被克制
-  { source: 'sombra', target: 'wuyang', strength: 3 },
-  { source: 'widowmaker', target: 'wuyang', strength: 3 },
-  { source: 'sojourn', target: 'wuyang', strength: 3 },
-  { source: 'winston', target: 'wuyang', strength: 3 },
+  // 四、无漾（Wuyang）被克制 - 完全修改
+  { source: 'soldier76', target: 'wuyang', strength: 3 },
+  { source: 'cassidy', target: 'wuyang', strength: 3 },
+  { source: 'ashe', target: 'wuyang', strength: 3 },
   { source: 'genji', target: 'wuyang', strength: 3 },
-  { source: 'wrecking_ball', target: 'wuyang', strength: 3 },
+  { source: 'tracer', target: 'wuyang', strength: 3 },
+  { source: 'reaper', target: 'wuyang', strength: 3 },
   { source: 'moira', target: 'wuyang', strength: 3 },
-  { source: 'sigma', target: 'wuyang', strength: 3 },
-  { source: 'ramattra', target: 'wuyang', strength: 3 },
+  { source: 'vendetta', target: 'wuyang', strength: 3 },
+  { source: 'anran', target: 'wuyang', strength: 3 },
+  { source: 'zenyatta', target: 'wuyang', strength: 3 },
   
-  // 五、瑞稀（Ruixi）被克制
-  { source: 'widowmaker', target: 'ruixi', strength: 3 },
-  { source: 'ashe', target: 'ruixi', strength: 3 },
-  { source: 'soldier76', target: 'ruixi', strength: 3 },
-  { source: 'genji', target: 'ruixi', strength: 3 },
-
-  { source: 'wrecking_ball', target: 'ruixi', strength: 3 },
-  { source: 'winston', target: 'ruixi', strength: 3 },
-  { source: 'zarya', target: 'ruixi', strength: 3 },
-  { source: 'moira', target: 'ruixi', strength: 3 },
+  // 五、瑞稀（Ruixi）被克制 - 完全修改
+  { source: 'echo', target: 'ruixi', strength: 3 },
+  { source: 'pharah', target: 'ruixi', strength: 3 },
+  { source: 'cassidy', target: 'ruixi', strength: 3 },
+  { source: 'blackwidow', target: 'ruixi', strength: 3 },
+  { source: 'sojourn', target: 'ruixi', strength: 3 },
   { source: 'sombra', target: 'ruixi', strength: 3 },
-  { source: 'illari', target: 'ruixi', strength: 3 },
   
-  // 六、飞天猫（Feitianmao）被克制
-  { source: 'widowmaker', target: 'feitianmao', strength: 3 },
+  // 六、飞天猫（Feitianmao）被克制 - 完全修改
   { source: 'cassidy', target: 'feitianmao', strength: 3 },
-  { source: 'soldier76', target: 'feitianmao', strength: 3 },
+  { source: 'blackwidow', target: 'feitianmao', strength: 3 },
   { source: 'ashe', target: 'feitianmao', strength: 3 },
+  { source: 'torbjorn', target: 'feitianmao', strength: 3 },
+  { source: 'sojourn', target: 'feitianmao', strength: 3 },
+  { source: 'soldier76', target: 'feitianmao', strength: 3 },
   { source: 'sombra', target: 'feitianmao', strength: 3 },
-  { source: 'dva', target: 'feitianmao', strength: 3 },
-  { source: 'zarya', target: 'feitianmao', strength: 3 },
-  { source: 'pharah', target: 'feitianmao', strength: 3 },
   { source: 'echo', target: 'feitianmao', strength: 3 },
+  { source: 'juno', target: 'feitianmao', strength: 3 },
+  { source: 'baptiste', target: 'feitianmao', strength: 3 },
   
   // 新英雄克制关系 - 补全缺失数据
   // 瑞希 (Ruixi) - 支援英雄，克制突进英雄
