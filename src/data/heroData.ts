@@ -489,6 +489,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'cassidy', target: 'genji', strength: 3 },
   { source: 'brigitte', target: 'genji', strength: 3 },
   { source: 'zenyatta', target: 'genji', strength: 3 },
+  { source: 'moira', target: 'genji', strength: 3 },
   
   // 11. 托比昂被克制
   { source: 'orisa', target: 'torbjorn', strength: 3 },
