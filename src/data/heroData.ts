@@ -643,49 +643,17 @@ export const counterRelations: CounterRelation[] = [
   { source: 'cassidy', target: 'freja', strength: 3 },
   
   // ========== 斩仇（Vendetta/Zhanchou）克制关系 ==========
-  // 斩仇被克制 - 纯近战英雄，缺乏远程能力
-  // 1. 空中/飞行单位（天克）
-  { source: 'pharah', target: 'vendetta', strength: 3 },
-  { source: 'echo', target: 'vendetta', strength: 3 },
-  { source: 'juno', target: 'vendetta', strength: 3 },
-  
-  // 2. 强控制与防突进英雄
-  { source: 'sombra', target: 'vendetta', strength: 3 },
-  { source: 'cassidy', target: 'vendetta', strength: 3 },
-  { source: 'ana', target: 'vendetta', strength: 3 },
-  { source: 'illari', target: 'vendetta', strength: 3 },
-  { source: 'orisa', target: 'vendetta', strength: 3 },
-  { source: 'mauga', target: 'vendetta', strength: 3 },
-  
-  // 3. 长距离消耗/狙击英雄
-  { source: 'widowmaker', target: 'vendetta', strength: 3 },
-  { source: 'ashe', target: 'vendetta', strength: 3 },
-  { source: 'hanzo', target: 'vendetta', strength: 3 },
-  { source: 'sojourn', target: 'vendetta', strength: 3 },
-  { source: 'soldier76', target: 'vendetta', strength: 3 },
-  
-  // 4. 近战/陷阱/爆发英雄
+  // 斩仇被克制 - 完全修改
   { source: 'roadhog', target: 'vendetta', strength: 3 },
-  { source: 'junkrat', target: 'vendetta', strength: 3 },
-  { source: 'torbjorn', target: 'vendetta', strength: 3 },
-  { source: 'mei', target: 'vendetta', strength: 3 },
-  { source: 'dva', target: 'vendetta', strength: 3 },
+  { source: 'pharah', target: 'vendetta', strength: 3 },
+  { source: 'widowmaker', target: 'vendetta', strength: 3 },
+  { source: 'bastion', target: 'vendetta', strength: 3 },
+  { source: 'hanzo', target: 'vendetta', strength: 3 },
+  { source: 'ashe', target: 'vendetta', strength: 3 },
+  { source: 'soldier76', target: 'vendetta', strength: 3 },
+  { source: 'ana', target: 'vendetta', strength: 3 },
   { source: 'zarya', target: 'vendetta', strength: 3 },
-  
-  // 5. 高机动风筝型
-  { source: 'tracer', target: 'vendetta', strength: 3 },
-  { source: 'genji', target: 'vendetta', strength: 3 },
-  { source: 'venture', target: 'vendetta', strength: 3 },
-  
-  // 6. 范围伤害/控制
-  { source: 'symmetra', target: 'vendetta', strength: 3 },
-  { source: 'baptiste', target: 'vendetta', strength: 3 },
-  { source: 'brigitte', target: 'vendetta', strength: 3 },
-  { source: 'kiriko', target: 'vendetta', strength: 3 },
-  { source: 'moira', target: 'vendetta', strength: 3 },
-  { source: 'zenyatta', target: 'vendetta', strength: 3 },
-  { source: 'mercy', target: 'vendetta', strength: 3 },
-  { source: 'lucio', target: 'vendetta', strength: 3 },
+  { source: 'ruixi', target: 'vendetta', strength: 3 },
   
   // ========== 辅助篇 ==========
   // 1. 安娜被克制
@@ -835,101 +803,8 @@ export const counterRelations: CounterRelation[] = [
    
    // ========== 斩仇（Vendetta）克制他人 ==========
    // 斩仇作为高机动近战刺客，克制缺乏自保能力的脆皮和机动性差的目标
-   // 1. 克制机动性较差的脆皮输出
-   { source: 'vendetta', target: 'ashe', strength: 3 },
-   { source: 'vendetta', target: 'bastion', strength: 3 },
-   { source: 'vendetta', target: 'hanzo', strength: 3 },
-   { source: 'vendetta', target: 'junkrat', strength: 3 },
-   { source: 'vendetta', target: 'mei', strength: 2 },
-   { source: 'vendetta', target: 'reaper', strength: 2 },
-   { source: 'vendetta', target: 'sojourn', strength: 3 },
-   { source: 'vendetta', target: 'soldier76', strength: 3 },
-   { source: 'vendetta', target: 'symmetra', strength: 3 },
-   { source: 'vendetta', target: 'torbjorn', strength: 3 },
-   { source: 'vendetta', target: 'widowmaker', strength: 3 },
-   { source: 'vendetta', target: 'freja', strength: 3 },
    
-   // 2. 克制缺乏自保的支援
-   { source: 'vendetta', target: 'ana', strength: 3 },
-   { source: 'vendetta', target: 'baptiste', strength: 3 },
-   { source: 'vendetta', target: 'brigitte', strength: 2 },
-   { source: 'vendetta', target: 'illari', strength: 3 },
-   { source: 'vendetta', target: 'juno', strength: 2 },
-   { source: 'vendetta', target: 'kiriko', strength: 3 },
-   { source: 'vendetta', target: 'lifeweaver', strength: 3 },
-   { source: 'vendetta', target: 'lucio', strength: 3 },
-   { source: 'vendetta', target: 'mercy', strength: 3 },
-   { source: 'vendetta', target: 'moira', strength: 3 },
-   { source: 'vendetta', target: 'zenyatta', strength: 3 },
    
-   // 3. 与其他机动性英雄互有胜负
-   { source: 'vendetta', target: 'genji', strength: 2 },
-   { source: 'vendetta', target: 'tracer', strength: 2 },
-   { source: 'vendetta', target: 'venture', strength: 2 },
-   { source: 'vendetta', target: 'echo', strength: 1 },
-   { source: 'vendetta', target: 'pharah', strength: 1 },
-   { source: 'vendetta', target: 'sombra', strength: 2 },
-   
-   // 4. 对坦克威胁有限
-   { source: 'vendetta', target: 'dva', strength: 1 },
-   { source: 'vendetta', target: 'doomfist', strength: 1 },
-   { source: 'vendetta', target: 'hazard', strength: 1 },
-   { source: 'vendetta', target: 'junker_queen', strength: 1 },
-   { source: 'vendetta', target: 'mauga', strength: 1 },
-   { source: 'vendetta', target: 'orisa', strength: 1 },
-   { source: 'vendetta', target: 'ramattra', strength: 1 },
-   { source: 'vendetta', target: 'reinhardt', strength: 1 },
-   { source: 'vendetta', target: 'roadhog', strength: 1 },
-   { source: 'vendetta', target: 'sigma', strength: 1 },
-   { source: 'vendetta', target: 'winston', strength: 1 },
-   { source: 'vendetta', target: 'wrecking_ball', strength: 1 },
-   { source: 'vendetta', target: 'zarya', strength: 1 },
-   
-   // ========== 安燃克制篇 ==========
-   { source: 'anran', target: 'dva', strength: 2 },
-   { source: 'anran', target: 'doomfist', strength: 2 },
-   { source: 'anran', target: 'hazard', strength: 2 },
-   { source: 'anran', target: 'junker_queen', strength: 2 },
-   { source: 'anran', target: 'mauga', strength: 2 },
-   { source: 'anran', target: 'orisa', strength: 2 },
-   { source: 'anran', target: 'ramattra', strength: 2 },
-   { source: 'anran', target: 'reinhardt', strength: 2 },
-   { source: 'anran', target: 'roadhog', strength: 2 },
-   { source: 'anran', target: 'sigma', strength: 2 },
-   { source: 'anran', target: 'winston', strength: 2 },
-   { source: 'anran', target: 'wrecking_ball', strength: 2 },
-   { source: 'anran', target: 'zarya', strength: 2 },
-   { source: 'anran', target: 'ashe', strength: 2 },
-   { source: 'anran', target: 'bastion', strength: 2 },
-   { source: 'anran', target: 'cassidy', strength: 2 },
-   { source: 'anran', target: 'echo', strength: 2 },
-   { source: 'anran', target: 'freja', strength: 2 },
-   { source: 'anran', target: 'genji', strength: 3 },
-   { source: 'anran', target: 'hanzo', strength: 2 },
-   { source: 'anran', target: 'junkrat', strength: 2 },
-   { source: 'anran', target: 'mei', strength: 2 },
-   { source: 'anran', target: 'pharah', strength: 2 },
-   { source: 'anran', target: 'reaper', strength: 2 },
-   { source: 'anran', target: 'sojourn', strength: 2 },
-   { source: 'anran', target: 'soldier76', strength: 2 },
-   { source: 'anran', target: 'sombra', strength: 2 },
-   { source: 'anran', target: 'symmetra', strength: 2 },
-   { source: 'anran', target: 'torbjorn', strength: 2 },
-   { source: 'anran', target: 'tracer', strength: 3 },
-   { source: 'anran', target: 'venture', strength: 2 },
-   { source: 'anran', target: 'widowmaker', strength: 2 },
-   { source: 'anran', target: 'vendetta', strength: 2 },
-   { source: 'anran', target: 'ana', strength: 2 },
-   { source: 'anran', target: 'baptiste', strength: 2 },
-    { source: 'anran', target: 'brigitte', strength: 2 },
-    { source: 'anran', target: 'illari', strength: 2 },
-    { source: 'anran', target: 'juno', strength: 2 },
-    { source: 'anran', target: 'kiriko', strength: 2 },
-    { source: 'anran', target: 'lifeweaver', strength: 2 },
-    { source: 'anran', target: 'lucio', strength: 2 },
-    { source: 'anran', target: 'mercy', strength: 2 },
-    { source: 'anran', target: 'moira', strength: 3 },
-    { source: 'anran', target: 'zenyatta', strength: 2 },
     
     // ========== 被安燃克制篇 ==========
     { source: 'brigitte', target: 'anran', strength: 3 },
@@ -1012,49 +887,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'juno', target: 'feitianmao', strength: 3 },
   { source: 'baptiste', target: 'feitianmao', strength: 3 },
   
-  // 新英雄克制关系 - 补全缺失数据
-  // 瑞希 (Ruixi) - 支援英雄，克制突进英雄
-  { source: 'ruixi', target: 'genji', strength: 2 },
-  { source: 'ruixi', target: 'tracer', strength: 2 },
-  { source: 'ruixi', target: 'doomfist', strength: 2 },
-  { source: 'ruixi', target: 'winston', strength: 1 },
-  { source: 'ruixi', target: 'dva', strength: 1 },
-  { source: 'ruixi', target: 'wrecking_ball', strength: 1 },
   
-  // 飞天猫 (Feitianmao) - 输出英雄，克制脆皮
-  { source: 'feitianmao', target: 'mercy', strength: 3 },
-  { source: 'feitianmao', target: 'zenyatta', strength: 2 },
-  { source: 'feitianmao', target: 'kiriko', strength: 2 },
-  { source: 'feitianmao', target: 'ana', strength: 2 },
-  { source: 'feitianmao', target: 'tracer', strength: 2 },
-  { source: 'feitianmao', target: 'bastion', strength: 1 },
-  
-  // 武神 (Wuyang) - 支援英雄，克制敌方输出
-  { source: 'wuyang', target: 'widowmaker', strength: 2 },
-  { source: 'wuyang', target: 'hanzo', strength: 2 },
-  { source: 'wuyang', target: 'ashe', strength: 2 },
-  { source: 'wuyang', target: 'cassidy', strength: 1 },
-  { source: 'wuyang', target: 'soldier76', strength: 1 },
-  
-  // 金驭 (Jinyu) - 坦克英雄
-  { source: 'jinyu', target: 'reinhardt', strength: 2 },
-  { source: 'jinyu', target: 'zarya', strength: 2 },
-  { source: 'jinyu', target: 'sigma', strength: 1 },
-  { source: 'jinyu', target: 'roadhog', strength: 1 },
-  
-  // Emrey - 输出英雄
-  { source: 'emrey', target: 'mercy', strength: 3 },
-  { source: 'emrey', target: 'ana', strength: 2 },
-  { source: 'emrey', target: 'kiriko', strength: 2 },
-  { source: 'emrey', target: 'zenyatta', strength: 2 },
-  { source: 'emrey', target: 'widowmaker', strength: 1 },
-  
-  // Freja - 输出英雄
-  { source: 'freja', target: 'mercy', strength: 3 },
-  { source: 'freja', target: 'ana', strength: 2 },
-  { source: 'freja', target: 'kiriko', strength: 2 },
-  { source: 'freja', target: 'lucio', strength: 2 },
-  { source: 'freja', target: 'pharah', strength: 1 },
   ];
 
 // 获取角色颜色
