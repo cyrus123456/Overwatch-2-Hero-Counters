@@ -293,6 +293,8 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                             : 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-700/40 hover:border-slate-600/50 shadow-sm'
                         }`} 
                         onClick={() => setSelectedMap(selectedMap === map.id ? null : map.id)}
+                        onMouseEnter={() => setSelectedMap(map.id)}
+                        onMouseLeave={() => setSelectedMap(null)}
                       >
 
                       <div className="flex items-center justify-between gap-4">
