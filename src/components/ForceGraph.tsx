@@ -1089,32 +1089,21 @@ const ForceGraph = ({
 
                     </div>
 
-                    <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
-                      <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
-                      <span><span className="font-medium">{splitDesc(t('zoomDesc')).title}:</span><span className="text-cyan-300/80"> {splitDesc(t('zoomDesc')).content}</span></span>
                     </div>
                     <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
                       <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
-                        <span className="font-medium">{splitDesc(t('panDesc')).title}:</span>
-                        <span className="text-cyan-300/80"> {splitDesc(t('panDesc')).content}</span>
+                        <span className="font-medium">{splitDesc(t('zoomDesc')).title} / {splitDesc(t('touchZoomDesc')).title}:</span>
+                        <span className="text-cyan-300/80"> {splitDesc(t('zoomDesc')).content} / {splitDesc(t('touchZoomDesc')).content}</span>
                       </span>
                     </div>
-                    </div>
-                    <div className="text-purple-300 flex items-start gap-2 bg-purple-900/20 p-2 rounded-lg border border-purple-800/30">
-                      <span className="w-1 h-1 bg-purple-500 rounded-full mt-1 flex-shrink-0"></span>
+                    <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
+                      <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
-                        <span className="font-medium">{splitDesc(t('touchZoomDesc')).title}:</span>
-                        <span className="text-purple-300/80"> {splitDesc(t('touchZoomDesc')).content}</span>
+                        <span className="font-medium">{splitDesc(t('panDesc')).title} / {splitDesc(t('touchPanDesc')).title}:</span>
+                        <span className="text-cyan-300/80"> {splitDesc(t('panDesc')).content} / {splitDesc(t('touchPanDesc')).content}</span>
                       </span>
                     </div>
-                    <div className="text-purple-300 flex items-start gap-2 bg-purple-900/20 p-2 rounded-lg border border-purple-800/30">
-                      <span className="w-1 h-1 bg-purple-500 rounded-full mt-1 flex-shrink-0"></span>
-                      <span>
-                        <span className="font-medium">{splitDesc(t('touchPanDesc')).title}:</span>
-                        <span className="text-purple-300/80"> {splitDesc(t('touchPanDesc')).content}</span>
-                      </span>
-                  </div>
                 </div>
               </div>
             </Card>
