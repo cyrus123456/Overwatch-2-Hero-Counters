@@ -9,6 +9,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getCounterReason } from '@/data/counterReasons';
 import { counterRelations, getRoleName, heroes, type Hero } from '@/data/heroData';
+import { maps } from '@/data/mapData';
 import { getSynergyReason } from '@/data/synergyReasons';
 import { synergyRelations } from '@/data/synergyRelations';
 import { useI18n } from '@/i18n';
@@ -53,15 +54,22 @@ interface ForceGraphProps {
   selectedHero: string | null;
   onHeroSelect: (heroId: string | null) => void;
   isDrawerOpen?: boolean;
+  selectedMap?: string | null;
 }
 
 const ForceGraph = ({
   selectedRole,
   selectedHero,
   onHeroSelect,
-  isDrawerOpen = true
+  isDrawerOpen = true,
+  selectedMap = null
 }: ForceGraphProps) => {
+  const selectedMapData = selectedMap ? maps.find(m => m.id === selectedMap) : null;
+  const mapRecommendedHeroes = selectedMapData?.recommendedHeroes || [];
+
   const { t, language } = useI18n();
+
+  // Helper
 
   // Helper to split translation by colon safely
   const splitDesc = (desc: string) => {
@@ -86,7 +94,15 @@ const ForceGraph = ({
       strength: r.strength || 1
     }))
     .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
-    .sort((a, b) => b.strength - a.strength) : [];
+    .sort((a, b) => {
+      if (selectedMap) {
+        const aRecommended = mapRecommendedHeroes.includes(a.hero.id);
+        const bRecommended = mapRecommendedHeroes.includes(b.hero.id);
+        if (aRecommended && !bRecommended) return -1;
+        if (!aRecommended && bRecommended) return 1;
+      }
+      return b.strength - a.strength;
+    }) : [];
 
   const counters = displayedHero ? counterRelations
     .filter(r => r.source === displayedHero.id)
@@ -95,7 +111,15 @@ const ForceGraph = ({
       strength: r.strength || 1
     }))
     .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
-    .sort((a, b) => b.strength - a.strength) : [];
+    .sort((a, b) => {
+      if (selectedMap) {
+        const aRecommended = mapRecommendedHeroes.includes(a.hero.id);
+        const bRecommended = mapRecommendedHeroes.includes(b.hero.id);
+        if (aRecommended && !bRecommended) return -1;
+        if (!aRecommended && bRecommended) return 1;
+      }
+      return b.strength - a.strength;
+    }) : [];
 
   // Get synergy partners for the selected hero - 使用新的有向图格式数据
   const synergyPartners = displayedHero ? synergyRelations
@@ -105,7 +129,15 @@ const ForceGraph = ({
       strength: r.strength || 1
     }))
     .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
-    .sort((a, b) => b.strength - a.strength) : [];
+    .sort((a, b) => {
+      if (selectedMap) {
+        const aRecommended = mapRecommendedHeroes.includes(a.hero.id);
+        const bRecommended = mapRecommendedHeroes.includes(b.hero.id);
+        if (aRecommended && !bRecommended) return -1;
+        if (!aRecommended && bRecommended) return 1;
+      }
+      return b.strength - a.strength;
+    }) : [];
     
   const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
   const [isDraggingPanel, setIsDraggingPanel] = useState(false);
@@ -171,6 +203,12 @@ const ForceGraph = ({
                   {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
                 </span>
               </div>
+              {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
+                // <Badge variant="secondary" className="text-[9px] px-1 py-0 text-cyan-400 border-cyan-400/50 bg-cyan-400/10">
+                <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
+                  {t('mapRecommended')}
+                </Badge>
+              )}
               <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${s === 3 ? 'bg-red-400' : s === 2 ? 'bg-orange-400' : 'bg-slate-400'}`}>
                 {s === 3 ? t('hardCounter') : s === 2 ? t('strongCounter') : t('softCounter')} LV.{s}
               </Badge>
@@ -690,7 +728,14 @@ const ForceGraph = ({
           <Card className="p-3 bg-slate-800/60 border-slate-700 backdrop-blur-md shadow-xl h-full flex flex-col gap-1">
             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-700/50 flex-shrink-0">
               <ShieldAlert className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-              <h3 className="text-lg font-bold text-slate-100">{t('heroCounterPanel')}</h3>
+              <h3 className="text-lg font-bold text-slate-100">
+                {t('heroCounterPanel')}
+                {selectedMapData && (
+                  <span className="ml-2 text-sm font-normal text-cyan-400">
+                    {language === 'zh' ? selectedMapData.name : selectedMapData.nameEn}
+                  </span>
+                )}
+              </h3>
             </div>
 
             {displayedHero ? (
@@ -703,6 +748,11 @@ const ForceGraph = ({
                     <div className="flex items-center gap-2">
                       <h3 className="text-base font-bold text-slate-100 leading-tight">{language === 'zh' ? displayedHero?.name : displayedHero?.nameEn}</h3>
                       <Badge variant="outline" className="text-xs px-2 py-0" style={{ borderColor: displayedHero.color, color: displayedHero.color }}>{getRoleName(displayedHero.role, language)}</Badge>
+                      {selectedMap && mapRecommendedHeroes.includes(displayedHero.id) && (
+                        <Badge variant="outline" className="text-xs px-2 py-0 text-cyan-400 border-cyan-400/50 bg-cyan-400/10">
+                          {t('mapRecommended')}
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-xs text-slate-200 leading-tight mt-0.5">{language === 'zh' ? displayedHero?.nameEn : displayedHero?.name}</p>
                   </div>
@@ -759,6 +809,12 @@ const ForceGraph = ({
                                       {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
                                     </span>
                                   </div>
+                                  {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
+                                    // <Badge variant="outline" className="text-[9px] px-1 py-0 text-cyan-400 border-cyan-400/50 bg-cyan-400/10">
+                                    <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
+                                      {t('mapRecommended')}
+                                    </Badge>
+                                  )}
                                   <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${partner.strength === 3 ? 'bg-red-500' : partner.strength === 2 ? 'bg-yellow-500' : 'bg-slate-400'}`}>
                                     {partner.strength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : partner.strength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{partner.strength}
                                   </Badge>

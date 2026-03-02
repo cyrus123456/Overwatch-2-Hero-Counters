@@ -93,6 +93,7 @@ const translations: Record<Language, Record<string, string>> = {
     previewContent: '预览完整复制内容',
     recommendedLineup: '推荐首发阵容',
     selectLanguage: '点击选择语言',
+    mapRecommended: '地图强势',
   },
   en: {
     title: 'Overwatch 2 Hero Counter Relationships',
@@ -182,6 +183,7 @@ const translations: Record<Language, Record<string, string>> = {
     previewContent: 'Preview Full Content',
     recommendedLineup: 'Recommended Lineup',
     selectLanguage: 'Click to select language',
+    mapRecommended: 'Map Strong',
   },
   ja: {
     title: 'オーバーチュア ヒーロー相性図',
