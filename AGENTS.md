@@ -14,21 +14,20 @@ This file provides guidance for AI agents working in this repository.
 
 ```bash
 # Development
-npm run dev              # Start dev server at http://localhost:5173
+npm run dev              # Start dev server at http://localhost:5173 (with --host for mobile access)
 npm run build            # Production build (TypeScript + Vite)
 npm run preview          # Preview production build
 npm run lint             # Run ESLint on all files
 
 # Deployment
+npm run build            # Build the project
 npm run deploy           # Deploy dist/ to GitHub Pages
-npm run build            # Build and deploy
+npm run build:deploy     # Build and deploy in one command
 ```
 
-**Note**: This project does not include a test framework. There are no test commands available.
+**Note**: This project does not include a test framework.
 
-## Code Style Guidelines
-
-### TypeScript Configuration
+## TypeScript Configuration
 
 The project uses strict TypeScript settings. Key options in `tsconfig.app.json`:
 
@@ -38,8 +37,11 @@ The project uses strict TypeScript settings. Key options in `tsconfig.app.json`:
 - `verbatimModuleSyntax: true` - Requires explicit type imports
 - `noEmit: true` - TypeScript only checks, does not emit files
 
-### Path Aliases
+**IMPORTANT**: Never suppress type errors with `as any`, `@ts-ignore`, or `@ts-expect-error`.
 
+## Import Guidelines
+
+### Path Aliases
 Use `@/` for imports from the `src/` directory:
 
 ```typescript
@@ -50,42 +52,36 @@ import { cn } from '@/lib/utils';
 
 // Avoid
 import { Button } from '../components/ui/button';
-import { heroes } from '../../data/heroData';
 ```
 
 ### Import Order
+Organize imports in groups (separate with blank lines):
 
-Organize imports in the following groups (separate with blank lines):
-
-1. External library imports (React, D3, Radix UI)
-2. Internal component imports (@/components/...)
+1. External libraries (React, D3, Radix UI)
+2. Internal components (@/components/...)
 3. Data imports (@/data/...)
-4. Utility imports (@/lib/, @/hooks/, @/i18n/)
+4. Utilities (@/lib/, @/hooks/, @/i18n/)
 5. Type imports (use `type` keyword)
 
 ```typescript
-// Example import order
 import { useState, useEffect } from 'react';
 import * as d3 from 'd3';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { heroes } from '@/data/heroData';
 import { useI18n } from '@/i18n';
 import type { Language } from '@/i18n';
 ```
 
-### Type Annotations
+## Type Annotations
 
-Always use explicit type annotations. With `verbatimModuleSyntax: true`, use separate type imports:
+Always use explicit type annotations. With `verbatimModuleSyntax`, use separate type imports:
 
 ```typescript
-// Correct - separate type imports
 import { useState } from 'react';
 import type { Language } from '@/i18n';
 
 const [language, setLanguage] = useState<Language>('en');
 
-// Interface for props
 interface ForceGraphProps {
   selectedRole: string | null;
   selectedHero: string | null;
@@ -93,41 +89,46 @@ interface ForceGraphProps {
 }
 ```
 
-### Naming Conventions
+## Naming Conventions
 
 - **Components**: PascalCase (e.g., `ForceGraph.tsx`, `Button.tsx`)
 - **Functions/variables**: camelCase (e.g., `handleCopyToClipboard`, `filteredMaps`)
 - **Interfaces**: PascalCase with descriptive names (e.g., `NodeDatum`, `LinkDatum`)
 - **Constants**: camelCase or UPPER_SNAKE_CASE for configuration objects
 
-### Component Patterns
+## Component Patterns
 
-Follow the existing patterns for UI components:
+### UI Components (Radix + cva)
 
 ```typescript
-// Export both component and utility functions
 export { Button, buttonVariants };
 
-// Use cva for variant props
 const buttonVariants = cva("...", {
   variants: {
-    variant: { default: "...", destructive: "...", ... },
-    size: { default: "...", sm: "...", ... },
+    variant: { default: "...", destructive: "...", outline: "..." },
+    size: { default: "...", sm: "...", lg: "..." },
   },
   defaultVariants: { variant: "default", size: "default" },
 });
 ```
 
-### TailwindCSS Usage
-
-- Use Tailwind utility classes extensively
-- Use `cn()` from `@/lib/utils` for conditional classes
-- Follow the custom color scheme defined in `tailwind.config.js`
+### D3.js Force Graphs
 
 ```typescript
-// Correct - use cn() for class merging
-import { cn } from '@/lib/utils';
+const simulationRef = useRef<d3.Simulation<NodeDatum, LinkDatum> | null>(null);
 
+useEffect(() => {
+  // Cleanup is mandatory
+  return () => { simulation?.stop(); };
+}, []);
+```
+
+## TailwindCSS
+
+- Use `cn()` from `@/lib/utils` for conditional classes
+- Follow custom colors in `tailwind.config.js`
+
+```typescript
 <div className={cn(
   "base-classes",
   isActive && "active-classes",
@@ -135,56 +136,63 @@ import { cn } from '@/lib/utils';
 )} />
 ```
 
-### Error Handling
+## Error Handling
 
-- Always handle async operations with proper error states
-- Use optional chaining and nullish coalescing for safe property access
-- Provide fallback values for potentially undefined data
+- Handle async operations with proper error states
+- Use optional chaining (`?.`) and nullish coalescing (`??`)
+- Provide fallback values for undefined data
 
 ```typescript
-// Safe data access
 const hero = heroes.find(h => h.id === heroId);
 const heroName = hero ? (language === 'zh' ? hero.name : hero.nameEn) : 'Unknown';
 
-// Filter and type guard
 .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
 ```
 
-### D3.js Patterns
+## Hard Blocks
 
-When working with D3 force-directed graphs:
-
-```typescript
-// Use refs for D3 instances
-const simulationRef = useRef<d3.Simulation<NodeDatum, LinkDatum> | null>(null);
-
-// Cleanup in useEffect return
-return () => { simulation.stop(); };
-```
+- **NEVER** use `as any`, `@ts-ignore`, `@ts-expect-error` to suppress errors
+- **NEVER** leave empty catch blocks `catch(e) {}`
+- **NEVER** delete failing tests to "pass" (no test framework exists)
+- **NEVER** commit unless explicitly requested
 
 ## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── ForceGraph.tsx      # Main D3 visualization component
-│   └── ui/                 # Radix UI-based components
+│   ├── ForceGraph.tsx      # Main D3 visualization
+│   └── ui/                 # Radix UI components
 ├── data/
-│   ├── heroData.ts         # Hero definitions and counter relations
+│   ├── heroData.ts         # Hero definitions, counter/synergy relations
 │   ├── counterReasons.ts   # Counter explanation text
+│   ├── synergyRelations.ts # Synergy partner data
+│   ├── synergyReasons.ts   # Synergy explanation text
 │   └── mapData.ts          # Map information
 ├── hooks/                  # Custom React hooks
-├── i18n/                   # Internationalization
+├── i18n/                   # Internationalization (zh/en)
 ├── lib/
 │   └── utils.ts           # Utility functions (cn, etc.)
-├── App.tsx                # Main application component
+├── App.tsx                # Main application
 └── main.tsx               # Entry point
 ```
 
 ## Key Libraries
 
+- **React 19**: UI framework
+- **Vite 7**: Build tool
 - **Radix UI**: Accessible component primitives
-- **Lucide React**: Icon library
-- **class-variance-authority**: Component variant management
-- **Tailwind Merge**: Class name merging utility
-- **next-themes**: Theme switching support
+- **TailwindCSS**: Styling
+- **D3.js 7**: Force-directed graph visualization
+- **Lucide React**: Icons
+- **class-variance-authority**: Component variants
+- **next-themes**: Theme switching
+
+## Build Verification
+
+After any changes, always run:
+```bash
+npm run build
+```
+
+Ensure the build passes (exit code 0) before considering work complete.
