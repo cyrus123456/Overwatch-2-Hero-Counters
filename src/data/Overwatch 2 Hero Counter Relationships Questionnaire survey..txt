@@ -1,4 +1,4 @@
-D.Va(D.Va)_你认为被谁克制[多选题]
+D.Va(D.Va)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -50,7 +50,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-末日铁拳(Doomfist)_你认为被谁克制[多选题]
+末日铁拳(Doomfist)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -102,7 +102,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-骇灾(Hazard)_你认为被谁克制[多选题]
+骇灾(Hazard)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -154,7 +154,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-渣客女王(Junker_Queen)_你认为被谁克制[多选题]
+渣客女王(Junker_Queen)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -206,7 +206,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-毛加(Mauga)_你认为被谁克制[多选题]
+毛加(Mauga)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -258,7 +258,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-奥丽莎(Orisa)_你认为被谁克制[多选题]
+奥丽莎(Orisa)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -310,7 +310,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-拉玛刹(Ramattra)_你认为被谁克制[多选题]
+拉玛刹(Ramattra)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -362,7 +362,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-莱因哈特(Reinhardt)_你认为被谁克制[多选题]
+莱因哈特(Reinhardt)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -414,7 +414,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-路霸(Roadhog)_你认为被谁克制[多选题]
+路霸(Roadhog)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -466,7 +466,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-西格玛(Sigma)_你认为被谁克制[多选题]
+西格玛(Sigma)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -518,7 +518,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-温斯顿(Winston)_你认为被谁克制[多选题]
+温斯顿(Winston)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -570,7 +570,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-破坏球(Wrecking_Ball)_你认为被谁克制[多选题]
+破坏球(Wrecking_Ball)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -622,7 +622,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-查莉娅(Zarya)_你认为被谁克制[多选题]
+查莉娅(Zarya)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -674,7 +674,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-金驭(Jinyu)_你认为被谁克制[多选题]
+金驭(Jinyu)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -726,7 +726,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-艾什(Ashe)_你认为被谁克制[多选题]
+艾什(Ashe)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -778,7 +778,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-堡垒(Bastion)_你认为被谁克制[多选题]
+堡垒(Bastion)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -830,7 +830,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-卡西迪(Cassidy)_你认为被谁克制[多选题]
+卡西迪(Cassidy)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -882,7 +882,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-回声(Echo)_你认为被谁克制[多选题]
+回声(Echo)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -934,7 +934,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-芙蕾雅(Freja)_你认为被谁克制[多选题]
+芙蕾雅(Freja)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -986,7 +986,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-源氏(Genji)_你认为被谁克制[多选题]
+源氏(Genji)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1038,7 +1038,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-半藏(Hanzo)_你认为被谁克制[多选题]
+半藏(Hanzo)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1090,7 +1090,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-狂鼠(Junkrat)_你认为被谁克制[多选题]
+狂鼠(Junkrat)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1142,7 +1142,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-美(Mei)_你认为被谁克制[多选题]
+美(Mei)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1194,7 +1194,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-法老之鹰(Pharah)_你认为被谁克制[多选题]
+法老之鹰(Pharah)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1246,7 +1246,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-死神(Reaper)_你认为被谁克制[多选题]
+死神(Reaper)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1298,7 +1298,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-索杰恩(Sojourn)_你认为被谁克制[多选题]
+索杰恩(Sojourn)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1350,7 +1350,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-士兵:76(Soldier:_76)_你认为被谁克制[多选题]
+士兵:76(Soldier:_76)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1402,7 +1402,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-黑影(Sombra)_你认为被谁克制[多选题]
+黑影(Sombra)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1454,7 +1454,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-秩序之光(Symmetra)_你认为被谁克制[多选题]
+秩序之光(Symmetra)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1506,7 +1506,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-托比昂(Torbjorn)_你认为被谁克制[多选题]
+托比昂(Torbjorn)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1558,7 +1558,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-猎空(Tracer)_你认为被谁克制[多选题]
+猎空(Tracer)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1610,7 +1610,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-探奇(Venture)_你认为被谁克制[多选题]
+探奇(Venture)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1662,7 +1662,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-黑百合(Widowmaker)_你认为被谁克制[多选题]
+黑百合(Widowmaker)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1714,7 +1714,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-斩仇(VENDETTA)_你认为被谁克制[多选题]
+斩仇(VENDETTA)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1766,7 +1766,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-安燃(Anran)_你认为被谁克制[多选题]
+安燃(Anran)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1818,7 +1818,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-埃姆雷(Emrey)_你认为被谁克制[多选题]
+埃姆雷(Emrey)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1870,7 +1870,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-安娜(Ana)_你认为被谁克制[多选题]
+安娜(Ana)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1922,7 +1922,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-巴蒂斯特(Baptiste)_你认为被谁克制[多选题]
+巴蒂斯特(Baptiste)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1974,7 +1974,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-布丽吉塔(Brigitte)_你认为被谁克制[多选题]
+布丽吉塔(Brigitte)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2026,7 +2026,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-伊拉锐(Illari)_你认为被谁克制[多选题]
+伊拉锐(Illari)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2078,7 +2078,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-朱诺(Juno)_你认为被谁克制[多选题]
+朱诺(Juno)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2130,7 +2130,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-雾子(Kiriko)_你认为被谁克制[多选题]
+雾子(Kiriko)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2182,7 +2182,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-生命之梭(Lifeweaver)_你认为被谁克制[多选题]
+生命之梭(Lifeweaver)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2234,7 +2234,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-卢西奥(Lucio)_你认为被谁克制[多选题]
+卢西奥(Lucio)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2286,7 +2286,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-天使(Mercy)_你认为被谁克制[多选题]
+天使(Mercy)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2338,7 +2338,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-莫伊拉(Moira)_你认为被谁克制[多选题]
+莫伊拉(Moira)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2390,7 +2390,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-禅雅塔(Zenyatta)_你认为被谁克制[多选题]
+禅雅塔(Zenyatta)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2442,7 +2442,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-无漾(Wuyang)_你认为被谁克制[多选题]
+无漾(Wuyang)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2494,7 +2494,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-瑞稀(Ruixi)_你认为被谁克制[多选题]
+瑞稀(Ruixi)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -2546,7 +2546,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-飞天猫(Jetpack_Cat)_你认为被谁克制[多选题]
+飞天猫(Jetpack_Cat)_你认为被谁克制[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)

@@ -1,4 +1,4 @@
-釜山(Busan)地图中你认为哪位英雄有优势[多选题]
+釜山(Busan)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -50,7 +50,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-伊利奥斯(Ilios)地图中你认为哪位英雄有优势[多选题]
+伊利奥斯(Ilios)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -102,7 +102,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-漓江塔(Lijiang Tower)地图中你认为哪位英雄有优势[多选题]
+漓江塔(Lijiang Tower)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -154,7 +154,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-尼泊尔(Nepal)地图中你认为哪位英雄有优势[多选题]
+尼泊尔(Nepal)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -206,7 +206,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-萨摩亚·火山(Samoa)地图中你认为哪位英雄有优势[多选题]
+萨摩亚·火山(Samoa)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -258,7 +258,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-绿洲城(Oasis)地图中你认为哪位英雄有优势[多选题]
+绿洲城(Oasis)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -310,7 +310,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-暴雪世界(Blizzard World)地图中你认为哪位英雄有优势[多选题]
+暴雪世界(Blizzard World)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -362,7 +362,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-艾兴瓦尔德(Eichenwalde)地图中你认为哪位英雄有优势[多选题]
+艾兴瓦尔德(Eichenwalde)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -414,7 +414,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-好莱坞(Hollywood)地图中你认为哪位英雄有优势[多选题]
+好莱坞(Hollywood)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -466,7 +466,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-国王大道(King's Row)地图中你认为哪位英雄有优势[多选题]
+国王大道(King's Row)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -518,7 +518,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-中城(Midtown)地图中你认为哪位英雄有优势[多选题]
+中城(Midtown)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -570,7 +570,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-努巴尼(Numbani)地图中你认为哪位英雄有优势[多选题]
+努巴尼(Numbani)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -622,7 +622,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-帕拉伊苏(Paraíso)地图中你认为哪位英雄有优势[多选题]
+帕拉伊苏(Paraíso)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -674,7 +674,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-皇家赛道(Circuit Royal)地图中你认为哪位英雄有优势[多选题]
+皇家赛道(Circuit Royal)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -726,7 +726,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-多拉多(Dorado)地图中你认为哪位英雄有优势[多选题]
+多拉多(Dorado)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -778,7 +778,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-哈瓦那(Havana)地图中你认为哪位英雄有优势[多选题]
+哈瓦那(Havana)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -830,7 +830,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-渣客镇(Junkertown)地图中你认为哪位英雄有优势[多选题]
+渣客镇(Junkertown)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -882,7 +882,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-里阿尔托(Rialto)地图中你认为哪位英雄有优势[多选题]
+里阿尔托(Rialto)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -934,7 +934,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-66号公路(Route 66)地图中你认为哪位英雄有优势[多选题]
+66号公路(Route 66)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -986,7 +986,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-直布罗陀(Watchpoint: Gibraltar)地图中你认为哪位英雄有优势[多选题]
+直布罗陀(Watchpoint: Gibraltar)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1038,7 +1038,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-香巴里寺院(Shambali Monastery)地图中你认为哪位英雄有优势[多选题]
+香巴里寺院(Shambali Monastery)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1090,7 +1090,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-鲁纳塞彼(Runasapi)地图中你认为哪位英雄有优势[多选题]
+鲁纳塞彼(Runasapi)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1142,7 +1142,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-斗兽场(Colosseo)地图中你认为哪位英雄有优势[多选题]
+斗兽场(Colosseo)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1194,7 +1194,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-埃斯佩兰萨(Esperança)地图中你认为哪位英雄有优势[多选题]
+埃斯佩兰萨(Esperança)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1246,7 +1246,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-新皇后街(New Queen Street)地图中你认为哪位英雄有优势[多选题]
+新皇后街(New Queen Street)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1298,7 +1298,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-南极半岛(Antarctic Peninsula)地图中你认为哪位英雄有优势[多选题]
+南极半岛(Antarctic Peninsula)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1350,7 +1350,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-新渣客城(New Junk City)地图中你认为哪位英雄有优势[多选题]
+新渣客城(New Junk City)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1402,7 +1402,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-苏拉瓦萨(Suravasa)地图中你认为哪位英雄有优势[多选题]
+苏拉瓦萨(Suravasa)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
@@ -1454,7 +1454,7 @@ D.Va(D.Va)
 瑞稀(Ruixi)
 飞天猫(Jetpack_Cat)
 
-阿特利斯(Aatlis)地图中你认为哪位英雄有优势[多选题]
+阿特利斯(Aatlis)地图中你认为哪位英雄有优势[投票多选题][选答]
 D.Va(D.Va)
 末日铁拳(Doomfist)
 骇灾(Hazard)
