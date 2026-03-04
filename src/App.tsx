@@ -48,7 +48,6 @@ function AppContent() {
 const [isMapCopied, setIsMapCopied] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [hoverTimer, setHoverTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const [lastHoverTime, setLastHoverTime] = useState<number>(0);
   const roleOrder = { tank: 0, damage: 1, support: 2 };
 
   const sortHeroesByRole = (heroIds: string[]): string[] => {
@@ -296,26 +295,21 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                         }`} 
                         onClick={() => setSelectedMap(selectedMap === map.id ? null : map.id)}
                         onMouseEnter={() => {
-                          // 节流机制：如果距离上次触发时间小于3秒，则不触发
-                          const now = Date.now();
-                          if (now - lastHoverTime < 3000) return;
-                          
-                          // 清除之前的计时器
+                          // 取消之前的倒计时
                           if (hoverTimer) {
                             clearTimeout(hoverTimer);
                           }
                           
-                          // 设置3秒延迟后触发选中地图事件
+                          // 设置新的倒计时
                           const timer = setTimeout(() => {
                             setSelectedMap(map.id);
-                            setLastHoverTime(Date.now());
                             setHoverTimer(null);
                           }, 3000);
                           
                           setHoverTimer(timer);
                         }}
                         onMouseLeave={() => {
-                          // 鼠标移出时清除计时器
+                          // 鼠标移出时取消倒计时
                           if (hoverTimer) {
                             clearTimeout(hoverTimer);
                             setHoverTimer(null);
