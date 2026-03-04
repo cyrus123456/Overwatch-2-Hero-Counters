@@ -6,6 +6,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getCounterReason } from '@/data/counterReasons';
 import { counterRelations, getRoleName, heroes, type Hero } from '@/data/heroData';
@@ -760,12 +765,41 @@ const ForceGraph = ({
 
                 <Tabs value={activeCounterTab} onValueChange={(v) => setActiveCounterTab(v as any)} className="flex-1 flex flex-col min-h-0">
                   <TabsList className="grid w-full grid-cols-3 mb-2 bg-slate-800/50 p-1 h-9 flex-shrink-0">
-                    <TabsTrigger value="counteredBy" className="text-white data-[state=active]:bg-red-600 flex items-center justify-center gap-2 px-2 h-7">
-                      <ShieldAlert className="w-3.5 h-3.5" />
-                      <span className="text-[11px]">{t('counteredBy')}</span>
+                    <TabsTrigger value="counteredBy" className="text-white data-[state=active]:bg-red-600 flex items-center justify-center gap-1.5 px-2 h-7 min-w-0">
+                      <ShieldAlert className="w-3.5 h-3.5 flex-shrink-0" />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="text-[11px] truncate">{t('counteredBy')}</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{t('counteredBy')}</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </TabsTrigger>
-                    <TabsTrigger value="counters" className="text-white data-[state=active]:bg-green-600 flex items-center justify-center gap-2 px-2 h-7"><Swords className="w-3.5 h-3.5" /><span className="text-[11px]">{t('counters')}</span></TabsTrigger>
-                    <TabsTrigger value="synergy" className="text-white data-[state=active]:bg-cyan-600 flex items-center justify-center gap-2 px-2 h-7"><Users className="w-3.5 h-3.5" /><span className="text-[11px]">{t('synergy')}</span></TabsTrigger>
+
+                    <TabsTrigger value="counters" className="text-white data-[state=active]:bg-green-600 flex items-center justify-center gap-1.5 px-2 h-7 min-w-0">
+                      <Swords className="w-3.5 h-3.5 flex-shrink-0" />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="text-[11px] truncate">{t('counters')}</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{t('counters')}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TabsTrigger>
+
+                    <TabsTrigger value="synergy" className="text-white data-[state=active]:bg-cyan-600 flex items-center justify-center gap-1.5 px-2 h-7 min-w-0">
+                      <Users className="w-3.5 h-3.5 flex-shrink-0" />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="text-[11px] truncate">{t('synergy')}</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{t('synergy')}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="counteredBy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-red-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
