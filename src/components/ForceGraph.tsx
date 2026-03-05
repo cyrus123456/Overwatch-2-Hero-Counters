@@ -366,8 +366,8 @@ const ForceGraph = ({
       defs.append('marker').attr('id', shade.id).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 3).attr('markerHeight', 3).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', shade.color).attr('opacity', shade.opacity);
     });
 
-    // Cyan arrow for synergy
-    defs.append('marker').attr('id', 'arrow-cyan-1').attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 3).attr('markerHeight', 3).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#06b6d4').attr('opacity', 0.8);
+    // Purple arrow for synergy
+    defs.append('marker').attr('id', 'arrow-purple-1').attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 3).attr('markerHeight', 3).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#a855f7').attr('opacity', 0.8);
 
     // Animated arrow heads
     ['red', 'green'].forEach(color => {
@@ -468,7 +468,8 @@ const ForceGraph = ({
         const s = rel?.strength || 1;
         // Synergy模式使用高饱和cyan色系粒子
         if (activeCounterTab === 'synergy') {
-          return s === 3 ? '#22d3ee' : s === 2 ? '#67e8f9' : '#a5f3fc';
+          // Synergy模式使用紫色系粒子
+          return s === 3 ? '#c084fc' : s === 2 ? '#d8b4fe' : '#e9d5ff';
         }
         const color = activeCounterTab === 'counteredBy' ?
           (targetId === selectedHero ? 'red' : 'green') :
@@ -689,7 +690,7 @@ const ForceGraph = ({
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
-        if (activeCounterTab === 'synergy') return '#06b6d4';
+        if (activeCounterTab === 'synergy') return '#a855f7';
         if (activeCounterTab === 'counteredBy') return s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#fca5a5';
         return s === 3 ? '#15803d' : s === 2 ? '#22c55e' : '#86efac';
       }).attr('marker-end', d => {
@@ -752,7 +753,7 @@ const ForceGraph = ({
         return s === 3 ? 4.5 : s === 2 ? 3 : 1.5;
       }).attr('stroke', d => {
         // Synergy links use cyan color
-        if (activeCounterTab === 'synergy') return '#06b6d4';
+        if (activeCounterTab === 'synergy') return '#a855f7';
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
@@ -771,7 +772,17 @@ const ForceGraph = ({
 
     svg.on('click', () => onHeroSelect(null));
     return () => { simulation.stop(); };
-  }, [prepareData, selectedHero, language, activeCounterTab, selectedMap, mapRecommendedHeroes, onHeroSelect, selectedRole, t]);
+  }, [
+    prepareData,
+    selectedHero,
+    language,
+    activeCounterTab,
+    selectedMap,
+    mapRecommendedHeroes,
+    onHeroSelect,
+    selectedRole,
+    t
+  ]);
 
   const handleZoomIn = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 1.3);
   const handleZoomOut = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 0.7);
@@ -841,7 +852,7 @@ const ForceGraph = ({
                       </Tooltip>
                     </TabsTrigger>
 
-                    <TabsTrigger value="synergy" className="text-white data-[state=active]:bg-cyan-600 flex items-center justify-center gap-1.5 px-2 h-7 min-w-0">
+                    <TabsTrigger value="synergy" className="text-white data-[state=active]:bg-purple-600 flex items-center justify-center gap-1.5 px-2 h-7 min-w-0">
                       <Users className="w-3.5 h-3.5 flex-shrink-0" />
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -876,15 +887,15 @@ const ForceGraph = ({
                     {counters.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('noCounters')}</div>}
                   </TabsContent>
 
-                  <TabsContent value="synergy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-cyan-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
+                  <TabsContent value="synergy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-purple-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
                     {displayedHero && synergyPartners.length > 0 && (
                       <div className="space-y-2">
                         {synergyPartners.map(partner => {
                           const hero = partner.hero;
                           if (!hero) return null;
                           return (
-                            <div key={hero.id} className="flex items-center gap-3 p-2 rounded-lg border bg-cyan-900/20 border-cyan-700/30">
-                              <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-cyan-500/50 flex-shrink-0">
+                            <div key={hero.id} className="flex items-center gap-3 p-2 rounded-lg border bg-purple-900/20 border-purple-700/30">
+                              <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-purple-500/50 flex-shrink-0">
                                 <img src={hero.image} alt="" className="w-full h-full object-cover" />
                               </div>
                               <div className="flex-1">
@@ -906,7 +917,7 @@ const ForceGraph = ({
                                     </Badge>
                                   </div>
                                 </div>
-                                <p className="text-[11px] text-cyan-300 leading-relaxed mt-1">
+                                <p className="text-[11px] text-purple-300 leading-relaxed mt-1">
                                   {getSynergyReason(hero.id, displayedHero.id, language)}
                                 </p>
                               </div>
@@ -926,7 +937,7 @@ const ForceGraph = ({
                       <span className="text-xs font-semibold text-white">{activeCounterTab === 'counteredBy' ? t('counteredByTemplate') : activeCounterTab === 'counters' ? t('countersTemplate') : t('synergyDesc')}</span>
                     </div>
                     {(activeCounterTab === 'synergy' ? synergyPartners.length > 0 : (activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0) && (
-                      <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-slate-200 hover:text-cyan-400" onClick={(e) => {
+                      <Button variant="ghost" size="sm" className={`h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-slate-200 ${activeCounterTab === 'synergy' ? 'hover:text-purple-400' : 'hover:text-cyan-400'}`} onClick={(e) => {
                         e.stopPropagation();
                         let text = '';
                         if (activeCounterTab === 'synergy') {
@@ -1003,7 +1014,7 @@ const ForceGraph = ({
                             }
                             return name;
                           }).join('、');
-                          return <><div className="text-cyan-400 font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>最佳拍档</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-cyan-300 font-medium">{partnerNames}</div></>;
+                          return <><div className="text-purple-400 font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>最佳拍档</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-purple-300 font-medium">{partnerNames}</div></>;
                         })()
                       ) : t('noSynergy')
                     ) : ((activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 ? (
