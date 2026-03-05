@@ -208,15 +208,16 @@ const ForceGraph = ({
                   {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
                 </span>
               </div>
-              {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
-                // <Badge variant="secondary" className="text-[9px] px-1 py-0 text-cyan-400 border-cyan-400/50 bg-cyan-400/10">
-                <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
-                  {t('mapRecommended')}
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
+                  <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
+                    {t('mapRecommended')}
+                  </Badge>
+                )}
+                <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${s === 3 ? 'bg-red-400' : s === 2 ? 'bg-orange-400' : 'bg-slate-400'}`}>
+                  {s === 3 ? t('hardCounter') : s === 2 ? t('strongCounter') : t('softCounter')} LV.{s}
                 </Badge>
-              )}
-              <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${s === 3 ? 'bg-red-400' : s === 2 ? 'bg-orange-400' : 'bg-slate-400'}`}>
-                {s === 3 ? t('hardCounter') : s === 2 ? t('strongCounter') : t('softCounter')} LV.{s}
-              </Badge>
+              </div>
             </div>
             <p className={`text-[11px] leading-relaxed mt-1 ${colorClass.includes('red') ? 'text-red-300' : 'text-green-300'}`}>
               {formattedReason}
@@ -843,15 +844,16 @@ const ForceGraph = ({
                                       {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
                                     </span>
                                   </div>
-                                  {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
-                                    // <Badge variant="outline" className="text-[9px] px-1 py-0 text-cyan-400 border-cyan-400/50 bg-cyan-400/10">
-                                    <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
-                                      {t('mapRecommended')}
+                                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                                    {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
+                                      <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
+                                        {t('mapRecommended')}
+                                      </Badge>
+                                    )}
+                                    <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${partner.strength === 3 ? 'bg-red-500' : partner.strength === 2 ? 'bg-yellow-500' : 'bg-slate-400'}`}>
+                                      {partner.strength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : partner.strength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{partner.strength}
                                     </Badge>
-                                  )}
-                                  <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${partner.strength === 3 ? 'bg-red-500' : partner.strength === 2 ? 'bg-yellow-500' : 'bg-slate-400'}`}>
-                                    {partner.strength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : partner.strength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{partner.strength}
-                                  </Badge>
+                                  </div>
                                 </div>
                                 <p className="text-[11px] text-cyan-300 leading-relaxed mt-1">
                                   {getSynergyReason(hero.id, displayedHero.id, language)}
