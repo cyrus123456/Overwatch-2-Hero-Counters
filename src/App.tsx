@@ -28,7 +28,7 @@ import {
   Shield,
   Target,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 import ForceGraph from '@/components/ForceGraph';
 import { heroes } from '@/data/heroData';
@@ -49,6 +49,18 @@ const [isMapCopied, setIsMapCopied] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [hoverTimer, setHoverTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const roleOrder = { tank: 0, damage: 1, support: 2 };
+
+  useEffect(() => {
+    if (selectedMap) {
+      const element = document.getElementById(`map-${selectedMap}`);
+      if (element) {
+        // Use a small timeout to ensure DOM has updated if expansion is animated or takes space
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
+      }
+    }
+  }, [selectedMap]);
 
   const sortHeroesByRole = (heroIds: string[]): string[] => {
     return [...heroIds].sort((a, b) => {
@@ -288,6 +300,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                     {filteredMaps.map(map => (
                       <div 
                         key={map.id} 
+                        id={`map-${map.id}`}
                         className={`p-2 rounded-xl cursor-pointer transition-all border group ${
                           selectedMap === map.id 
                             ? 'bg-cyan-500/10 border-cyan-500/40 shadow-lg shadow-cyan-900/20' 
@@ -295,10 +308,12 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                         }`} 
                         onClick={() => setSelectedMap(selectedMap === map.id ? null : map.id)}
                         onMouseEnter={() => {
-                          // 取消之前的倒计时
                           if (hoverTimer) {
                             clearTimeout(hoverTimer);
                           }
+
+                          // 如果当前地图已经是展开状态，则不执行任何操作
+                          if (selectedMap === map.id) return;
                           
                           // 设置新的倒计时
                           const timer = setTimeout(() => {
