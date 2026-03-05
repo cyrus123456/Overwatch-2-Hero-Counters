@@ -33,7 +33,7 @@ import {
   ZoomIn,
   ZoomOut
 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 interface NodeDatum extends d3.SimulationNodeDatum {
   id: string;
@@ -69,8 +69,8 @@ const ForceGraph = ({
   isDrawerOpen = true,
   selectedMap = null
 }: ForceGraphProps) => {
-  const selectedMapData = selectedMap ? maps.find(m => m.id === selectedMap) : null;
-  const mapRecommendedHeroes = selectedMapData?.recommendedHeroes || [];
+  const selectedMapData = useMemo(() => selectedMap ? maps.find(m => m.id === selectedMap) : null, [selectedMap]);
+  const mapRecommendedHeroes = useMemo(() => selectedMapData?.recommendedHeroes || [], [selectedMapData]);
 
   const { t, language } = useI18n();
 
@@ -771,7 +771,7 @@ const ForceGraph = ({
 
     svg.on('click', () => onHeroSelect(null));
     return () => { simulation.stop(); };
-  }, [prepareData, selectedHero, language, activeCounterTab, selectedMap, mapRecommendedHeroes]);
+  }, [prepareData, selectedHero, language, activeCounterTab, selectedMap, mapRecommendedHeroes, onHeroSelect, selectedRole, t]);
 
   const handleZoomIn = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 1.3);
   const handleZoomOut = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 0.7);
