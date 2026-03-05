@@ -6,12 +6,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getCounterReason } from '@/data/counterReasons';
 import { counterRelations, getRoleName, heroes, type Hero } from '@/data/heroData';
 import { maps } from '@/data/mapData';
@@ -497,6 +497,28 @@ const ForceGraph = ({
     nodeGroup.append('image').attr('xlink:href', d => d.image).attr('x', d => -(d.radius - 2)).attr('y', d => -(d.radius - 2)).attr('width', d => (d.radius - 2) * 2).attr('height', d => (d.radius - 2) * 2).attr('clip-path', d => `url(#clip-${d.id})`).attr('preserveAspectRatio', 'xMidYMid slice').style('pointer-events', 'none');
     nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', '12px').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 1px 3px rgba(0,0,0,0.8)').style('opacity', '1');
 
+    // Add "Map Strong" label above nodes
+    const mapLabelGroup = nodeGroup.append('g')
+      .attr('class', 'map-strong-label')
+      .style('opacity', 0)
+      .style('pointer-events', 'none');
+
+    mapLabelGroup.append('rect')
+      .attr('x', -24)
+      .attr('y', d => -(d.radius + 10))
+      .attr('width', 48)
+      .attr('height', 14)
+      .attr('rx', 4)
+      .attr('fill', '#22d3ee');
+
+    mapLabelGroup.append('text')
+      .attr('text-anchor', 'middle')
+      .attr('dy', d => -(d.radius))
+      .attr('fill', '#0f172a')
+      .attr('font-size', '9px')
+      .attr('font-weight', '800')
+      .text(t('mapRecommended'));
+
     nodeGroup.on('click', (event, d) => { event.stopPropagation(); onHeroSelect(d.id === selectedHero ? null : d.id); });
 
     // Track particle animation progress
@@ -584,7 +606,6 @@ const ForceGraph = ({
       });
 
       nodeGroup.select('.node-name').transition().duration(300).style('opacity', 1);
-
       nodeGroup.each(function (d) {
         const group = d3.select(this);
         
@@ -610,6 +631,29 @@ const ForceGraph = ({
         group.select('image').transition().duration(300).attr('x', -imgR).attr('y', -imgR).attr('width', imgR * 2).attr('height', imgR * 2);
         d3.select(`#clip-${d.id} circle`).transition().duration(300).attr('r', imgR);
         group.select('.node-name').transition().duration(300).attr('dy', r + 20);
+
+        const isRecommended = selectedMap && mapRecommendedHeroes.includes(d.id);
+        let showLabel = false;
+        if (isRecommended) {
+          if (d.id === selectedHero) {
+            showLabel = true;
+          } else {
+            // Check relationship based on active tab
+            if (activeCounterTab === 'synergy') {
+              showLabel = synergyRelations.some(r => r.source === d.id && r.target === selectedHero);
+            } else if (activeCounterTab === 'counteredBy') {
+              showLabel = counterRelations.some(r => r.source === d.id && r.target === selectedHero);
+            } else {
+              showLabel = counterRelations.some(r => r.source === selectedHero && r.target === d.id);
+            }
+          }
+        }
+
+        group.select('.map-strong-label')
+          .transition()
+          .duration(300)
+          .style('opacity', showLabel ? 1 : 0)
+          .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
       });
 
       link.attr('stroke-opacity', d => {
@@ -671,6 +715,13 @@ const ForceGraph = ({
         group.select('image').transition().duration(300).attr('x', -(d.radius - 2)).attr('y', -(d.radius - 2)).attr('width', (d.radius - 2) * 2).attr('height', (d.radius - 2) * 2);
         d3.select(`#clip-${d.id} circle`).transition().duration(300).attr('r', d.radius - 2);
         group.select('.node-name').transition().duration(300).attr('dy', d.radius + 20);
+
+        const isRecommended = selectedMap && mapRecommendedHeroes.includes(d.id);
+        group.select('.map-strong-label')
+          .transition()
+          .duration(300)
+          .style('opacity', isRecommended ? 1 : 0)
+          .attr('transform', 'translate(0, 0)');
       });
       link.attr('stroke-opacity', d => {
         if (activeCounterTab === 'synergy') {
@@ -720,7 +771,7 @@ const ForceGraph = ({
 
     svg.on('click', () => onHeroSelect(null));
     return () => { simulation.stop(); };
-  }, [prepareData, selectedHero, language, activeCounterTab]);
+  }, [prepareData, selectedHero, language, activeCounterTab, selectedMap, mapRecommendedHeroes]);
 
   const handleZoomIn = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 1.3);
   const handleZoomOut = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 0.7);
