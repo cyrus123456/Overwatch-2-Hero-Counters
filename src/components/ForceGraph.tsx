@@ -1014,7 +1014,7 @@ const ForceGraph = ({
                             }
                             return name;
                           }).join('、');
-                          return <><div className="text-purple-400 font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>最佳拍档</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-purple-300 font-medium">{partnerNames}</div></>;
+                          return <><div className="text-white font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>最佳拍档</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-purple-300 font-medium">{partnerNames}</div></>;
                         })()
                       ) : t('noSynergy')
                     ) : ((activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 ? (
@@ -1033,9 +1033,9 @@ const ForceGraph = ({
                         const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
                         const hNameWithNickname = language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : hName;
                         if (activeCounterTab === 'counteredBy') {
-                          return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-cyan-400 font-bold text-2xl">{hNameWithNickname}</div></>;
+                          return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-white font-bold text-2xl">{hNameWithNickname}</div></>;
                         } else {
-                          return <><div className="text-cyan-400 font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
+                          return <><div className="text-white font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
                         }
                       })()
                     ) : t('noCounterData'))}
