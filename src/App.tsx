@@ -28,7 +28,7 @@ import {
   Shield,
   Target,
 } from 'lucide-react';
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import ForceGraph from '@/components/ForceGraph';
 import { heroes } from '@/data/heroData';
@@ -248,13 +248,19 @@ const [isMapCopied, setIsMapCopied] = useState(false);
 {/* 左侧地图卡片面板 - 抽屉 */}
           <div className={`absolute top-4 bottom-4 left-4 z-10 flex flex-col w-96 pointer-events-none transition-transform duration-300 ease-in-out ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
             {/* 抽屉Toggle按钮 - 放在面板右侧外面 */}
-            <button
-              onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-              className="absolute -right-12 top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
-              title={isDrawerOpen ? '收起面板' : '展开面板'}
-            >
-              <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isDrawerOpen ? '' : 'rotate-180'}`} />
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+                  className="absolute -right-12 top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
+                >
+                  <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isDrawerOpen ? '' : 'rotate-180'}`} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{isDrawerOpen ? '收起面板' : '展开面板'}</p>
+              </TooltipContent>
+            </Tooltip>
             <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
               <Card className="p-3 bg-slate-800/60 border-slate-700 backdrop-blur-md shadow-xl h-full flex flex-col gap-1 rounded-xl border">
                 <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4">
