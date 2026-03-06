@@ -1559,6 +1559,14 @@ const ForceGraph = ({
                   </div>
                 </div>
 
+                {/* 地图优势因素说明 */}
+                <div className="text-[11px] text-slate-200">
+                  <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1 pt-4">{t('mapFactor')}</p>
+                  <div className="flex items-center gap-2 px-2">
+                    <span className="text-cyan-300/80">{t('mapRecommendedTip')}</span>
+                  </div>
+                </div>
+
                 <div className="text-[11px] text-slate-200">
 
                   <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('networkFilter')}</p>
@@ -1571,30 +1579,40 @@ const ForceGraph = ({
                   <div className="space-y-1.5 mt-2">
                     <div className="text-slate-300 flex items-start gap-2">
                       <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
-                      <span><span className="font-medium">{splitDesc(t('clickDesc')).title}:</span><span className="text-slate-400"> {splitDesc(t('clickDesc')).content}</span></span>
+                      <span><span className="font-medium">{splitDesc(t('clickDesc')).title}</span><span className="text-slate-400"> {splitDesc(t('clickDesc')).content}</span></span>
                     </div>
                     <div className="text-slate-200 flex items-start gap-2">
                       <span className="w-1 h-1 bg-cyan-800 rounded-full mt-1 flex-shrink-0"></span>
-                      <span><span className="font-medium">{splitDesc(t('hoverDesc')).title}:</span><span className="text-slate-400"> {splitDesc(t('hoverDesc')).content}</span></span>
+                      <span><span className="font-medium">{splitDesc(t('hoverDesc')).title}</span><span className="text-slate-400"> {splitDesc(t('hoverDesc')).content}</span></span>
                     </div>
                     <div className="text-slate-300 flex items-start gap-2">
                       <span className="w-1 h-1 bg-slate-600 rounded-full mt-1 flex-shrink-0"></span>
-                      <span><span className="font-medium">{splitDesc(t('dragDesc')).title}:</span><span className="text-slate-400"> {splitDesc(t('dragDesc')).content}</span></span>
+                      <span><span className="font-medium">{splitDesc(t('dragDesc')).title}</span><span className="text-slate-400"> {splitDesc(t('dragDesc')).content}</span></span>
                     </div>
                     <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
                       <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
-                        <span className="font-medium">{splitDesc(t('zoomDesc')).title} / {splitDesc(t('touchZoomDesc')).title}:</span>
-                        <span className="text-cyan-300/80"> {splitDesc(t('zoomDesc')).content} / {splitDesc(t('touchZoomDesc')).content}</span>
+                        <p className="font-medium">{splitDesc(t('zoomDesc')).title} </p>
+                        <p className="font-medium"> {splitDesc(t('touchZoomDesc')).title}</p>
+                        {/* <span className="text-cyan-300/80"> {splitDesc(t('zoomDesc')).content} / {splitDesc(t('touchZoomDesc')).content}</span> */}
                       </span>
                     </div>
                     <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
                       <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
-                        <span className="font-medium">{splitDesc(t('panDesc')).title} / {splitDesc(t('touchPanDesc')).title}:</span>
-                        <span className="text-cyan-300/80"> {splitDesc(t('panDesc')).content} / {splitDesc(t('touchPanDesc')).content}</span>
+                        <p className="font-medium">{splitDesc(t('panDesc')).title}</p>
+                        <p className="font-medium"> {splitDesc(t('touchPanDesc')).title}</p>
+                        {/* <span className="text-cyan-300/80"> {splitDesc(t('panDesc')).content} / {splitDesc(t('touchPanDesc')).content}</span> */}
                       </span>
                     </div>
+                    <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
+                      <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
+                      <span>
+                        <span className="font-medium"> {language === 'zh' ? '多选英雄：' : 'Multi-select heroes'}</span>
+                        <span className="font-medium text-cyan-300/80">{t('ctrlMultiSelect')}</span>
+                      </span>
+                    </div>
+                      
                   </div>
                 </div>
               </div>
