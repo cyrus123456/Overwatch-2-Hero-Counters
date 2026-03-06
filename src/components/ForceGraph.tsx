@@ -56,15 +56,15 @@ interface LinkDatum extends d3.SimulationLinkDatum<NodeDatum> {
 
 interface ForceGraphProps {
   selectedRole: string | null;
-  selectedHero: string | null;
-  onHeroSelect: (heroId: string | null) => void;
+  selectedHeroes: string[];
+  onHeroSelect: (heroIds: string[]) => void;
   isDrawerOpen?: boolean;
   selectedMap?: string | null;
 }
 
 const ForceGraph = ({
   selectedRole,
-  selectedHero,
+  selectedHeroes,
   onHeroSelect,
   isDrawerOpen = true,
   selectedMap = null
@@ -90,66 +90,145 @@ const ForceGraph = ({
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const animationRef = useRef<number | null>(null);
 
-  const displayedHero = selectedHero ? heroes.find(h => h.id === selectedHero) : null;
-
-  const counteredBy = displayedHero ? counterRelations
-    .filter(r => r.target === displayedHero.id)
-    .map(r => ({
-      hero: heroes.find(h => h.id === r.source),
-      strength: r.strength || 1
-    }))
-    .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
-    .sort((a, b) => {
-      if (selectedMap) {
-        const aRecommended = mapRecommendedHeroes.includes(a.hero.id);
-        const bRecommended = mapRecommendedHeroes.includes(b.hero.id);
-        if (aRecommended && !bRecommended) return -1;
-        if (!aRecommended && bRecommended) return 1;
-      }
-      return b.strength - a.strength;
-    }) : [];
-
-  const counters = displayedHero ? counterRelations
-    .filter(r => r.source === displayedHero.id)
-    .map(r => ({
-      hero: heroes.find(h => h.id === r.target),
-      strength: r.strength || 1
-    }))
-    .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
-    .sort((a, b) => {
-      if (selectedMap) {
-        const aRecommended = mapRecommendedHeroes.includes(a.hero.id);
-        const bRecommended = mapRecommendedHeroes.includes(b.hero.id);
-        if (aRecommended && !bRecommended) return -1;
-        if (!aRecommended && bRecommended) return 1;
-      }
-      return b.strength - a.strength;
-    }) : [];
-
-  // Get synergy partners for the selected hero - 使用新的有向图格式数据
-  const synergyPartners = displayedHero ? synergyRelations
-    .filter(r => r.target === displayedHero.id)
-    .map(r => ({
-      hero: heroes.find(h => h.id === r.source),
-      strength: r.strength || 1
-    }))
-    .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
-    .sort((a, b) => {
-      if (selectedMap) {
-        const aRecommended = mapRecommendedHeroes.includes(a.hero.id);
-        const bRecommended = mapRecommendedHeroes.includes(b.hero.id);
-        if (aRecommended && !bRecommended) return -1;
-        if (!aRecommended && bRecommended) return 1;
-      }
-      return b.strength - a.strength;
-    }) : [];
-    
-  const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
-  const [isDraggingPanel, setIsDraggingPanel] = useState(false);
-  const dragStartRef = useRef({ x: 0, y: 0 });
+  const displayedHero = selectedHeroes.length === 1 ? heroes.find(h => h.id === selectedHeroes[0]) : null;
+  const selectedHero = selectedHeroes.length === 1 ? selectedHeroes[0] : null;
   const [activeCounterTab, setActiveCounterTab] = useState<'counteredBy' | 'counters' | 'synergy'>('counteredBy');
   const [isCopied, setIsCopied] = useState(false);
   const [isIntroOpen, setIsIntroOpen] = useState(false);
+  const isMultiSelect = selectedHeroes.length > 1;
+
+  const getCommonCounters = useCallback((heroIds: string[]) => {
+    if (heroIds.length === 0) return [];
+    
+    return heroes
+      .map(h => {
+        const relations = heroIds.map(targetId => 
+          counterRelations.find(r => r.source === h.id && r.target === targetId)
+        );
+        
+        if (relations.every(r => r !== undefined)) {
+          const minStrength = Math.min(...relations.map(r => r!.strength || 1));
+          return { hero: h, strength: minStrength };
+        }
+        return null;
+      })
+      .filter((item): item is { hero: Hero; strength: number } => item !== null)
+      .sort((a, b) => b.strength - a.strength);
+  }, []);
+
+  const getCommonCounted = useCallback((heroIds: string[]) => {
+    if (heroIds.length === 0) return [];
+    
+    return heroes
+      .map(h => {
+        const relations = heroIds.map(sourceId => 
+          counterRelations.find(r => r.source === sourceId && r.target === h.id)
+        );
+        
+        if (relations.every(r => r !== undefined)) {
+          const minStrength = Math.min(...relations.map(r => r!.strength || 1));
+          return { hero: h, strength: minStrength };
+        }
+        return null;
+      })
+      .filter((item): item is { hero: Hero; strength: number } => item !== null)
+      .sort((a, b) => b.strength - a.strength);
+  }, []);
+
+  const getCommonSynergies = useCallback((heroIds: string[]) => {
+    if (heroIds.length === 0) return [];
+    
+    return heroes
+      .map(h => {
+        const relations = heroIds.map(targetId => 
+          synergyRelations.find(r => r.source === h.id && r.target === targetId)
+        );
+        
+        if (relations.every(r => r !== undefined)) {
+          const minStrength = Math.min(...relations.map(r => r!.strength || 1));
+          return { hero: h, strength: minStrength };
+        }
+        return null;
+      })
+      .filter((item): item is { hero: Hero; strength: number } => item !== null)
+      .sort((a, b) => b.strength - a.strength);
+  }, []);
+
+  const counteredBy = useMemo(() => {
+    if (selectedHeroes.length === 0) return [];
+    if (selectedHeroes.length === 1) {
+      return counterRelations
+        .filter(r => r.target === selectedHeroes[0])
+        .map(r => ({
+          hero: heroes.find(h => h.id === r.source),
+          strength: r.strength || 1
+        }))
+        .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
+        .sort((a, b) => b.strength - a.strength);
+    }
+    return getCommonCounters(selectedHeroes);
+  }, [selectedHeroes, getCommonCounters]);
+
+  const counters = useMemo(() => {
+    if (selectedHeroes.length === 0) return [];
+    if (selectedHeroes.length === 1) {
+      return counterRelations
+        .filter(r => r.source === selectedHeroes[0])
+        .map(r => ({
+          hero: heroes.find(h => h.id === r.target),
+          strength: r.strength || 1
+        }))
+        .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
+        .sort((a, b) => b.strength - a.strength);
+    }
+    return getCommonCounted(selectedHeroes);
+  }, [selectedHeroes, getCommonCounted]);
+
+  const synergyPartners = useMemo(() => {
+    if (selectedHeroes.length === 0) return [];
+    if (selectedHeroes.length === 1) {
+      return synergyRelations
+        .filter(r => r.target === selectedHeroes[0])
+        .map(r => ({
+          hero: heroes.find(h => h.id === r.source),
+          strength: r.strength || 1
+        }))
+        .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
+        .sort((a, b) => b.strength - a.strength);
+    }
+    return getCommonSynergies(selectedHeroes);
+  }, [selectedHeroes, getCommonSynergies]);
+
+  const commonRelatedIds = useMemo(() => {
+    if (selectedHeroes.length <= 1) return [];
+    if (activeCounterTab === 'synergy') {
+      return synergyPartners.map(p => p.hero.id);
+    } else if (activeCounterTab === 'counteredBy') {
+      return counteredBy.map(p => p.hero.id);
+    } else {
+      return counters.map(p => p.hero.id);
+    }
+  }, [selectedHeroes.length, activeCounterTab, synergyPartners, counteredBy, counters]);
+
+  const handleHeroClick = (heroId: string, event: any) => {
+    event.stopPropagation();
+    if (event.shiftKey || event.ctrlKey || event.metaKey) {
+      onHeroSelect(
+        selectedHeroes.includes(heroId)
+          ? selectedHeroes.filter(id => id !== heroId)
+          : [...selectedHeroes, heroId]
+      );
+    } else {
+      onHeroSelect(
+        selectedHeroes.length === 1 && selectedHeroes[0] === heroId ? [] : [heroId]
+      );
+    }
+  };
+
+  const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
+  const [isDraggingPanel, setIsDraggingPanel] = useState(false);
+  const dragStartRef = useRef({ x: 0, y: 0 });
+
 
   const handleCopyToClipboard = (text: string) => {
     if (!text) return;
@@ -186,15 +265,43 @@ const ForceGraph = ({
     return [...items].sort((a, b) => roleOrder[a.hero.role] - roleOrder[b.hero.role]);
   };
 
-  const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroId: string, swapSourceTarget = false) => {
+  const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroIds: string[], swapSourceTarget = false) => {
     const filtered = items.filter(i => i.strength === strength);
     const sorted = sortByRole(filtered);
-    const targetHero = heroes.find(h => h.id === targetHeroId);
+    const isMulti = targetHeroIds.length > 1;
+    
+    // For single select, get the target hero name
+    const targetHero = !isMulti ? heroes.find(h => h.id === targetHeroIds[0]) : null;
     const targetHeroName = targetHero ? (language === 'zh' ? targetHero.name : targetHero.nameEn) : '';
+
     return sorted.map(({ hero, strength: s }) => {
-      const reason = getCounterReason(swapSourceTarget ? targetHeroId : hero.id, swapSourceTarget ? hero.id : targetHeroId, language);
+      let formattedReason = '';
       const heroName = language === 'zh' ? hero.name : hero.nameEn;
-      const formattedReason = reason.includes('→') ? reason.replace(/^(.+?) → (.+)$/, (_, ability, weakness) => `${swapSourceTarget ? targetHeroName : heroName} ${ability} → ${swapSourceTarget ? heroName : targetHeroName} ${weakness}`) : reason;
+      
+      if (!isMulti) {
+        const targetHeroId = targetHeroIds[0];
+        const reason = getCounterReason(swapSourceTarget ? targetHeroId : hero.id, swapSourceTarget ? hero.id : targetHeroId, language);
+        formattedReason = reason.includes('→') ? reason.replace(/^(.+?) → (.+)$/, (_, ability, weakness) => `${swapSourceTarget ? targetHeroName : heroName} ${ability} → ${swapSourceTarget ? heroName : targetHeroName} ${weakness}`) : reason;
+      } else {
+        // 多选模式：提供更详细的关系描述
+        const targetHeroNames = targetHeroIds.map(id => {
+          const h = heroes.find(hero => hero.id === id);
+          return h ? (language === 'zh' ? h.name : h.nameEn) : '';
+        }).filter(name => name).join(language === 'zh' ? '、' : ', ');
+        
+        if (swapSourceTarget) {
+          // 克制关系：选中英雄克制当前英雄
+          formattedReason = language === 'zh' 
+            ? `${targetHeroNames} 的协同能力能够有效克制 ${heroName} 的${hero.role === 'tank' ? '前排压制' : hero.role === 'damage' ? '输出能力' : '治疗支援'}`
+            : `${targetHeroNames}'s combined abilities effectively counter ${heroName}'s ${hero.role === 'tank' ? 'frontline pressure' : hero.role === 'damage' ? 'damage output' : 'healing support'}`;
+        } else {
+          // 被克制关系：当前英雄克制选中英雄
+          formattedReason = language === 'zh'
+            ? `${heroName} 的${hero.role === 'tank' ? '控制能力' : hero.role === 'damage' ? '高爆发伤害' : '反制技能'} 能够有效应对 ${targetHeroNames} 的组合`
+            : `${heroName}'s ${hero.role === 'tank' ? 'crowd control' : hero.role === 'damage' ? 'burst damage' : 'counter abilities'} effectively handles ${targetHeroNames}'s combination`;
+        }
+      }
+
       return (
         <div key={hero.id} className={`flex items-start gap-3 p-2 rounded-lg border backdrop-blur-sm mb-2 ${colorClass}`}>
           <div className={`w-10 h-10 rounded-full overflow-hidden bg-slate-800 flex-shrink-0 ring-2 ${colorClass.includes('red') ? 'ring-red-500/50' : 'ring-green-500/50'}`}>
@@ -232,7 +339,7 @@ const ForceGraph = ({
     if (selectedHero) return;
     const randomIndex = Math.floor(Math.random() * heroes.length);
     const randomHero = heroes[randomIndex];
-    if (randomHero) onHeroSelect(randomHero.id);
+    if (randomHero) onHeroSelect([randomHero.id]);
   }, []);
 
   const handlePanelDragStart = (e: React.MouseEvent) => {
@@ -287,25 +394,29 @@ const ForceGraph = ({
     const nodes: NodeDatum[] = heroes
       .filter(h => !selectedRole || h.role === selectedRole)
       .map(h => {
-        const radiusByStrength = (heroId: string, targetId: string | null): number => {
-          if (!targetId) return h.role === 'tank' ? 32 : 28;
-          if (heroId === targetId) return 42;
+        const radiusByStrength = (heroId: string, targetIds: string[]): number => {
+          if (targetIds.length === 0) return h.role === 'tank' ? 32 : 28;
+          if (targetIds.includes(heroId)) return 42;
           
-          // For synergy: only check if heroId -> targetId (hero is target's partner)
-          // For counter: check both directions
           let relation;
-          if (activeCounterTab === 'synergy') {
-            // 只检查 heroId 作为 source (即 heroId 是 targetId 的拍档)
-            // 格式: source=拍档方, target=被配对方
-            relation = synergyRelations.find(r => 
-              r.source === heroId && r.target === targetId
-            );
+          if (isMultiSelect) {
+            if (commonRelatedIds.includes(heroId)) {
+              const commonItem = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
+                .find(item => item.hero.id === heroId);
+              if (commonItem) {
+                relation = { strength: commonItem.strength };
+              }
+            }
           } else {
-            // 克制关系检查双向
-            relation = counterRelations.find(r =>
-              (r.source === heroId && r.target === targetId) ||
-              (r.target === heroId && r.source === targetId)
-            );
+            const targetId = targetIds[0];
+            if (activeCounterTab === 'synergy') {
+              relation = synergyRelations.find(r => r.source === heroId && r.target === targetId);
+            } else {
+              relation = counterRelations.find(r =>
+                (r.source === heroId && r.target === targetId) ||
+                (r.target === heroId && r.source === targetId)
+              );
+            }
           }
           
           if (!relation) return h.role === 'tank' ? 28 : 24;
@@ -321,25 +432,50 @@ const ForceGraph = ({
           role: h.role,
           color: h.role === 'tank' ? '#f59e0b' : h.role === 'damage' ? '#ef4444' : '#22c55e',
           image: h.image,
-          radius: radiusByStrength(h.id, selectedHero),
+          radius: radiusByStrength(h.id, selectedHeroes),
         };
       });
     const nodeIds = new Set(nodes.map(n => n.id));
-    // Add synergy links when synergy tab is active
-    let links: LinkDatum[] = counterRelations
-      .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target))
-      .map(l => ({ source: l.source, target: l.target }));
-
-    // Only show synergy links when synergy tab is active
-    if (activeCounterTab === 'synergy' && selectedHero) {
-      const synergyLinks = synergyRelations
-        .filter(r => r.target === selectedHero && nodeIds.has(r.source))
-        .map(r => ({ source: r.source, target: r.target }));
-      links = synergyLinks;
+    
+    let links: LinkDatum[] = [];
+    
+    if (isMultiSelect) {
+      // For multi-select, show links between selected heroes and common related heroes
+      if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
+        // Source is common hero, Target is one of selected heroes
+        links = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
+          .filter(r => selectedHeroes.includes(r.target) && commonRelatedIds.includes(r.source) && nodeIds.has(r.source) && nodeIds.has(r.target))
+          .map(r => ({ source: r.source, target: r.target }));
+      } else {
+        // Source is one of selected heroes, Target is common hero
+        links = counterRelations
+          .filter(r => selectedHeroes.includes(r.source) && commonRelatedIds.includes(r.target) && nodeIds.has(r.source) && nodeIds.has(r.target))
+          .map(r => ({ source: r.source, target: r.target }));
+      }
+    } else if (selectedHeroes.length === 1) {
+      const selectedHeroId = selectedHeroes[0];
+      if (activeCounterTab === 'synergy') {
+        links = synergyRelations
+          .filter(r => r.target === selectedHeroId && nodeIds.has(r.source))
+          .map(r => ({ source: r.source, target: r.target }));
+      } else if (activeCounterTab === 'counteredBy') {
+        links = counterRelations
+          .filter(r => r.target === selectedHeroId && nodeIds.has(r.source))
+          .map(r => ({ source: r.source, target: r.target }));
+      } else {
+        links = counterRelations
+          .filter(r => r.source === selectedHeroId && nodeIds.has(r.target))
+          .map(r => ({ source: r.source, target: r.target }));
+      }
+    } else {
+      // Default: show all counter links (but filtered by node visibility)
+      links = counterRelations
+        .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target))
+        .map(l => ({ source: l.source, target: l.target }));
     }
 
     return { nodes, links };
-  }, [selectedRole, selectedHero, activeCounterTab]);
+  }, [selectedRole, selectedHeroes, activeCounterTab, isMultiSelect, commonRelatedIds, synergyPartners, counteredBy, counters]);
 
   useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
@@ -466,14 +602,32 @@ const ForceGraph = ({
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
-        // Synergy模式使用高饱和cyan色系粒子
+        
+        // Synergy模式使用紫色系粒子
         if (activeCounterTab === 'synergy') {
-          // Synergy模式使用紫色系粒子
           return s === 3 ? '#c084fc' : s === 2 ? '#d8b4fe' : '#e9d5ff';
         }
-        const color = activeCounterTab === 'counteredBy' ?
-          (targetId === selectedHero ? 'red' : 'green') :
-          (sourceId === selectedHero ? 'green' : 'red');
+        
+        // 统一粒子颜色逻辑：多选和单选使用相同的颜色规则
+        let color = 'red';
+        
+        if (isMultiSelect) {
+          // 多选模式：根据关系方向确定颜色
+          if (activeCounterTab === 'counteredBy') {
+            // 被克制关系：从共同被克制英雄流向选中英雄（红色）
+            color = commonRelatedIds.includes(sourceId) && selectedHeroes.includes(targetId) ? 'red' : 'green';
+          } else {
+            // 克制关系：从选中英雄流向共同克制英雄（绿色）
+            color = selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId) ? 'green' : 'red';
+          }
+        } else {
+          // 单选模式：保持原有逻辑
+          color = activeCounterTab === 'counteredBy' ?
+            (targetId === selectedHeroes[0] ? 'red' : 'green') :
+            (sourceId === selectedHeroes[0] ? 'green' : 'red');
+        }
+        
+        // 使用与单选模式相同的粒子颜色
         return s === 3 ? (color === 'red' ? '#ff6b6b' : '#4ade80') :
           s === 2 ? (color === 'red' ? '#ff8a8a' : '#6ee7a0') :
             (color === 'red' ? '#ffa8a8' : '#a3f7bc');
@@ -497,6 +651,36 @@ const ForceGraph = ({
     nodeGroup.append('circle').attr('r', d => d.radius).attr('fill', '#1a1a2e').attr('stroke', d => d.color).attr('stroke-width', 3).attr('class', 'node-circle');
     nodeGroup.append('image').attr('xlink:href', d => d.image).attr('x', d => -(d.radius - 2)).attr('y', d => -(d.radius - 2)).attr('width', d => (d.radius - 2) * 2).attr('height', d => (d.radius - 2) * 2).attr('clip-path', d => `url(#clip-${d.id})`).attr('preserveAspectRatio', 'xMidYMid slice').style('pointer-events', 'none');
     nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', '12px').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 1px 3px rgba(0,0,0,0.8)').style('opacity', '1');
+    
+    // Add selection indicator (checkbox) at bottom right of the node image
+    const checkGroup = nodeGroup.append('g')
+      .attr('class', 'selection-indicator')
+      .style('opacity', d => selectedHeroes.includes(d.id) ? 1 : 0)
+      .style('pointer-events', 'none');
+
+    // White background checkbox with gray border - increased to 30px and moved closer to center
+    checkGroup.append('rect')
+      .attr('x', d => d.radius * 0.3)  // Moved closer to center (from 0.5 to 0.3)
+      .attr('y', d => d.radius * 0.3)  // Moved closer to center (from 0.5 to 0.3)
+      .attr('width', 30)  // Increased from 16 to 30
+      .attr('height', 30)  // Increased from 16 to 30
+      .attr('rx', 6)  // Increased corner radius for larger size
+      .attr('fill', '#ffffff')
+      .attr('stroke', '#6b7280')
+      .attr('stroke-width', 2);
+
+    // Black checkmark - adjusted for larger size
+    checkGroup.append('path')
+      .attr('d', d => {
+        const x = d.radius * 0.3 + 8;  // Adjusted for new position and size
+        const y = d.radius * 0.3 + 15; // Adjusted for new position and size
+        return `M${x},${y} l6,6 l10,-10`;  // Increased checkmark size
+      })
+      .attr('fill', 'none')
+      .attr('stroke', '#000000')
+      .attr('stroke-width', 3)  // Increased stroke width for larger checkmark
+      .attr('stroke-linecap', 'round')
+      .attr('stroke-linejoin', 'round');
 
     // Add "Map Strong" label above nodes
     const mapLabelGroup = nodeGroup.append('g')
@@ -520,7 +704,7 @@ const ForceGraph = ({
       .attr('font-weight', '800')
       .text(t('mapRecommended'));
 
-    nodeGroup.on('click', (event, d) => { event.stopPropagation(); onHeroSelect(d.id === selectedHero ? null : d.id); });
+    nodeGroup.on('click', (event, d) => { handleHeroClick(d.id, event); });
 
     // Track particle animation progress
     let particleProgress = 0;
@@ -537,9 +721,17 @@ const ForceGraph = ({
           if (activeCounterTab === 'synergy') return 0;
           const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
           const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-          const isRelevant = selectedHero ?
-            (activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) :
-            false;
+          
+          let isRelevant = false;
+          if (isMultiSelect) {
+            isRelevant = activeCounterTab === 'counteredBy' 
+              ? (selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId))
+              : (selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId));
+          } else {
+            const targetHero = selectedHeroes[0];
+            isRelevant = activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
+          }
+          
           if (!isRelevant) return 0;
           return 0.9;
         })
@@ -548,10 +740,17 @@ const ForceGraph = ({
           const target = d.target as NodeDatum;
           const sourceId = source.id;
           const targetId = target.id;
-          const isRelevant = selectedHero ?
-            (activeCounterTab === 'synergy' ? (targetId === selectedHero || sourceId === selectedHero) :
-              activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) :
-            false;
+          
+          let isRelevant = false;
+          if (isMultiSelect) {
+            isRelevant = activeCounterTab === 'counteredBy' 
+              ? (selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId))
+              : (selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId));
+          } else {
+            const targetHero = selectedHeroes[0];
+            isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
+          }
+          
           if (!isRelevant) return 0;
           const dx = (target.x || 0) - (source.x || 0);
           const maxPos = activeCounterTab === 'synergy' ? 0.5 : 1;
@@ -563,10 +762,17 @@ const ForceGraph = ({
           const target = d.target as NodeDatum;
           const sourceId = source.id;
           const targetId = target.id;
-          const isRelevant = selectedHero ?
-            (activeCounterTab === 'synergy' ? (targetId === selectedHero || sourceId === selectedHero) :
-              activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero) :
-            false;
+          
+          let isRelevant = false;
+          if (isMultiSelect) {
+            isRelevant = activeCounterTab === 'counteredBy' 
+              ? (selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId))
+              : (selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId));
+          } else {
+            const targetHero = selectedHeroes[0];
+            isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
+          }
+          
           if (!isRelevant) return 0;
           const dy = (target.y || 0) - (source.y || 0);
           const maxPos = activeCounterTab === 'synergy' ? 0.5 : 1;
@@ -586,22 +792,24 @@ const ForceGraph = ({
       nodeGroup.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
     });
 
-    if (selectedHero) {
+    if (selectedHeroes.length > 0) {
       simulation.alpha(0.1).restart();
 
       nodeGroup.transition().duration(300).style('opacity', d => {
-        if (d.id === selectedHero) return 1;
+        if (selectedHeroes.includes(d.id)) return 0.85;
         
         let isRelated;
-        if (activeCounterTab === 'synergy') {
-          // 只检查 d.id 作为 source
-          isRelated = synergyRelations.some(r => 
-            r.source === d.id && r.target === selectedHero
-          );
+        if (isMultiSelect) {
+          isRelated = commonRelatedIds.includes(d.id);
         } else {
-          isRelated = activeCounterTab === 'counteredBy' 
-            ? counterRelations.some(r => r.source === d.id && r.target === selectedHero) 
-            : counterRelations.some(r => r.source === selectedHero && r.target === d.id);
+          const targetHero = selectedHeroes[0];
+          if (activeCounterTab === 'synergy') {
+            isRelated = synergyRelations.some(r => r.source === d.id && r.target === targetHero);
+          } else {
+            isRelated = activeCounterTab === 'counteredBy' 
+              ? counterRelations.some(r => r.source === d.id && r.target === targetHero) 
+              : counterRelations.some(r => r.source === targetHero && r.target === d.id);
+          }
         }
         return isRelated ? 1 : 0.7;
       });
@@ -611,20 +819,31 @@ const ForceGraph = ({
         const group = d3.select(this);
         
         let relation;
-        if (activeCounterTab === 'synergy') {
-          // 只检查 d.id 作为 source (即 d.id 是 selectedHero 的拍档)
-          relation = synergyRelations.find(r =>
-            r.source === d.id && r.target === selectedHero
-          );
+        if (isMultiSelect) {
+          if (commonRelatedIds.includes(d.id)) {
+            // Find relations to determine strength (use average or min or just representative)
+            // For now, we use the results from getCommonXXX which already sorted/filtered
+            const commonItem = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
+              .find(item => item.hero.id === d.id);
+            if (commonItem) {
+              relation = { strength: commonItem.strength };
+            }
+          }
         } else {
-          relation = activeCounterTab === 'counteredBy' 
-            ? counterRelations.find(r => r.source === d.id && r.target === selectedHero) 
-            : counterRelations.find(r => r.source === selectedHero && r.target === d.id);
+          const targetHero = selectedHeroes[0];
+          if (activeCounterTab === 'synergy') {
+            relation = synergyRelations.find(r => r.source === d.id && r.target === targetHero);
+          } else {
+            relation = activeCounterTab === 'counteredBy' 
+              ? counterRelations.find(r => r.source === d.id && r.target === targetHero) 
+              : counterRelations.find(r => r.source === targetHero && r.target === d.id);
+          }
         }
         
         let scale = 0.8;
-        if (d.id === selectedHero) scale = 1.5;
+        if (selectedHeroes.includes(d.id)) scale = 1.5;
         else if (relation) scale = relation.strength === 3 ? 1.3 : relation.strength === 2 ? 1.1 : 1.0;
+        
         const r = d.radius * scale;
         const imgR = (d.radius - 2) * scale;
         group.select('.node-circle').transition().duration(300).attr('r', r);
@@ -632,20 +851,29 @@ const ForceGraph = ({
         group.select('image').transition().duration(300).attr('x', -imgR).attr('y', -imgR).attr('width', imgR * 2).attr('height', imgR * 2);
         d3.select(`#clip-${d.id} circle`).transition().duration(300).attr('r', imgR);
         group.select('.node-name').transition().duration(300).attr('dy', r + 20);
+        
+        // Update selection indicator
+        group.select('.selection-indicator')
+          .transition()
+          .duration(300)
+          .style('opacity', selectedHeroes.includes(d.id) ? 1 : 0)
+          .attr('transform', `translate(${(scale - 1) * d.radius}, ${(scale - 1) * d.radius})`);
 
         const isRecommended = selectedMap && mapRecommendedHeroes.includes(d.id);
         let showLabel = false;
         if (isRecommended) {
-          if (d.id === selectedHero) {
+          if (selectedHeroes.includes(d.id)) {
             showLabel = true;
+          } else if (isMultiSelect) {
+            showLabel = commonRelatedIds.includes(d.id);
           } else {
-            // Check relationship based on active tab
+            const targetHero = selectedHeroes[0];
             if (activeCounterTab === 'synergy') {
-              showLabel = synergyRelations.some(r => r.source === d.id && r.target === selectedHero);
+              showLabel = synergyRelations.some(r => r.source === d.id && r.target === targetHero);
             } else if (activeCounterTab === 'counteredBy') {
-              showLabel = counterRelations.some(r => r.source === d.id && r.target === selectedHero);
+              showLabel = counterRelations.some(r => r.source === d.id && r.target === targetHero);
             } else {
-              showLabel = counterRelations.some(r => r.source === selectedHero && r.target === d.id);
+              showLabel = counterRelations.some(r => r.source === targetHero && r.target === d.id);
             }
           }
         }
@@ -660,35 +888,67 @@ const ForceGraph = ({
       link.attr('stroke-opacity', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const isRelevant = activeCounterTab === 'synergy' ? (targetId === selectedHero || sourceId === selectedHero) : activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero;
-        if (!isRelevant) return 0.01;
+        
+        let isRelevant = false;
         let s = 1;
-        if (activeCounterTab === 'synergy') {
-          const synergyRel = synergyRelations.find(r => r.source === sourceId && r.target === targetId);
-          s = synergyRel?.strength || 1;
+
+        if (isMultiSelect) {
+          if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
+            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId);
+            if (isRelevant) {
+              const rel = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
+                .find(r => r.source === sourceId && r.target === targetId);
+              s = rel?.strength || 1;
+            }
+          } else {
+            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId);
+            if (isRelevant) {
+              const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+              s = rel?.strength || 1;
+            }
+          }
         } else {
-          const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
-          s = rel?.strength || 1;
+          const targetHero = selectedHeroes[0];
+          isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
+          if (isRelevant) {
+            const rel = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
+              .find(r => r.source === sourceId && r.target === targetId);
+            s = rel?.strength || 1;
+          }
         }
+
+        if (!isRelevant) return 0.01;
         return s === 3 ? 1.0 : s === 2 ? 0.5 : 0.25;
       }).attr('stroke-width', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const isRelevant = activeCounterTab === 'synergy' ? (targetId === selectedHero || sourceId === selectedHero) : activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero;
-        if (!isRelevant) return 1;
+        
+        let isRelevant = false;
         let s = 1;
-        if (activeCounterTab === 'synergy') {
-          const synergyRel = synergyRelations.find(r => r.source === sourceId && r.target === targetId);
-          s = synergyRel?.strength || 1;
+
+        if (isMultiSelect) {
+          if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
+            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId);
+          } else {
+            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId);
+          }
         } else {
-          const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
-          s = rel?.strength || 1;
+          const targetHero = selectedHeroes[0];
+          isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
         }
+
+        if (!isRelevant) return 1;
+        
+        const rel = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
+          .find(r => r.source === sourceId && r.target === targetId);
+        s = rel?.strength || 1;
+        
         return s === 3 ? 15 : s === 2 ? 9 : 4.5;
       }).attr('stroke', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
+          .find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
         if (activeCounterTab === 'synergy') return '#a855f7';
         if (activeCounterTab === 'counteredBy') return s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#fca5a5';
@@ -696,12 +956,24 @@ const ForceGraph = ({
       }).attr('marker-end', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const isRelevant = activeCounterTab === 'synergy' ? (targetId === selectedHero || sourceId === selectedHero) : activeCounterTab === 'counteredBy' ? targetId === selectedHero : sourceId === selectedHero;
+        
+        let isRelevant = false;
+        if (isMultiSelect) {
+          if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
+            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId);
+          } else {
+            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId);
+          }
+        } else {
+          const targetHero = selectedHeroes[0];
+          isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
+        }
+
         if (!isRelevant) return null;
+        if (activeCounterTab === 'synergy') return null;
+        
         const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
-        // No arrow for synergy links
-        if (activeCounterTab === 'synergy') return null;
         return `url(#arrow-${activeCounterTab === 'counteredBy' ? 'red' : 'green'}-${s})`;
       });
     } else {
@@ -770,7 +1042,7 @@ const ForceGraph = ({
       });
     }
 
-    svg.on('click', () => onHeroSelect(null));
+    svg.on('click', () => onHeroSelect([]));
     return () => { simulation.stop(); };
   }, [
     prepareData,
@@ -786,7 +1058,7 @@ const ForceGraph = ({
 
   const handleZoomIn = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 1.3);
   const handleZoomOut = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 0.7);
-  const handleReset = () => { if (svgRef.current) d3.select(svgRef.current).transition().duration(500).call(zoomRef.current!.transform, d3.zoomIdentity); onHeroSelect(null); };
+  const handleReset = () => { if (svgRef.current) d3.select(svgRef.current).transition().duration(500).call(zoomRef.current!.transform, d3.zoomIdentity); onHeroSelect([]); };
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
@@ -806,24 +1078,59 @@ const ForceGraph = ({
               </h3>
             </div>
 
-            {displayedHero ? (
+            {displayedHero || isMultiSelect ? (
               <div className="flex flex-col flex-1 min-h-0">
                 <div className="flex items-center gap-4 mb-4 flex-shrink-0" onMouseDown={handlePanelDragStart}>
-                  <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `3px solid ${displayedHero.color}`, backgroundColor: '#1a1a2e' }}>
-                    <img src={displayedHero.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-slate-100 leading-tight">{language === 'zh' ? displayedHero?.name : displayedHero?.nameEn}</h3>
-                      <Badge variant="outline" className="text-xs px-2 py-0" style={{ borderColor: displayedHero.color, color: displayedHero.color }}>{getRoleName(displayedHero.role, language)}</Badge>
-                      {selectedMap && mapRecommendedHeroes.includes(displayedHero.id) && (
-                        <Badge variant="outline" className="text-xs px-2 py-0 text-cyan-400 border-cyan-400/50 bg-cyan-400/10">
-                          {t('mapRecommended')}
-                        </Badge>
-                      )}
+                  {displayedHero ? (
+                    <>
+                      <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `3px solid ${displayedHero.color}`, backgroundColor: '#1a1a2e' }}>
+                        <img src={displayedHero.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-bold text-slate-100 leading-tight">{language === 'zh' ? displayedHero?.name : displayedHero?.nameEn}</h3>
+                          <Badge variant="outline" className="text-xs px-2 py-0" style={{ borderColor: displayedHero.color, color: displayedHero.color }}>{getRoleName(displayedHero.role, language)}</Badge>
+                          {selectedMap && mapRecommendedHeroes.includes(displayedHero.id) && (
+                            <Badge variant="outline" className="text-xs px-2 py-0 text-cyan-400 border-cyan-400/50 bg-cyan-400/10">
+                              {t('mapRecommended')}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-200 leading-tight mt-0.5">{language === 'zh' ? displayedHero?.nameEn : displayedHero?.name}</p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex-1">
+                      <h3 className="text-base font-bold text-slate-100 leading-tight mb-3">
+                        {t('multiSelectMode') || '多选模式'}
+                        <span className="ml-2 text-sm font-normal text-slate-400">
+                          {(language === 'zh' ? '已选择 ' : 'Selected ') + selectedHeroes.length + (language === 'zh' ? ' 个英雄' : ' heroes')}
+                        </span>
+                      </h3>
+                      <div className="flex flex-wrap gap-3">
+                        {selectedHeroes.map(heroId => {
+                          const hero = heroes.find(h => h.id === heroId);
+                          if (!hero) return null;
+                          return (
+                            <div key={heroId} className="flex items-center gap-2 bg-slate-800/40 p-2 rounded-lg border border-slate-700/50 min-w-0 flex-shrink-0">
+                              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `2px solid ${hero.color}`, backgroundColor: '#1a1a2e' }}>
+                                <img src={hero.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1">
+                                  <span className="text-xs font-bold text-slate-100 truncate">{language === 'zh' ? hero.name : hero.nameEn}</span>
+                                  <span className="text-[10px] px-1 py-0.5 rounded border font-medium" style={{ borderColor: hero.color, color: hero.color }}>
+                                    {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
+                                  </span>
+                                </div>
+                                <p className="text-[10px] text-slate-400 truncate">{language === 'zh' ? hero.nameEn : hero.name}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-200 leading-tight mt-0.5">{language === 'zh' ? displayedHero?.nameEn : displayedHero?.name}</p>
-                  </div>
+                  )}
                 </div>
 
                 <Tabs value={activeCounterTab} onValueChange={(v) => setActiveCounterTab(v as any)} className="flex-1 flex flex-col min-h-0">
@@ -832,10 +1139,10 @@ const ForceGraph = ({
                       <ShieldAlert className="w-3.5 h-3.5 flex-shrink-0" />
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="text-[11px] truncate">{t('counteredBy')}</span>
+                          <span className="text-[11px] truncate">{isMultiSelect ? t('commonPrefix') : ''}{t('counteredBy')}</span>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>{t('counteredBy')}</p>
+                          <p>{isMultiSelect ? t('commonPrefix') : ''}{t('counteredBy')}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TabsTrigger>
@@ -844,10 +1151,10 @@ const ForceGraph = ({
                       <Swords className="w-3.5 h-3.5 flex-shrink-0" />
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="text-[11px] truncate">{t('counters')}</span>
+                          <span className="text-[11px] truncate">{isMultiSelect ? t('commonPrefix') : ''}{t('counters')}</span>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>{t('counters')}</p>
+                          <p>{isMultiSelect ? t('commonPrefix') : ''}{t('counters')}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TabsTrigger>
@@ -856,39 +1163,39 @@ const ForceGraph = ({
                       <Users className="w-3.5 h-3.5 flex-shrink-0" />
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="text-[11px] truncate">{t('synergy')}</span>
+                          <span className="text-[11px] truncate">{isMultiSelect ? t('commonPrefix') : ''}{t('synergy')}</span>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>{t('synergy')}</p>
+                          <p>{isMultiSelect ? t('commonPrefix') : ''}{t('synergy')}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="counteredBy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-red-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
-                    {displayedHero && (
+                    {selectedHeroes.length > 0 && (
                       <>
-                        {renderHeroList(counteredBy, 3, 'bg-red-900/30 border-red-700/50', displayedHero.id)}
-                        {renderHeroList(counteredBy, 2, 'bg-red-800/20 border-red-600/40', displayedHero.id)}
-                        {renderHeroList(counteredBy, 1, 'bg-red-700/10 border-red-500/30', displayedHero.id)}
+                        {renderHeroList(counteredBy, 3, 'bg-red-900/30 border-red-700/50', selectedHeroes)}
+                        {renderHeroList(counteredBy, 2, 'bg-red-800/20 border-red-600/40', selectedHeroes)}
+                        {renderHeroList(counteredBy, 1, 'bg-red-700/10 border-red-500/30', selectedHeroes)}
                       </>
                     )}
                     {counteredBy.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('notCounteredByAny')}</div>}
                   </TabsContent>
 
                   <TabsContent value="counters" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-green-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
-                    {displayedHero && (
+                    {selectedHeroes.length > 0 && (
                       <>
-                        {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', displayedHero.id, true)}
-                        {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', displayedHero.id, true)}
-                        {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', displayedHero.id, true)}
+                        {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', selectedHeroes, true)}
+                        {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', selectedHeroes, true)}
+                        {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', selectedHeroes, true)}
                       </>
                     )}
                     {counters.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('noCounters')}</div>}
                   </TabsContent>
 
                   <TabsContent value="synergy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-purple-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
-                    {displayedHero && synergyPartners.length > 0 && (
+                    {selectedHeroes.length > 0 && synergyPartners.length > 0 && (
                       <div className="space-y-2">
                         {synergyPartners.map(partner => {
                           const hero = partner.hero;
@@ -918,7 +1225,19 @@ const ForceGraph = ({
                                   </div>
                                 </div>
                                 <p className="text-[11px] text-purple-300 leading-relaxed mt-1">
-                                  {getSynergyReason(hero.id, displayedHero.id, language)}
+                                  {!isMultiSelect 
+                                    ? getSynergyReason(hero.id, selectedHeroes[0], language)
+                                    : (() => {
+                                        const targetHeroNames = selectedHeroes.map(id => {
+                                          const h = heroes.find(hero => hero.id === id);
+                                          return h ? (language === 'zh' ? h.name : h.nameEn) : '';
+                                        }).filter(name => name).join(language === 'zh' ? '、' : ', ');
+                                        const currentHeroName = language === 'zh' ? hero.name : hero.nameEn;
+                                        
+                                        return language === 'zh'
+                                          ? `${currentHeroName} 与 ${targetHeroNames} 形成${hero.role === 'tank' ? '前排保护' : hero.role === 'damage' ? '火力压制' : '治疗支援'}的完美协同，${partner.strength === 3 ? '极大提升' : partner.strength === 2 ? '有效增强' : '适当补充'}团队作战能力`
+                                          : `${currentHeroName} synergizes perfectly with ${targetHeroNames} for ${hero.role === 'tank' ? 'frontline protection' : hero.role === 'damage' ? 'firepower suppression' : 'healing support'}, ${partner.strength === 3 ? 'significantly boosting' : partner.strength === 2 ? 'effectively enhancing' : 'appropriately supplementing'} team combat capabilities`;
+                                      })()}
                                 </p>
                               </div>
                             </div>
@@ -940,26 +1259,55 @@ const ForceGraph = ({
                       <Button variant="ghost" size="sm" className={`h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-slate-200 ${activeCounterTab === 'synergy' ? 'hover:text-purple-400' : 'hover:text-cyan-400'}`} onClick={(e) => {
                         e.stopPropagation();
                         let text = '';
-                        if (activeCounterTab === 'synergy') {
-                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                          const partnerNames = synergyPartners.map(p => language === 'zh' ? p.hero.name : p.hero.nameEn).join(', ');
-                          text = `${hName} 最佳拍档 英雄 ${partnerNames}`;
+                        const commonHeroesNames = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
+                          .map(p => language === 'zh' ? p.hero.name : p.hero.nameEn).join(', ');
+                        
+                        if (isMultiSelect) {
+                          const selectedHeroNames = selectedHeroes.map(id => {
+                            const h = heroes.find(hero => hero.id === id);
+                            return h ? (language === 'zh' ? h.name : h.nameEn) : '';
+                          }).filter(name => name).join(', ');
+                          
+                          if (activeCounterTab === 'synergy') {
+                            text = `${selectedHeroNames} ${t('commonSynergy')} ${t('heroes')} ${commonHeroesNames}`;
+                          } else {
+                            const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
+                            const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                            list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                            const formatGroup = (arr: typeof list, prefix: string) =>
+                              arr.length > 0 ? `${prefix}${arr.map(i => {
+                                const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                                return name;
+                              }).join(', ')}` : '';
+                            const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
+                            const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
+                            const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
+                            const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
+                            const header = activeCounterTab === 'counteredBy' 
+                              ? `${selectedHeroNames}${t('commonCounteredBy')}` 
+                              : `${selectedHeroNames}${t('commonCounters')}`;
+                            text = `${header} ${groups}`;
+                          }
                         } else {
-                          const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
                           const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                          const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
-                          list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
-                          const formatGroup = (arr: typeof list, prefix: string) =>
-                            arr.length > 0 ? `${prefix}${arr.map(i => {
-                              const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
-                              return name;
-                            }).join(', ')}` : '';
-                          const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
-                          const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
-                          const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
-                          const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
-                          const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
-                          text = `${header} ${groups}`;
+                          if (activeCounterTab === 'synergy') {
+                            text = `${hName} ${t('synergy')} ${t('heroes')} ${commonHeroesNames}`;
+                          } else {
+                            const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
+                            const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                            list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                            const formatGroup = (arr: typeof list, prefix: string) =>
+                              arr.length > 0 ? `${prefix}${arr.map(i => {
+                                const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                                return name;
+                              }).join(', ')}` : '';
+                            const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
+                            const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
+                            const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
+                            const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
+                            const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
+                            text = `${header} ${groups}`;
+                          }
                         }
                         handleCopyToClipboard(text);
                       }}>
@@ -973,31 +1321,62 @@ const ForceGraph = ({
                     onDoubleClick={(e) => {
                       e.stopPropagation();
                       let text = '';
-                      if (activeCounterTab === 'synergy') {
-                        if (synergyPartners.length > 0) {
-                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                          const partnerNames = synergyPartners.map(p => language === 'zh' ? p.hero.name : p.hero.nameEn).join(', ');
-                          text = `${hName} 最佳拍档 英雄 ${partnerNames}`;
-                          handleCopyToClipboard(text);
+                      const commonHeroesNames = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
+                        .map(p => language === 'zh' ? p.hero.name : p.hero.nameEn).join(', ');
+
+                      if (isMultiSelect) {
+                        const selectedHeroNames = selectedHeroes.map(id => {
+                          const h = heroes.find(hero => hero.id === id);
+                          return h ? (language === 'zh' ? h.name : h.nameEn) : '';
+                        }).filter(name => name).join(', ');
+                        
+                        if (activeCounterTab === 'synergy') {
+                          text = `${selectedHeroNames} ${t('commonSynergy')} ${t('heroes')} ${commonHeroesNames}`;
+                        } else {
+                          const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
+                          if (list.length > 0) {
+                            const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                            list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                            const formatGroup = (arr: typeof list, prefix: string) =>
+                              arr.length > 0 ? `${prefix}${arr.map(i => {
+                                const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                                return name;
+                              }).join(', ')}` : '';
+                            const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
+                            const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
+                            const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
+                            const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
+                            const header = activeCounterTab === 'counteredBy' 
+                              ? `${selectedHeroNames}${t('commonCounteredBy')}` 
+                              : `${selectedHeroNames}${t('commonCounters')}`;
+                            text = `${header} ${groups}`;
+                          }
                         }
-                      } else {
-                        const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
-                        if (list.length > 0) {
-                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                          const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
-                          list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
-                          const formatGroup = (arr: typeof list, prefix: string) =>
-                            arr.length > 0 ? `${prefix}${arr.map(i => {
-                              const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
-                              return name;
-                            }).join(', ')}` : '';
-                          const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
-                          const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
-                          const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
-                          const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
-                          const header = activeCounterTab === 'counteredBy' ? `${hName}${t('counteredByHeader')}` : `${hName}${t('countersHeader')}`;
-                          text = `${header} ${groups}`;
-                          handleCopyToClipboard(text);
+                        handleCopyToClipboard(text);
+                      } else if (displayedHero) {
+                        if (activeCounterTab === 'synergy') {
+                          if (synergyPartners.length > 0) {
+                            text = `${displayedHero.name} ${t('synergy')} ${t('heroes')} ${commonHeroesNames}`;
+                            handleCopyToClipboard(text);
+                          }
+                        } else {
+                          const list = activeCounterTab === 'counteredBy' ? counteredBy : counters;
+                          if (list.length > 0) {
+                            const grouped = { 3: [] as typeof list, 2: [] as typeof list, 1: [] as typeof list };
+                            list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
+                            const formatGroup = (arr: typeof list, prefix: string) =>
+                              arr.length > 0 ? `${prefix}${arr.map(i => {
+                                const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                                return name;
+                              }).join(', ')}` : '';
+                            const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
+                            const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
+                            const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
+                            const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
+                            const header = activeCounterTab === 'counteredBy' ? `${displayedHero.name}${t('counteredByHeader')}` : `${displayedHero.name}${t('countersHeader')}`;
+                            text = `${header} ${groups}`;
+                            handleCopyToClipboard(text);
+                          }
                         }
                       }
                     }}
@@ -1005,8 +1384,6 @@ const ForceGraph = ({
                     {activeCounterTab === 'synergy' ? (
                       synergyPartners.length > 0 ? (
                         (() => {
-                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                          const hNameWithNickname = language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : hName;
                           const partnerNames = synergyPartners.map(p => {
                             const name = language === 'zh' ? p.hero.name : p.hero.nameEn;
                             if (language === 'zh' && p.hero.nickname) {
@@ -1014,7 +1391,17 @@ const ForceGraph = ({
                             }
                             return name;
                           }).join('、');
-                          return <><div className="text-white font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>最佳拍档</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-purple-300 font-medium">{partnerNames}</div></>;
+                          
+                          const selectedHeroNames = selectedHeroes.map(id => {
+                            const h = heroes.find(hero => hero.id === id);
+                            return h ? (language === 'zh' ? h.name : h.nameEn) : '';
+                          }).filter(name => name).join('、');
+                          
+                          const hNameWithNickname = isMultiSelect ? selectedHeroNames : (
+                            language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : 
+                            (language === 'zh' ? displayedHero?.name : displayedHero?.nameEn)
+                          );
+                          return <><div className="text-white font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{isMultiSelect ? t('commonSynergy') : t('synergy')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-purple-300 font-medium">{partnerNames}</div></>;
                         })()
                       ) : t('noSynergy')
                     ) : ((activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0 ? (
@@ -1030,12 +1417,30 @@ const ForceGraph = ({
                             }
                             return name;
                           }).join('、')}</div> : null;
-                        const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
-                        const hNameWithNickname = language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : hName;
+                        
+                        const selectedHeroNames = selectedHeroes.map(id => {
+                          const h = heroes.find(hero => hero.id === id);
+                          return h ? (language === 'zh' ? h.name : h.nameEn) : '';
+                        }).filter(name => name).join('、');
+                        
+                        const hNameWithNickname = isMultiSelect ? selectedHeroNames : (
+                          language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : 
+                          (language === 'zh' ? displayedHero?.name : displayedHero?.nameEn)
+                        );
+                        
+                        if (isMultiSelect) {
+                          if (activeCounterTab === 'counteredBy') {
+                            // Countered By关系保持不变：被克制英雄 → 选择的英雄
+                            return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{isMultiSelect ? t('commonCountered') : t('counteredBy')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-white font-bold text-2xl">{hNameWithNickname}</div></>;
+                          } else {
+                            // CommonCounters关系互换：选择的英雄 → 被克制英雄
+                            return <><div className="text-white font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{isMultiSelect ? t('commonCounter') : t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
+                          }
+                        }
                         if (activeCounterTab === 'counteredBy') {
-                          return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-white font-bold text-2xl">{hNameWithNickname}</div></>;
+                          return <>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-red-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-red-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-red-200')}<div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{isMultiSelect ? t('commonCountered') : t('counteredBy')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-white font-bold text-2xl">{hNameWithNickname}</div></>;
                         } else {
-                          return <><div className="text-white font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
+                          return <><div className="text-white font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{isMultiSelect ? t('commonCounter') : t('counter')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div>{formatDisplay(grouped[3], t('strength3') + ': ', 'text-green-400')}{formatDisplay(grouped[2], t('strength2') + ': ', 'text-green-300')}{formatDisplay(grouped[1], t('strength1') + ': ', 'text-green-200')}</>;
                         }
                       })()
                     ) : t('noCounterData'))}
@@ -1044,10 +1449,10 @@ const ForceGraph = ({
                 </div>
               </div>
             ) : (
-              <div className="flex-1 flex items-center justify-center">
-                <div className="text-center">
-                  <Swords className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-200 text-sm">{t('selectHeroPrompt')}</p>
+              <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+                <div className="text-center p-8 bg-slate-800/30 rounded-2xl border border-slate-700/50 backdrop-blur-sm">
+                  <Users className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                  <p>{t('selectHeroTip')}</p>
                 </div>
               </div>
             )}
@@ -1055,7 +1460,6 @@ const ForceGraph = ({
         </div>
       </div>
 
-      {/* 缩放与介绍控制 - 进一步右移，避免贴合过紧 */}
       <div className={`absolute bottom-6 left-[420px] z-10 flex flex-col gap-3 pointer-events-auto transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
         {/* 网络节点介绍 - 问号图标 */}
         <Popover open={isIntroOpen} onOpenChange={setIsIntroOpen}>
@@ -1112,7 +1516,6 @@ const ForceGraph = ({
                   </div>
                 </div>
 
-
                 <div className="text-[11px] text-slate-200">
 
                   <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1 pt-4">{t('arrowDirection')} <span className="text-slate-400 normal-case font-normal">({t('whoCountersWho')})</span></p>
@@ -1156,13 +1559,11 @@ const ForceGraph = ({
                   </div>
                 </div>
 
-
                 <div className="text-[11px] text-slate-200">
 
                   <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('networkFilter')}</p>
                   <p className="text-[11px] text-slate-300 leading-relaxed mb-1">{t('networkFilterDesc')}</p>
                 </div>
-
 
                 {/* 交互说明 */}
                 <div className="text-[11px] text-slate-200">
@@ -1180,14 +1581,6 @@ const ForceGraph = ({
                       <span className="w-1 h-1 bg-slate-600 rounded-full mt-1 flex-shrink-0"></span>
                       <span><span className="font-medium">{splitDesc(t('dragDesc')).title}:</span><span className="text-slate-400"> {splitDesc(t('dragDesc')).content}</span></span>
                     </div>
-                    <div className="text-slate-300 flex items-start gap-2">
-
-                    </div>
-                    <div className="text-slate-300 flex items-start gap-2">
-
-                    </div>
-
-                    </div>
                     <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
                       <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
@@ -1202,6 +1595,7 @@ const ForceGraph = ({
                         <span className="text-cyan-300/80"> {splitDesc(t('panDesc')).content} / {splitDesc(t('touchPanDesc')).content}</span>
                       </span>
                     </div>
+                  </div>
                 </div>
               </div>
             </Card>
@@ -1219,6 +1613,7 @@ const ForceGraph = ({
       <svg ref={svgRef} className="w-full h-full cursor-move" style={{ background: 'transparent' }} />
     </div>
   );
+
 };
 
 export default ForceGraph;
