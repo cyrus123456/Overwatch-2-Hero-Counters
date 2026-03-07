@@ -340,16 +340,25 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                         {/* onMouseLeave={() => setSelectedMap(null)} */}
 
                       <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 min-w-0">
+                        <div className="flex items-center gap-4 min-w-0 flex-1">
                           {selectedMap === map.id ? (
                             <ChevronDown className="w-5 h-5 text-cyan-400 flex-shrink-0" />
                           ) : (
                             <ChevronRight className="w-5 h-5 text-slate-700 group-hover:text-white flex-shrink-0 transition-colors" />
                           )}
-                          <div className="flex flex-col min-w-0">
-                            <span className="text-base font-bold text-slate-100 truncate group-hover:text-cyan-400 transition-colors">
-                              {language === 'zh' ? map.name : map.nameEn}
-                            </span>
+                          <div className="flex flex-col min-w-0 flex-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-base font-bold text-slate-100 truncate group-hover:text-cyan-400 transition-colors">
+                                {language === 'zh' ? map.name : map.nameEn}
+                              </span>
+                              <Badge 
+                                variant="outline" 
+                                className="text-xs font-bold h-7 px-3 flex-shrink-0 border-slate-800 text-white group-hover:border-slate-700 ml-2" 
+                                style={{ color: getMapTypeColor(map.type), borderColor: `${getMapTypeColor(map.type)}44` }}
+                              >
+                                {getMapTypeName(map.type, language)}
+                              </Badge>
+                            </div>
                             {selectedMap !== map.id && (
                               <div className="flex flex-wrap gap-2 mt-2">
                                   {sortHeroesByRole(map.recommendedHeroes).map(heroId => {
@@ -379,14 +388,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                             )}
                           </div>
                         </div>
-                        <Badge 
-                          variant="outline" 
-                          className="text-xs font-bold h-7 px-3 flex-shrink-0 border-slate-800 text-white group-hover:border-slate-700" 
-                          style={{ color: getMapTypeColor(map.type), borderColor: `${getMapTypeColor(map.type)}44` }}
-                        >
-                          {getMapTypeName(map.type, language)}
-                        </Badge>
-                       </div>
+                      </div>
                         {selectedMap === map.id && (
                           <div className="mt-2 pt-1 border-t border-slate-800/50 pl-6 space-y-3">
                             {map.description && (
