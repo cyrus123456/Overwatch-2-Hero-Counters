@@ -818,7 +818,7 @@ const ForceGraph = ({
         });
 
       // Update search highlight animation
-      nodeGroup.selectAll('.search-highlight')
+      nodeGroup.selectAll<SVGCircleElement, NodeDatum>('.search-highlight')
         .attr('opacity', (d: NodeDatum) => {
           if (!matchedHeroIds.includes(d.id)) return 0;
           // 使用正弦波创建平滑的闪烁效果
