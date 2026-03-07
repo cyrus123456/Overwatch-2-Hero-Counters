@@ -469,6 +469,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   </TooltipContent>
                                </Tooltip>
                              </div>
+                              <div className="max-h-[50vh] overflow-y-auto pr-1">
                               {sortHeroesByRole(map.recommendedHeroes).map(heroId => {
                                 const hero = heroes.find(h => h.id === heroId);
                                 if (!hero) return null;
@@ -503,6 +504,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   </div>
                                 );
                               })}
+                              </div>
                           </div>
                         )}
                       </div>
