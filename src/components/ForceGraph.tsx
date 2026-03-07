@@ -1686,13 +1686,13 @@ const ForceGraph = ({
       {/* 英雄搜索框 */}
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 w-80 pointer-events-auto">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-300 z-10" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white z-10" />
           <Input
             type="text"
             placeholder={language === 'zh' ? '搜索英雄...' : 'Search heroes...'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-10 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-white placeholder:text-slate-300 focus:border-cyan-500 focus:ring-cyan-500/20"
+            className="pl-10 pr-10 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-white placeholder:text-white focus:border-cyan-500 focus:ring-cyan-500/20"
           />
           {searchQuery && (
             <button
