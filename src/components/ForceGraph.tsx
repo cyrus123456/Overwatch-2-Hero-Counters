@@ -1686,7 +1686,7 @@ const ForceGraph = ({
       {/* 英雄搜索框 */}
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 w-80 pointer-events-auto">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-300" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-300 z-10" />
           <Input
             type="text"
             placeholder={language === 'zh' ? '搜索英雄...' : 'Search heroes...'}
