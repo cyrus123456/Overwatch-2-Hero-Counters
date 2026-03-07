@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -26,6 +27,7 @@ import {
   HelpCircle,
   Info,
   RotateCcw,
+  Search,
   ShieldAlert,
   Swords,
   Users,
@@ -95,6 +97,7 @@ const ForceGraph = ({
   const [activeCounterTab, setActiveCounterTab] = useState<'counteredBy' | 'counters' | 'synergy'>('counteredBy');
   const [isCopied, setIsCopied] = useState(false);
   const [isIntroOpen, setIsIntroOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const isMultiSelect = selectedHeroes.length > 1;
 
   const getCommonCounters = useCallback((heroIds: string[]) => {
@@ -1629,6 +1632,78 @@ const ForceGraph = ({
       </div>
 
       <svg ref={svgRef} className="w-full h-full cursor-move" style={{ background: 'transparent' }} />
+      
+      {/* 英雄搜索框 */}
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 w-80 pointer-events-auto">
+        {/* 搜索结果下拉框 */}
+        {searchQuery && (
+          <div className="mb-2 bg-slate-800/95 backdrop-blur-md border border-slate-700 rounded-lg shadow-xl max-h-80 overflow-y-auto custom-scrollbar">
+            {heroes
+              .filter(hero => {
+                const searchLower = searchQuery.toLowerCase();
+                return (
+                  hero.name.toLowerCase().includes(searchLower) ||
+                  hero.nameEn.toLowerCase().includes(searchLower) ||
+                  (hero.nickname && hero.nickname.toLowerCase().includes(searchLower))
+                );
+              })
+              .map(hero => (
+                <button
+                  key={hero.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onHeroSelect([hero.id]);
+                    setSearchQuery('');
+                  }}
+                  className="w-full flex items-center gap-3 p-2 hover:bg-slate-700/50 transition-colors border-b border-slate-700/50 last:border-0"
+                >
+                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `2px solid ${hero.color}`, backgroundColor: '#1a1a2e' }}>
+                    <img src={hero.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-white">{language === 'zh' ? hero.name : hero.nameEn}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
+                        {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 truncate">{language === 'zh' ? hero.nameEn : hero.name}</p>
+                  </div>
+                </button>
+              ))}
+            {heroes.filter(hero => {
+              const searchLower = searchQuery.toLowerCase();
+              return (
+                hero.name.toLowerCase().includes(searchLower) ||
+                hero.nameEn.toLowerCase().includes(searchLower) ||
+                (hero.nickname && hero.nickname.toLowerCase().includes(searchLower))
+              );
+            }).length === 0 && (
+              <div className="p-4 text-center text-slate-400 text-sm">
+                {language === 'zh' ? '未找到匹配的英雄' : 'No matching heroes found'}
+              </div>
+            )}
+          </div>
+        )}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-300 z-10" />
+          <Input
+            type="text"
+            placeholder={language === 'zh' ? '搜索英雄...' : 'Search heroes...'}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-10 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-white placeholder:text-slate-300 focus:border-cyan-500 focus:ring-cyan-500/20"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 
