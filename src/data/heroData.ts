@@ -266,7 +266,6 @@ export const counterRelations: CounterRelation[] = [
   { source: 'sigma', target: 'mauga', strength: 3 },
   { source: 'zarya', target: 'mauga', strength: 3 },
   { source: 'orisa', target: 'mauga', strength: 3 },
-  { source: 'pharah', target: 'mauga', strength: 3 },
   { source: 'echo', target: 'mauga', strength: 3 },
   { source: 'reaper', target: 'mauga', strength: 3 },
   { source: 'sojourn', target: 'mauga', strength: 3 },
@@ -626,6 +625,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'baptiste', target: 'pharah', strength: 3 },
   { source: 'illari', target: 'pharah', strength: 3 },
   { source: 'feitianmao', target: 'pharah', strength: 3 }, // 补充：法老之鹰还被飞天猫克制
+  { source: 'mauga', target: 'pharah', strength: 3 }, // 补充：法老之鹰被毛加克制
   
   // ========== 芙蕾雅（Freja）克制关系 ==========
   // 芙蕾雅被克制 - 强化弩箭滞空输出，惧怕反弹和突进
