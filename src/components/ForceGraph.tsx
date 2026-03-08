@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Tooltip,
@@ -21,15 +22,18 @@ import { synergyRelations } from '@/data/synergyRelations';
 import { useI18n } from '@/i18n';
 import * as d3 from 'd3';
 import {
+  Camera,
   Check,
   Copy,
   FileText,
   HelpCircle,
+  History,
   Info,
   RotateCcw,
   Search,
   ShieldAlert,
   Swords,
+  Trash2,
   Users,
   X,
   ZoomIn,
@@ -97,6 +101,8 @@ const ForceGraph = ({
   const [activeCounterTab, setActiveCounterTab] = useState<'counteredBy' | 'counters' | 'synergy'>('counteredBy');
   const [isCopied, setIsCopied] = useState(false);
   const [isIntroOpen, setIsIntroOpen] = useState(false);
+  const [heroSnapshots, setHeroSnapshots] = useState<{ id: string; heroIds: string[]; timestamp: number }[]>([]);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const isMultiSelect = selectedHeroes.length > 1;
 
@@ -1528,7 +1534,7 @@ const ForceGraph = ({
             </Button>
           </PopoverTrigger>
           <PopoverContent side="top" className="p-0 border-none bg-transparent shadow-none mb-3">
-            <Card className="p-5 bg-slate-950/95 backdrop-blur-md border border-slate-700/50 shadow-2xl rounded-2xl w-96 text-left">
+            <Card className="p-5 bg-slate-800/60 backdrop-blur-md border border-slate-700 shadow-2xl rounded-2xl w-96 text-left">
               <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
                   <Info className="w-5 h-5 text-cyan-400" />
@@ -1676,9 +1682,115 @@ const ForceGraph = ({
           <Button variant="secondary" size="icon" onClick={handleZoomOut} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('zoomOut') || "Zoom Out"}><ZoomOut className="w-4 h-4 text-cyan-400" /></Button>
           <Button variant="secondary" size="icon" onClick={handleReset} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('resetView') || "Reset View"}><RotateCcw className="w-4 h-4 text-cyan-400" /></Button>
         </div>
+
       </div>
 
       <svg ref={svgRef} className="w-full h-full cursor-move" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
+
+      {/* 保存快照和历史记录按钮 - 英雄克制面板左下角外侧 */}
+      <div className="absolute bottom-6 right-[410px] z-10 flex flex-row gap-2 pointer-events-auto">
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={() => {
+            if (selectedHeroes.length > 0) {
+              const newSnapshot = {
+                id: Date.now().toString(),
+                heroIds: [...selectedHeroes],
+                timestamp: Date.now()
+              };
+              setHeroSnapshots(prev => [newSnapshot, ...prev].slice(0, 10)); // 只保留最近10条记录
+            }
+          }}
+          className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9"
+          title={language === 'zh' ? '保存英雄选择快照' : 'Save Hero Selection Snapshot'}
+          disabled={selectedHeroes.length === 0}
+        >
+          <Camera className="w-4 h-4 text-cyan-400" />
+        </Button>
+        <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9"
+              title={language === 'zh' ? '查看历史快照' : 'View History Snapshots'}
+              disabled={heroSnapshots.length === 0}
+              onMouseEnter={() => setIsHistoryOpen(true)}
+            >
+              <History className="w-4 h-4 text-cyan-400" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent 
+            side="top" 
+            align="end"
+            sideOffset={8}
+            className="p-0 border-none bg-transparent shadow-none mb-3"
+            onMouseEnter={() => setIsHistoryOpen(true)}
+            onMouseLeave={() => setIsHistoryOpen(false)}
+          >
+            <Card className="p-5 bg-slate-800/60 backdrop-blur-md border border-slate-700 shadow-2xl rounded-2xl w-80 text-left">
+              <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-base font-black text-slate-200 uppercase tracking-widest">{language === 'zh' ? '历史快照' : 'History Snapshots'}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setHeroSnapshots([])}
+                    className="text-slate-400 hover:text-slate-200 transition-colors p-1 hover:text-red-400"
+                    title={language === 'zh' ? '清空历史' : 'Clear History'}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+              <ScrollArea className="max-h-72 overflow-y-auto">
+                {heroSnapshots.length === 0 ? (
+                  <div className="p-4 text-center text-slate-500 text-sm">
+                    {language === 'zh' ? '暂无历史快照' : 'No history snapshots'}
+                  </div>
+                ) : (
+                  <div className="p-2 space-y-1">
+                    {heroSnapshots.map(snapshot => {
+                      const snapshotHeroes = snapshot.heroIds.map(id => heroes.find(h => h.id === id)).filter(Boolean);
+                      const heroNames = snapshotHeroes.map(h => language === 'zh' ? h!.name : h!.nameEn).join(', ');
+                      const date = new Date(snapshot.timestamp);
+                      const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+
+                      return (
+                        <div
+                          key={snapshot.id}
+                          className="group flex items-center justify-between p-2 rounded-md bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer"
+                          onClick={() => {
+                            onHeroSelect(snapshot.heroIds);
+                            setIsHistoryOpen(false);
+                          }}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs text-slate-400 mb-1">{timeStr}</div>
+                            <div className="text-sm text-slate-200 truncate">{heroNames}</div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setHeroSnapshots(prev => prev.filter(s => s.id !== snapshot.id));
+                            }}
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-400"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </ScrollArea>
+            </Card>
+          </PopoverContent>
+        </Popover>
+      </div>
       
       {/* 英雄搜索框 */}
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 w-80 pointer-events-auto">
