@@ -104,6 +104,7 @@ const translations: Record<Language, Record<string, string>> = {
     commonPrefix: '共同',
     commonCounter: '共同克制',
     commonCountered: '共同被克制',
+    multiSelectMode: '多选模式',
   },
   en: {
     title: 'Overwatch 2 Hero Counter Relationships',
@@ -293,6 +294,7 @@ const translations: Record<Language, Record<string, string>> = {
     commonPrefix: '共通',
     commonCounter: '共通カウンター',
     commonCountered: '共通不利',
+    multiSelectMode: '複数選択モード',
   },
   ko: {
     title: '오버워치 2 영웅 상성도',
@@ -387,6 +389,7 @@ const translations: Record<Language, Record<string, string>> = {
     commonPrefix: '공통',
     commonCounter: '공통 카운터',
     commonCountered: '공통 불리함',
+    multiSelectMode: '다중 선택 모드',
   },
   'zh-TW': {
     title: '鬥陣特攻英雄被剋制關係圖',
@@ -481,6 +484,7 @@ const translations: Record<Language, Record<string, string>> = {
     commonPrefix: '共同',
     commonCounter: '共同剋制',
     commonCountered: '共同被剋制',
+    multiSelectMode: '多選模式',
   },
   es: {
     title: 'Sobrecarga de Contadores de Héroes de Overwatch 2',
@@ -549,6 +553,7 @@ const translations: Record<Language, Record<string, string>> = {
     commonPrefix: 'Común',
     commonCounter: 'Contra Común',
     commonCountered: 'Comúnmente Contrado',
+    multiSelectMode: 'Modo de Selección Múltiple',
     hardCounter: 'Contra Dura',
     strongCounter: 'Contra Fuerte',
     softCounter: 'Contra Suave',
@@ -662,6 +667,7 @@ const translations: Record<Language, Record<string, string>> = {
     commonPrefix: 'Commun',
     commonCounter: 'Contre Commun',
     commonCountered: 'Communément Contré',
+    multiSelectMode: 'Mode Multi-Sélection',
   },
   de: {
     title: 'Overwatch 2 Helden Gegenbeziehungen',
@@ -755,6 +761,7 @@ const translations: Record<Language, Record<string, string>> = {
     commonPrefix: 'Gemeinsam',
     commonCounter: 'Gemeinsamer Konter',
     commonCountered: 'Gemeinsam Gekontert',
+    multiSelectMode: 'Mehrfachauswahl-Modus',
   },
   pt: {
     title: 'Relações de Contra de Heróis Overwatch 2',
@@ -848,6 +855,7 @@ const translations: Record<Language, Record<string, string>> = {
     commonPrefix: 'Comum',
     commonCounter: 'Contra Comum',
     commonCountered: 'Comumente Contrado',
+    multiSelectMode: 'Modo de Seleção Múltipla',
   },
   ru: {
     title: 'Отношения Контроу Героев Overwatch 2',
@@ -941,6 +949,7 @@ const translations: Record<Language, Record<string, string>> = {
     commonPrefix: 'Общий',
     commonCounter: 'Общий Контр',
     commonCountered: 'Обычно Контрится',
+    multiSelectMode: 'Режим множественного выбора',
   },
   it: {
     title: 'Relazioni di Contro degli Eroi Overwatch 2',
