@@ -446,7 +446,6 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'cassidy', strength: 3 },
   { source: 'illari', target: 'cassidy', strength: 3 },
   { source: 'emrey', target: 'cassidy', strength: 3 }, // 补充：卡西迪还被埃姆雷克制
-  { source: 'vendetta', target: 'cassidy', strength: 3 }, // 补充：卡西迪还被斩仇克制
   
   // 6. 士兵76被克制
   { source: 'sigma', target: 'soldier76', strength: 3 },
@@ -641,6 +640,10 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ashe', target: 'freja', strength: 3 },
   { source: 'soldier76', target: 'freja', strength: 3 },
   { source: 'cassidy', target: 'freja', strength: 3 },
+
+  // 4. 其他克制
+  { source: 'dva', target: 'freja', strength: 3 }, // 补充：芙蕾雅还被D.Va克制
+  { source: 'reaper', target: 'freja', strength: 3 }, // 补充：芙蕾雅还被死神克制
   
   // ========== 斩仇（Vendetta/Zhanchou）克制关系 ==========
   // 斩仇被克制 - 完全修改
@@ -654,6 +657,9 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'vendetta', strength: 3 },
   { source: 'zarya', target: 'vendetta', strength: 3 },
   { source: 'ruixi', target: 'vendetta', strength: 3 },
+  { source: 'echo', target: 'vendetta', strength: 3 }, // 补充：斩仇还被回声克制
+  { source: 'cassidy', target: 'vendetta', strength: 3 }, // 补充：斩仇还被卡西迪克制
+  { source: 'moira', target: 'vendetta', strength: 3 }, // 补充：斩仇还被莫伊拉克制
   
   // ========== 辅助篇 ==========
   // 1. 安娜被克制
@@ -832,6 +838,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'tracer', target: 'jinyu', strength: 3 },
   { source: 'vendetta', target: 'jinyu', strength: 3 },
   { source: 'wuyang', target: 'jinyu', strength: 3 },
+  { source: 'doomfist', target: 'jinyu', strength: 3 }, // 补充：金驭还被铁拳克制
+  { source: 'reinhardt', target: 'jinyu', strength: 3 }, // 补充：金驭还被莱因哈特克制
   
   // 二、埃姆雷（Emrey）被克制 - 完全修改
   { source: 'genji', target: 'emrey', strength: 3 },
@@ -844,6 +852,9 @@ export const counterRelations: CounterRelation[] = [
   { source: 'sigma', target: 'emrey', strength: 3 },
   { source: 'hanzo', target: 'emrey', strength: 3 },
   { source: 'blackwidow', target: 'emrey', strength: 3 },
+  { source: 'echo', target: 'emrey', strength: 3 }, // 补充：埃姆雷还被回声克制
+  { source: 'pharah', target: 'emrey', strength: 3 }, // 补充：埃姆雷还被法老之鹰克制
+  { source: 'cassidy', target: 'emrey', strength: 3 }, // 补充：埃姆雷还被卡西迪克制
   
   // 三、安燃（Anran）被克制 - 完全修改
   { source: 'roadhog', target: 'anran', strength: 3 },
@@ -854,6 +865,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'anran', strength: 3 },
   { source: 'zenyatta', target: 'anran', strength: 3 },
   { source: 'moira', target: 'anran', strength: 3 },
+  { source: 'genji', target: 'anran', strength: 3 }, // 补充：安燃还被源氏克制
   
   // 四、无漾（Wuyang）被克制 - 完全修改
   { source: 'soldier76', target: 'wuyang', strength: 3 },
@@ -866,6 +878,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'vendetta', target: 'wuyang', strength: 3 },
   { source: 'anran', target: 'wuyang', strength: 3 },
   { source: 'zenyatta', target: 'wuyang', strength: 3 },
+  { source: 'widowmaker', target: 'wuyang', strength: 3 }, // 补充：无漾还被黑百合克制
+  { source: 'sombra', target: 'wuyang', strength: 3 }, // 补充：无漾还被黑影克制
   
   // 五、瑞稀（Ruixi）被克制 - 完全修改
   { source: 'echo', target: 'ruixi', strength: 3 },
