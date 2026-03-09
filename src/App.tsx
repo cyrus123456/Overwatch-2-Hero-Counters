@@ -268,9 +268,19 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                     <MapPin className="w-6 h-6 text-cyan-400" />
                     <h3 className="text-xl font-bold text-slate-100 uppercase tracking-wide">{t('mapRecommendations')}</h3>
                   </div>
-                  <Badge variant="outline" className="text-xs border-slate-700 text-white font-mono px-3">
-                    {filteredMaps.length}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href="https://wj.qq.com/s2/25861398/c38c/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-cyan-400 hover:text-cyan-300 underline decoration-cyan-400/50 hover:decoration-cyan-400 underline-offset-2 transition-all"
+                    >
+                      {language === 'zh' ? '地图强势英雄投票问卷' : 'Map Hero Survey'}
+                    </a>
+                    <Badge variant="outline" className="text-xs border-slate-700 text-white font-mono px-3">
+                      {filteredMaps.length}
+                    </Badge>
+                  </div>
                 </div>
 
                 {/* 地图搜索与分类 */}
