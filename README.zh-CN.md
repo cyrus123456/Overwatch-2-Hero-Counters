@@ -1,43 +1,34 @@
-![alt text](image-1.png)
+![alt text](image-zh.png)
 # 守望先锋英雄克制关系可视化
 
 [English](README.md) | 简体中文
 
-一个基于 React + TypeScript + Vite 的交互式可视化应用，用于展示《守望先锋 2》中英雄之间的克制关系。
+一个基于 React + TypeScript + Vite 的交互式可视化应用，用于展示《守望先锋 2》中英雄之间的克制关系与协同搭配。
 
 ## 在线演示
 
-**[点击查看已部署的 GitHub Pages](https://cyrus123456.github.io/Overwatch-2-Hero-Counters/)**
+[**点击查看已部署的 GitHub Pages**](https://cyrus123456.github.io/Overwatch-2-Hero-Counters/)
 
-你可以直接在线访问上面的链接，无需本地安装即可体验完整的英雄克制关系可视化功能！
+直接访问上方链接即可体验完整功能！
 
-## 🎮 功能特性
+## 功能特性
 
-- **交互式力导向图**：使用 D3.js 实现英雄克制关系的动态可视化
+- **交互式力导向图**：使用 D3.js 实现动态可视化
 - **协同关系**：探索英雄协同和团队阵容搭配
 - **实时搜索**：快速查找和筛选英雄
-- **完整英雄库**：包含所有守望先锋 2 英雄及其职业分类（坦克、输出、支援）
-- **克制关系展示**：清晰显示英雄之间的克制关系及强度等级
-- **协同强度等级**：可视化协同效果指标
-- **地图数据**：包含游戏中所有地图的相关信息
-- **多语言支持**：内置国际化框架（中文/英文）
-- **深色/浅色主题**：现代化的 UI 设计配合主题切换
+- **完整英雄库**：包含所有守望先锋 2 英雄及其职业分类
+- **克制关系展示**：清晰显示克制关系及强度等级
+- **地图数据**：包含游戏中所有地图信息
+- **多语言支持**：内置国际化（中文/英文）
+- **深色/浅色主题**：现代化 UI 配合主题切换
 - **命令面板**：通过 Ctrl+K 快速执行操作
 
-- **交互式力导向图**：使用 D3.js 实现英雄克制关系的动态可视化
-- **实时搜索**：快速查找和筛选英雄
-- **完整英雄库**：包含所有守望先锋 2 英雄及其职业分类（坦克、输出、支援）
-- **克制关系展示**：清晰显示英雄之间的克制关系及强度等级
-- **地图数据**：包含游戏中所有地图的相关信息
-- **多语言支持**：内置国际化框架
-- **深色/浅色主题**：现代化的 UI 设计配合主题切换
-
-## 🚀 快速开始
+## 快速开始
 
 ### 环境要求
 
 - Node.js >= 18
-- npm 或 yarn 或 pnpm
+- npm / yarn / pnpm
 
 ### 安装依赖
 
@@ -55,13 +46,7 @@ pnpm install
 npm run dev
 ```
 
-应用将在 `http://localhost:5173` 启动，支持热重载 (HMR)。使用 `--host` 参数可在同一网络下从移动设备访问。
-
-```bash
-npm run dev
-```
-
-应用将在 `http://localhost:5173` 启动，支持热重载 (HMR)。
+应用将在 `http://localhost:5173` 启动，支持热重载 (HMR)。使用 `--host` 可从移动设备访问。
 
 ### 生产构建
 
@@ -69,7 +54,7 @@ npm run dev
 npm run build
 ```
 
-### 预览构建结果
+### 预览
 
 ```bash
 npm run preview
@@ -79,129 +64,84 @@ npm run preview
 
 ```bash
 npm run deploy
-```
-
-或一步完成构建和部署：
-
-```bash
+# 或
 npm run build:deploy
 ```
 
-```bash
-npm run build
-```
-
-### 预览构建结果
-
-```bash
-npm run preview
-```
-
-## 📦 项目结构
+## 项目结构
 
 ```
 src/
 ├── components/          # React 组件
-│   ├── ForceGraph.tsx   # 力导向图可视化组件
-│   └── ui/              # UI 组件库（Radix UI 基础）
+│   ├── ForceGraph.tsx  # D3 力导向图
+│   └── ui/             # Radix UI 组件
 ├── data/                # 数据定义
-│   ├── heroData.ts      # 英雄数据和图片配置
-│   ├── counterReasons.ts # 克制原因说明
-│   ├── counterRelations.ts # 克制关系数据
-│   ├── synergyReasons.ts # 协同原因说明
-│   ├── synergyRelations.ts # 协同关系数据
-│   └── mapData.ts       # 地图数据
-├── hooks/               # 自定义 React Hooks
-├── i18n/                # 国际化配置
-└── lib/                 # 工具函数库
+│   ├── heroData.ts
+│   ├── counterReasons.ts
+│   ├── counterRelations.ts
+│   ├── synergyReasons.ts
+│   ├── synergyRelations.ts
+│   └── mapData.ts
+├── hooks/               # 自定义 hooks
+├── i18n/                # 国际化
+└── lib/                 # 工具函数
 ```
 
-```
-src/
-├── components/          # React 组件
-│   ├── ForceGraph.tsx   # 力导向图可视化组件
-│   └── ui/              # UI 组件库（Radix UI 基础）
-├── data/                # 数据定义
-│   ├── heroData.ts      # 英雄数据和图片配置
-│   ├── counterReasons.ts # 克制原因说明
-│   └── mapData.ts       # 地图数据
-├── hooks/               # 自定义 React Hooks
-├── i18n/                # 国际化配置
-└── lib/                 # 工具函数库
-```
-
-## 🛠️ 技术栈
+## 技术栈
 
 - **框架**：React 19 + TypeScript
-- **构建工具**：Vite 7
-- **数据可视化**：D3.js 7
-- **UI 组件**：Radix UI + TailwindCSS
-- **图标库**：Lucide React
-- **组件变体**：class-variance-authority
-- **命令面板**：cmdk
+- **构建**：Vite 7
+- **可视化**：D3.js 7
+- **UI**：Radix UI + TailwindCSS
+- **图标**：Lucide React
 - **表单**：react-hook-form + Zod
-- **通知提示**：Sonner
-- **抽屉组件**：Vaul
-- **图表**：Recharts
-- **可调整面板**：react-resizable-panels
-- **主题切换**：next-themes
-- **国际化**：i18n 支持
+- **主题**：next-themes
+- **国际化**：内置支持
 
-- **框架**：React 19 + TypeScript
-- **构建工具**：Vite
-- **数据可视化**：D3.js 7
-- **UI 组件**：Radix UI + TailwindCSS
-- **主题切换**：next-themes
-- **国际化**：i18n 支持
+## 使用指南
 
-## 💡 使用指南
+### 查看关系
 
-### 查看英雄克制关系
-
-1. 应用启动后，会显示一个交互式力导向图
+1. 启动应用后显示交互式力导向图
 2. 每个节点代表一个守望先锋英雄
-3. 节点之间的连线表示克制关系（从克制方指向被克制方）
-4. 不同的英雄角色用不同的颜色区分
+3. 连线表示克制关系（从克制方指向被克制方）
+4. 不同角色用不同颜色区分
 
 ### 交互操作
 
-- 点击英雄：展示其专属克制网并放大图标
-- 拖拽图标：长按并移动英雄可手动调整位置
-- 滚轮缩放：在画布滚动鼠标中键可放大缩小
-- 悬停预览：移动鼠标到头像上可查看高亮并微缩无关项
-- 移动画板：按住并拖拽空白处可平移整个关系图
+- **点击英雄**：展示其专属网络并放大
+- **拖拽**：手动调整位置
+- **滚轮**：放大/缩小
+- **悬停**：高亮聚焦
+- **平移**：拖拽空白处移动画布
 
-### 克制强度说明
+### 强度说明
 
-- ★★★ 绝对克制 (职业天敌)
-- ★★ 明显克制 (强势压制)
-- ★ 轻微克制 (博弈优势)
+**克制：**
+- ★★★ 绝对克制
+- ★★ 明显克制
+- ★ 轻微克制
 
-### 协同强度说明
+**协同：**
+- ★★★ 强力协同
+- ★★ 良好协同
+- ★ 基础协同
 
-- ★★★ 强力协同 (绝佳组合)
-- ★★ 良好协同 (优质搭配)
-- ★ 基础协同 (可行组合)
+## 相关资源
 
-- ★★★ 绝对克制 (职业天敌)
-- ★★ 明显克制 (强势压制)
-- ★ 轻微克制 (博弈优势)
+- [守望先锋官网](https://overwatch.blizzard.com/)
+- [React](https://react.dev)
+- [D3.js](https://d3js.org)
+- [Vite](https://vitejs.dev)
 
-## 🔗 相关资源
+## 许可证
 
-- [守望先锋官方网站](https://overwatch.blizzard.com/)
-- [React 官方文档](https://react.dev)
-- [D3.js 文档](https://d3js.org)
-- [Vite 文档](https://vitejs.dev)
+仅供学习参考使用。
 
-## 📝 许可证
-
-本项目仅供学习和参考使用。
-
-## 👥 贡献
+## 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
 ---
 
-**注意**：《守望先锋》及其相关资源为暴雪娱乐公司 (Blizzard Entertainment) 的商标和知识产权。
+**注意**：《守望先锋》相关资源为暴雪娱乐商标和知识产权。

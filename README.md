@@ -1,38 +1,29 @@
-![alt text](image-2.png)
+![alt text](image-en.png)
 # Overwatch 2 Hero Counter Relationships
 
 [**简体中文**](README.zh-CN.md) | English
 
-An interactive visualization application built with React + TypeScript + Vite to display hero counter relationships in Overwatch 2.
+An interactive visualization application built with React + TypeScript + Vite to display hero counter relationships and synergies in Overwatch 2.
 
 ## Live Demo
 
-**[View Deployed GitHub Pages](https://cyrus123456.github.io/Overwatch-2-Hero-Counters/)**
+[**View Deployed GitHub Pages**](https://cyrus123456.github.io/Overwatch-2-Hero-Counters/)
 
 You can access the link above directly to experience the full hero counter visualization without local installation!
 
-## 🎮 Features
+## Features
 
-- **Interactive Force-Directed Graph**: Dynamic visualization of hero counter relationships using D3.js
+- **Interactive Force-Directed Graph**: Dynamic visualization using D3.js
 - **Synergy Relationships**: Explore hero synergies and team compositions
 - **Real-time Search**: Quickly find and filter heroes
-- **Complete Hero Library**: All Overwatch 2 heroes with role classifications (Tank, Damage, Support)
-- **Counter Relationship Display**: Clear visualization of hero counters and strength levels
-- **Synergy Strength Levels**: Visual indicators for synergy effectiveness
+- **Complete Hero Library**: All OW2 heroes with role classifications (Tank, Damage, Support)
+- **Counter Relationship Display**: Clear visualization of counters and strength levels
 - **Map Data**: Information about all maps in the game
-- **Multi-language Support**: Built-in internationalization framework (Chinese/English)
-- **Dark/Light Theme**: Modern UI design with theme switching
+- **Multi-language Support**: Built-in internationalization (Chinese/English)
+- **Dark/Light Theme**: Modern UI with theme switching
 - **Command Palette**: Quick actions via Cmd+K
 
-- **Interactive Force-Directed Graph**: Dynamic visualization of hero counter relationships using D3.js
-- **Real-time Search**: Quickly find and filter heroes
-- **Complete Hero Library**: All Overwatch 2 heroes with role classifications (Tank, Damage, Support)
-- **Counter Relationship Display**: Clear visualization of hero counters and strength levels
-- **Map Data**: Information about all maps in the game
-- **Multi-language Support**: Built-in internationalization framework
-- **Dark/Light Theme**: Modern UI design with theme switching
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Requirements
 
@@ -55,13 +46,7 @@ pnpm install
 npm run dev
 ```
 
-The app will start at `http://localhost:5173` with Hot Module Replacement (HMR) support. Use `--host` flag to access from mobile devices on the same network.
-
-```bash
-npm run dev
-```
-
-The app will start at `http://localhost:5173` with Hot Module Replacement (HMR) support.
+The app starts at `http://localhost:5173` with HMR. Use `--host` for mobile access.
 
 ### Production Build
 
@@ -69,7 +54,7 @@ The app will start at `http://localhost:5173` with Hot Module Replacement (HMR) 
 npm run build
 ```
 
-### Preview Build
+### Preview
 
 ```bash
 npm run preview
@@ -79,129 +64,84 @@ npm run preview
 
 ```bash
 npm run deploy
-```
-
-Or build and deploy in one command:
-
-```bash
+# or
 npm run build:deploy
 ```
 
-```bash
-npm run build
-```
-
-### Preview Build
-
-```bash
-npm run preview
-```
-
-## 📦 Project Structure
+## Project Structure
 
 ```
 src/
 ├── components/          # React components
-│   ├── ForceGraph.tsx   # Force-directed graph visualization
-│   └── ui/              # UI components (Radix UI based)
+│   ├── ForceGraph.tsx  # D3 force-directed graph
+│   └── ui/             # Radix UI based components
 ├── data/                # Data definitions
-│   ├── heroData.ts      # Hero data and image configuration
-│   ├── counterReasons.ts # Counter reason descriptions
-│   ├── counterRelations.ts # Counter relationship data
-│   ├── synergyReasons.ts # Synergy reason descriptions
-│   ├── synergyRelations.ts # Synergy relationship data
-│   └── mapData.ts       # Map data
-├── hooks/               # Custom React Hooks
+│   ├── heroData.ts
+│   ├── counterReasons.ts
+│   ├── counterRelations.ts
+│   ├── synergyReasons.ts
+│   ├── synergyRelations.ts
+│   └── mapData.ts
+├── hooks/               # Custom React hooks
 ├── i18n/                # Internationalization
-└── lib/                 # Utility libraries
+└── lib/                 # Utilities
 ```
 
-```
-src/
-├── components/          # React components
-│   ├── ForceGraph.tsx   # Force-directed graph visualization
-│   └── ui/              # UI components (Radix UI based)
-├── data/                # Data definitions
-│   ├── heroData.ts      # Hero data and image configuration
-│   ├── counterReasons.ts # Counter reason descriptions
-│   └── mapData.ts       # Map data
-├── hooks/               # Custom React Hooks
-├── i18n/                # Internationalization
-└── lib/                 # Utility libraries
-```
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: React 19 + TypeScript
-- **Build Tool**: Vite 7
-- **Data Visualization**: D3.js 7
-- **UI Components**: Radix UI + TailwindCSS
+- **Build**: Vite 7
+- **Visualization**: D3.js 7
+- **UI**: Radix UI + TailwindCSS
 - **Icons**: Lucide React
-- **Component Variants**: class-variance-authority
-- **Command Palette**: cmdk
 - **Forms**: react-hook-form + Zod
-- **Toast Notifications**: Sonner
-- **Drawers**: Vaul
-- **Charts**: Recharts
-- **Resizable Panels**: react-resizable-panels
-- **Theme Switching**: next-themes
-- **Internationalization**: i18n support
+- **Theme**: next-themes
+- **i18n**: Built-in support
 
-- **Framework**: React 19 + TypeScript
-- **Build Tool**: Vite
-- **Data Visualization**: D3.js 7
-- **UI Components**: Radix UI + TailwindCSS
-- **Theme Switching**: next-themes
-- **Internationalization**: i18n support
+## User Guide
 
-## 💡 User Guide
+### Viewing Relationships
 
-### Viewing Hero Counter Relationships
-
-1. After launching the app, an interactive force-directed graph will be displayed
+1. Launch the app to see an interactive force-directed graph
 2. Each node represents an Overwatch hero
-3. Lines between nodes indicate counter relationships (from counterer to countee)
-4. Different hero roles are distinguished by different colors
+3. Lines show counter relationships (from counterer to countee)
+4. Different roles use different colors
 
-### Interactive Operations
+### Interactions
 
-- **Click Hero**: Focus on their counter network & scale up the icon
-- **Drag Icon**: Hold and move to reposition manually
-- **Scroll Zoom**: Use mouse wheel to zoom in/out
-- **Hover Focus**: Mouse over icon to highlight and focus
-- **Pan Board**: Click and drag empty space to move the graph
+- **Click Hero**: Focus on their counter network, scale up icon
+- **Drag**: Move heroes to reposition
+- **Scroll**: Zoom in/out
+- **Hover**: Highlight and focus
+- **Pan**: Click and drag empty space
 
-### Counter Strength Levels
+### Strength Levels
 
-- ★★★ Hard Counter (Direct Nemesis)
-- ★★ Strong Counter (Solid Advantage)
-- ★ Soft Counter (Skill Matchup)
+**Counter:**
+- ★★★ Hard Counter
+- ★★ Strong Counter
+- ★ Soft Counter
 
-### Synergy Strength Levels
+**Synergy:**
+- ★★★ Strong Synergy
+- ★★ Good Synergy
+- ★ Basic Synergy
 
-- ★★★ Strong Synergy (Excellent Combo)
-- ★★ Good Synergy (Solid Pair)
-- ★ Basic Synergy (Workable Pair)
+## Resources
 
-- ★★★ Hard Counter (Direct Nemesis)
-- ★★ Strong Counter (Solid Advantage)
-- ★ Soft Counter (Skill Matchup)
+- [Overwatch Official](https://overwatch.blizzard.com/)
+- [React](https://react.dev)
+- [D3.js](https://d3js.org)
+- [Vite](https://vitejs.dev)
 
-## 🔗 Resources
+## License
 
-- [Overwatch Official Website](https://overwatch.blizzard.com/)
-- [React Documentation](https://react.dev)
-- [D3.js Documentation](https://d3js.org)
-- [Vite Documentation](https://vitejs.dev)
+For educational purposes only.
 
-## 📝 License
+## Contributing
 
-This project is for educational and reference purposes only.
-
-## 👥 Contributing
-
-Issues and Pull Requests are welcome!
+Issues and Pull Requests welcome!
 
 ---
 
-**Note**: Overwatch and its related resources are trademarks and intellectual property of Blizzard Entertainment.
+**Note**: Overwatch and related resources are trademarks of Blizzard Entertainment.
