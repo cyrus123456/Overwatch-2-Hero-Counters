@@ -40,6 +40,7 @@ import {
   ZoomOut
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useDebounce from '@/hooks/useDebounce';
 
 interface NodeDatum extends d3.SimulationNodeDatum {
   id: string;
@@ -104,12 +105,13 @@ const ForceGraph = ({
   const [heroSnapshots, setHeroSnapshots] = useState<{ id: string; heroIds: string[]; timestamp: number }[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const isMultiSelect = selectedHeroes.length > 1;
 
   // 计算搜索匹配的英雄 ID
   const matchedHeroIds = useMemo(() => {
-    if (!searchQuery) return [];
-    const searchLower = searchQuery.toLowerCase();
+    if (!debouncedSearchQuery) return [];
+    const searchLower = debouncedSearchQuery.toLowerCase();
     return heroes
       .filter(hero => 
         hero.name.toLowerCase().includes(searchLower) ||
@@ -117,7 +119,7 @@ const ForceGraph = ({
         (hero.nickname && hero.nickname.toLowerCase().includes(searchLower))
       )
       .map(hero => hero.id);
-  }, [searchQuery]);
+  }, [debouncedSearchQuery]);
 
   const getCommonCounters = useCallback((heroIds: string[]) => {
     if (heroIds.length === 0) return [];
@@ -1112,7 +1114,8 @@ const ForceGraph = ({
     onHeroSelect,
     selectedRole,
     t,
-    matchedHeroIds
+    matchedHeroIds,
+    debouncedSearchQuery
   ]);
 
   const handleZoomIn = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 1.3);
