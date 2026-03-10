@@ -1115,7 +1115,14 @@ const ForceGraph = ({
     selectedRole,
     t,
     matchedHeroIds,
-    debouncedSearchQuery
+    debouncedSearchQuery,
+    commonRelatedIds,
+    counteredBy,
+    counters,
+    handleHeroClick,
+    isMultiSelect,
+    selectedHeroes,
+    synergyPartners
   ]);
 
   const handleZoomIn = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 1.3);
