@@ -14,6 +14,17 @@
 ## 🎮 功能特性
 
 - **交互式力导向图**：使用 D3.js 实现英雄克制关系的动态可视化
+- **协同关系**：探索英雄协同和团队阵容搭配
+- **实时搜索**：快速查找和筛选英雄
+- **完整英雄库**：包含所有守望先锋 2 英雄及其职业分类（坦克、输出、支援）
+- **克制关系展示**：清晰显示英雄之间的克制关系及强度等级
+- **协同强度等级**：可视化协同效果指标
+- **地图数据**：包含游戏中所有地图的相关信息
+- **多语言支持**：内置国际化框架（中文/英文）
+- **深色/浅色主题**：现代化的 UI 设计配合主题切换
+- **命令面板**：通过 Ctrl+K 快速执行操作
+
+- **交互式力导向图**：使用 D3.js 实现英雄克制关系的动态可视化
 - **实时搜索**：快速查找和筛选英雄
 - **完整英雄库**：包含所有守望先锋 2 英雄及其职业分类（坦克、输出、支援）
 - **克制关系展示**：清晰显示英雄之间的克制关系及强度等级
@@ -44,9 +55,37 @@ pnpm install
 npm run dev
 ```
 
+应用将在 `http://localhost:5173` 启动，支持热重载 (HMR)。使用 `--host` 参数可在同一网络下从移动设备访问。
+
+```bash
+npm run dev
+```
+
 应用将在 `http://localhost:5173` 启动，支持热重载 (HMR)。
 
 ### 生产构建
+
+```bash
+npm run build
+```
+
+### 预览构建结果
+
+```bash
+npm run preview
+```
+
+### 部署到 GitHub Pages
+
+```bash
+npm run deploy
+```
+
+或一步完成构建和部署：
+
+```bash
+npm run build:deploy
+```
 
 ```bash
 npm run build
@@ -68,6 +107,23 @@ src/
 ├── data/                # 数据定义
 │   ├── heroData.ts      # 英雄数据和图片配置
 │   ├── counterReasons.ts # 克制原因说明
+│   ├── counterRelations.ts # 克制关系数据
+│   ├── synergyReasons.ts # 协同原因说明
+│   ├── synergyRelations.ts # 协同关系数据
+│   └── mapData.ts       # 地图数据
+├── hooks/               # 自定义 React Hooks
+├── i18n/                # 国际化配置
+└── lib/                 # 工具函数库
+```
+
+```
+src/
+├── components/          # React 组件
+│   ├── ForceGraph.tsx   # 力导向图可视化组件
+│   └── ui/              # UI 组件库（Radix UI 基础）
+├── data/                # 数据定义
+│   ├── heroData.ts      # 英雄数据和图片配置
+│   ├── counterReasons.ts # 克制原因说明
 │   └── mapData.ts       # 地图数据
 ├── hooks/               # 自定义 React Hooks
 ├── i18n/                # 国际化配置
@@ -75,6 +131,21 @@ src/
 ```
 
 ## 🛠️ 技术栈
+
+- **框架**：React 19 + TypeScript
+- **构建工具**：Vite 7
+- **数据可视化**：D3.js 7
+- **UI 组件**：Radix UI + TailwindCSS
+- **图标库**：Lucide React
+- **组件变体**：class-variance-authority
+- **命令面板**：cmdk
+- **表单**：react-hook-form + Zod
+- **通知提示**：Sonner
+- **抽屉组件**：Vaul
+- **图表**：Recharts
+- **可调整面板**：react-resizable-panels
+- **主题切换**：next-themes
+- **国际化**：i18n 支持
 
 - **框架**：React 19 + TypeScript
 - **构建工具**：Vite
@@ -101,6 +172,16 @@ src/
 - 移动画板：按住并拖拽空白处可平移整个关系图
 
 ### 克制强度说明
+
+- ★★★ 绝对克制 (职业天敌)
+- ★★ 明显克制 (强势压制)
+- ★ 轻微克制 (博弈优势)
+
+### 协同强度说明
+
+- ★★★ 强力协同 (绝佳组合)
+- ★★ 良好协同 (优质搭配)
+- ★ 基础协同 (可行组合)
 
 - ★★★ 绝对克制 (职业天敌)
 - ★★ 明显克制 (强势压制)
