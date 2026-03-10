@@ -19,6 +19,7 @@ import { counterRelations, getRoleName, heroes, type Hero } from '@/data/heroDat
 import { maps } from '@/data/mapData';
 import { getSynergyReason } from '@/data/synergyReasons';
 import { synergyRelations } from '@/data/synergyRelations';
+import useDebounce from '@/hooks/useDebounce';
 import { useI18n } from '@/i18n';
 import * as d3 from 'd3';
 import {
@@ -40,7 +41,6 @@ import {
   ZoomOut
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import useDebounce from '@/hooks/useDebounce';
 
 interface NodeDatum extends d3.SimulationNodeDatum {
   id: string;
@@ -234,7 +234,7 @@ const ForceGraph = ({
     }
   }, [selectedHeroes.length, activeCounterTab, synergyPartners, counteredBy, counters]);
 
-  const handleHeroClick = (heroId: string, event: any) => {
+  const handleHeroClick = useCallback((heroId: string, event: any) => {
     event.stopPropagation();
     if (event.shiftKey || event.ctrlKey || event.metaKey) {
       onHeroSelect(
@@ -251,7 +251,7 @@ const ForceGraph = ({
     if (searchQuery) {
       setSearchQuery('');
     }
-  };
+  }, []);
 
   const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
   const [isDraggingPanel, setIsDraggingPanel] = useState(false);
@@ -363,12 +363,14 @@ const ForceGraph = ({
     });
   };
 
+  // 使用useEffect钩子来处理副作用
   useEffect(() => {
-    if (selectedHero) return;
+    // 检查是否已选择英雄，如果已选择则直接返回
+    if (selectedHeroes.length > 0) return;
     const randomIndex = Math.floor(Math.random() * heroes.length);
     const randomHero = heroes[randomIndex];
     if (randomHero) onHeroSelect([randomHero.id]);
-  }, []);
+  }, [selectedHeroes, onHeroSelect]);
 
   const handlePanelDragStart = (e: React.MouseEvent) => {
     setIsDraggingPanel(true);
