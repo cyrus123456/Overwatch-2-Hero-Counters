@@ -248,10 +248,8 @@ const ForceGraph = ({
       );
     }
     // 清空搜索框
-    if (searchQuery) {
-      setSearchQuery('');
-    }
-  }, []);
+    setSearchQuery('');
+  }, [selectedHeroes, onHeroSelect]);
 
   const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
   const [isDraggingPanel, setIsDraggingPanel] = useState(false);
