@@ -514,6 +514,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'brigitte', target: 'genji', strength: 3 },
   { source: 'zenyatta', target: 'genji', strength: 3 },
   { source: 'moira', target: 'genji', strength: 3 },
+  { source: 'symmetra', target: 'genji', strength: 3 }, // 补充：源氏被秩序之光克制
   { source: 'emrey', target: 'genji', strength: 3 }, // 补充：源氏还被埃姆雷克制
   { source: 'ruixi', target: 'genji', strength: 3 }, // 补充：源氏还被瑞稀克制
   
