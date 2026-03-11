@@ -477,24 +477,32 @@ const ForceGraph = ({
       });
     const nodeIds = new Set(nodes.map(n => n.id));
     
+    // 过滤掉被筛选掉的选中英雄（只保留在 nodeIds 中的）
+    const visibleSelectedHeroes = selectedHeroes.filter(id => nodeIds.has(id));
+    
     let links: LinkDatum[] = [];
     
-    if (isMultiSelect) {
+    if (isMultiSelect && visibleSelectedHeroes.length > 1) {
       // For multi-select, show links between selected heroes and common related heroes
+      // 同时过滤 commonRelatedIds，只保留在 nodeIds 中的
+      const visibleCommonIds = commonRelatedIds.filter(id => nodeIds.has(id));
       if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
         // Source is common hero, Target is one of selected heroes
         links = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
-          .filter(r => selectedHeroes.includes(r.target) && commonRelatedIds.includes(r.source) && nodeIds.has(r.source) && nodeIds.has(r.target))
+          .filter(r => visibleSelectedHeroes.includes(r.target) && visibleCommonIds.includes(r.source) && nodeIds.has(r.source) && nodeIds.has(r.target))
           .map(r => ({ source: r.source, target: r.target }));
       } else {
         // Source is one of selected heroes, Target is common hero
         links = counterRelations
-          .filter(r => selectedHeroes.includes(r.source) && commonRelatedIds.includes(r.target) && nodeIds.has(r.source) && nodeIds.has(r.target))
+          .filter(r => visibleSelectedHeroes.includes(r.source) && visibleCommonIds.includes(r.target) && nodeIds.has(r.source) && nodeIds.has(r.target))
           .map(r => ({ source: r.source, target: r.target }));
       }
     } else if (selectedHeroes.length === 1) {
       const selectedHeroId = selectedHeroes[0];
-      if (activeCounterTab === 'synergy') {
+      // 如果选中的英雄被筛选掉了（不在 nodeIds 中），则不显示任何 links
+      if (!nodeIds.has(selectedHeroId)) {
+        links = [];
+      } else if (activeCounterTab === 'synergy') {
         links = synergyRelations
           .filter(r => r.target === selectedHeroId && nodeIds.has(r.source))
           .map(r => ({ source: r.source, target: r.target }));
