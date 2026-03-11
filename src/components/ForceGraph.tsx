@@ -96,6 +96,7 @@ const ForceGraph = ({
   const simulationRef = useRef<d3.Simulation<NodeDatum, LinkDatum> | null>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const animationRef = useRef<number | null>(null);
+  const nodePositionsRef = useRef<Map<string, {x: number, y: number}>>(new Map());
 
   const displayedHero = selectedHeroes.length === 1 ? heroes.find(h => h.id === selectedHeroes[0]) : null;
   const selectedHero = selectedHeroes.length === 1 ? selectedHeroes[0] : null;
@@ -385,6 +386,17 @@ const ForceGraph = ({
       setIsIntroOpen(true);
       localStorage.setItem('hasVisitedBefore', 'true');
     }
+
+    // Load saved node positions from localStorage
+    try {
+      const savedPositions = localStorage.getItem('nodePositions');
+      if (savedPositions) {
+        const positions = JSON.parse(savedPositions);
+        nodePositionsRef.current = new Map(Object.entries(positions));
+      }
+    } catch (e) {
+      console.error('Failed to load node positions:', e);
+    }
   }, []);
 
   useEffect(() => {
@@ -571,7 +583,14 @@ const ForceGraph = ({
     zoomRef.current = zoom;
 
     const { nodes, links } = prepareData();
+
+    // Restore node positions from saved state if available
     nodes.forEach(node => {
+      const savedPosition = nodePositionsRef.current.get(node.id);
+      if (savedPosition) {
+        node.x = savedPosition.x;
+        node.y = savedPosition.y;
+      }
       defs.append('clipPath').attr('id', `clip-${node.id}`).append('circle').attr('r', node.radius - 2);
     });
 
@@ -850,6 +869,13 @@ const ForceGraph = ({
     simulation.on('tick', () => {
       link.attr('x1', d => (d.source as NodeDatum).x || 0).attr('y1', d => (d.source as NodeDatum).y || 0).attr('x2', d => (d.target as NodeDatum).x || 0).attr('y2', d => (d.target as NodeDatum).y || 0);
       nodeGroup.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
+
+      // Save node positions
+      nodes.forEach(node => {
+        if (node.x !== undefined && node.y !== undefined) {
+          nodePositionsRef.current.set(node.id, { x: node.x, y: node.y });
+        }
+      });
     });
 
     if (selectedHeroes.length > 0) {
@@ -1103,7 +1129,28 @@ const ForceGraph = ({
     }
 
     svg.on('click', () => onHeroSelect([]));
-    return () => { simulation.stop(); };
+
+    // Save node positions to localStorage periodically
+    const saveInterval = setInterval(() => {
+      try {
+        const positions = Object.fromEntries(nodePositionsRef.current);
+        localStorage.setItem('nodePositions', JSON.stringify(positions));
+      } catch (e) {
+        console.error('Failed to save node positions:', e);
+      }
+    }, 1000); // Save every second
+
+    return () => { 
+      simulation.stop(); 
+      clearInterval(saveInterval);
+      // Final save when component unmounts
+      try {
+        const positions = Object.fromEntries(nodePositionsRef.current);
+        localStorage.setItem('nodePositions', JSON.stringify(positions));
+      } catch (e) {
+        console.error('Failed to save node positions:', e);
+      }
+    };
   }, [
     prepareData,
     selectedHero,
