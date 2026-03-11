@@ -1603,7 +1603,7 @@ const ForceGraph = ({
               onMouseEnter={() => setIsIntroOpen(true)}
               onClick={(e) => e.preventDefault()}
             >
-              <HelpCircle className="w-6 h-6 text-cyan-400" />
+              <HelpCircle className="w-6 h-6 text-yellow-400" />
             </Button>
           </PopoverTrigger>
           <PopoverContent side="top" className="p-0 border-none bg-transparent shadow-none mb-3">
@@ -1717,6 +1717,13 @@ const ForceGraph = ({
                         <span className="font-medium">{t('ctrlMultiSelect')}</span>
                       </span>
                     </div>
+                    <div className="text-yellow-300 flex items-start gap-2 bg-yellow-900/20 p-2 rounded-lg border border-yellow-800/30">
+                      <span className="w-1 h-1 bg-yellow-500 rounded-full mt-1 flex-shrink-0"></span>
+                      <span>
+                        <span className="font-medium">{language === 'zh' ? '快照功能：' : 'Snapshot Feature:'} </span>
+                        <span className="text-yellow-300/80">{language === 'zh' ? '点击相机图标保存当前英雄选择，点击历史图标查看或恢复之前的快照。' : 'Click the camera icon to save current hero selection, click the history icon to view or restore previous snapshots.'}</span>
+                      </span>
+                    </div>
                     <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
                       <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
@@ -1779,7 +1786,7 @@ const ForceGraph = ({
           title={language === 'zh' ? '保存英雄选择快照' : 'Save Hero Selection Snapshot'}
           disabled={selectedHeroes.length === 0}
         >
-          <Camera className="w-4 h-4 text-cyan-400" />
+          <Camera className="w-4 h-4 text-yellow-400" />
         </Button>
         <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
           <PopoverTrigger asChild>
@@ -1791,7 +1798,7 @@ const ForceGraph = ({
               disabled={heroSnapshots.length === 0}
               onMouseEnter={() => setIsHistoryOpen(true)}
             >
-              <History className="w-4 h-4 text-cyan-400" />
+              <History className="w-4 h-4 text-yellow-400" />
             </Button>
           </PopoverTrigger>
           <PopoverContent 
@@ -1805,7 +1812,7 @@ const ForceGraph = ({
             <Card className="p-5 bg-slate-800/60 backdrop-blur-md border border-slate-700 shadow-2xl rounded-2xl w-80 text-left">
               <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-base font-black text-slate-200 uppercase tracking-widest">{language === 'zh' ? '历史快照' : 'History Snapshots'}</span>
+                  <span className="text-base font-black text-slate-200 uppercase tracking-widest">{language === 'zh' ? '曾经选择过的英雄 历史快照' : 'History Snapshots'}</span>
                   <Button
                     variant="ghost"
                     size="icon"
