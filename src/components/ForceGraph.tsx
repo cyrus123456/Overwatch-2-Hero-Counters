@@ -580,6 +580,8 @@ const ForceGraph = ({
       })
       .on('zoom', (event) => g.attr('transform', event.transform));
     svg.call(zoom);
+    // 初始化时设置 transform 为 identity，确保 D3 内部状态与 DOM 一致，避免首次拖拽时画布跳跃
+    svg.call(zoom.transform, d3.zoomIdentity);
     zoomRef.current = zoom;
 
     const { nodes, links } = prepareData();
