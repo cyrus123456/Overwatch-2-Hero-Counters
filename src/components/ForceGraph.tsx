@@ -369,7 +369,7 @@ const ForceGraph = ({
     const randomIndex = Math.floor(Math.random() * heroes.length);
     const randomHero = heroes[randomIndex];
     if (randomHero) onHeroSelect([randomHero.id]);
-  }, [selectedHeroes, onHeroSelect]);
+  }, []);
 
   const handlePanelDragStart = (e: React.MouseEvent) => {
     setIsDraggingPanel(true);
