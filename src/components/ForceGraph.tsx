@@ -1758,9 +1758,24 @@ const ForceGraph = ({
 
         {/* 缩放按钮横向排列 */}
         <div className="flex flex-row gap-2">
-          <Button variant="secondary" size="icon" onClick={handleZoomIn} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('zoomIn') || "Zoom In"}><ZoomIn className="w-4 h-4 text-cyan-400" /></Button>
-          <Button variant="secondary" size="icon" onClick={handleZoomOut} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('zoomOut') || "Zoom Out"}><ZoomOut className="w-4 h-4 text-cyan-400" /></Button>
-          <Button variant="secondary" size="icon" onClick={handleReset} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9" title={t('resetView') || "Reset View"}><RotateCcw className="w-4 h-4 text-cyan-400" /></Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="secondary" size="icon" onClick={handleZoomIn} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9"><ZoomIn className="w-4 h-4 text-cyan-400" /></Button>
+            </TooltipTrigger>
+            <TooltipContent>{t('zoomIn') || "Zoom In"}</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="secondary" size="icon" onClick={handleZoomOut} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9"><ZoomOut className="w-4 h-4 text-cyan-400" /></Button>
+            </TooltipTrigger>
+            <TooltipContent>{t('zoomOut') || "Zoom Out"}</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="secondary" size="icon" onClick={handleReset} className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9"><RotateCcw className="w-4 h-4 text-cyan-400" /></Button>
+            </TooltipTrigger>
+            <TooltipContent>{t('resetView') || "Reset View"}</TooltipContent>
+          </Tooltip>
         </div>
 
       </div>
@@ -1769,6 +1784,8 @@ const ForceGraph = ({
 
       {/* 保存快照和历史记录按钮 - 英雄克制面板左下角外侧 */}
       <div className="absolute bottom-6 right-[410px] z-10 flex flex-row gap-2 pointer-events-auto">
+        <Tooltip>
+          <TooltipTrigger asChild>
         <Button
           variant="secondary"
           size="icon"
@@ -1783,18 +1800,19 @@ const ForceGraph = ({
             }
           }}
           className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9"
-          title={language === 'zh' ? '保存英雄选择快照' : 'Save Hero Selection Snapshot'}
           disabled={selectedHeroes.length === 0}
         >
           <Camera className="w-4 h-4 text-yellow-400" />
         </Button>
+          </TooltipTrigger>
+          <TooltipContent>{language === 'zh' ? '保存英雄选择快照' : 'Save Hero Selection Snapshot'}</TooltipContent>
+        </Tooltip>
         <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="secondary"
               size="icon"
               className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9"
-              title={language === 'zh' ? '查看历史快照' : 'View History Snapshots'}
               disabled={heroSnapshots.length === 0}
               onMouseEnter={() => setIsHistoryOpen(true)}
             >
