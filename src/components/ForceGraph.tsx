@@ -1130,26 +1130,24 @@ const ForceGraph = ({
 
     svg.on('click', () => onHeroSelect([]));
 
-    // Save node positions to localStorage periodically
-    const saveInterval = setInterval(() => {
+    // Save node positions when force simulation ends (after refresh)
+    const saveNodePositions = () => {
       try {
         const positions = Object.fromEntries(nodePositionsRef.current);
         localStorage.setItem('nodePositions', JSON.stringify(positions));
       } catch (e) {
         console.error('Failed to save node positions:', e);
       }
-    }, 1000); // Save every second
+    };
+    
+    // Save positions when simulation ends
+    simulation.on('end', saveNodePositions);
 
     return () => { 
       simulation.stop(); 
-      clearInterval(saveInterval);
+
       // Final save when component unmounts
-      try {
-        const positions = Object.fromEntries(nodePositionsRef.current);
-        localStorage.setItem('nodePositions', JSON.stringify(positions));
-      } catch (e) {
-        console.error('Failed to save node positions:', e);
-      }
+      saveNodePositions();
     };
   }, [
     prepareData,
