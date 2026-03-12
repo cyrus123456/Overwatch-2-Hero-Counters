@@ -15,7 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getCounterReason } from '@/data/counterReasons';
-import { counterRelations, getRoleName, heroes, type Hero } from '@/data/heroData';
+import { counterRelations, getHeroName, getRoleName, heroes, type Hero } from '@/data/heroData';
 import { maps } from '@/data/mapData';
 import { getSynergyReason } from '@/data/synergyReasons';
 import { synergyRelations } from '@/data/synergyRelations';
@@ -299,11 +299,11 @@ const ForceGraph = ({
     
     // For single select, get the target hero name
     const targetHero = !isMulti ? heroes.find(h => h.id === targetHeroIds[0]) : null;
-    const targetHeroName = targetHero ? (language === 'zh' ? targetHero.name : targetHero.nameEn) : '';
+    const targetHeroName = targetHero ? getHeroName(targetHero, language) : '';
 
     return sorted.map(({ hero, strength: s }) => {
       let formattedReason = '';
-      const heroName = language === 'zh' ? hero.name : hero.nameEn;
+      const heroName = getHeroName(hero, language);
       
       if (!isMulti) {
         const targetHeroId = targetHeroIds[0];
@@ -313,8 +313,8 @@ const ForceGraph = ({
         // 多选模式：提供更详细的关系描述
         const targetHeroNames = targetHeroIds.map(id => {
           const h = heroes.find(hero => hero.id === id);
-          return h ? (language === 'zh' ? h.name : h.nameEn) : '';
-        }).filter(name => name).join(language === 'zh' ? '、' : ', ');
+          return h ? getHeroName(h, language) : '';
+        }).filter(name => name).join(t('listSeparator'));
         
         if (swapSourceTarget) {
           // 克制关系：选中英雄克制当前英雄
@@ -1196,7 +1196,7 @@ const ForceGraph = ({
                 {t('heroCounterPanel')}
                 {selectedMapData && (
                   <span className="ml-2 text-sm font-normal text-cyan-400">
-                    {language === 'zh' ? selectedMapData.name : selectedMapData.nameEn}
+                    {getHeroName(selectedMapData as unknown as Hero, language) || selectedMapData.name}
                   </span>
                 )}
               </h3>
@@ -1206,7 +1206,7 @@ const ForceGraph = ({
                 rel="noopener noreferrer"
                 className="ml-auto text-xs text-cyan-400 hover:text-cyan-300 underline decoration-cyan-400/50 hover:decoration-cyan-400 underline-offset-2 transition-all"
               >
-                {language === 'zh' ? '克制关系投票问卷' : 'Counter Relations Survey'}
+                {t('counterRelationsSurvey')}
               </a>
             </div>
 
@@ -1220,7 +1220,7 @@ const ForceGraph = ({
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <h3 className="text-base font-bold text-slate-100 leading-tight">{language === 'zh' ? displayedHero?.name : displayedHero?.nameEn}</h3>
+                          <h3 className="text-base font-bold text-slate-100 leading-tight">{getHeroName(displayedHero, language)}</h3>
                           <Badge variant="outline" className="text-xs px-2 py-0" style={{ borderColor: displayedHero.color, color: displayedHero.color }}>{getRoleName(displayedHero.role, language)}</Badge>
                           {selectedMap && mapRecommendedHeroes.includes(displayedHero.id) && (
                             <Badge variant="outline" className="text-xs px-2 py-0 text-cyan-400 border-cyan-400/50 bg-cyan-400/10">
@@ -1234,9 +1234,9 @@ const ForceGraph = ({
                   ) : (
                     <div className="flex-1">
                       <h3 className="text-base font-bold text-slate-100 leading-tight mb-3">
-                        {t('multiSelectMode') || '多选模式'}
+                        {t('multiSelectMode')}
                         <span className="ml-2 text-sm font-normal text-slate-400">
-                          {(language === 'zh' ? '已选择 ' : 'Selected ') + selectedHeroes.length + (language === 'zh' ? ' 个英雄' : ' heroes')}
+                          {t('selected') + ' ' + selectedHeroes.length + t('heroesCount')}
                         </span>
                       </h3>
                       <div className="flex flex-wrap gap-3">
@@ -1250,7 +1250,7 @@ const ForceGraph = ({
                               </div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1">
-                                  <span className="text-xs font-bold text-slate-100 truncate">{language === 'zh' ? hero.name : hero.nameEn}</span>
+                                  <span className="text-xs font-bold text-slate-100 truncate">{getHeroName(hero, language)}</span>
                                   <span className="text-[10px] px-1 py-0.5 rounded border font-medium" style={{ borderColor: hero.color, color: hero.color }}>
                                     {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
                                   </span>
@@ -1340,7 +1340,7 @@ const ForceGraph = ({
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 flex-wrap justify-between">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-sm font-bold text-white">{language === 'zh' ? hero.name : hero.nameEn}</span>
+                                    <span className="text-sm font-bold text-white">{getHeroName(hero, language)}</span>
                                     <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
                                       {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
                                     </span>
@@ -1362,9 +1362,9 @@ const ForceGraph = ({
                                     : (() => {
                                         const targetHeroNames = selectedHeroes.map(id => {
                                           const h = heroes.find(hero => hero.id === id);
-                                          return h ? (language === 'zh' ? h.name : h.nameEn) : '';
-                                        }).filter(name => name).join(language === 'zh' ? '、' : ', ');
-                                        const currentHeroName = language === 'zh' ? hero.name : hero.nameEn;
+                                          return h ? getHeroName(h, language) : '';
+                                        }).filter(name => name).join(t('listSeparator'));
+                                        const currentHeroName = getHeroName(hero, language);
                                         
                                         return language === 'zh'
                                           ? `${currentHeroName} 与 ${targetHeroNames} 形成${hero.role === 'tank' ? '前排保护' : hero.role === 'damage' ? '火力压制' : '治疗支援'}的完美协同，${partner.strength === 3 ? '极大提升' : partner.strength === 2 ? '有效增强' : '适当补充'}团队作战能力`
@@ -1392,12 +1392,12 @@ const ForceGraph = ({
                         e.stopPropagation();
                         let text = '';
                         const commonHeroesNames = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
-                          .map(p => language === 'zh' ? p.hero.name : p.hero.nameEn).join(', ');
+                          .map(p => getHeroName(p.hero, language)).join(', ');
                         
                         if (isMultiSelect) {
                           const selectedHeroNames = selectedHeroes.map(id => {
                             const h = heroes.find(hero => hero.id === id);
-                            return h ? (language === 'zh' ? h.name : h.nameEn) : '';
+                            return h ? getHeroName(h, language) : '';
                           }).filter(name => name).join(', ');
                           
                           if (activeCounterTab === 'synergy') {
@@ -1408,7 +1408,7 @@ const ForceGraph = ({
                             list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
                             const formatGroup = (arr: typeof list, prefix: string) =>
                               arr.length > 0 ? `${prefix}${arr.map(i => {
-                                const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                                const name = getHeroName(i.hero, language);
                                 return name;
                               }).join(', ')}` : '';
                             const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
@@ -1421,7 +1421,7 @@ const ForceGraph = ({
                             text = `${header} ${groups}`;
                           }
                         } else {
-                          const hName = language === 'zh' ? displayedHero?.name : displayedHero?.nameEn;
+                          const hName = getHeroName(displayedHero, language);
                           if (activeCounterTab === 'synergy') {
                             text = `${hName} ${t('synergy')} ${t('heroes')} ${commonHeroesNames}`;
                           } else {
@@ -1430,7 +1430,7 @@ const ForceGraph = ({
                             list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
                             const formatGroup = (arr: typeof list, prefix: string) =>
                               arr.length > 0 ? `${prefix}${arr.map(i => {
-                                const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                                const name = getHeroName(i.hero, language);
                                 return name;
                               }).join(', ')}` : '';
                             const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
@@ -1454,12 +1454,12 @@ const ForceGraph = ({
                       e.stopPropagation();
                       let text = '';
                       const commonHeroesNames = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
-                        .map(p => language === 'zh' ? p.hero.name : p.hero.nameEn).join(', ');
+                        .map(p => getHeroName(p.hero, language)).join(', ');
 
                       if (isMultiSelect) {
                         const selectedHeroNames = selectedHeroes.map(id => {
                           const h = heroes.find(hero => hero.id === id);
-                          return h ? (language === 'zh' ? h.name : h.nameEn) : '';
+                          return h ? getHeroName(h, language) : '';
                         }).filter(name => name).join(', ');
                         
                         if (activeCounterTab === 'synergy') {
@@ -1471,7 +1471,7 @@ const ForceGraph = ({
                             list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
                             const formatGroup = (arr: typeof list, prefix: string) =>
                               arr.length > 0 ? `${prefix}${arr.map(i => {
-                                const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                                const name = getHeroName(i.hero, language);
                                 return name;
                               }).join(', ')}` : '';
                             const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
@@ -1488,7 +1488,7 @@ const ForceGraph = ({
                       } else if (displayedHero) {
                         if (activeCounterTab === 'synergy') {
                           if (synergyPartners.length > 0) {
-                            text = `${displayedHero.name} ${t('synergy')} ${t('heroes')} ${commonHeroesNames}`;
+                            text = `${getHeroName(displayedHero, language)} ${t('synergy')} ${t('heroes')} ${commonHeroesNames}`;
                             handleCopyToClipboard(text);
                           }
                         } else {
@@ -1498,14 +1498,14 @@ const ForceGraph = ({
                             list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
                             const formatGroup = (arr: typeof list, prefix: string) =>
                               arr.length > 0 ? `${prefix}${arr.map(i => {
-                                const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                                const name = getHeroName(i.hero, language);
                                 return name;
                               }).join(', ')}` : '';
                             const strong3 = formatGroup(grouped[3], t('strength3') + ': ');
                             const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
                             const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
                             const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
-                            const header = activeCounterTab === 'counteredBy' ? `${displayedHero.name}${t('counteredByHeader')}` : `${displayedHero.name}${t('countersHeader')}`;
+                            const header = activeCounterTab === 'counteredBy' ? `${getHeroName(displayedHero, language)}${t('counteredByHeader')}` : `${getHeroName(displayedHero, language)}${t('countersHeader')}`;
                             text = `${header} ${groups}`;
                             handleCopyToClipboard(text);
                           }
@@ -1517,21 +1517,21 @@ const ForceGraph = ({
                       synergyPartners.length > 0 ? (
                         (() => {
                           const partnerNames = synergyPartners.map(p => {
-                            const name = language === 'zh' ? p.hero.name : p.hero.nameEn;
+                            const name = getHeroName(p.hero, language);
                             if (language === 'zh' && p.hero.nickname) {
                               return `${name}（${p.hero.nickname}）`;
                             }
                             return name;
-                          }).join('、');
+                          }).join(t('listSeparator'));
                           
                           const selectedHeroNames = selectedHeroes.map(id => {
                             const h = heroes.find(hero => hero.id === id);
-                            return h ? (language === 'zh' ? h.name : h.nameEn) : '';
-                          }).filter(name => name).join('、');
+                            return h ? getHeroName(h, language) : '';
+                          }).filter(name => name).join(t('listSeparator'));
                           
                           const hNameWithNickname = isMultiSelect ? selectedHeroNames : (
                             language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : 
-                            (language === 'zh' ? displayedHero?.name : displayedHero?.nameEn)
+                            getHeroName(displayedHero, language)
                           );
                           return <><div className="text-white font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{isMultiSelect ? t('commonSynergy') : t('synergy')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-purple-300 font-medium">{partnerNames}</div></>;
                         })()
@@ -1543,21 +1543,21 @@ const ForceGraph = ({
                         list.forEach(i => grouped[i.strength as keyof typeof grouped].push(i));
                         const formatDisplay = (arr: typeof list, prefix: string, colorClass: string) =>
                           arr.length > 0 ? <div className={`font-medium ${colorClass}`}>{prefix}{arr.map(i => {
-                            const name = language === 'zh' ? i.hero.name : i.hero.nameEn;
+                            const name = getHeroName(i.hero, language);
                             if (language === 'zh' && i.hero.nickname) {
                               return `${name}（${i.hero.nickname}）`;
                             }
                             return name;
-                          }).join('、')}</div> : null;
+                          }).join(t('listSeparator'))}</div> : null;
                         
                         const selectedHeroNames = selectedHeroes.map(id => {
                           const h = heroes.find(hero => hero.id === id);
-                          return h ? (language === 'zh' ? h.name : h.nameEn) : '';
-                        }).filter(name => name).join('、');
+                          return h ? getHeroName(h, language) : '';
+                        }).filter(name => name).join(t('listSeparator'));
                         
                         const hNameWithNickname = isMultiSelect ? selectedHeroNames : (
                           language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : 
-                          (language === 'zh' ? displayedHero?.name : displayedHero?.nameEn)
+                          getHeroName(displayedHero, language)
                         );
                         
                         if (isMultiSelect) {
@@ -1713,15 +1713,15 @@ const ForceGraph = ({
                     <div className="text-amber-300 flex items-start gap-2 bg-amber-900/20 p-2 rounded-lg border border-amber-800/30">
                       <span className="w-1 h-1 bg-amber-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
-                        <span className="font-medium"> {language === 'zh' ? '多选英雄：' : 'Multi-select heroes'}</span>
+                        <span className="font-medium"> {t('multiSelectHeroes')}</span>
                         <span className="font-medium">{t('ctrlMultiSelect')}</span>
                       </span>
                     </div>
                     <div className="text-yellow-300 flex items-start gap-2 bg-yellow-900/20 p-2 rounded-lg border border-yellow-800/30">
                       <span className="w-1 h-1 bg-yellow-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
-                        <span className="font-medium">{language === 'zh' ? '快照功能：' : 'Snapshot Feature:'} </span>
-                        <span className="text-yellow-300/80">{language === 'zh' ? '点击相机图标保存当前英雄选择，点击历史图标查看或恢复之前的快照。' : 'Click the camera icon to save current hero selection, click the history icon to view or restore previous snapshots.'}</span>
+                        <span className="font-medium">{t('snapshotFeature')} </span>
+                        <span className="text-yellow-300/80">{t('snapshotFeatureDesc')}</span>
                       </span>
                     </div>
                     <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
@@ -1805,7 +1805,7 @@ const ForceGraph = ({
           <Camera className="w-4 h-4 text-yellow-400" />
         </Button>
           </TooltipTrigger>
-          <TooltipContent>{language === 'zh' ? '保存英雄选择快照' : 'Save Hero Selection Snapshot'}</TooltipContent>
+          <TooltipContent>{t('saveHeroSnapshot')}</TooltipContent>
         </Tooltip>
         <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
           <PopoverTrigger asChild>
@@ -1830,13 +1830,13 @@ const ForceGraph = ({
             <Card className="p-5 bg-slate-800/60 backdrop-blur-md border border-slate-700 shadow-2xl rounded-2xl w-80 text-left">
               <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-base font-black text-slate-200 uppercase tracking-widest">{language === 'zh' ? '曾经选择过的英雄 历史快照' : 'History Snapshots'}</span>
+                  <span className="text-base font-black text-slate-200 uppercase tracking-widest">{t('historySnapshots')}</span>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setHeroSnapshots([])}
                     className="text-slate-400 hover:text-slate-200 transition-colors p-1 hover:text-red-400"
-                    title={language === 'zh' ? '清空历史' : 'Clear History'}
+                    title={t('clearHistory')}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -1845,13 +1845,13 @@ const ForceGraph = ({
               <ScrollArea className="max-h-72 overflow-y-auto">
                 {heroSnapshots.length === 0 ? (
                   <div className="p-4 text-center text-slate-500 text-sm">
-                    {language === 'zh' ? '暂无历史快照' : 'No history snapshots'}
+                    {t('noHistorySnapshots')}
                   </div>
                 ) : (
                   <div className="p-2 space-y-1">
                     {heroSnapshots.map(snapshot => {
                       const snapshotHeroes = snapshot.heroIds.map(id => heroes.find(h => h.id === id)).filter(Boolean);
-                      const heroNames = snapshotHeroes.map(h => language === 'zh' ? h!.name : h!.nameEn).join(', ');
+                      const heroNames = snapshotHeroes.map(h => getHeroName(h, language)).join(', ');
                       const date = new Date(snapshot.timestamp);
                       const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 
@@ -1896,7 +1896,7 @@ const ForceGraph = ({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white z-10" />
           <Input
             type="text"
-            placeholder={language === 'zh' ? '搜索英雄...' : 'Search heroes...'}
+            placeholder={t('searchHeroesPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 pr-10 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-white placeholder:text-white focus:border-cyan-500 focus:ring-cyan-500/20"

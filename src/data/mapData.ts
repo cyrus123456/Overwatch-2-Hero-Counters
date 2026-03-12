@@ -21,6 +21,11 @@ export const getMapTypeName = (type: string, language: MapLanguage = 'zh'): stri
   return typeNames[type]?.[language] || typeNames[type]?.en || type;
 };
 
+export const getMapName = (map: Map | undefined | null, language: MapLanguage = 'zh'): string => {
+  if (!map) return '';
+  return language === 'zh' ? map.name : map.nameEn;
+};
+
   // 地图数据
   export const maps: Map[] = [
     // 占领要点地图

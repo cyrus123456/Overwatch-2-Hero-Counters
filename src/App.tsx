@@ -31,8 +31,8 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 import ForceGraph from '@/components/ForceGraph';
-import { heroes } from '@/data/heroData';
-import { getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
+import { getHeroName, heroes } from '@/data/heroData';
+import { getMapName, getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
 
 import type { Language } from '@/i18n';
 import { useI18n } from '@/i18n';
@@ -275,7 +275,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                       rel="noopener noreferrer"
                       className="text-xs text-cyan-400 hover:text-cyan-300 underline decoration-cyan-400/50 hover:decoration-cyan-400 underline-offset-2 transition-all"
                     >
-                      {language === 'zh' ? '地图强势英雄投票问卷' : 'Map Hero Survey'}
+                      {t('mapHeroSurvey')}
                     </a>
                     <Badge variant="outline" className="text-xs border-slate-700 text-white font-mono px-3">
                       {filteredMaps.length}
@@ -359,7 +359,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                           <div className="flex flex-col min-w-0 flex-1">
                             <div className="flex items-center justify-between">
                               <span className="text-base font-bold text-slate-100 truncate group-hover:text-cyan-400 transition-colors">
-                                {language === 'zh' ? map.name : map.nameEn}
+                                {getMapName(map, language)}
                               </span>
                               <Badge 
                                 variant="outline" 
@@ -384,7 +384,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                       <TooltipContent side="right" className="bg-slate-900 border-slate-700 p-3 max-w-[240px] z-[100] shadow-2xl rounded-lg backdrop-blur-xl">
                                         <div className="flex flex-col gap-1.5">
                                           <span className="text-sm font-black text-cyan-400 tracking-wider uppercase border-b border-slate-800 pb-1">
-                                            {language === 'zh' ? hero.name : hero.nameEn}
+                                            {getHeroName(hero, language)}
                                           </span>
                                          <p className="text-xs text-white leading-relaxed">
                                               {map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || map.heroReasons[heroId]?.zh || ''}
@@ -421,19 +421,19 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                          
                                          const heroNames = sortedHeroes.map(heroId => {
                                            const hero = heroes.find(h => h.id === heroId);
-                                           return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
+                                           return hero ? getHeroName(hero, language) : '';
                                          }).filter(Boolean);
                                          
                                          const reasons = sortedHeroes.map(heroId => {
                                            const hero = heroes.find(h => h.id === heroId);
                                            const reason = map.heroReasons[heroId];
                                            if (!hero || !reason) return '';
-                                           const heroName = language === 'zh' ? hero.name : hero.nameEn;
+                                           const heroName = getHeroName(hero, language);
                                            const reasonText = reason[language] || reason.en || reason.zh || '';
                                            return `${heroName}: ${sanitizeMapTextChinese(reasonText)}`;
                                          }).filter(Boolean);
                                          
-                                          const mapName = language === 'zh' ? map.name : map.nameEn;
+                                          const mapName = getMapName(map, language);
                                           const mapDesc = map.description?.[language] || map.description?.en || '';
                                           const text = `${mapName} - ${mapDesc} | ${t('recommendedLineup')}: ${heroNames.join(', ')} | ${reasons.join(' | ')}`;
                                          handleMapCopyToClipboard(text);
@@ -457,19 +457,19 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                            const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
                                            const heroNames = sortedHeroes.map(heroId => {
                                              const hero = heroes.find(h => h.id === heroId);
-                                             return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
+                                             return hero ? getHeroName(hero, language) : '';
                                            }).filter(Boolean);
                                             
                                             const reasons = sortedHeroes.map(heroId => {
                                               const hero = heroes.find(h => h.id === heroId);
                                               const reason = map.heroReasons[heroId];
                                               if (!hero || !reason) return '';
-                                              const heroName = language === 'zh' ? hero.name : hero.nameEn;
+                                              const heroName = getHeroName(hero, language);
                                               const reasonText = reason[language] || reason.en || reason.zh || '';
                                               return `${heroName}: ${sanitizeMapTextChinese(reasonText)}`;
                                             }).filter(Boolean);
                                             
-                                             const mapName = language === 'zh' ? map.name : map.nameEn;
+                                             const mapName = getMapName(map, language);
                                              const mapDesc = map.description?.[language] || map.description?.en || '';
                                              const preview = `${mapName} - ${mapDesc} | ${t('recommendedLineup')}: ${heroNames.join(', ')} | ${reasons.join(' | ')}`;
                                              return preview;
@@ -504,12 +504,12 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <div className="flex items-center gap-2 flex-wrap">
-                                        <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
+                                        <p className="text-sm font-black text-slate-200 tracking-tight">{getHeroName(hero, language)}</p>
                                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
                                           {roleNames[hero.role]}
                                         </span>
                                       </div>
-                                      <p className="text-[11px] text-slate-300 leading-relaxed mt-1">{map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.zh || ''}</p>
+                                      <p className="text-[11px] text-slate-300 leading-relaxed mt-1">{map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || ''}</p>
                                     </div>
                                   </div>
                                 );
@@ -556,7 +556,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                   onClick={() => setSelectedRole(role.id)}
                 >
                   <role.icon className="w-4 h-4" style={{ color: selectedRole === role.id ? '#fff' : role.color }} />
-                  <span className="text-[11px] font-black uppercase tracking-widest">{language === 'zh' ? role.name : role.nameEn}</span>
+                  <span className="text-[11px] font-black uppercase tracking-widest">{role.name}</span>
                   <Badge 
                     variant="secondary" 
                     className={`ml-1 text-[10px] h-4.5 px-2 font-mono font-black ${

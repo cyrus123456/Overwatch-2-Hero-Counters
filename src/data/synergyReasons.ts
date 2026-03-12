@@ -926,6 +926,7 @@ export const getSynergyReason = (
   const reason = synergyReasons[key];
   
   if (!reason) {
+    // 默认返回通用配合描述
     return language === 'zh' ? '配合默契，协同作战' : 'Great synergy and teamwork';
   }
   

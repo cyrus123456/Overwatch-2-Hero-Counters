@@ -934,3 +934,9 @@ export const getRoleNameEn = (role: string): string => {
     default: return 'Unknown';
   }
 };
+
+// 获取英雄名称（根据语言）
+export const getHeroName = (hero: Hero | undefined | null, language: string = 'zh'): string => {
+  if (!hero) return '';
+  return language === 'zh' ? hero.name : hero.nameEn;
+};
