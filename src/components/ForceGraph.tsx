@@ -1621,7 +1621,7 @@ const ForceGraph = ({
                 </button>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-1">
                 {/* 克制强度说明 - 节点尺寸 + 连线箭头 */}
                 <div className="text-[11px] text-slate-200">
 
@@ -1727,17 +1727,15 @@ const ForceGraph = ({
                     <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
                       <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
-                        <p className="font-medium">{splitDesc(t('zoomDesc')).title} </p>
-                        <p className="font-medium"> {splitDesc(t('touchZoomDesc')).title}</p>
-                        {/* <span className="text-cyan-300/80"> {splitDesc(t('zoomDesc')).content} / {splitDesc(t('touchZoomDesc')).content}</span> */}
+                        <p className="font-medium">{splitDesc(t('zoomDesc')).title} <span className="text-cyan-300/80">{splitDesc(t('zoomDesc')).content}</span></p>
+                        <p className="font-medium">{splitDesc(t('touchZoomDesc')).title} <span className="text-cyan-300/80">{splitDesc(t('touchZoomDesc')).content}</span></p>
                       </span>
                     </div>
                     <div className="text-cyan-300 flex items-start gap-2 bg-cyan-900/20 p-2 rounded-lg border border-cyan-800/30">
                       <span className="w-1 h-1 bg-cyan-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
-                        <p className="font-medium">{splitDesc(t('panDesc')).title}</p>
-                        <p className="font-medium"> {splitDesc(t('touchPanDesc')).title}</p>
-                        {/* <span className="text-cyan-300/80"> {splitDesc(t('panDesc')).content} / {splitDesc(t('touchPanDesc')).content}</span> */}
+                        <p className="font-medium">{splitDesc(t('panDesc')).title} <span className="text-cyan-300/80">{splitDesc(t('panDesc')).content}</span></p>
+                        <p className="font-medium">{splitDesc(t('touchPanDesc')).title} <span className="text-cyan-300/80">{splitDesc(t('touchPanDesc')).content}</span></p>
                       </span>
                     </div>
                     <div className="text-slate-300 flex items-start gap-2">
