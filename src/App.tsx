@@ -263,21 +263,21 @@ const [isMapCopied, setIsMapCopied] = useState(false);
             </Tooltip>
             <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
               <Card className="p-3 bg-slate-800/60 border-slate-700 backdrop-blur-md shadow-xl h-full flex flex-col gap-1 rounded-xl border">
-                <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4">
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-6 h-6 text-cyan-400" />
-                    <h3 className="text-xl font-bold text-slate-100 uppercase tracking-wide">{t('mapRecommendations')}</h3>
+                <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4 gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <MapPin className="w-6 h-6 text-cyan-400 flex-shrink-0" />
+                    <h3 className="text-xl font-bold text-slate-100 uppercase tracking-wide max-w-[170px] break-words leading-tight">{t('mapRecommendations')}</h3>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <a
                       href="https://wj.qq.com/s2/25861398/c38c/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-cyan-400 hover:text-cyan-300 underline decoration-cyan-400/50 hover:decoration-cyan-400 underline-offset-2 transition-all"
+                      className="text-xs text-cyan-400 hover:text-cyan-300 underline decoration-cyan-400/50 hover:decoration-cyan-400 underline-offset-2 transition-all max-w-[100px] break-words leading-tight"
                     >
                       {t('mapHeroSurvey')}
                     </a>
-                    <Badge variant="outline" className="text-xs border-slate-700 text-white font-mono px-3">
+                    <Badge variant="outline" className="text-xs border-slate-700 text-white font-mono px-3 flex-shrink-0">
                       {filteredMaps.length}
                     </Badge>
                   </div>
