@@ -94,7 +94,7 @@ export const heroes: Hero[] = [
   { id: 'winston', name: '温斯顿', nameEn: 'Winston', nickname: '猩猩', role: 'tank', color: '#f59e0b', image: heroImages.winston },
   { id: 'wrecking_ball', name: '破坏球', nameEn: 'Wrecking Ball', nickname: '球', role: 'tank', color: '#f59e0b', image: heroImages.wrecking_ball },
   { id: 'zarya', name: '查莉娅', nameEn: 'Zarya', nickname: '毛妹', role: 'tank', color: '#f59e0b', image: heroImages.zarya },
-  { id: 'jinyu', name: '金驭', nameEn: 'Jinyu', role: 'tank', color: '#f59e0b', image: heroImages.jinyu },
+  { id: 'jinyu', name: '金驭', nameEn: 'Domina', role: 'tank', color: '#f59e0b', image: heroImages.jinyu },
   
   // 输出英雄
   { id: 'ashe', name: '艾什', nameEn: 'Ashe', role: 'damage', color: '#ef4444', image: heroImages.ashe },
