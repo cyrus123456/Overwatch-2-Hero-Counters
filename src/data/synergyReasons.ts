@@ -292,15 +292,15 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   // 金驭的最佳拍档
   'kiriko-jinyu': { 
     reasonZh: '金驭需要前排治疗保障，雾子提供及时位移支援', 
-    reasonEn: 'Kiriko provides mobile healing for Jinyu\'s front-line play' 
+    reasonEn: 'Kiriko provides mobile healing for Domina\'s front-line play' 
   },
   'genji-jinyu': { 
     reasonZh: '高机动的Genji配合金驭的控制能快速建立优势', 
-    reasonEn: 'High mobility Genji + Jinyu\'s control = quick advantages' 
+    reasonEn: 'High mobility Genji + Domina\'s control = quick advantages' 
   },
   'cassidy-jinyu': { 
     reasonZh: '卡西迪的远程输出弥补金驭的输出空缺', 
-    reasonEn: 'Cassidy covers Jinyu\'s damage gaps at range' 
+    reasonEn: 'Cassidy covers Domina\'s damage gaps at range' 
   },
 
   // ========== Damage heroes 最佳拍档理由 ==========

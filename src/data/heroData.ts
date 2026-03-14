@@ -828,7 +828,7 @@ export const counterRelations: CounterRelation[] = [
      { source: 'torbjorn', target: 'anran', strength: 2 },
   
   // ========== 新英雄克制关系 ==========
-  // 一、金驭（Jinyu）被克制 - 完全修改
+  // 一、金驭（Domina）被克制 - 完全修改
   { source: 'winston', target: 'jinyu', strength: 3 },
   { source: 'wrecking_ball', target: 'jinyu', strength: 3 },
   { source: 'reaper', target: 'jinyu', strength: 3 },
