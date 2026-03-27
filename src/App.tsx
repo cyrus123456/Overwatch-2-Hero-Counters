@@ -778,9 +778,12 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   </div>
                                 );
                               })}
-                              {(customMapHeroes[map.id] || []).map((customHero, index) => {
-                                const hero = heroes.find(h => h.id === customHero.heroId);
+                              {sortHeroesByRole((customMapHeroes[map.id] || []).map(ch => ch.heroId)).map((heroId) => {
+                                const customHero = (customMapHeroes[map.id] || []).find(ch => ch.heroId === heroId);
+                                if (!customHero) return null;
+                                const hero = heroes.find(h => h.id === heroId);
                                 if (!hero) return null;
+                                const originalIndex = (customMapHeroes[map.id] || []).findIndex(ch => ch.heroId === heroId);
                                 const roleColors = {
                                   tank: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
                                   damage: 'bg-red-500/20 text-red-400 border-red-500/30',
@@ -792,10 +795,10 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   support: t('support'),
                                 };
                                 return (
-                                  <div 
-                                    key={`custom-${index}`} 
-                                    className="flex items-start gap-4 p-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 cursor-pointer transition-all border border-cyan-600/30 hover:border-cyan-500/50" 
-                                    onClick={(e) => { e.stopPropagation(); setSelectedHeroes([customHero.heroId]); }}
+                                  <div
+                                    key={`custom-${heroId}`}
+                                    className="flex items-start gap-4 p-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 cursor-pointer transition-all border border-cyan-600/30 hover:border-cyan-500/50"
+                                    onClick={(e) => { e.stopPropagation(); setSelectedHeroes([heroId]); }}
                                   >
                                     <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-700 shadow-md flex-shrink-0 ring-1 ring-cyan-500/30">
                                       <img src={hero.image} alt="" className="w-full h-full object-cover" />
@@ -806,6 +809,9 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
                                           {roleNames[hero.role]}
                                         </span>
+                                        <span className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+                                          {t('custom')}
+                                        </span>
                                       </div>
                                       <p className="text-[11px] text-slate-300 leading-relaxed mt-1">{customHero.reason}</p>
                                     </div>
@@ -813,7 +819,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                       variant="ghost"
                                       size="sm"
                                       className="h-7 w-7 p-0 text-slate-400 hover:text-red-400 hover:bg-red-500/10"
-                                      onClick={(e) => { e.stopPropagation(); removeCustomHero(map.id, index); }}
+                                      onClick={(e) => { e.stopPropagation(); removeCustomHero(map.id, originalIndex); }}
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
                                     </Button>

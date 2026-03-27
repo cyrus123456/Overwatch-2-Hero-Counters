@@ -142,6 +142,7 @@ const translations: Record<Language, Record<string, string>> = {
     confirmClearAll: '确定要清除所有自定义数据吗？此操作不可撤销。',
     saveCustomData: '保存自定义数据：',
     unsavedChanges: '有未保存的更改！',
+    custom: '自定义',
   },
   en: {
     title: 'Overwatch 2 Hero Counter Relationships',
@@ -280,6 +281,7 @@ const translations: Record<Language, Record<string, string>> = {
     confirmClearAll: 'Are you sure you want to clear all custom data? This action cannot be undone.',
     saveCustomData: 'Save custom data:',
     unsavedChanges: 'Unsaved changes!',
+    custom: 'Custom',
   },
   ja: {
     title: 'オーバーチュア ヒーロー相性図',
