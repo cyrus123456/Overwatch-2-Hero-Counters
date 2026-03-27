@@ -61,12 +61,19 @@ interface LinkDatum extends d3.SimulationLinkDatum<NodeDatum> {
   target: string | NodeDatum;
 }
 
+interface CustomMapHero {
+  heroId: string;
+  reason: string;
+}
+
 interface ForceGraphProps {
   selectedRole: string | null;
   selectedHeroes: string[];
   onHeroSelect: (heroIds: string[]) => void;
   isDrawerOpen?: boolean;
   selectedMap?: string | null;
+  customMapHeroes?: Record<string, CustomMapHero[]>;
+  deletedDefaultHeroes?: Record<string, string[]>;
 }
 
 const ForceGraph = ({
@@ -74,10 +81,17 @@ const ForceGraph = ({
   selectedHeroes,
   onHeroSelect,
   isDrawerOpen = true,
-  selectedMap = null
+  selectedMap = null,
+  customMapHeroes = {},
+  deletedDefaultHeroes = {}
 }: ForceGraphProps) => {
   const selectedMapData = useMemo(() => selectedMap ? maps.find(m => m.id === selectedMap) : null, [selectedMap]);
-  const mapRecommendedHeroes = useMemo(() => selectedMapData?.recommendedHeroes || [], [selectedMapData]);
+  const mapRecommendedHeroes = useMemo(() => {
+    if (!selectedMapData || !selectedMap) return [];
+    const defaultHeroes = selectedMapData.recommendedHeroes.filter(id => !(deletedDefaultHeroes[selectedMap] || []).includes(id));
+    const customHeroes = (customMapHeroes[selectedMap] || []).map((ch: CustomMapHero) => ch.heroId);
+    return [...defaultHeroes, ...customHeroes];
+  }, [selectedMapData, selectedMap, deletedDefaultHeroes, customMapHeroes]);
 
   const { t, language } = useI18n();
 
@@ -956,28 +970,28 @@ const ForceGraph = ({
           .attr('transform', `translate(${(scale - 1) * d.radius}, ${(scale - 1) * d.radius})`);
 
         const isRecommended = selectedMap && mapRecommendedHeroes.includes(d.id);
-        let showLabel = false;
-        if (isRecommended) {
-          if (selectedHeroes.includes(d.id)) {
-            showLabel = true;
-          } else if (isMultiSelect) {
-            showLabel = commonRelatedIds.includes(d.id);
+        // 判断是否与选中节点有关系
+        let hasRelation = false;
+        if (selectedHeroes.length > 0) {
+          if (isMultiSelect) {
+            hasRelation = selectedHeroes.includes(d.id) || commonRelatedIds.includes(d.id);
           } else {
             const targetHero = selectedHeroes[0];
             if (activeCounterTab === 'synergy') {
-              showLabel = synergyRelations.some(r => r.source === d.id && r.target === targetHero);
+              hasRelation = d.id === targetHero || synergyRelations.some(r => r.source === d.id && r.target === targetHero);
             } else if (activeCounterTab === 'counteredBy') {
-              showLabel = counterRelations.some(r => r.source === d.id && r.target === targetHero);
+              hasRelation = d.id === targetHero || counterRelations.some(r => r.source === d.id && r.target === targetHero);
             } else {
-              showLabel = counterRelations.some(r => r.source === targetHero && r.target === d.id);
+              hasRelation = d.id === targetHero || counterRelations.some(r => r.source === targetHero && r.target === d.id);
             }
           }
         }
-
+        // 有关系时完全不透明，无关系时半透明
+        const labelOpacity = isRecommended ? (hasRelation ? 1 : 0.5) : 0;
         group.select('.map-strong-label')
           .transition()
           .duration(300)
-          .style('opacity', showLabel ? 1 : 0)
+          .style('opacity', labelOpacity)
           .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
       });
 
@@ -1086,6 +1100,7 @@ const ForceGraph = ({
         group.select('.node-name').transition().duration(300).attr('dy', d.radius + 20);
 
         const isRecommended = selectedMap && mapRecommendedHeroes.includes(d.id);
+        // 无选中节点时，所有地图推荐英雄标签正常显示
         group.select('.map-strong-label')
           .transition()
           .duration(300)

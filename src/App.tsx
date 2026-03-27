@@ -20,13 +20,19 @@ import {
   ChevronRight,
   Copy,
   Crosshair,
+  Download,
   Github,
   Globe,
   Heart,
   MapPin,
+  Plus,
+  RotateCcw,
   Search,
   Shield,
   Target,
+  Trash2,
+  Upload,
+  X
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -37,6 +43,54 @@ import { getMapName, getMapTypeColor, getMapTypeName, maps } from '@/data/mapDat
 import type { Language } from '@/i18n';
 import { useI18n } from '@/i18n';
 import './App.css';
+
+interface CustomMapHero {
+  heroId: string;
+  reason: string;
+}
+
+const CUSTOM_MAP_HEROES_KEY = 'ow2-custom-map-heroes';
+const DELETED_DEFAULT_HEROES_KEY = 'ow2-deleted-default-heroes';
+
+function loadCustomMapHeroes(): Record<string, CustomMapHero[]> {
+  try {
+    const stored = localStorage.getItem(CUSTOM_MAP_HEROES_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch {
+    console.error('Failed to load custom map heroes from localStorage');
+  }
+  return {};
+}
+
+function saveCustomMapHeroes(data: Record<string, CustomMapHero[]>): void {
+  try {
+    localStorage.setItem(CUSTOM_MAP_HEROES_KEY, JSON.stringify(data));
+  } catch {
+    console.error('Failed to save custom map heroes to localStorage');
+  }
+}
+
+function loadDeletedDefaultHeroes(): Record<string, string[]> {
+  try {
+    const stored = localStorage.getItem(DELETED_DEFAULT_HEROES_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch {
+    console.error('Failed to load deleted default heroes from localStorage');
+  }
+  return {};
+}
+
+function saveDeletedDefaultHeroes(data: Record<string, string[]>): void {
+  try {
+    localStorage.setItem(DELETED_DEFAULT_HEROES_KEY, JSON.stringify(data));
+  } catch {
+    console.error('Failed to save deleted default heroes to localStorage');
+  }
+}
 
 function AppContent() {
   const { t, language, setLanguage } = useI18n();
@@ -49,6 +103,11 @@ const [isMapCopied, setIsMapCopied] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [hoverTimer, setHoverTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const roleOrder = { tank: 0, damage: 1, support: 2 };
+  const [customMapHeroes, setCustomMapHeroes] = useState<Record<string, CustomMapHero[]>>({});
+  const [deletedDefaultHeroes, setDeletedDefaultHeroes] = useState<Record<string, string[]>>({});
+  const [newHeroId, setNewHeroId] = useState<string>('');
+  const [newHeroReason, setNewHeroReason] = useState<string>('');
+  const [addingHeroMapId, setAddingHeroMapId] = useState<string | null>(null);
 
   useEffect(() => {
     if (selectedMap) {
@@ -61,6 +120,127 @@ const [isMapCopied, setIsMapCopied] = useState(false);
       }
     }
   }, [selectedMap]);
+
+  useEffect(() => {
+    const loaded = loadCustomMapHeroes();
+    setCustomMapHeroes(loaded);
+    const deleted = loadDeletedDefaultHeroes();
+    setDeletedDefaultHeroes(deleted);
+  }, []);
+
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  const addCustomHero = (mapId: string, heroId: string, reason: string) => {
+    if (!heroId.trim()) return;
+    setCustomMapHeroes(prev => {
+      const updated = {
+        ...prev,
+        [mapId]: [...(prev[mapId] || []), { heroId, reason }],
+      };
+      saveCustomMapHeroes(updated);
+      return updated;
+    });
+    setHasUnsavedChanges(true);
+    setNewHeroId('');
+    setNewHeroReason('');
+    setAddingHeroMapId(null);
+  };
+
+  const removeCustomHero = (mapId: string, index: number) => {
+    setCustomMapHeroes(prev => {
+      const mapHeroes = prev[mapId] || [];
+      const updated = {
+        ...prev,
+        [mapId]: mapHeroes.filter((_, i) => i !== index),
+      };
+      saveCustomMapHeroes(updated);
+      return updated;
+    });
+    setHasUnsavedChanges(true);
+  };
+
+  const deleteDefaultHero = (mapId: string, heroId: string) => {
+    setDeletedDefaultHeroes(prev => {
+      const updated = {
+        ...prev,
+        [mapId]: [...(prev[mapId] || []), heroId],
+      };
+      saveDeletedDefaultHeroes(updated);
+      return updated;
+    });
+    setHasUnsavedChanges(true);
+  };
+
+  const resetMapToDefault = (mapId: string) => {
+    setCustomMapHeroes(prev => {
+      const updated = { ...prev };
+      delete updated[mapId];
+      saveCustomMapHeroes(updated);
+      return updated;
+    });
+    setDeletedDefaultHeroes(prev => {
+      const updated = { ...prev };
+      delete updated[mapId];
+      saveDeletedDefaultHeroes(updated);
+      return updated;
+    });
+    setHasUnsavedChanges(true);
+  };
+
+  const exportData = () => {
+    const data = {
+      customMapHeroes,
+      deletedDefaultHeroes,
+      exportDate: new Date().toISOString(),
+      version: '1.0'
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ow2-hero-recommendations-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setHasUnsavedChanges(false);
+  };
+
+  const importData = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        if (data.customMapHeroes) {
+          setCustomMapHeroes(data.customMapHeroes);
+          saveCustomMapHeroes(data.customMapHeroes);
+        }
+        if (data.deletedDefaultHeroes) {
+          setDeletedDefaultHeroes(data.deletedDefaultHeroes);
+          saveDeletedDefaultHeroes(data.deletedDefaultHeroes);
+        }
+        setHasUnsavedChanges(false);
+        alert(t('importSuccess'));
+      } catch {
+        alert(t('importError'));
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  };
+
+  const clearAllData = () => {
+    if (confirm(t('confirmClearAll'))) {
+      setCustomMapHeroes({});
+      setDeletedDefaultHeroes({});
+      saveCustomMapHeroes({});
+      saveDeletedDefaultHeroes({});
+      setHasUnsavedChanges(false);
+    }
+  };
 
   const sortHeroesByRole = (heroIds: string[]): string[] => {
     return [...heroIds].sort((a, b) => {
@@ -263,7 +443,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
             </Tooltip>
             <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
               <Card className="p-3 bg-slate-800/60 border-slate-700 backdrop-blur-md shadow-xl h-full flex flex-col gap-1 rounded-xl border">
-                <div className="flex items-center justify-between mb-1 flex-shrink-0 border-b border-slate-700/50 pb-4 gap-2">
+                <div className="flex items-center justify-between flex-shrink-0 gap-2">
                   <div className="flex items-center gap-3 min-w-0">
                     <MapPin className="w-6 h-6 text-cyan-400 flex-shrink-0" />
                     <h3 className="text-xl font-bold text-slate-100 uppercase tracking-wide max-w-[170px] break-words leading-tight">{t('mapRecommendations')}</h3>
@@ -280,6 +460,53 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                     <Badge variant="outline" className="text-xs border-slate-700 text-white font-mono px-3 flex-shrink-0">
                       {filteredMaps.length}
                     </Badge>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between flex-shrink-0  border border-slate-700 pl-9  rounded-lg">
+                  <span className="text-xs text-slate-400">{t('saveCustomData')}</span>
+                  <div className="flex items-center gap-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={exportData}
+                          className={`p-1.5 rounded transition-colors ${hasUnsavedChanges ? 'animate-pulse bg-cyan-500/20' : 'hover:bg-slate-700'}`}
+                        >
+                          <Download className={`w-4 h-4 ${hasUnsavedChanges ? 'text-cyan-400' : 'text-slate-400 hover:text-cyan-400'}`} />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className={`p-2 z-[100] ${hasUnsavedChanges ? 'bg-cyan-600 border-cyan-500/50' : 'bg-slate-900 border-slate-700'}`}>
+                        <p className={`text-xs font-medium ${hasUnsavedChanges ? 'text-white' : 'text-white'}`}>{hasUnsavedChanges ? t('unsavedChanges') : t('exportData')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <label className="p-1.5 rounded hover:bg-slate-700 transition-colors cursor-pointer">
+                          <Upload className="w-4 h-4 text-slate-400 hover:text-cyan-400" />
+                          <input
+                            type="file"
+                            accept=".json"
+                            onChange={importData}
+                            className="hidden"
+                          />
+                        </label>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="bg-slate-900 border-slate-700 p-2 z-[100]">
+                        <p className="text-xs text-white">{t('importData')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={clearAllData}
+                          className="p-1.5 rounded hover:bg-slate-700 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4 text-slate-400 hover:text-red-400" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="bg-slate-900 border-slate-700 p-2 z-[100]">
+                        <p className="text-xs text-white">{t('clearAllData')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                 </div>
 
@@ -322,7 +549,11 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                             ? 'bg-cyan-500/10 border-cyan-500/40 shadow-lg shadow-cyan-900/20' 
                             : 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-700/40 hover:border-slate-600/50 shadow-sm'
                         }`} 
-                        onClick={() => setSelectedMap(selectedMap === map.id ? null : map.id)}
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          if (target.closest('[data-prevent-map-toggle]')) return;
+                          setSelectedMap(selectedMap === map.id ? null : map.id);
+                        }}
                         onMouseEnter={() => {
                           if (hoverTimer) {
                             clearTimeout(hoverTimer);
@@ -358,9 +589,26 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                           )}
                           <div className="flex flex-col min-w-0 flex-1">
                             <div className="flex items-center justify-between">
-                              <span className="text-base font-bold text-slate-100 truncate group-hover:text-cyan-400 transition-colors">
-                                {getMapName(map, language)}
-                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-base font-bold text-slate-100 truncate group-hover:text-cyan-400 transition-colors">
+                                  {getMapName(map, language)}
+                                </span>
+                                {selectedMap === map.id && (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <button
+                                        className="p-1 rounded hover:bg-slate-700 transition-colors"
+                                        onClick={(e) => { e.stopPropagation(); resetMapToDefault(map.id); }}
+                                      >
+                                        <RotateCcw className="w-4 h-4 text-slate-400 hover:text-cyan-400" />
+                                      </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="bg-slate-900 border-slate-700 p-2 z-[100]">
+                                      <p className="text-xs text-white">{t('resetMapDefault')}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )}
+                              </div>
                               <Badge 
                                 variant="outline" 
                                 className="text-xs font-bold h-7 px-3 flex-shrink-0 border-slate-800 text-white group-hover:border-slate-700 ml-2" 
@@ -371,29 +619,36 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                             </div>
                             {selectedMap !== map.id && (
                               <div className="flex flex-wrap gap-2 mt-2">
-                                  {sortHeroesByRole(map.recommendedHeroes).map(heroId => {
-                                  const hero = heroes.find(h => h.id === heroId);
-                                  if (!hero) return null;
-                                  return (
-                                    <Tooltip key={heroId}>
-                                      <TooltipTrigger asChild>
-                                        <div className="w-[22px] h-[22px] rounded-full overflow-hidden border border-slate-900 flex-shrink-0 shadow-md cursor-help ring-1 ring-slate-800/50">
-                                          <img src={hero.image} alt="" className="w-full h-full object-cover scale-110" />
-                                        </div>
-                                      </TooltipTrigger>
-                                      <TooltipContent side="right" className="bg-slate-900 border-slate-700 p-3 max-w-[240px] z-[100] shadow-2xl rounded-lg backdrop-blur-xl">
-                                        <div className="flex flex-col gap-1.5">
-                                          <span className="text-sm font-black text-cyan-400 tracking-wider uppercase border-b border-slate-800 pb-1">
-                                            {getHeroName(hero, language)}
-                                          </span>
-                                         <p className="text-xs text-white leading-relaxed">
-                                              {map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || map.heroReasons[heroId]?.zh || ''}
-                                            </p>
-                                        </div>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  );
-                                })}
+                                  {(() => {
+                                    const defaultHeroes = map.recommendedHeroes.filter(id => !(deletedDefaultHeroes[map.id] || []).includes(id));
+                                    const customHeroes = (customMapHeroes[map.id] || []).map(ch => ch.heroId);
+                                    const actualHeroes = [...defaultHeroes, ...customHeroes];
+                                    return sortHeroesByRole(actualHeroes).map(heroId => {
+                                      const hero = heroes.find(h => h.id === heroId);
+                                      if (!hero) return null;
+                                      const customHero = (customMapHeroes[map.id] || []).find(ch => ch.heroId === heroId);
+                                      const reason = customHero?.reason || map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || map.heroReasons[heroId]?.zh || '';
+                                      return (
+                                        <Tooltip key={heroId}>
+                                          <TooltipTrigger asChild>
+                                            <div className={`w-[22px] h-[22px] rounded-full overflow-hidden border flex-shrink-0 shadow-md cursor-help ring-1 ${customHero ? 'border-cyan-500/50 ring-cyan-500/30' : 'border-slate-900 ring-slate-800/50'}`}>
+                                              <img src={hero.image} alt="" className="w-full h-full object-cover scale-110" />
+                                            </div>
+                                          </TooltipTrigger>
+                                          <TooltipContent side="right" className="bg-slate-900 border-slate-700 p-3 max-w-[240px] z-[100] shadow-2xl rounded-lg backdrop-blur-xl">
+                                            <div className="flex flex-col gap-1.5">
+                                              <span className="text-sm font-black text-cyan-400 tracking-wider uppercase border-b border-slate-800 pb-1">
+                                                {getHeroName(hero, language)}
+                                              </span>
+                                              <p className="text-xs text-white leading-relaxed">
+                                                {reason}
+                                              </p>
+                                            </div>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      );
+                                    });
+                                  })()}
                               </div>
                             )}
                           </div>
@@ -479,8 +734,8 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   </TooltipContent>
                                </Tooltip>
                              </div>
-                              <div className="max-h-[50vh] overflow-y-auto pr-1">
-                              {sortHeroesByRole(map.recommendedHeroes).map(heroId => {
+                              <div className="max-h-[50vh] overflow-y-auto pr-1 space-y-2">
+                              {sortHeroesByRole(map.recommendedHeroes).filter(heroId => !(deletedDefaultHeroes[map.id] || []).includes(heroId)).map(heroId => {
                                 const hero = heroes.find(h => h.id === heroId);
                                 if (!hero) return null;
                                 const roleColors = {
@@ -511,9 +766,120 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                       </div>
                                       <p className="text-[11px] text-slate-300 leading-relaxed mt-1">{map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || ''}</p>
                                     </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-7 w-7 p-0 text-slate-400 hover:text-red-400 hover:bg-red-500/10"
+                                      onClick={(e) => { e.stopPropagation(); deleteDefaultHero(map.id, heroId); }}
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </Button>
                                   </div>
                                 );
                               })}
+                              {(customMapHeroes[map.id] || []).map((customHero, index) => {
+                                const hero = heroes.find(h => h.id === customHero.heroId);
+                                if (!hero) return null;
+                                const roleColors = {
+                                  tank: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+                                  damage: 'bg-red-500/20 text-red-400 border-red-500/30',
+                                  support: 'bg-green-500/20 text-green-400 border-green-500/30',
+                                };
+                                const roleNames = {
+                                  tank: t('tank'),
+                                  damage: t('damage'),
+                                  support: t('support'),
+                                };
+                                return (
+                                  <div 
+                                    key={`custom-${index}`} 
+                                    className="flex items-start gap-4 p-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 cursor-pointer transition-all border border-cyan-600/30 hover:border-cyan-500/50" 
+                                    onClick={(e) => { e.stopPropagation(); setSelectedHeroes([customHero.heroId]); }}
+                                  >
+                                    <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-700 shadow-md flex-shrink-0 ring-1 ring-cyan-500/30">
+                                      <img src={hero.image} alt="" className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <p className="text-sm font-black text-slate-200 tracking-tight">{getHeroName(hero, language)}</p>
+                                        <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
+                                          {roleNames[hero.role]}
+                                        </span>
+                                      </div>
+                                      <p className="text-[11px] text-slate-300 leading-relaxed mt-1">{customHero.reason}</p>
+                                    </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-7 w-7 p-0 text-slate-400 hover:text-red-400 hover:bg-red-500/10"
+                                      onClick={(e) => { e.stopPropagation(); removeCustomHero(map.id, index); }}
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </Button>
+                                  </div>
+                                );
+                              })}
+                              {addingHeroMapId === map.id ? (
+                                <div data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-cyan-500/30">
+                                  <Select value={newHeroId} onValueChange={setNewHeroId}>
+                                    <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                      <span className={newHeroId ? 'text-white' : 'text-slate-400'}>
+                                        {newHeroId ? getHeroName(heroes.find(h => h.id === newHeroId)!, language) : t('selectHero')}
+                                      </span>
+                                    </SelectTrigger>
+                                    <SelectContent position="popper" className="bg-slate-800 border-slate-600 max-h-60 z-[9999]">
+                                      {(() => {
+                                        const existingHeroIds = new Set([
+                                          ...map.recommendedHeroes.filter(id => !(deletedDefaultHeroes[map.id] || []).includes(id)),
+                                          ...(customMapHeroes[map.id] || []).map(ch => ch.heroId)
+                                        ]);
+                                        return heroes.filter(h => !existingHeroIds.has(h.id)).map(h => (
+                                          <SelectItem key={h.id} value={h.id} className="text-white hover:bg-slate-700">
+                                            <div className="flex items-center gap-2">
+                                            <img src={h.image} alt="" className="w-5 h-5 rounded-full" />
+                                            <span>{getHeroName(h, language)}</span>
+                                          </div>
+                                        </SelectItem>
+                                      ));
+                                      })()}
+                                    </SelectContent>
+                                  </Select>
+                                  <Input
+                                    value={newHeroReason}
+                                    onChange={(e) => setNewHeroReason(e.target.value)}
+                                    placeholder={t('enterReason')}
+                                    className="h-8 bg-slate-800 border-slate-600 text-sm text-white placeholder:text-slate-400"
+                                  />
+                                  <div className="flex gap-2 justify-end">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-7 px-2 text-xs text-slate-400 hover:text-white"
+                                      onClick={(e) => { e.stopPropagation(); setAddingHeroMapId(null); setNewHeroId(''); setNewHeroReason(''); }}
+                                    >
+                                      <X className="w-3 h-3 mr-1" />
+                                      {t('cancel')}
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      className="h-7 px-2 text-xs bg-cyan-600 hover:bg-cyan-700"
+                                      onClick={(e) => { e.stopPropagation(); addCustomHero(map.id, newHeroId, newHeroReason); }}
+                                      disabled={!newHeroId}
+                                    >
+                                      <Plus className="w-3 h-3 mr-1" />
+                                      {t('add')}
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <button
+                                  className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-cyan-500 text-slate-400 hover:text-cyan-400 transition-all"
+                                  onClick={(e) => { e.stopPropagation(); setAddingHeroMapId(map.id); }}
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  <span className="text-xs">{t('addHero')}</span>
+                                </button>
+                              )}
                               </div>
                           </div>
                         )}
@@ -568,7 +934,15 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                 </Button>
               ))}
             </div>
-            <ForceGraph selectedRole={selectedRole} selectedHeroes={selectedHeroes} onHeroSelect={setSelectedHeroes} isDrawerOpen={isDrawerOpen} selectedMap={selectedMap} />
+            <ForceGraph 
+              selectedRole={selectedRole} 
+              selectedHeroes={selectedHeroes} 
+              onHeroSelect={setSelectedHeroes} 
+              isDrawerOpen={isDrawerOpen} 
+              selectedMap={selectedMap}
+              customMapHeroes={customMapHeroes}
+              deletedDefaultHeroes={deletedDefaultHeroes}
+            />
           </div>
         </main>
       </div>
