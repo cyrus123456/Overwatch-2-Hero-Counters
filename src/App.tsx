@@ -20,13 +20,13 @@ import {
   ChevronRight,
   Copy,
   Crosshair,
-  Download,
   Github,
   Globe,
   Heart,
   MapPin,
   Plus,
   RotateCcw,
+  Save,
   Search,
   Shield,
   Target,
@@ -471,7 +471,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                           onClick={exportData}
                           className={`p-1.5 rounded transition-colors ${hasUnsavedChanges ? 'animate-pulse bg-cyan-500/20' : 'hover:bg-slate-700'}`}
                         >
-                          <Download className={`w-4 h-4 ${hasUnsavedChanges ? 'text-cyan-400' : 'text-slate-400 hover:text-cyan-400'}`} />
+                          <Save className={`w-4 h-4 ${hasUnsavedChanges ? 'text-cyan-400' : 'text-slate-400 hover:text-cyan-400'}`} />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom" className={`p-2 z-[100] ${hasUnsavedChanges ? 'bg-cyan-600 border-cyan-500/50' : 'bg-slate-900 border-slate-700'}`}>
@@ -597,14 +597,15 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   <Tooltip>
                                     <TooltipTrigger asChild>
                                       <button
-                                        className="p-1 rounded hover:bg-slate-700 transition-colors"
+                                        className="flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-700 transition-colors"
                                         onClick={(e) => { e.stopPropagation(); resetMapToDefault(map.id); }}
                                       >
-                                        <RotateCcw className="w-4 h-4 text-slate-400 hover:text-cyan-400" />
+                                        <RotateCcw className="w-3.5 h-3.5 text-slate-400 hover:text-cyan-400" />
+                                        <span className="text-xs text-slate-400 hover:text-cyan-400">{t('resetMapDefault')}</span>
                                       </button>
                                     </TooltipTrigger>
                                     <TooltipContent side="top" className="bg-slate-900 border-slate-700 p-2 z-[100]">
-                                      <p className="text-xs text-white">{t('resetMapDefault')}</p>
+                                      <p className="text-xs text-white">{t('resetMapDefaultTip')}</p>
                                     </TooltipContent>
                                   </Tooltip>
                                 )}
