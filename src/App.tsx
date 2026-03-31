@@ -26,15 +26,13 @@ import {
   MapPin,
   Plus,
   RotateCcw,
-  Save,
   Search,
   Shield,
   Target,
   Trash2,
-  Upload,
   X
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ForceGraph from '@/components/ForceGraph';
 import { getHeroName, heroes } from '@/data/heroData';
@@ -108,6 +106,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
   const [newHeroId, setNewHeroId] = useState<string>('');
   const [newHeroReason, setNewHeroReason] = useState<string>('');
   const [addingHeroMapId, setAddingHeroMapId] = useState<string | null>(null);
+  const addHeroFormRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (selectedMap) {
@@ -432,7 +431,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
               <TooltipTrigger asChild>
                 <button
                   onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-                  className="absolute -right-12 top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
+                  className="absolute -right-[38px] top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
                 >
                   <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isDrawerOpen ? '' : 'rotate-180'}`} />
                 </button>
@@ -460,53 +459,6 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                     <Badge variant="outline" className="text-xs border-slate-700 text-white font-mono px-3 flex-shrink-0">
                       {filteredMaps.length}
                     </Badge>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between flex-shrink-0  border border-slate-700 pl-9  rounded-lg">
-                  <span className="text-xs text-slate-400">{t('saveCustomData')}</span>
-                  <div className="flex items-center gap-2">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={exportData}
-                          className={`p-1.5 rounded transition-colors ${hasUnsavedChanges ? 'animate-pulse bg-cyan-500/20' : 'hover:bg-slate-700'}`}
-                        >
-                          <Save className={`w-4 h-4 ${hasUnsavedChanges ? 'text-cyan-400' : 'text-slate-400 hover:text-cyan-400'}`} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className={`p-2 z-[100] ${hasUnsavedChanges ? 'bg-cyan-600 border-cyan-500/50' : 'bg-slate-900 border-slate-700'}`}>
-                        <p className={`text-xs font-medium ${hasUnsavedChanges ? 'text-white' : 'text-white'}`}>{hasUnsavedChanges ? t('unsavedChanges') : t('exportData')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <label className="p-1.5 rounded hover:bg-slate-700 transition-colors cursor-pointer">
-                          <Upload className="w-4 h-4 text-slate-400 hover:text-cyan-400" />
-                          <input
-                            type="file"
-                            accept=".json"
-                            onChange={importData}
-                            className="hidden"
-                          />
-                        </label>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="bg-slate-900 border-slate-700 p-2 z-[100]">
-                        <p className="text-xs text-white">{t('importData')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={clearAllData}
-                          className="p-1.5 rounded hover:bg-slate-700 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4 text-slate-400 hover:text-red-400" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="bg-slate-900 border-slate-700 p-2 z-[100]">
-                        <p className="text-xs text-white">{t('clearAllData')}</p>
-                      </TooltipContent>
-                    </Tooltip>
                   </div>
                 </div>
 
@@ -809,9 +761,9 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
                                           {roleNames[hero.role]}
                                         </span>
-                                        <span className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+                                        <Badge variant="outline" className="text-[9px] px-1 py-0 text-white border-white/50 bg-white/10">
                                           {t('custom')}
-                                        </span>
+                                        </Badge>
                                       </div>
                                       <p className="text-[11px] text-slate-300 leading-relaxed mt-1">{customHero.reason}</p>
                                     </div>
@@ -827,7 +779,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                 );
                               })}
                               {addingHeroMapId === map.id ? (
-                                <div data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-cyan-500/30">
+                                <div ref={addHeroFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-cyan-500/30">
                                   <Select value={newHeroId} onValueChange={setNewHeroId}>
                                     <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
                                       <span className={newHeroId ? 'text-white' : 'text-slate-400'}>
@@ -881,7 +833,14 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                               ) : (
                                 <button
                                   className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-cyan-500 text-slate-400 hover:text-cyan-400 transition-all"
-                                  onClick={(e) => { e.stopPropagation(); setAddingHeroMapId(map.id); }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setAddingHeroMapId(map.id);
+                                    // 延迟滚动以确保 DOM 已更新
+                                    setTimeout(() => {
+                                      addHeroFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                    }, 50);
+                                  }}
                                 >
                                   <Plus className="w-4 h-4" />
                                   <span className="text-xs">{t('addHero')}</span>
@@ -949,6 +908,12 @@ const [isMapCopied, setIsMapCopied] = useState(false);
               selectedMap={selectedMap}
               customMapHeroes={customMapHeroes}
               deletedDefaultHeroes={deletedDefaultHeroes}
+              mapDataActions={{
+                exportMapData: exportData,
+                importMapData: importData,
+                clearAllMapData: clearAllData,
+                hasMapUnsavedChanges: hasUnsavedChanges,
+              }}
             />
           </div>
         </main>

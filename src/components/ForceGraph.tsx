@@ -8,6 +8,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Tooltip,
@@ -30,7 +36,10 @@ import {
   HelpCircle,
   History,
   Info,
+  MonitorDown,
+  Plus,
   RotateCcw,
+  Save,
   Search,
   ShieldAlert,
   Swords,
@@ -66,6 +75,22 @@ interface CustomMapHero {
   reason: string;
 }
 
+// 自定义克制关系数据结构
+interface CustomCounterRelation {
+  source: string; // 克制方英雄ID
+  target: string; // 被克制方英雄ID
+  strength: number; // 1-3
+  isCustom: boolean; // 标记是否为自定义添加
+}
+
+// 自定义协同关系数据结构
+interface CustomSynergyRelation {
+  source: string; // 协同方英雄ID
+  target: string; // 被协同方英雄ID
+  strength: number; // 1-3
+  isCustom: boolean; // 标记是否为自定义添加
+}
+
 interface ForceGraphProps {
   selectedRole: string | null;
   selectedHeroes: string[];
@@ -74,6 +99,12 @@ interface ForceGraphProps {
   selectedMap?: string | null;
   customMapHeroes?: Record<string, CustomMapHero[]>;
   deletedDefaultHeroes?: Record<string, string[]>;
+  mapDataActions?: {
+    exportMapData: () => void;
+    importMapData: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    clearAllMapData: () => void;
+    hasMapUnsavedChanges: boolean;
+  };
 }
 
 const ForceGraph = ({
@@ -83,7 +114,8 @@ const ForceGraph = ({
   isDrawerOpen = true,
   selectedMap = null,
   customMapHeroes = {},
-  deletedDefaultHeroes = {}
+  deletedDefaultHeroes = {},
+  mapDataActions
 }: ForceGraphProps) => {
   const selectedMapData = useMemo(() => selectedMap ? maps.find(m => m.id === selectedMap) : null, [selectedMap]);
   const mapRecommendedHeroes = useMemo(() => {
@@ -123,6 +155,22 @@ const ForceGraph = ({
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const isMultiSelect = selectedHeroes.length > 1;
 
+  // 自定义克制关系状态
+  const [customCounterRelations, setCustomCounterRelations] = useState<CustomCounterRelation[]>([]);
+  const [deletedDefaultRelations, setDeletedDefaultRelations] = useState<string[]>([]); // 存储被删除的默认关系ID (source-target)
+  const [isAddingCustomRelation, setIsAddingCustomRelation] = useState(false);
+  const [newRelationTarget, setNewRelationTarget] = useState<string>('');
+  const [newRelationStrength, setNewRelationStrength] = useState<number>(2);
+  const addRelationFormRef = useRef<HTMLDivElement>(null);
+
+  // 自定义协同关系状态
+  const [customSynergyRelations, setCustomSynergyRelations] = useState<CustomSynergyRelation[]>([]);
+  const [deletedDefaultSynergyRelations, setDeletedDefaultSynergyRelations] = useState<string[]>([]);
+  const [isAddingCustomSynergy, setIsAddingCustomSynergy] = useState(false);
+  const [newSynergyTarget, setNewSynergyTarget] = useState<string>('');
+  const [newSynergyStrength, setNewSynergyStrength] = useState<number>(2);
+  const addSynergyFormRef = useRef<HTMLDivElement>(null);
+
   // 计算搜索匹配的英雄 ID
   const matchedHeroIds = useMemo(() => {
     if (!debouncedSearchQuery) return [];
@@ -136,107 +184,141 @@ const ForceGraph = ({
       .map(hero => hero.id);
   }, [debouncedSearchQuery]);
 
+  // 合并默认和自定义克制关系
+  const mergedCounterRelations = useMemo(() => {
+    // 过滤掉被删除的默认关系
+    const filteredDefaults = counterRelations.filter(r => {
+      const relationId = `${r.source}-${r.target}`;
+      return !deletedDefaultRelations.includes(relationId);
+    });
+    // 合并自定义关系
+    return [...filteredDefaults, ...customCounterRelations];
+  }, [customCounterRelations, deletedDefaultRelations]);
+
   const getCommonCounters = useCallback((heroIds: string[]) => {
     if (heroIds.length === 0) return [];
-    
+
     return heroes
       .map(h => {
-        const relations = heroIds.map(targetId => 
-          counterRelations.find(r => r.source === h.id && r.target === targetId)
+        const relations = heroIds.map(targetId =>
+          mergedCounterRelations.find(r => r.source === h.id && r.target === targetId)
         );
-        
+
         if (relations.every(r => r !== undefined)) {
           const minStrength = Math.min(...relations.map(r => r!.strength || 1));
-          return { hero: h, strength: minStrength };
+          const isCustom = relations.some(r => (r as CustomCounterRelation).isCustom);
+          return { hero: h, strength: minStrength, isCustom };
         }
         return null;
       })
-      .filter((item): item is { hero: Hero; strength: number } => item !== null)
+      .filter((item): item is { hero: Hero; strength: number; isCustom: boolean } => item !== null)
       .sort((a, b) => b.strength - a.strength);
-  }, []);
+  }, [mergedCounterRelations]);
 
   const getCommonCounted = useCallback((heroIds: string[]) => {
     if (heroIds.length === 0) return [];
-    
-    return heroes
-      .map(h => {
-        const relations = heroIds.map(sourceId => 
-          counterRelations.find(r => r.source === sourceId && r.target === h.id)
-        );
-        
-        if (relations.every(r => r !== undefined)) {
-          const minStrength = Math.min(...relations.map(r => r!.strength || 1));
-          return { hero: h, strength: minStrength };
-        }
-        return null;
-      })
-      .filter((item): item is { hero: Hero; strength: number } => item !== null)
-      .sort((a, b) => b.strength - a.strength);
-  }, []);
 
-  const getCommonSynergies = useCallback((heroIds: string[]) => {
-    if (heroIds.length === 0) return [];
-    
     return heroes
       .map(h => {
-        const relations = heroIds.map(targetId => 
-          synergyRelations.find(r => r.source === h.id && r.target === targetId)
+        const relations = heroIds.map(sourceId =>
+          mergedCounterRelations.find(r => r.source === sourceId && r.target === h.id)
         );
-        
+
         if (relations.every(r => r !== undefined)) {
           const minStrength = Math.min(...relations.map(r => r!.strength || 1));
-          return { hero: h, strength: minStrength };
+          const isCustom = relations.some(r => (r as CustomCounterRelation).isCustom);
+          return { hero: h, strength: minStrength, isCustom };
         }
         return null;
       })
-      .filter((item): item is { hero: Hero; strength: number } => item !== null)
+      .filter((item): item is { hero: Hero; strength: number; isCustom: boolean } => item !== null)
       .sort((a, b) => b.strength - a.strength);
-  }, []);
+  }, [mergedCounterRelations]);
 
   const counteredBy = useMemo(() => {
     if (selectedHeroes.length === 0) return [];
     if (selectedHeroes.length === 1) {
-      return counterRelations
+      return mergedCounterRelations
         .filter(r => r.target === selectedHeroes[0])
         .map(r => ({
           hero: heroes.find(h => h.id === r.source),
-          strength: r.strength || 1
+          strength: r.strength || 1,
+          isCustom: (r as CustomCounterRelation).isCustom || false,
+          source: r.source,
+          target: r.target
         }))
-        .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
+        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonCounters(selectedHeroes);
-  }, [selectedHeroes, getCommonCounters]);
+  }, [selectedHeroes, getCommonCounters, mergedCounterRelations]);
 
   const counters = useMemo(() => {
     if (selectedHeroes.length === 0) return [];
     if (selectedHeroes.length === 1) {
-      return counterRelations
+      return mergedCounterRelations
         .filter(r => r.source === selectedHeroes[0])
         .map(r => ({
           hero: heroes.find(h => h.id === r.target),
-          strength: r.strength || 1
+          strength: r.strength || 1,
+          isCustom: (r as CustomCounterRelation).isCustom || false,
+          source: r.source,
+          target: r.target
         }))
-        .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
+        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonCounted(selectedHeroes);
-  }, [selectedHeroes, getCommonCounted]);
+  }, [selectedHeroes, getCommonCounted, mergedCounterRelations]);
+
+  // 合并默认和自定义协同关系
+  const mergedSynergyRelations = useMemo(() => {
+    // 过滤掉被删除的默认关系
+    const filteredDefaults = synergyRelations.filter(r => {
+      const relationId = `${r.source}-${r.target}`;
+      return !deletedDefaultSynergyRelations.includes(relationId);
+    });
+    // 合并自定义关系
+    return [...filteredDefaults, ...customSynergyRelations];
+  }, [customSynergyRelations, deletedDefaultSynergyRelations]);
+
+  const getCommonSynergies = useCallback((heroIds: string[]) => {
+    if (heroIds.length === 0) return [];
+
+    return heroes
+      .map(h => {
+        const relations = heroIds.map(targetId =>
+          mergedSynergyRelations.find(r => r.source === h.id && r.target === targetId)
+        );
+
+        if (relations.every(r => r !== undefined)) {
+          const minStrength = Math.min(...relations.map(r => r!.strength || 1));
+          const isCustom = relations.some(r => (r as CustomSynergyRelation).isCustom);
+          return { hero: h, strength: minStrength, isCustom };
+        }
+        return null;
+      })
+      .filter((item): item is { hero: Hero; strength: number; isCustom: boolean } => item !== null)
+      .sort((a, b) => b.strength - a.strength);
+  }, [mergedSynergyRelations]);
 
   const synergyPartners = useMemo(() => {
     if (selectedHeroes.length === 0) return [];
     if (selectedHeroes.length === 1) {
-      return synergyRelations
+      return mergedSynergyRelations
         .filter(r => r.target === selectedHeroes[0])
         .map(r => ({
           hero: heroes.find(h => h.id === r.source),
-          strength: r.strength || 1
+          strength: r.strength || 1,
+          isCustom: (r as CustomSynergyRelation).isCustom || false,
+          source: r.source,
+          target: r.target
         }))
-        .filter((item): item is { hero: Hero; strength: number } => item.hero !== undefined)
+        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonSynergies(selectedHeroes);
-  }, [selectedHeroes, getCommonSynergies]);
+  }, [selectedHeroes, getCommonSynergies, mergedSynergyRelations]);
 
   const commonRelatedIds = useMemo(() => {
     if (selectedHeroes.length <= 1) return [];
@@ -306,19 +388,205 @@ const ForceGraph = ({
     return [...items].sort((a, b) => roleOrder[a.hero.role] - roleOrder[b.hero.role]);
   };
 
+  // 保存自定义克制关系到 localStorage
+  const saveCustomCounterRelations = (relations: CustomCounterRelation[]) => {
+    try {
+      localStorage.setItem('ow2-custom-counter-relations', JSON.stringify(relations));
+    } catch (e) {
+      console.error('Failed to save custom counter relations:', e);
+    }
+  };
+
+  const saveDeletedDefaultRelations = (relations: string[]) => {
+    try {
+      localStorage.setItem('ow2-deleted-default-relations', JSON.stringify(relations));
+    } catch (e) {
+      console.error('Failed to save deleted default relations:', e);
+    }
+  };
+
+  // 保存自定义协同关系到 localStorage
+  const saveCustomSynergyRelations = (relations: CustomSynergyRelation[]) => {
+    try {
+      localStorage.setItem('ow2-custom-synergy-relations', JSON.stringify(relations));
+    } catch (e) {
+      console.error('Failed to save custom synergy relations:', e);
+    }
+  };
+
+  const saveDeletedDefaultSynergyRelations = (relations: string[]) => {
+    try {
+      localStorage.setItem('ow2-deleted-default-synergy-relations', JSON.stringify(relations));
+    } catch (e) {
+      console.error('Failed to save deleted default synergy relations:', e);
+    }
+  };
+
+  // 添加自定义克制关系
+  const addCustomCounterRelation = () => {
+    if (!selectedHero || !newRelationTarget) return;
+    const sourceHero = activeCounterTab === 'counters' ? selectedHero : newRelationTarget;
+    const targetHero = activeCounterTab === 'counters' ? newRelationTarget : selectedHero;
+
+    const newRelation: CustomCounterRelation = {
+      source: sourceHero,
+      target: targetHero,
+      strength: newRelationStrength,
+      isCustom: true
+    };
+
+    const updated = [...customCounterRelations, newRelation];
+    setCustomCounterRelations(updated);
+    saveCustomCounterRelations(updated);
+    setHasForceGraphUnsavedChanges(true);
+    setNewRelationTarget('');
+    setNewRelationStrength(2);
+    setIsAddingCustomRelation(false);
+  };
+
+  // 删除自定义克制关系
+  const removeCustomCounterRelation = (index: number) => {
+    const updated = customCounterRelations.filter((_, i) => i !== index);
+    setCustomCounterRelations(updated);
+    saveCustomCounterRelations(updated);
+    setHasForceGraphUnsavedChanges(true);
+  };
+
+  // 删除默认克制关系
+  const deleteDefaultCounterRelation = (source: string, target: string) => {
+    const relationId = `${source}-${target}`;
+    const updated = [...deletedDefaultRelations, relationId];
+    setDeletedDefaultRelations(updated);
+    saveDeletedDefaultRelations(updated);
+    setHasForceGraphUnsavedChanges(true);
+  };
+
+  // 添加自定义协同关系
+  const addCustomSynergyRelation = () => {
+    if (!selectedHero || !newSynergyTarget) return;
+
+    const newRelation: CustomSynergyRelation = {
+      source: newSynergyTarget,  // 协同伙伴
+      target: selectedHero,      // 被选中的英雄
+      strength: newSynergyStrength,
+      isCustom: true
+    };
+
+    const updated = [...customSynergyRelations, newRelation];
+    setCustomSynergyRelations(updated);
+    saveCustomSynergyRelations(updated);
+    setHasForceGraphUnsavedChanges(true);
+    setNewSynergyTarget('');
+    setNewSynergyStrength(2);
+    setIsAddingCustomSynergy(false);
+  };
+
+  // 删除自定义协同关系
+  const removeCustomSynergyRelation = (index: number) => {
+    const updated = customSynergyRelations.filter((_, i) => i !== index);
+    setCustomSynergyRelations(updated);
+    saveCustomSynergyRelations(updated);
+    setHasForceGraphUnsavedChanges(true);
+  };
+
+  // 删除默认协同关系
+  const deleteDefaultSynergyRelation = (source: string, target: string) => {
+    const relationId = `${source}-${target}`;
+    const updated = [...deletedDefaultSynergyRelations, relationId];
+    setDeletedDefaultSynergyRelations(updated);
+    saveDeletedDefaultSynergyRelations(updated);
+    setHasForceGraphUnsavedChanges(true);
+  };
+
+  // 导出自定义关系数据
+  const exportForceGraphData = () => {
+    const data = {
+      customCounterRelations,
+      deletedDefaultRelations,
+      customSynergyRelations,
+      deletedDefaultSynergyRelations
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `overwatch-forcegraph-data-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setHasForceGraphUnsavedChanges(false);
+  };
+
+  // 导入自定义关系数据
+  const importForceGraphData = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        if (data.customCounterRelations) {
+          setCustomCounterRelations(data.customCounterRelations);
+          saveCustomCounterRelations(data.customCounterRelations);
+        }
+        if (data.deletedDefaultRelations) {
+          setDeletedDefaultRelations(data.deletedDefaultRelations);
+          saveDeletedDefaultRelations(data.deletedDefaultRelations);
+        }
+        if (data.customSynergyRelations) {
+          setCustomSynergyRelations(data.customSynergyRelations);
+          saveCustomSynergyRelations(data.customSynergyRelations);
+        }
+        if (data.deletedDefaultSynergyRelations) {
+          setDeletedDefaultSynergyRelations(data.deletedDefaultSynergyRelations);
+          saveDeletedDefaultSynergyRelations(data.deletedDefaultSynergyRelations);
+        }
+      } catch (error) {
+        console.error('Failed to import data:', error);
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  };
+
+  // 清除所有自定义关系数据
+  const clearAllForceGraphData = () => {
+    if (confirm(t('confirmClearAll'))) {
+      setCustomCounterRelations([]);
+      setDeletedDefaultRelations([]);
+      setCustomSynergyRelations([]);
+      setDeletedDefaultSynergyRelations([]);
+      saveCustomCounterRelations([]);
+      saveDeletedDefaultRelations([]);
+      saveCustomSynergyRelations([]);
+      saveDeletedDefaultSynergyRelations([]);
+      setHasForceGraphUnsavedChanges(false);
+    }
+  };
+
+  // 是否存在未保存的自定义数据
+  const [hasForceGraphUnsavedChanges, setHasForceGraphUnsavedChanges] = useState(() =>
+    customCounterRelations.length > 0 || deletedDefaultRelations.length > 0 || customSynergyRelations.length > 0 || deletedDefaultSynergyRelations.length > 0
+  );
+
   const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroIds: string[], swapSourceTarget = false) => {
     const filtered = items.filter(i => i.strength === strength);
     const sorted = sortByRole(filtered);
     const isMulti = targetHeroIds.length > 1;
-    
+
     // For single select, get the target hero name
     const targetHero = !isMulti ? heroes.find(h => h.id === targetHeroIds[0]) : null;
     const targetHeroName = targetHero ? getHeroName(targetHero, language) : '';
 
-    return sorted.map(({ hero, strength: s }) => {
+    return sorted.map((item) => {
+      const { hero, strength: s } = item;
+      // 使用类型断言获取可选属性
+      const isCustom = (item as { isCustom?: boolean }).isCustom ?? false;
+      const source = (item as { source?: string }).source;
+      const target = (item as { target?: string }).target;
+
       let formattedReason = '';
       const heroName = getHeroName(hero, language);
-      
+
       if (!isMulti) {
         const targetHeroId = targetHeroIds[0];
         const reason = getCounterReason(swapSourceTarget ? targetHeroId : hero.id, swapSourceTarget ? hero.id : targetHeroId, language);
@@ -329,10 +597,10 @@ const ForceGraph = ({
           const h = heroes.find(hero => hero.id === id);
           return h ? getHeroName(h, language) : '';
         }).filter(name => name).join(t('listSeparator'));
-        
+
         if (swapSourceTarget) {
           // 克制关系：选中英雄克制当前英雄
-          formattedReason = language === 'zh' 
+          formattedReason = language === 'zh'
             ? `${targetHeroNames} 的协同能力能够有效克制 ${heroName} 的${hero.role === 'tank' ? '前排压制' : hero.role === 'damage' ? '输出能力' : '治疗支援'}`
             : `${targetHeroNames}'s combined abilities effectively counter ${heroName}'s ${hero.role === 'tank' ? 'frontline pressure' : hero.role === 'damage' ? 'damage output' : 'healing support'}`;
         } else {
@@ -343,18 +611,29 @@ const ForceGraph = ({
         }
       }
 
+      // 计算关系source和target用于删除
+      const relationSource = source || (swapSourceTarget ? hero.id : targetHeroIds[0]);
+      const relationTarget = target || (swapSourceTarget ? targetHeroIds[0] : hero.id);
+
       return (
-        <div key={hero.id} className={`flex items-start gap-3 p-2 rounded-lg border backdrop-blur-sm mb-2 ${colorClass}`}>
+        <div key={`${hero.id}-${s}`} className={`flex items-start gap-3 p-2 rounded-lg border backdrop-blur-sm mb-2 ${colorClass} group`}>
           <div className={`w-10 h-10 rounded-full overflow-hidden bg-slate-800 flex-shrink-0 ring-2 ${colorClass.includes('red') ? 'ring-red-500/50' : 'ring-green-500/50'}`}>
             <img src={hero.image} alt="" className="w-full h-full object-cover" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-white">{heroName}</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
-                  {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
-                </span>
+            <div className="flex items-start gap-2">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-bold text-white">{heroName}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
+                    {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
+                  </span>
+                  {isCustom && (
+                    <Badge variant="outline" className="text-[9px] px-1 py-0 text-white border-white/50 bg-white/10">
+                      {t('custom')}
+                    </Badge>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
@@ -365,6 +644,28 @@ const ForceGraph = ({
                 <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${s === 3 ? 'bg-red-400' : s === 2 ? 'bg-orange-400' : 'bg-slate-400'}`}>
                   {s === 3 ? t('hardCounter') : s === 2 ? t('strongCounter') : t('softCounter')} LV.{s}
                 </Badge>
+                {!isMulti && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isCustom) {
+                        // 找到自定义关系的实际索引
+                        const customIndex = customCounterRelations.findIndex(
+                          r => r.source === relationSource && r.target === relationTarget
+                        );
+                        if (customIndex !== -1) {
+                          removeCustomCounterRelation(customIndex);
+                        }
+                      } else {
+                        deleteDefaultCounterRelation(relationSource, relationTarget);
+                      }
+                    }}
+                    className="ml-1 p-1 rounded hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-opacity"
+                    title={t('delete')}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
             <p className={`text-[11px] leading-relaxed mt-1 ${colorClass.includes('red') ? 'text-red-300' : 'text-green-300'}`}>
@@ -410,6 +711,30 @@ const ForceGraph = ({
       }
     } catch (e) {
       console.error('Failed to load node positions:', e);
+    }
+
+    // Load custom counter relations from localStorage
+    try {
+      const savedCustomRelations = localStorage.getItem('ow2-custom-counter-relations');
+      if (savedCustomRelations) {
+        setCustomCounterRelations(JSON.parse(savedCustomRelations));
+      }
+      const savedDeletedRelations = localStorage.getItem('ow2-deleted-default-relations');
+      if (savedDeletedRelations) {
+        setDeletedDefaultRelations(JSON.parse(savedDeletedRelations));
+      }
+
+      // Load custom synergy relations from localStorage
+      const savedCustomSynergy = localStorage.getItem('ow2-custom-synergy-relations');
+      if (savedCustomSynergy) {
+        setCustomSynergyRelations(JSON.parse(savedCustomSynergy));
+      }
+      const savedDeletedSynergy = localStorage.getItem('ow2-deleted-default-synergy-relations');
+      if (savedDeletedSynergy) {
+        setDeletedDefaultSynergyRelations(JSON.parse(savedDeletedSynergy));
+      }
+    } catch (e) {
+      console.error('Failed to load custom counter relations:', e);
     }
   }, []);
 
@@ -464,9 +789,9 @@ const ForceGraph = ({
           } else {
             const targetId = targetIds[0];
             if (activeCounterTab === 'synergy') {
-              relation = synergyRelations.find(r => r.source === heroId && r.target === targetId);
+              relation = mergedSynergyRelations.find(r => r.source === heroId && r.target === targetId);
             } else {
-              relation = counterRelations.find(r =>
+              relation = mergedCounterRelations.find(r =>
                 (r.source === heroId && r.target === targetId) ||
                 (r.target === heroId && r.source === targetId)
               );
@@ -502,12 +827,12 @@ const ForceGraph = ({
       const visibleCommonIds = commonRelatedIds.filter(id => nodeIds.has(id));
       if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
         // Source is common hero, Target is one of selected heroes
-        links = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
+        links = (activeCounterTab === 'synergy' ? mergedSynergyRelations : mergedCounterRelations)
           .filter(r => visibleSelectedHeroes.includes(r.target) && visibleCommonIds.includes(r.source) && nodeIds.has(r.source) && nodeIds.has(r.target))
           .map(r => ({ source: r.source, target: r.target }));
       } else {
         // Source is one of selected heroes, Target is common hero
-        links = counterRelations
+        links = mergedCounterRelations
           .filter(r => visibleSelectedHeroes.includes(r.source) && visibleCommonIds.includes(r.target) && nodeIds.has(r.source) && nodeIds.has(r.target))
           .map(r => ({ source: r.source, target: r.target }));
       }
@@ -517,27 +842,27 @@ const ForceGraph = ({
       if (!nodeIds.has(selectedHeroId)) {
         links = [];
       } else if (activeCounterTab === 'synergy') {
-        links = synergyRelations
+        links = mergedSynergyRelations
           .filter(r => r.target === selectedHeroId && nodeIds.has(r.source))
           .map(r => ({ source: r.source, target: r.target }));
       } else if (activeCounterTab === 'counteredBy') {
-        links = counterRelations
+        links = mergedCounterRelations
           .filter(r => r.target === selectedHeroId && nodeIds.has(r.source))
           .map(r => ({ source: r.source, target: r.target }));
       } else {
-        links = counterRelations
+        links = mergedCounterRelations
           .filter(r => r.source === selectedHeroId && nodeIds.has(r.target))
           .map(r => ({ source: r.source, target: r.target }));
       }
     } else {
       // Default: show all counter links (but filtered by node visibility)
-      links = counterRelations
+      links = mergedCounterRelations
         .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target))
         .map(l => ({ source: l.source, target: l.target }));
     }
 
     return { nodes, links };
-  }, [selectedRole, selectedHeroes, activeCounterTab, isMultiSelect, commonRelatedIds, synergyPartners, counteredBy, counters]);
+  }, [selectedRole, selectedHeroes, activeCounterTab, isMultiSelect, commonRelatedIds, synergyPartners, counteredBy, counters, mergedCounterRelations, mergedSynergyRelations]);
 
   useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
@@ -626,7 +951,7 @@ const ForceGraph = ({
         if (!selectedHero) return 140;
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
         if (!rel) return 140;
         const isRelated = activeCounterTab === 'counteredBy' ?
           (targetId === selectedHero || sourceId === selectedHero) :
@@ -664,16 +989,16 @@ const ForceGraph = ({
       .attr('r', (d: LinkDatum) => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
         return s === 3 ? 6 : s === 2 ? 4.5 : 3;
       })
       .attr('fill', (d: LinkDatum) => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
-        
+
         // Synergy模式使用紫色系粒子
         if (activeCounterTab === 'synergy') {
           return s === 3 ? '#c084fc' : s === 2 ? '#d8b4fe' : '#e9d5ff';
@@ -708,7 +1033,7 @@ const ForceGraph = ({
     const nodeGroup = g.append('g').attr('class', 'nodes').selectAll('g').data(nodes).enter().append('g').attr('class', 'node-group').style('cursor', 'pointer').style('opacity', d => {
       if (!selectedHero) return 1;
       if (d.id === selectedHero) return 1;
-      const hasConnection = counterRelations.some(r =>
+      const hasConnection = mergedCounterRelations.some(r =>
         (r.source === d.id && r.target === selectedHero) ||
         (r.target === d.id && r.source === selectedHero)
       );
@@ -914,11 +1239,11 @@ const ForceGraph = ({
         } else {
           const targetHero = selectedHeroes[0];
           if (activeCounterTab === 'synergy') {
-            isRelated = synergyRelations.some(r => r.source === d.id && r.target === targetHero);
+            isRelated = mergedSynergyRelations.some(r => r.source === d.id && r.target === targetHero);
           } else {
-            isRelated = activeCounterTab === 'counteredBy' 
-              ? counterRelations.some(r => r.source === d.id && r.target === targetHero) 
-              : counterRelations.some(r => r.source === targetHero && r.target === d.id);
+            isRelated = activeCounterTab === 'counteredBy'
+              ? mergedCounterRelations.some(r => r.source === d.id && r.target === targetHero)
+              : mergedCounterRelations.some(r => r.source === targetHero && r.target === d.id);
           }
         }
         return isRelated ? 1 : 0.7;
@@ -942,11 +1267,11 @@ const ForceGraph = ({
         } else {
           const targetHero = selectedHeroes[0];
           if (activeCounterTab === 'synergy') {
-            relation = synergyRelations.find(r => r.source === d.id && r.target === targetHero);
+            relation = mergedSynergyRelations.find(r => r.source === d.id && r.target === targetHero);
           } else {
             relation = activeCounterTab === 'counteredBy' 
-              ? counterRelations.find(r => r.source === d.id && r.target === targetHero) 
-              : counterRelations.find(r => r.source === targetHero && r.target === d.id);
+              ? mergedCounterRelations.find(r => r.source === d.id && r.target === targetHero) 
+              : mergedCounterRelations.find(r => r.source === targetHero && r.target === d.id);
           }
         }
         
@@ -978,11 +1303,11 @@ const ForceGraph = ({
           } else {
             const targetHero = selectedHeroes[0];
             if (activeCounterTab === 'synergy') {
-              hasRelation = d.id === targetHero || synergyRelations.some(r => r.source === d.id && r.target === targetHero);
+              hasRelation = d.id === targetHero || mergedSynergyRelations.some(r => r.source === d.id && r.target === targetHero);
             } else if (activeCounterTab === 'counteredBy') {
-              hasRelation = d.id === targetHero || counterRelations.some(r => r.source === d.id && r.target === targetHero);
+              hasRelation = d.id === targetHero || mergedCounterRelations.some(r => r.source === d.id && r.target === targetHero);
             } else {
-              hasRelation = d.id === targetHero || counterRelations.some(r => r.source === targetHero && r.target === d.id);
+              hasRelation = d.id === targetHero || mergedCounterRelations.some(r => r.source === targetHero && r.target === d.id);
             }
           }
         }
@@ -1013,7 +1338,7 @@ const ForceGraph = ({
           } else {
             isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId);
             if (isRelevant) {
-              const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+              const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
               s = rel?.strength || 1;
             }
           }
@@ -1021,7 +1346,7 @@ const ForceGraph = ({
           const targetHero = selectedHeroes[0];
           isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
           if (isRelevant) {
-            const rel = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
+            const rel = (activeCounterTab === 'synergy' ? mergedSynergyRelations : mergedCounterRelations)
               .find(r => r.source === sourceId && r.target === targetId);
             s = rel?.strength || 1;
           }
@@ -1049,7 +1374,7 @@ const ForceGraph = ({
 
         if (!isRelevant) return 1;
         
-        const rel = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
+        const rel = (activeCounterTab === 'synergy' ? mergedSynergyRelations : mergedCounterRelations)
           .find(r => r.source === sourceId && r.target === targetId);
         s = rel?.strength || 1;
         
@@ -1082,7 +1407,7 @@ const ForceGraph = ({
         if (!isRelevant) return null;
         if (activeCounterTab === 'synergy') return null;
         
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
         return `url(#arrow-${activeCounterTab === 'counteredBy' ? 'red' : 'green'}-${s})`;
       });
@@ -1111,13 +1436,13 @@ const ForceGraph = ({
         if (activeCounterTab === 'synergy') {
           const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
           const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-          const synergyRel = synergyRelations.find(r => r.source === sourceId && r.target === targetId);
+          const synergyRel = mergedSynergyRelations.find(r => r.source === sourceId && r.target === targetId);
           const s = synergyRel?.strength || 1;
           return s === 3 ? 0.5 : s === 2 ? 0.15 : 0.05;
         }
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
         return s === 3 ? 0.5 : s === 2 ? 0.15 : 0.05;
       }).attr('stroke-width', d => {
@@ -1125,13 +1450,13 @@ const ForceGraph = ({
         if (activeCounterTab === 'synergy') {
           const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
           const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-          const synergyRel = synergyRelations.find(r => r.source === sourceId && r.target === targetId);
+          const synergyRel = mergedSynergyRelations.find(r => r.source === sourceId && r.target === targetId);
           const s = synergyRel?.strength || 1;
           return s === 3 ? 4.5 : s === 2 ? 3 : 1.5;
         }
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
         return s === 3 ? 4.5 : s === 2 ? 3 : 1.5;
       }).attr('stroke', d => {
@@ -1139,7 +1464,7 @@ const ForceGraph = ({
         if (activeCounterTab === 'synergy') return '#a855f7';
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
         return s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#fca5a5';
       }).attr('marker-end', d => {
@@ -1147,7 +1472,7 @@ const ForceGraph = ({
         if (activeCounterTab === 'synergy') return null;
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = counterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
         const s = rel?.strength || 1;
         return `url(#arrow-red-${s})`;
       });
@@ -1201,6 +1526,106 @@ const ForceGraph = ({
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
+      {/* 地图数据操作面板 - 左上角 */}
+      {mapDataActions && (
+        <div className={`absolute top-4 left-[410px] z-20 border border-slate-700 px-3 py-2 rounded-lg bg-slate-800/60 backdrop-blur-md transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
+          <span className="text-xs text-slate-400 block mb-1">{t('saveCustomData')}</span>
+          <div className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={mapDataActions.exportMapData}
+                  className={`p-1.5 rounded transition-colors ${mapDataActions.hasMapUnsavedChanges ? 'animate-pulse bg-cyan-500/20' : 'hover:bg-slate-700'}`}
+                >
+                  <Save className={`w-4 h-4 ${mapDataActions.hasMapUnsavedChanges ? 'text-cyan-400' : 'text-slate-400 hover:text-cyan-400'}`} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className={`p-2 z-[100] ${mapDataActions.hasMapUnsavedChanges ? 'bg-cyan-600 border-cyan-500/50' : 'bg-slate-900 border-slate-700'}`}>
+                <p className="text-xs font-medium text-white">{mapDataActions.hasMapUnsavedChanges ? t('unsavedChanges') : t('exportData')}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <label className="p-1.5 rounded hover:bg-slate-700 transition-colors cursor-pointer">
+                  <MonitorDown className="w-4 h-4 text-slate-400 hover:text-cyan-400" />
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={mapDataActions.importMapData}
+                    className="hidden"
+                  />
+                </label>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="bg-slate-900 border-slate-700 p-2 z-[100]">
+                <p className="text-xs text-white">{t('importData')}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={mapDataActions.clearAllMapData}
+                  className="p-1.5 rounded hover:bg-slate-700 transition-colors"
+                >
+                  <RotateCcw className="w-4 h-4 text-slate-400 hover:text-red-400" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="bg-slate-900 border-slate-700 p-2 z-[100]">
+                <p className="text-xs text-white">{t('clearAllData')}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
+      )}
+
+      {/* 自定义关系数据操作面板 - 右上角 */}
+      <div className="absolute top-4 right-[410px] z-20 border border-slate-700 px-3 py-2 rounded-lg bg-slate-800/60 backdrop-blur-md">
+        <span className="text-xs text-slate-400 block mb-1">{t('saveCustomData')}</span>
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={exportForceGraphData}
+                className={`p-1.5 rounded transition-colors ${hasForceGraphUnsavedChanges ? 'animate-pulse bg-cyan-500/20' : 'hover:bg-slate-700'}`}
+              >
+                <Save className={`w-4 h-4 ${hasForceGraphUnsavedChanges ? 'text-cyan-400' : 'text-slate-400 hover:text-cyan-400'}`} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className={`p-2 z-[100] ${hasForceGraphUnsavedChanges ? 'bg-cyan-600 border-cyan-500/50' : 'bg-slate-900 border-slate-700'}`}>
+              <p className="text-xs font-medium text-white">{hasForceGraphUnsavedChanges ? t('unsavedChanges') : t('exportData')}</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <label className="p-1.5 rounded hover:bg-slate-700 transition-colors cursor-pointer">
+                <MonitorDown className="w-4 h-4 text-slate-400 hover:text-cyan-400" />
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={importForceGraphData}
+                  className="hidden"
+                />
+              </label>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="bg-slate-900 border-slate-700 p-2 z-[100]">
+              <p className="text-xs text-white">{t('importData')}</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={clearAllForceGraphData}
+                className="p-1.5 rounded hover:bg-slate-700 transition-colors"
+              >
+                <RotateCcw className="w-4 h-4 text-slate-400 hover:text-red-400" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="bg-slate-900 border-slate-700 p-2 z-[100]">
+              <p className="text-xs text-white">{t('clearAllData')}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </div>
+
       {/* 英雄详情面板 */}
       <div className="absolute z-10 w-96 flex flex-col" style={{ top: '1rem', right: '1rem', bottom: '1rem' }}>
         <div className="flex-1 overflow-hidden pointer-events-auto h-full">
@@ -1325,6 +1750,78 @@ const ForceGraph = ({
                         {renderHeroList(counteredBy, 3, 'bg-red-900/30 border-red-700/50', selectedHeroes)}
                         {renderHeroList(counteredBy, 2, 'bg-red-800/20 border-red-600/40', selectedHeroes)}
                         {renderHeroList(counteredBy, 1, 'bg-red-700/10 border-red-500/30', selectedHeroes)}
+                        {!isMultiSelect && (
+                          <>
+                            {!isAddingCustomRelation ? (
+                              <button
+                                className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-red-500 text-slate-400 hover:text-red-400 transition-all"
+                                onClick={() => {
+                                  setIsAddingCustomRelation(true);
+                                  // 延迟滚动以确保 DOM 已更新
+                                  setTimeout(() => {
+                                    addRelationFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                  }, 50);
+                                }}
+                              >
+                                <Plus className="w-4 h-4" />
+                                <span className="text-xs">{t('addCustomCounter')}</span>
+                              </button>
+                            ) : (
+                              <div ref={addRelationFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-red-500/30">
+                                <Select value={newRelationTarget} onValueChange={setNewRelationTarget}>
+                                  <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                    <span className={newRelationTarget ? 'text-white' : 'text-slate-400'}>
+                                      {newRelationTarget ? getHeroName(heroes.find(h => h.id === newRelationTarget), language) : t('selectTargetHero')}
+                                    </span>
+                                  </SelectTrigger>
+                                  <SelectContent position="popper" className="bg-slate-800 border-slate-600 max-h-60 z-[9999]">
+                                    {heroes
+                                      .filter(h => h.id !== selectedHero && !counteredBy.some(c => c.hero.id === h.id))
+                                      .sort((a, b) => roleOrder[a.role] - roleOrder[b.role])
+                                      .map(hero => (
+                                        <SelectItem key={hero.id} value={hero.id} className="text-white hover:bg-slate-700">
+                                          <div className="flex items-center gap-2">
+                                            <img src={hero.image} alt="" className="w-5 h-5 rounded-full" />
+                                            <span>{getHeroName(hero, language)}</span>
+                                          </div>
+                                        </SelectItem>
+                                      ))}
+                                  </SelectContent>
+                                </Select>
+                                <Select value={String(newRelationStrength)} onValueChange={(v) => setNewRelationStrength(Number(v))}>
+                                  <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                    <span className="text-white">{newRelationStrength === 3 ? t('hardCounter') : newRelationStrength === 2 ? t('strongCounter') : t('softCounter')} LV.{newRelationStrength}</span>
+                                  </SelectTrigger>
+                                  <SelectContent position="popper" className="bg-slate-800 border-slate-600 z-[9999]">
+                                    <SelectItem value="3" className="text-white hover:bg-slate-700">{t('hardCounter')} LV.3</SelectItem>
+                                    <SelectItem value="2" className="text-white hover:bg-slate-700">{t('strongCounter')} LV.2</SelectItem>
+                                    <SelectItem value="1" className="text-white hover:bg-slate-700">{t('softCounter')} LV.1</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <div className="flex gap-2 justify-end">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 px-2 text-xs text-slate-400 hover:text-white"
+                                    onClick={() => { setIsAddingCustomRelation(false); setNewRelationTarget(''); }}
+                                  >
+                                    <X className="w-3 h-3 mr-1" />
+                                    {t('cancel')}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    className="h-7 px-2 text-xs bg-red-600 hover:bg-red-700"
+                                    onClick={addCustomCounterRelation}
+                                    disabled={!newRelationTarget}
+                                  >
+                                    <Plus className="w-3 h-3 mr-1" />
+                                    {t('add')}
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </>
                     )}
                     {counteredBy.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('notCounteredByAny')}</div>}
@@ -1336,65 +1833,246 @@ const ForceGraph = ({
                         {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', selectedHeroes, true)}
                         {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', selectedHeroes, true)}
                         {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', selectedHeroes, true)}
+                        {!isMultiSelect && (
+                          <>
+                            {!isAddingCustomRelation ? (
+                              <button
+                                className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-green-500 text-slate-400 hover:text-green-400 transition-all"
+                                onClick={() => {
+                                  setIsAddingCustomRelation(true);
+                                  // 延迟滚动以确保 DOM 已更新
+                                  setTimeout(() => {
+                                    addRelationFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                  }, 50);
+                                }}
+                              >
+                                <Plus className="w-4 h-4" />
+                                <span className="text-xs">{t('addCustomCounter')}</span>
+                              </button>
+                            ) : (
+                              <div ref={addRelationFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-green-500/30">
+                                <Select value={newRelationTarget} onValueChange={setNewRelationTarget}>
+                                  <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                    <span className={newRelationTarget ? 'text-white' : 'text-slate-400'}>
+                                      {newRelationTarget ? getHeroName(heroes.find(h => h.id === newRelationTarget), language) : t('selectTargetHero')}
+                                    </span>
+                                  </SelectTrigger>
+                                  <SelectContent position="popper" className="bg-slate-800 border-slate-600 max-h-60 z-[9999]">
+                                    {heroes
+                                      .filter(h => h.id !== selectedHero && !counters.some(c => c.hero.id === h.id))
+                                      .sort((a, b) => roleOrder[a.role] - roleOrder[b.role])
+                                      .map(hero => (
+                                        <SelectItem key={hero.id} value={hero.id} className="text-white hover:bg-slate-700">
+                                          <div className="flex items-center gap-2">
+                                            <img src={hero.image} alt="" className="w-5 h-5 rounded-full" />
+                                            <span>{getHeroName(hero, language)}</span>
+                                          </div>
+                                        </SelectItem>
+                                      ))}
+                                  </SelectContent>
+                                </Select>
+                                <Select value={String(newRelationStrength)} onValueChange={(v) => setNewRelationStrength(Number(v))}>
+                                  <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                    <span className="text-white">{newRelationStrength === 3 ? t('hardCounter') : newRelationStrength === 2 ? t('strongCounter') : t('softCounter')} LV.{newRelationStrength}</span>
+                                  </SelectTrigger>
+                                  <SelectContent position="popper" className="bg-slate-800 border-slate-600 z-[9999]">
+                                    <SelectItem value="3" className="text-white hover:bg-slate-700">{t('hardCounter')} LV.3</SelectItem>
+                                    <SelectItem value="2" className="text-white hover:bg-slate-700">{t('strongCounter')} LV.2</SelectItem>
+                                    <SelectItem value="1" className="text-white hover:bg-slate-700">{t('softCounter')} LV.1</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <div className="flex gap-2 justify-end">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 px-2 text-xs text-slate-400 hover:text-white"
+                                    onClick={() => { setIsAddingCustomRelation(false); setNewRelationTarget(''); }}
+                                  >
+                                    <X className="w-3 h-3 mr-1" />
+                                    {t('cancel')}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    className="h-7 px-2 text-xs bg-green-600 hover:bg-green-700"
+                                    onClick={addCustomCounterRelation}
+                                    disabled={!newRelationTarget}
+                                  >
+                                    <Plus className="w-3 h-3 mr-1" />
+                                    {t('add')}
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </>
                     )}
                     {counters.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('noCounters')}</div>}
                   </TabsContent>
 
                   <TabsContent value="synergy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-purple-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
-                    {selectedHeroes.length > 0 && synergyPartners.length > 0 && (
-                      <div className="space-y-2">
-                        {synergyPartners.map(partner => {
-                          const hero = partner.hero;
-                          if (!hero) return null;
-                          return (
-                            <div key={hero.id} className="flex items-center gap-3 p-2 rounded-lg border bg-purple-900/20 border-purple-700/30">
-                              <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-purple-500/50 flex-shrink-0">
-                                <img src={hero.image} alt="" className="w-full h-full object-cover" />
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 flex-wrap justify-between">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm font-bold text-white">{getHeroName(hero, language)}</span>
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
-                                      {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
-                                    </span>
+                    {selectedHeroes.length > 0 && (
+                      <>
+                        {(synergyPartners.length > 0 || !isMultiSelect) && (
+                          <div className="space-y-2">
+                            {synergyPartners.map(partner => {
+                              const hero = partner.hero;
+                              if (!hero) return null;
+                              // 使用类型断言获取可选属性
+                              const isCustom = (partner as { isCustom?: boolean }).isCustom ?? false;
+                              const source = (partner as { source?: string }).source;
+                              const target = (partner as { target?: string }).target;
+                              const relationSource = source || hero.id;
+                              const relationTarget = target || selectedHeroes[0];
+                              return (
+                                <div key={hero.id} className="flex items-start gap-3 p-2 rounded-lg border bg-purple-900/20 border-purple-700/30 group">
+                                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-purple-500/50 flex-shrink-0">
+                                    <img src={hero.image} alt="" className="w-full h-full object-cover" />
                                   </div>
-                                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                                    {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
-                                      <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
-                                        {t('mapRecommended')}
-                                      </Badge>
-                                    )}
-                                    <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${partner.strength === 3 ? 'bg-red-500' : partner.strength === 2 ? 'bg-yellow-500' : 'bg-slate-400'}`}>
-                                      {partner.strength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : partner.strength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{partner.strength}
-                                    </Badge>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-start gap-2">
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                          <span className="text-sm font-bold text-white">{getHeroName(hero, language)}</span>
+                                          <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
+                                            {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
+                                          </span>
+                                          {isCustom && (
+                                            <Badge variant="outline" className="text-[9px] px-1 py-0 text-white border-white/50 bg-white/10">
+                                              {t('custom')}
+                                            </Badge>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                                        {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
+                                          <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
+                                            {t('mapRecommended')}
+                                          </Badge>
+                                        )}
+                                        <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${partner.strength === 3 ? 'bg-red-500' : partner.strength === 2 ? 'bg-yellow-500' : 'bg-slate-400'}`}>
+                                          {partner.strength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : partner.strength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{partner.strength}
+                                        </Badge>
+                                        {!isMultiSelect && (
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              if (isCustom) {
+                                                const customIndex = customSynergyRelations.findIndex(
+                                                  r => r.source === relationSource && r.target === relationTarget
+                                                );
+                                                if (customIndex !== -1) {
+                                                  removeCustomSynergyRelation(customIndex);
+                                                }
+                                              } else {
+                                                deleteDefaultSynergyRelation(relationSource, relationTarget);
+                                              }
+                                            }}
+                                            className="ml-1 p-1 rounded hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-opacity"
+                                            title={t('delete')}
+                                          >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <p className="text-[11px] text-purple-300 leading-relaxed mt-1">
+                                      {!isMultiSelect 
+                                        ? getSynergyReason(hero.id, selectedHeroes[0], language)
+                                        : (() => {
+                                            const targetHeroNames = selectedHeroes.map(id => {
+                                              const h = heroes.find(hero => hero.id === id);
+                                              return h ? getHeroName(h, language) : '';
+                                            }).filter(name => name).join(t('listSeparator'));
+                                            const currentHeroName = getHeroName(hero, language);
+                                            
+                                            return language === 'zh'
+                                              ? `${currentHeroName} 与 ${targetHeroNames} 形成${hero.role === 'tank' ? '前排保护' : hero.role === 'damage' ? '火力压制' : '治疗支援'}的完美协同，${partner.strength === 3 ? '极大提升' : partner.strength === 2 ? '有效增强' : '适当补充'}团队作战能力`
+                                              : `${currentHeroName} synergizes perfectly with ${targetHeroNames} for ${hero.role === 'tank' ? 'frontline protection' : hero.role === 'damage' ? 'firepower suppression' : 'healing support'}, ${partner.strength === 3 ? 'significantly boosting' : partner.strength === 2 ? 'effectively enhancing' : 'appropriately supplementing'} team combat capabilities`;
+                                          })()}
+                                    </p>
                                   </div>
                                 </div>
-                                <p className="text-[11px] text-purple-300 leading-relaxed mt-1">
-                                  {!isMultiSelect 
-                                    ? getSynergyReason(hero.id, selectedHeroes[0], language)
-                                    : (() => {
-                                        const targetHeroNames = selectedHeroes.map(id => {
-                                          const h = heroes.find(hero => hero.id === id);
-                                          return h ? getHeroName(h, language) : '';
-                                        }).filter(name => name).join(t('listSeparator'));
-                                        const currentHeroName = getHeroName(hero, language);
-                                        
-                                        return language === 'zh'
-                                          ? `${currentHeroName} 与 ${targetHeroNames} 形成${hero.role === 'tank' ? '前排保护' : hero.role === 'damage' ? '火力压制' : '治疗支援'}的完美协同，${partner.strength === 3 ? '极大提升' : partner.strength === 2 ? '有效增强' : '适当补充'}团队作战能力`
-                                          : `${currentHeroName} synergizes perfectly with ${targetHeroNames} for ${hero.role === 'tank' ? 'frontline protection' : hero.role === 'damage' ? 'firepower suppression' : 'healing support'}, ${partner.strength === 3 ? 'significantly boosting' : partner.strength === 2 ? 'effectively enhancing' : 'appropriately supplementing'} team combat capabilities`;
-                                      })()}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                              );
+                            })}
+                            {!isMultiSelect && (
+                              <>
+                                {!isAddingCustomSynergy ? (
+                                  <button
+                                    className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-purple-500 text-slate-400 hover:text-purple-400 transition-all"
+                                    onClick={() => {
+                                      setIsAddingCustomSynergy(true);
+                                      setTimeout(() => {
+                                        addSynergyFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                      }, 50);
+                                    }}
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                    <span className="text-xs">{t('addCustomSynergy')}</span>
+                                  </button>
+                                ) : (
+                                  <div ref={addSynergyFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-purple-500/30">
+                                    <Select value={newSynergyTarget} onValueChange={setNewSynergyTarget}>
+                                      <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                        <span className={newSynergyTarget ? 'text-white' : 'text-slate-400'}>
+                                          {newSynergyTarget ? getHeroName(heroes.find(h => h.id === newSynergyTarget), language) : t('selectTargetHero')}
+                                        </span>
+                                      </SelectTrigger>
+                                      <SelectContent position="popper" className="bg-slate-800 border-slate-600 max-h-60 z-[9999]">
+                                        {heroes
+                                          .filter(h => h.id !== selectedHero && !synergyPartners.some(p => p.hero.id === h.id))
+                                          .sort((a, b) => roleOrder[a.role] - roleOrder[b.role])
+                                          .map(hero => (
+                                            <SelectItem key={hero.id} value={hero.id} className="text-white hover:bg-slate-700">
+                                              <div className="flex items-center gap-2">
+                                                <img src={hero.image} alt="" className="w-5 h-5 rounded-full" />
+                                                <span>{getHeroName(hero, language)}</span>
+                                              </div>
+                                            </SelectItem>
+                                          ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <Select value={String(newSynergyStrength)} onValueChange={(v) => setNewSynergyStrength(Number(v))}>
+                                      <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                        <span className="text-white">{newSynergyStrength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : newSynergyStrength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{newSynergyStrength}</span>
+                                      </SelectTrigger>
+                                      <SelectContent position="popper" className="bg-slate-800 border-slate-600 z-[9999]">
+                                        <SelectItem value="3" className="text-white hover:bg-slate-700">{t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.3</SelectItem>
+                                        <SelectItem value="2" className="text-white hover:bg-slate-700">{t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.2</SelectItem>
+                                        <SelectItem value="1" className="text-white hover:bg-slate-700">{t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.1</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <div className="flex gap-2 justify-end">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 px-2 text-xs text-slate-400 hover:text-white"
+                                        onClick={() => { setIsAddingCustomSynergy(false); setNewSynergyTarget(''); }}
+                                      >
+                                        <X className="w-3 h-3 mr-1" />
+                                        {t('cancel')}
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        className="h-7 px-2 text-xs bg-purple-600 hover:bg-purple-700"
+                                        onClick={addCustomSynergyRelation}
+                                        disabled={!newSynergyTarget}
+                                      >
+                                        <Plus className="w-3 h-3 mr-1" />
+                                        {t('add')}
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </>
                     )}
-                    {synergyPartners.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('noSynergy')}</div>}
-                  </TabsContent>
-                </Tabs>
+                  {synergyPartners.length === 0 && isMultiSelect && <div className="text-center py-6 text-slate-200 text-xs">{t('noSynergy')}</div>}
+                </TabsContent>
+              </Tabs>
 
                 <div className="mt-4 pt-4 border-t border-slate-700/50 flex-shrink-0">
                   <div className="flex items-center justify-between mb-1">
@@ -1607,7 +2285,7 @@ const ForceGraph = ({
         </div>
       </div>
 
-      <div className={`absolute bottom-6 left-[420px] z-10 flex flex-col gap-3 pointer-events-auto transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
+      <div className={`absolute bottom-6 left-[410px] z-10 flex flex-col gap-3 pointer-events-auto transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
         {/* 网络节点介绍 - 问号图标 */}
         <Popover open={isIntroOpen} onOpenChange={setIsIntroOpen}>
           <PopoverTrigger asChild>
