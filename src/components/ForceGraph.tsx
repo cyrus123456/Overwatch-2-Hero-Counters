@@ -29,7 +29,6 @@ import useDebounce from '@/hooks/useDebounce';
 import { useI18n } from '@/i18n';
 import * as d3 from 'd3';
 import {
-  Camera,
   Check,
   Copy,
   FileText,
@@ -154,6 +153,25 @@ const ForceGraph = ({
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const isMultiSelect = selectedHeroes.length > 1;
+
+  // 自动保存英雄快照
+  useEffect(() => {
+    if (selectedHeroes.length > 0) {
+      setHeroSnapshots(prev => {
+        // 检查是否已存在相同的快照
+        const lastSnapshot = prev[0];
+        if (lastSnapshot && JSON.stringify(lastSnapshot.heroIds.sort()) === JSON.stringify([...selectedHeroes].sort())) {
+          return prev;
+        }
+        const newSnapshot = {
+          id: Date.now().toString(),
+          heroIds: [...selectedHeroes],
+          timestamp: Date.now()
+        };
+        return [newSnapshot, ...prev].slice(0, 10);
+      });
+    }
+  }, [selectedHeroes]);
 
   // 自定义克制关系状态
   const [customCounterRelations, setCustomCounterRelations] = useState<CustomCounterRelation[]>([]);
@@ -2514,31 +2532,8 @@ const ForceGraph = ({
 
       <svg ref={svgRef} className="w-full h-full cursor-move" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
 
-      {/* 保存快照和历史记录按钮 - 英雄克制面板左下角外侧 */}
+      {/* 历史记录按钮 - 英雄克制面板左下角外侧 */}
       <div className="absolute bottom-6 right-[410px] z-10 flex flex-row gap-2 pointer-events-auto">
-        <Tooltip>
-          <TooltipTrigger asChild>
-        <Button
-          variant="secondary"
-          size="icon"
-          onClick={() => {
-            if (selectedHeroes.length > 0) {
-              const newSnapshot = {
-                id: Date.now().toString(),
-                heroIds: [...selectedHeroes],
-                timestamp: Date.now()
-              };
-              setHeroSnapshots(prev => [newSnapshot, ...prev].slice(0, 10)); // 只保留最近10条记录
-            }
-          }}
-          className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9"
-          disabled={selectedHeroes.length === 0}
-        >
-          <Camera className="w-4 h-4 text-yellow-400" />
-        </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t('saveHeroSnapshot')}</TooltipContent>
-        </Tooltip>
         <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
           <PopoverTrigger asChild>
             <Button
