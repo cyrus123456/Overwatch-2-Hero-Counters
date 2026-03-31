@@ -149,6 +149,7 @@ const translations: Record<Language, Record<string, string>> = {
     selectTargetHero: '选择目标英雄',
     resetCounterDefault: '还原默认克制关系',
     resetSynergyDefault: '还原默认协同关系',
+    restoreHeroRelations: '恢复默认关系',
   },
   en: {
     title: 'Overwatch 2 Hero Counter Relationships',
@@ -294,6 +295,7 @@ const translations: Record<Language, Record<string, string>> = {
     resetCounterDefault: 'Reset Default Counter Relations',
     addCustomSynergy: 'Add Synergy Relation',
     resetSynergyDefault: 'Reset Default Synergy Relations',
+    restoreHeroRelations: 'Restore Default Relations',
   },
   ja: {
     title: 'オーバーチュア ヒーロー相性図',

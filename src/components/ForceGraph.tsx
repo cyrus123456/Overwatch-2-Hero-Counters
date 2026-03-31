@@ -563,6 +563,34 @@ const ForceGraph = ({
     }
   };
 
+  // 恢复单个英雄的默认克制和协同关系
+  const restoreHeroRelations = (heroId: string) => {
+    const updatedCustomCounters = customCounterRelations.filter(
+      r => r.source !== heroId && r.target !== heroId
+    );
+    const updatedDeletedCounters = deletedDefaultRelations.filter(
+      id => !id.startsWith(`${heroId}-`) && !id.endsWith(`-${heroId}`)
+    );
+    const updatedCustomSynergies = customSynergyRelations.filter(
+      r => r.source !== heroId && r.target !== heroId
+    );
+    const updatedDeletedSynergies = deletedDefaultSynergyRelations.filter(
+      id => !id.startsWith(`${heroId}-`) && !id.endsWith(`-${heroId}`)
+    );
+    setCustomCounterRelations(updatedCustomCounters);
+    setDeletedDefaultRelations(updatedDeletedCounters);
+    setCustomSynergyRelations(updatedCustomSynergies);
+    setDeletedDefaultSynergyRelations(updatedDeletedSynergies);
+    saveCustomCounterRelations(updatedCustomCounters);
+    saveDeletedDefaultRelations(updatedDeletedCounters);
+    saveCustomSynergyRelations(updatedCustomSynergies);
+    saveDeletedDefaultSynergyRelations(updatedDeletedSynergies);
+    if (updatedCustomCounters.length === 0 && updatedDeletedCounters.length === 0 &&
+        updatedCustomSynergies.length === 0 && updatedDeletedSynergies.length === 0) {
+      setHasForceGraphUnsavedChanges(false);
+    }
+  };
+
   // 是否存在未保存的自定义数据
   const [hasForceGraphUnsavedChanges, setHasForceGraphUnsavedChanges] = useState(() =>
     customCounterRelations.length > 0 || deletedDefaultRelations.length > 0 || customSynergyRelations.length > 0 || deletedDefaultSynergyRelations.length > 0
@@ -1667,6 +1695,19 @@ const ForceGraph = ({
                               {t('mapRecommended')}
                             </Badge>
                           )}
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => restoreHeroRelations(displayedHero.id)}
+                                className="p-1 rounded hover:bg-slate-600/50 text-slate-500 hover:text-cyan-400 transition-colors flex-shrink-0"
+                              >
+                                <RotateCcw className="w-3.5 h-3.5" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t('restoreHeroRelations')}</p>
+                            </TooltipContent>
+                          </Tooltip>
                         </div>
                         <p className="text-xs text-slate-200 leading-tight mt-0.5">{language === 'zh' ? displayedHero?.nameEn : displayedHero?.name}</p>
                       </div>
