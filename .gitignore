@@ -9,6 +9,7 @@ lerna-debug.log*
 # 构建输出
 dist/
 dist-ssr/
+dev-dist/
 build/
 *.local
 

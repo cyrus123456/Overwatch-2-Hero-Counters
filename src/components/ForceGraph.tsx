@@ -1813,7 +1813,7 @@ const ForceGraph = ({
                           <>
                             {!isAddingCustomRelation ? (
                               <button
-                                className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-red-500 text-slate-400 hover:text-red-400 transition-all"
+                                className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-red-500 text-white hover:text-red-400 transition-all"
                                 onClick={() => {
                                   setIsAddingCustomRelation(true);
                                   // 延迟滚动以确保 DOM 已更新

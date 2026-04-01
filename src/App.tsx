@@ -832,7 +832,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                 </div>
                               ) : (
                                 <button
-                                  className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-cyan-500 text-slate-400 hover:text-cyan-400 transition-all"
+                                  className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-cyan-500 text-white hover:text-cyan-400 transition-all"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setAddingHeroMapId(map.id);
