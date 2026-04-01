@@ -8,8 +8,8 @@
     "dev": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "deploy": "gh-pages -d dist",
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
     "build:deploy": "npm run build && npm run deploy"
   },
   "dependencies": {
@@ -62,6 +62,7 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.30.3",
     "@eslint/js": "^9.39.1",
     "@types/d3": "^7.4.3",
     "@types/node": "^24.10.11",
@@ -83,6 +84,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
-    "vite-plugin-pwa": "^1.2.0"
+    "vite-plugin-pwa": "^1.2.0",
+    "wrangler": "^4.79.0"
   }
 }
