@@ -121,7 +121,7 @@ const ForceGraph = ({
     if (!selectedMapData || !selectedMap) return [];
     const defaultHeroes = selectedMapData.recommendedHeroes.filter(id => !(deletedDefaultHeroes[selectedMap] || []).includes(id));
     const customHeroes = (customMapHeroes[selectedMap] || []).map((ch: CustomMapHero) => ch.heroId);
-    return [...defaultHeroes, ...customHeroes];
+    return [...new Set([...defaultHeroes, ...customHeroes])];
   }, [selectedMapData, selectedMap, deletedDefaultHeroes, customMapHeroes]);
 
   const { t, language } = useI18n();
@@ -209,8 +209,15 @@ const ForceGraph = ({
       const relationId = `${r.source}-${r.target}`;
       return !deletedDefaultRelations.includes(relationId);
     });
-    // 合并自定义关系
-    return [...filteredDefaults, ...customCounterRelations];
+    // 合并自定义关系并去重
+    const all = [...filteredDefaults, ...customCounterRelations];
+    const seen = new Set<string>();
+    return all.filter(r => {
+      const key = `${r.source}-${r.target}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }, [customCounterRelations, deletedDefaultRelations]);
 
   const getCommonCounters = useCallback((heroIds: string[]) => {
@@ -296,8 +303,15 @@ const ForceGraph = ({
       const relationId = `${r.source}-${r.target}`;
       return !deletedDefaultSynergyRelations.includes(relationId);
     });
-    // 合并自定义关系
-    return [...filteredDefaults, ...customSynergyRelations];
+    // 合并自定义关系并去重
+    const all = [...filteredDefaults, ...customSynergyRelations];
+    const seen = new Set<string>();
+    return all.filter(r => {
+      const key = `${r.source}-${r.target}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }, [customSynergyRelations, deletedDefaultSynergyRelations]);
 
   const getCommonSynergies = useCallback((heroIds: string[]) => {

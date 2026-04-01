@@ -575,7 +575,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   {(() => {
                                     const defaultHeroes = map.recommendedHeroes.filter(id => !(deletedDefaultHeroes[map.id] || []).includes(id));
                                     const customHeroes = (customMapHeroes[map.id] || []).map(ch => ch.heroId);
-                                    const actualHeroes = [...defaultHeroes, ...customHeroes];
+                                    const actualHeroes = [...new Set([...defaultHeroes, ...customHeroes])];
                                     return sortHeroesByRole(actualHeroes).map(heroId => {
                                       const hero = heroes.find(h => h.id === heroId);
                                       if (!hero) return null;
