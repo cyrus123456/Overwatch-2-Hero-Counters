@@ -3,10 +3,12 @@ import { inspectAttr } from 'kimi-plugin-inspect-react';
 import path from "path";
 import { defineConfig } from "vite";
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 // https://vite.dev/config/
 export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/Overwatch-2-Hero-Counters/' : './',
-  plugins: [inspectAttr(), react()],
+  plugins: [inspectAttr(), react(), cloudflare()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
