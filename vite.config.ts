@@ -2,6 +2,7 @@ import react from "@vitejs/plugin-react";
 import { inspectAttr } from 'kimi-plugin-inspect-react';
 import path from "path";
 import { defineConfig } from "vite";
+import { VitePWA } from 'vite-plugin-pwa';
 
 // const deployTarget = process.env.VITE_DEPLOY_TARGET
 
@@ -9,23 +10,77 @@ import { defineConfig } from "vite";
 export default defineConfig({
   // base: (process.env.NODE_ENV === 'production' && deployTarget === 'github') ? '/Overwatch-2-Hero-Counters/' : './',
   base: './',
-  plugins: [inspectAttr(), react()],
+  plugins: [
+    inspectAttr(),
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
+      manifest: {
+        name: '守望先锋英雄克制关系图 | Overwatch 2 Hero Counters',
+        short_name: 'OW2 Counters',
+        description: '交互式网络图可视化展示守望先锋2英雄之间的克制关系',
+        theme_color: '#0f172a',
+        background_color: '#0f172a',
+        display: 'standalone',
+        orientation: 'any',
+        scope: './',
+        start_url: './',
+        icons: [
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ],
+        categories: ['games', 'entertainment', 'utilities'],
+        lang: 'zh-CN',
+        dir: 'ltr',
+        prefer_related_applications: false
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/api\.ipapi\.co\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'ipapi-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 // 24 hours
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      },
+      devOptions: {
+        enabled: true
+      }
+    })
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
   build: {
-    sourcemap: 'hidden', // 隐藏式 source map，不生成独立文件但可用于错误追踪
-    // 或者选择以下方式之一：
-    // sourcemap: false,      // 不生成 source map
-    // sourcemap: true,       // 生成独立的 .map 文件 (最完整，适合生产环境调试)
-    // sourcemap: 'inline',   // 生成内联的 source map (会增加打包体积)
-    // sourcemap: 'hidden',   // 生成但不引用，适合上传到错误追踪平台
+    sourcemap: 'hidden',
   },
   server: {
-    // 开发环境 source map 模式
-    // sourcemap: 'eval',     // 使用 eval 快速模式 (默认)
-    // sourcemap: 'hidden',   // 不在错误信息中显示 source map
   },
 });
