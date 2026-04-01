@@ -3,11 +3,12 @@ import { inspectAttr } from 'kimi-plugin-inspect-react';
 import path from "path";
 import { defineConfig } from "vite";
 
-const deployTarget = process.env.VITE_DEPLOY_TARGET
+// const deployTarget = process.env.VITE_DEPLOY_TARGET
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: (process.env.NODE_ENV === 'production' && deployTarget === 'github') ? '/Overwatch-2-Hero-Counters/' : './',
+  // base: (process.env.NODE_ENV === 'production' && deployTarget === 'github') ? '/Overwatch-2-Hero-Counters/' : './',
+  base: './',
   plugins: [inspectAttr(), react()],
   resolve: {
     alias: {
