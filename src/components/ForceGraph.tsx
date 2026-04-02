@@ -1731,9 +1731,10 @@ const ForceGraph = ({
                             <TooltipTrigger asChild>
                               <button
                                 onClick={() => restoreHeroRelations(displayedHero.id)}
-                                className="p-1 rounded hover:bg-slate-600/50 text-slate-500 hover:text-cyan-400 transition-colors flex-shrink-0"
+                                className="flex items-center gap-1 p-1 rounded hover:bg-slate-600/50 text-slate-500 hover:text-cyan-400 transition-colors flex-shrink-0"
                               >
                                 <RotateCcw className="w-3.5 h-3.5" />
+                                <span className="text-xs hover:text-cyan-400">{t('restoreHeroRelations')}</span>
                               </button>
                             </TooltipTrigger>
                             <TooltipContent>
