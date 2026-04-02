@@ -41,3 +41,11 @@ coverage/
 # 操作系统
 Thumbs.db
 .DS_Store
+
+# 性能报告
+lighthouse-report/
+
+# 工具配置
+.qodo/
+.sixth/
+.sisyphus/
