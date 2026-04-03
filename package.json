@@ -8,6 +8,8 @@
     "dev": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "preview:gh": "vite preview",
+    "deploy:gh": "gh-pages -d dist",
     "preview": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy",
     "build:deploy": "npm run build && npm run deploy"
