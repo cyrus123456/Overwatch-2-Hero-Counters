@@ -32,15 +32,17 @@ import {
   Trash2,
   X
 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import ForceGraph from '@/components/ForceGraph';
-import { getHeroName, heroes } from '@/data/heroData';
 import { getMapName, getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
+import { useMemoizedHeroes, sortByRole } from '@/hooks/useMemoizedHeroes';
 
 import type { Language } from '@/i18n';
 import { useI18n } from '@/i18n';
 import './App.css';
+
+// 懒加载 ForceGraph 组件 (2703 行大组件，包含 D3.js 力导向图)
+const ForceGraph = lazy(() => import('@/components/ForceGraph').then(m => ({ default: m.default })));
 
 interface CustomMapHero {
   heroId: string;
@@ -90,8 +92,92 @@ function saveDeletedDefaultHeroes(data: Record<string, string[]>): void {
   }
 }
 
+/**
+ * MapHeroAvatar - 独立的英雄头像组件
+ * 使用 React.memo 避免不必要的重渲染
+ */
+const MapHeroAvatar = React.memo(({ 
+  heroId, customHero, reason, language,
+}: { 
+  heroId: string; 
+  customHero: CustomMapHero | undefined; 
+  reason: string;
+  language: string;
+}) => {
+  const { getHero } = useMemoizedHeroes();
+  const hero = getHero(heroId);
+  if (!hero) return null;
+  
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className={`w-[22px] h-[22px] rounded-full overflow-hidden border flex-shrink-0 shadow-md cursor-help ring-1 ${customHero ? 'border-cyan-500/50 ring-cyan-500/30' : 'border-slate-900 ring-slate-800/50'}`}>
+          <img src={hero.image} alt="" className="w-full h-full object-cover scale-110" loading="lazy" />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="right" className="bg-slate-900 border-slate-700 p-3 max-w-[240px] z-[100] shadow-2xl rounded-lg backdrop-blur-xl">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm font-black text-cyan-400 tracking-wider uppercase border-b border-slate-800 pb-1">
+            {language === 'zh' ? hero.name : hero.nameEn}
+          </span>
+          <p className="text-xs text-white leading-relaxed">{reason}</p>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
+});
+MapHeroAvatar.displayName = 'MapHeroAvatar';
+
+/** 预计算的地图英雄列表（带 memo） */
+const MapHeroesList = React.memo(({
+  defaultHeroes,
+  customMapHeroesForMap,
+  deletedDefaultForMap,
+  language,
+}: {
+  defaultHeroes: string[];
+  customMapHeroesForMap: CustomMapHero[];
+  deletedDefaultForMap: string[];
+  language: string;
+}) => {
+  const { getHero } = useMemoizedHeroes();
+  
+  // 合并并去重英雄列表
+  const actualHeroes = useMemo(() => {
+    const filteredDefaults = defaultHeroes.filter(id => !deletedDefaultForMap.includes(id));
+    const customIds = customMapHeroesForMap.map(ch => ch.heroId);
+    return [...new Set([...filteredDefaults, ...customIds])];
+  }, [defaultHeroes, customMapHeroesForMap, deletedDefaultForMap]);
+  
+  // 按角色排序
+  const sortedHeroes = useMemo(() => {
+    return sortByRole(actualHeroes.map(id => getHero(id)).filter((h): h is NonNullable<typeof h> => h !== undefined));
+  }, [actualHeroes, getHero]);
+  
+  return (
+    <div className="flex flex-wrap gap-2 mt-2">
+      {sortedHeroes.map(hero => {
+        const customHero = customMapHeroesForMap.find(ch => ch.heroId === hero.id);
+        const reason = customHero?.reason || '';
+        return (
+          <MapHeroAvatar 
+            key={hero.id} 
+            heroId={hero.id} 
+            customHero={customHero} 
+            reason={reason} 
+            language={language}
+          />
+        );
+      })}
+    </div>
+  );
+});
+MapHeroesList.displayName = 'MapHeroesList';
+
 function AppContent() {
   const { t, language, setLanguage } = useI18n();
+  const { getHero, heroes } = useMemoizedHeroes();
+  
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [selectedHeroes, setSelectedHeroes] = useState<string[]>([]);
   const [selectedMap, setSelectedMap] = useState<string | null>(null);
@@ -100,7 +186,7 @@ function AppContent() {
 const [isMapCopied, setIsMapCopied] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [hoverTimer, setHoverTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const roleOrder = { tank: 0, damage: 1, support: 2 };
+
   const [customMapHeroes, setCustomMapHeroes] = useState<Record<string, CustomMapHero[]>>({});
   const [deletedDefaultHeroes, setDeletedDefaultHeroes] = useState<Record<string, string[]>>({});
   const [newHeroId, setNewHeroId] = useState<string>('');
@@ -241,14 +327,9 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     }
   };
 
-  const sortHeroesByRole = (heroIds: string[]): string[] => {
-    return [...heroIds].sort((a, b) => {
-      const heroA = heroes.find(h => h.id === a);
-      const heroB = heroes.find(h => h.id === b);
-      if (!heroA || !heroB) return 0;
-      return roleOrder[heroA.role] - roleOrder[heroB.role];
-    });
-  };
+  const sortHeroesByRole = useCallback((heroIds: string[]): string[] => {
+    return sortByRole(heroIds.map(id => getHero(id)).filter((h): h is Exclude<typeof h, undefined> => h !== undefined)).map(h => h.id);
+  }, [getHero]);
   
   const sanitizeTextSimple = (text: string): string => {
     return text
@@ -571,38 +652,12 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                               </Badge>
                             </div>
                             {selectedMap !== map.id && (
-                              <div className="flex flex-wrap gap-2 mt-2">
-                                  {(() => {
-                                    const defaultHeroes = map.recommendedHeroes.filter(id => !(deletedDefaultHeroes[map.id] || []).includes(id));
-                                    const customHeroes = (customMapHeroes[map.id] || []).map(ch => ch.heroId);
-                                    const actualHeroes = [...new Set([...defaultHeroes, ...customHeroes])];
-                                    return sortHeroesByRole(actualHeroes).map(heroId => {
-                                      const hero = heroes.find(h => h.id === heroId);
-                                      if (!hero) return null;
-                                      const customHero = (customMapHeroes[map.id] || []).find(ch => ch.heroId === heroId);
-                                      const reason = customHero?.reason || map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || map.heroReasons[heroId]?.zh || '';
-                                      return (
-                                        <Tooltip key={heroId}>
-                                          <TooltipTrigger asChild>
-                                            <div className={`w-[22px] h-[22px] rounded-full overflow-hidden border flex-shrink-0 shadow-md cursor-help ring-1 ${customHero ? 'border-cyan-500/50 ring-cyan-500/30' : 'border-slate-900 ring-slate-800/50'}`}>
-                                              <img src={hero.image} alt="" className="w-full h-full object-cover scale-110" />
-                                            </div>
-                                          </TooltipTrigger>
-                                          <TooltipContent side="right" className="bg-slate-900 border-slate-700 p-3 max-w-[240px] z-[100] shadow-2xl rounded-lg backdrop-blur-xl">
-                                            <div className="flex flex-col gap-1.5">
-                                              <span className="text-sm font-black text-cyan-400 tracking-wider uppercase border-b border-slate-800 pb-1">
-                                                {getHeroName(hero, language)}
-                                              </span>
-                                              <p className="text-xs text-white leading-relaxed">
-                                                {reason}
-                                              </p>
-                                            </div>
-                                          </TooltipContent>
-                                        </Tooltip>
-                                      );
-                                    });
-                                  })()}
-                              </div>
+                              <MapHeroesList
+                                defaultHeroes={map.recommendedHeroes}
+                                customMapHeroesForMap={customMapHeroes[map.id] || []}
+                                deletedDefaultForMap={deletedDefaultHeroes[map.id] || []}
+                                language={language}
+                              />
                             )}
                           </div>
                         </div>
@@ -628,15 +683,15 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                          const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
                                          
                                          const heroNames = sortedHeroes.map(heroId => {
-                                           const hero = heroes.find(h => h.id === heroId);
-                                           return hero ? getHeroName(hero, language) : '';
+                                           const hero = getHero(heroId);
+                                           return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
                                          }).filter(Boolean);
                                          
                                          const reasons = sortedHeroes.map(heroId => {
-                                           const hero = heroes.find(h => h.id === heroId);
+                                           const hero = getHero(heroId);
                                            const reason = map.heroReasons[heroId];
                                            if (!hero || !reason) return '';
-                                           const heroName = getHeroName(hero, language);
+                                           const heroName = language === 'zh' ? hero.name : hero.nameEn;
                                            const reasonText = reason[language] || reason.en || reason.zh || '';
                                            return `${heroName}: ${sanitizeMapTextChinese(reasonText)}`;
                                          }).filter(Boolean);
@@ -664,18 +719,18 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                          {(() => {
                                            const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
                                            const heroNames = sortedHeroes.map(heroId => {
-                                             const hero = heroes.find(h => h.id === heroId);
-                                             return hero ? getHeroName(hero, language) : '';
+                                             const hero = getHero(heroId);
+                                             return hero ? (language === 'zh' ? hero.name : hero.nameEn) : '';
                                            }).filter(Boolean);
                                             
-                                            const reasons = sortedHeroes.map(heroId => {
-                                              const hero = heroes.find(h => h.id === heroId);
-                                              const reason = map.heroReasons[heroId];
-                                              if (!hero || !reason) return '';
-                                              const heroName = getHeroName(hero, language);
-                                              const reasonText = reason[language] || reason.en || reason.zh || '';
-                                              return `${heroName}: ${sanitizeMapTextChinese(reasonText)}`;
-                                            }).filter(Boolean);
+                                           const reasons = sortedHeroes.map(heroId => {
+                                             const hero = getHero(heroId);
+                                             const reason = map.heroReasons[heroId];
+                                             if (!hero || !reason) return '';
+                                             const heroName = language === 'zh' ? hero.name : hero.nameEn;
+                                             const reasonText = reason[language] || reason.en || reason.zh || '';
+                                             return `${heroName}: ${sanitizeMapTextChinese(reasonText)}`;
+                                           }).filter(Boolean);
                                             
                                              const mapName = getMapName(map, language);
                                              const mapDesc = map.description?.[language] || map.description?.en || '';
@@ -689,7 +744,8 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                              </div>
                               <div className="max-h-[50vh] overflow-y-auto pr-1 space-y-2">
                               {sortHeroesByRole(map.recommendedHeroes).filter(heroId => !(deletedDefaultHeroes[map.id] || []).includes(heroId)).map(heroId => {
-                                const hero = heroes.find(h => h.id === heroId);
+                                const hero = getHero(heroId);
+                                if (!hero) return null;
                                 if (!hero) return null;
                                 const roleColors = {
                                   tank: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
@@ -712,7 +768,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <div className="flex items-center gap-2 flex-wrap">
-                                        <p className="text-sm font-black text-slate-200 tracking-tight">{getHeroName(hero, language)}</p>
+                                        <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
                                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
                                           {roleNames[hero.role]}
                                         </span>
@@ -733,7 +789,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                               {sortHeroesByRole((customMapHeroes[map.id] || []).map(ch => ch.heroId)).map((heroId) => {
                                 const customHero = (customMapHeroes[map.id] || []).find(ch => ch.heroId === heroId);
                                 if (!customHero) return null;
-                                const hero = heroes.find(h => h.id === heroId);
+                                const hero = getHero(heroId);
                                 if (!hero) return null;
                                 const originalIndex = (customMapHeroes[map.id] || []).findIndex(ch => ch.heroId === heroId);
                                 const roleColors = {
@@ -757,7 +813,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <div className="flex items-center gap-2 flex-wrap">
-                                        <p className="text-sm font-black text-slate-200 tracking-tight">{getHeroName(hero, language)}</p>
+                                        <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
                                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
                                           {roleNames[hero.role]}
                                         </span>
@@ -783,7 +839,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   <Select value={newHeroId} onValueChange={setNewHeroId}>
                                     <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
                                       <span className={newHeroId ? 'text-white' : 'text-slate-400'}>
-                                        {newHeroId ? getHeroName(heroes.find(h => h.id === newHeroId)!, language) : t('selectHero')}
+                                        {newHeroId ? (language === 'zh' ? getHero(newHeroId)!.name : getHero(newHeroId)!.nameEn) : t('selectHero')}
                                       </span>
                                     </SelectTrigger>
                                     <SelectContent position="popper" className="bg-slate-800 border-slate-600 max-h-60 z-[9999]">
@@ -796,7 +852,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                           <SelectItem key={h.id} value={h.id} className="text-white hover:bg-slate-700">
                                             <div className="flex items-center gap-2">
                                             <img src={h.image} alt="" className="w-5 h-5 rounded-full" />
-                                            <span>{getHeroName(h, language)}</span>
+                                            <span>{language === 'zh' ? h.name : h.nameEn}</span>
                                           </div>
                                         </SelectItem>
                                       ));
@@ -900,6 +956,14 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                 </Button>
               ))}
             </div>
+            <Suspense fallback={
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-12 h-12 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin" />
+                  <p className="text-sm text-slate-400">{t('loading')}</p>
+                </div>
+              </div>
+            }>
             <ForceGraph 
               selectedRole={selectedRole} 
               selectedHeroes={selectedHeroes} 
@@ -915,6 +979,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                 hasMapUnsavedChanges: hasUnsavedChanges,
               }}
             />
+            </Suspense>
           </div>
         </main>
       </div>

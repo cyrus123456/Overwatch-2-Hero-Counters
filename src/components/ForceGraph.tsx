@@ -26,6 +26,8 @@ import { maps } from '@/data/mapData';
 import { getSynergyReason } from '@/data/synergyReasons';
 import { synergyRelations } from '@/data/synergyRelations';
 import useDebounce from '@/hooks/useDebounce';
+import { useMemoizedHeroes } from '@/hooks/useMemoizedHeroes';
+import { useRelationMaps } from '@/hooks/useRelationMaps';
 import { useI18n } from '@/i18n';
 import * as d3 from 'd3';
 import {
@@ -142,6 +144,7 @@ const ForceGraph = ({
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const animationRef = useRef<number | null>(null);
   const nodePositionsRef = useRef<Map<string, {x: number, y: number}>>(new Map());
+  const savePositionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const selectedHeroesRef = useRef<string[]>(selectedHeroes);
   const onHeroSelectRef = useRef(onHeroSelect);
 
@@ -238,82 +241,6 @@ const ForceGraph = ({
     });
   }, [customCounterRelations, deletedDefaultRelations]);
 
-  const getCommonCounters = useCallback((heroIds: string[]) => {
-    if (heroIds.length === 0) return [];
-
-    return heroes
-      .map(h => {
-        const relations = heroIds.map(targetId =>
-          mergedCounterRelations.find(r => r.source === h.id && r.target === targetId)
-        );
-
-        if (relations.every(r => r !== undefined)) {
-          const minStrength = Math.min(...relations.map(r => r!.strength || 1));
-          const isCustom = relations.some(r => (r as CustomCounterRelation).isCustom);
-          return { hero: h, strength: minStrength, isCustom };
-        }
-        return null;
-      })
-      .filter((item): item is { hero: Hero; strength: number; isCustom: boolean } => item !== null)
-      .sort((a, b) => b.strength - a.strength);
-  }, [mergedCounterRelations]);
-
-  const getCommonCounted = useCallback((heroIds: string[]) => {
-    if (heroIds.length === 0) return [];
-
-    return heroes
-      .map(h => {
-        const relations = heroIds.map(sourceId =>
-          mergedCounterRelations.find(r => r.source === sourceId && r.target === h.id)
-        );
-
-        if (relations.every(r => r !== undefined)) {
-          const minStrength = Math.min(...relations.map(r => r!.strength || 1));
-          const isCustom = relations.some(r => (r as CustomCounterRelation).isCustom);
-          return { hero: h, strength: minStrength, isCustom };
-        }
-        return null;
-      })
-      .filter((item): item is { hero: Hero; strength: number; isCustom: boolean } => item !== null)
-      .sort((a, b) => b.strength - a.strength);
-  }, [mergedCounterRelations]);
-
-  const counteredBy = useMemo(() => {
-    if (selectedHeroes.length === 0) return [];
-    if (selectedHeroes.length === 1) {
-      return mergedCounterRelations
-        .filter(r => r.target === selectedHeroes[0])
-        .map(r => ({
-          hero: heroes.find(h => h.id === r.source),
-          strength: r.strength || 1,
-          isCustom: (r as CustomCounterRelation).isCustom || false,
-          source: r.source,
-          target: r.target
-        }))
-        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
-        .sort((a, b) => b.strength - a.strength);
-    }
-    return getCommonCounters(selectedHeroes);
-  }, [selectedHeroes, getCommonCounters, mergedCounterRelations]);
-
-  const counters = useMemo(() => {
-    if (selectedHeroes.length === 0) return [];
-    if (selectedHeroes.length === 1) {
-      return mergedCounterRelations
-        .filter(r => r.source === selectedHeroes[0])
-        .map(r => ({
-          hero: heroes.find(h => h.id === r.target),
-          strength: r.strength || 1,
-          isCustom: (r as CustomCounterRelation).isCustom || false,
-          source: r.source,
-          target: r.target
-        }))
-        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
-        .sort((a, b) => b.strength - a.strength);
-    }
-    return getCommonCounted(selectedHeroes);
-  }, [selectedHeroes, getCommonCounted, mergedCounterRelations]);
-
   // 合并默认和自定义协同关系
   const mergedSynergyRelations = useMemo(() => {
     // 过滤掉被删除的默认关系
@@ -332,25 +259,116 @@ const ForceGraph = ({
     });
   }, [customSynergyRelations, deletedDefaultSynergyRelations]);
 
-  const getCommonSynergies = useCallback((heroIds: string[]) => {
+  // 关系查找 Map - O(1) 替代 20+ 处 O(n) 的 .find()
+  const {
+    counterMap: counterRelationMap,
+    synergyMap: synergyRelationMap,
+    getCounterStrength,
+    hasCounterRelation,
+    getSynergyStrength,
+    hasSynergyRelation,
+  } = useRelationMaps(mergedCounterRelations, mergedSynergyRelations);
+
+  // O(1) 英雄查找
+  const { getHero } = useMemoizedHeroes();
+
+  const getCommonCounters = useCallback((heroIds: string[]) => {
     if (heroIds.length === 0) return [];
 
+    // 使用 O(1) Map.get 替代 O(R) .find()，复杂度从 O(H*S*R) → O(H*S)
     return heroes
       .map(h => {
         const relations = heroIds.map(targetId =>
-          mergedSynergyRelations.find(r => r.source === h.id && r.target === targetId)
+          counterRelationMap.get(`${h.id}-${targetId}`)
         );
 
         if (relations.every(r => r !== undefined)) {
-          const minStrength = Math.min(...relations.map(r => r!.strength || 1));
-          const isCustom = relations.some(r => (r as CustomSynergyRelation).isCustom);
+          const minStrength = Math.min(...relations.map(r => r!.strength));
+          const isCustom = relations.some(r => r!.isCustom);
           return { hero: h, strength: minStrength, isCustom };
         }
         return null;
       })
       .filter((item): item is { hero: Hero; strength: number; isCustom: boolean } => item !== null)
       .sort((a, b) => b.strength - a.strength);
-  }, [mergedSynergyRelations]);
+  }, [counterRelationMap]);
+
+  const getCommonCounted = useCallback((heroIds: string[]) => {
+    if (heroIds.length === 0) return [];
+
+    return heroes
+      .map(h => {
+        const relations = heroIds.map(sourceId =>
+          counterRelationMap.get(`${sourceId}-${h.id}`)
+        );
+
+        if (relations.every(r => r !== undefined)) {
+          const minStrength = Math.min(...relations.map(r => r!.strength));
+          const isCustom = relations.some(r => r!.isCustom);
+          return { hero: h, strength: minStrength, isCustom };
+        }
+        return null;
+      })
+      .filter((item): item is { hero: Hero; strength: number; isCustom: boolean } => item !== null)
+      .sort((a, b) => b.strength - a.strength);
+  }, [counterRelationMap]);
+
+  const counteredBy = useMemo(() => {
+    if (selectedHeroes.length === 0) return [];
+    if (selectedHeroes.length === 1) {
+      return mergedCounterRelations
+        .filter(r => r.target === selectedHeroes[0])
+        .map(r => ({
+          hero: getHero(r.source),
+          strength: r.strength || 1,
+          isCustom: (r as CustomCounterRelation).isCustom || false,
+          source: r.source,
+          target: r.target
+        }))
+        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
+        .sort((a, b) => b.strength - a.strength);
+    }
+    return getCommonCounters(selectedHeroes);
+  }, [selectedHeroes, getCommonCounters, mergedCounterRelations, getHero]);
+
+  const counters = useMemo(() => {
+    if (selectedHeroes.length === 0) return [];
+    if (selectedHeroes.length === 1) {
+      return mergedCounterRelations
+        .filter(r => r.source === selectedHeroes[0])
+        .map(r => ({
+          hero: getHero(r.target),
+          strength: r.strength || 1,
+          isCustom: (r as CustomCounterRelation).isCustom || false,
+          source: r.source,
+          target: r.target
+        }))
+        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
+        .sort((a, b) => b.strength - a.strength);
+    }
+    return getCommonCounted(selectedHeroes);
+  }, [selectedHeroes, getCommonCounted, mergedCounterRelations, getHero]);
+
+  const getCommonSynergies = useCallback((heroIds: string[]) => {
+    if (heroIds.length === 0) return [];
+
+    // O(1) Map.get 替代 O(R) .find()
+    return heroes
+      .map(h => {
+        const relations = heroIds.map(targetId =>
+          synergyRelationMap.get(`${h.id}-${targetId}`)
+        );
+
+        if (relations.every(r => r !== undefined)) {
+          const minStrength = Math.min(...relations.map(r => r!.strength));
+          const isCustom = relations.some(r => r!.isCustom);
+          return { hero: h, strength: minStrength, isCustom };
+        }
+        return null;
+      })
+      .filter((item): item is { hero: Hero; strength: number; isCustom: boolean } => item !== null)
+      .sort((a, b) => b.strength - a.strength);
+  }, [synergyRelationMap]);
 
   const synergyPartners = useMemo(() => {
     if (selectedHeroes.length === 0) return [];
@@ -358,7 +376,7 @@ const ForceGraph = ({
       return mergedSynergyRelations
         .filter(r => r.target === selectedHeroes[0])
         .map(r => ({
-          hero: heroes.find(h => h.id === r.source),
+          hero: getHero(r.source),
           strength: r.strength || 1,
           isCustom: (r as CustomSynergyRelation).isCustom || false,
           source: r.source,
@@ -368,7 +386,7 @@ const ForceGraph = ({
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonSynergies(selectedHeroes);
-  }, [selectedHeroes, getCommonSynergies, mergedSynergyRelations]);
+  }, [selectedHeroes, getCommonSynergies, mergedSynergyRelations, synergyRelationMap, getHero]);
 
   const commonRelatedIds = useMemo(() => {
     if (selectedHeroes.length <= 1) return [];
@@ -1010,21 +1028,20 @@ const ForceGraph = ({
     const simulation = d3.forceSimulation<NodeDatum>(nodes)
       .velocityDecay(0.6)
       .alphaDecay(0.035)
-      .velocityDecay(0.6)
       .force('link', d3.forceLink<NodeDatum, LinkDatum>(links).id(d => d.id).distance(d => {
         const currentSelectedHero = currentSelectedHeroRef.current;
         const currentActiveCounterTab = currentActiveCounterTabRef.current;
-        const currentMergedCounterRelations = currentMergedCounterRef.current;
         if (!currentSelectedHero) return 140;
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = currentMergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
-        if (!rel) return 140;
+        // O(1) Map 查找替代 O(R) Array.find
+        const strength = getCounterStrength(sourceId, targetId);
+        if (!strength) return 140;
         const isRelated = currentActiveCounterTab === 'counteredBy' ?
           (targetId === currentSelectedHero || sourceId === currentSelectedHero) :
           (sourceId === currentSelectedHero || targetId === currentSelectedHero);
         if (!isRelated) return 140;
-        return rel.strength === 3 ? 100 : rel.strength === 2 ? 120 : 140;
+        return strength === 3 ? 100 : strength === 2 ? 120 : 140;
       }))
       .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
@@ -1035,11 +1052,11 @@ const ForceGraph = ({
         if (d.role === 'tank') return centerX - 340;
         if (d.role === 'damage') return centerX;
         return centerX + 340;
-      }).strength(1.0))
+      }).strength(0.5))
       .force('y', d3.forceY<NodeDatum>().y(() => {
         if (selectedRole && selectedRole !== 'all') return height / 2;
         return height / 2;
-      }).strength(0.1));
+      }).strength(0.4));
     simulationRef.current = simulation;
 
     const link = g.append('g').attr('class', 'links').selectAll('line').data(links).enter().append('line').attr('stroke-width', 1.5);
@@ -1048,7 +1065,7 @@ const ForceGraph = ({
     // Animated flowing particles group
     const particleGroup = g.append('g').attr('class', 'particles');
 
-    // Create particles for each link
+    // Create particles for each link - 使用 O(1) Map 查找
     particleGroup.selectAll('circle')
       .data(links)
       .enter()
@@ -1057,15 +1074,15 @@ const ForceGraph = ({
       .attr('r', (d: LinkDatum) => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
+        // O(1) 替代 O(R) .find()
+        const s = getCounterStrength(sourceId, targetId) ?? 1;
         return s === 3 ? 6 : s === 2 ? 4.5 : 3;
       })
       .attr('fill', (d: LinkDatum) => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
+        // O(1) 替代 O(R) .find() (原代码此处调用了 2 次 find)
+        const s = getCounterStrength(sourceId, targetId) ?? 1;
 
         // Synergy模式使用紫色系粒子
         if (activeCounterTab === 'synergy') {
@@ -1101,11 +1118,8 @@ const ForceGraph = ({
     const nodeGroup = g.append('g').attr('class', 'nodes').selectAll('g').data(nodes).enter().append('g').attr('class', 'node-group').style('cursor', 'pointer').style('opacity', d => {
       if (!selectedHero) return 1;
       if (d.id === selectedHero) return 1;
-      const hasConnection = mergedCounterRelations.some(r =>
-        (r.source === d.id && r.target === selectedHero) ||
-        (r.target === d.id && r.source === selectedHero)
-      );
-      return hasConnection ? 1 : 0.65;
+      // O(1) Map.has 替代 O(R) .some()
+      return (hasCounterRelation(d.id, selectedHero) || hasCounterRelation(selectedHero, d.id)) ? 1 : 0.65;
     }).call(d3.drag<SVGGElement, NodeDatum>()
       .on('start', (event, d) => { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
       .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
@@ -1290,24 +1304,24 @@ const ForceGraph = ({
       nodeGroup.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
     });
 
-    // Debounced position saving to avoid per-tick overhead
-    let positionSaveTimer: ReturnType<typeof setTimeout> | null = null;
-    const debouncedSavePositions = () => {
-      if (positionSaveTimer) return;
-      positionSaveTimer = setTimeout(() => {
-        positionSaveTimer = null;
+    // 防抖的节点位置保存函数（使用 ref 跨 effect 保持状态）
+    const debouncedSaveNodePositions = () => {
+      if (savePositionTimerRef.current) clearTimeout(savePositionTimerRef.current);
+      savePositionTimerRef.current = setTimeout(() => {
         nodes.forEach(node => {
           if (node.x !== undefined && node.y !== undefined) {
             nodePositionsRef.current.set(node.id, { x: node.x, y: node.y });
           }
         });
         try {
-          localStorage.setItem('nodePositions', JSON.stringify(Object.fromEntries(nodePositionsRef.current)));
-        } catch { /* ignore */ }
-      }, 500);
+          const data = JSON.stringify(Object.fromEntries(nodePositionsRef.current));
+          localStorage.setItem('nodePositions', data);
+        } catch {}
+        savePositionTimerRef.current = null;
+      }, 1000);
     };
-
-    simulation.on('end', debouncedSavePositions);
+    
+    simulation.on('end', debouncedSaveNodePositions);
 
     // Trigger initial visual update after SVG is built
     requestAnimationFrame(() => {
@@ -1319,19 +1333,6 @@ const ForceGraph = ({
 
     svg.on('click', () => onHeroSelectRef.current([]));
 
-    // Save node positions when force simulation ends (after refresh)
-    const saveNodePositions = () => {
-      try {
-        const positions = Object.fromEntries(nodePositionsRef.current);
-        localStorage.setItem('nodePositions', JSON.stringify(positions));
-      } catch (e) {
-        console.error('Failed to save node positions:', e);
-      }
-    };
-    
-    // Save positions when simulation ends
-    simulation.on('end', saveNodePositions);
-
     return () => { 
       simulation.stop(); 
       if (animationRef.current !== null) {
@@ -1339,8 +1340,7 @@ const ForceGraph = ({
         animationRef.current = null;
       }
 
-      // Final save when component unmounts
-      saveNodePositions();
+      // Final position save is already triggered by simulation.stop() → 'end' event → debouncedSavePositions
       nodeGroupRef.current = null;
       linkSelectionRef.current = null;
     };
@@ -1363,8 +1363,6 @@ const ForceGraph = ({
     const activeCounterTab = currentActiveCounterTabRef.current;
     const isMultiSelect = currentIsMultiSelectRef.current;
     const commonRelatedIds = currentCommonRelatedIdsRef.current;
-    const mergedCounterRelations = currentMergedCounterRef.current;
-    const mergedSynergyRelations = currentMergedSynergyRef.current;
     const mapRecommendedHeroes = currentMapRecommendedHeroesRef.current;
 
     if (selectedHeroes.length > 0) {
@@ -1372,18 +1370,20 @@ const ForceGraph = ({
 
       nodeGroup.transition().duration(300).style('opacity', d => {
         if (selectedHeroes.includes(d.id)) return 0.85;
-        
+
         let isRelated;
         if (isMultiSelect) {
           isRelated = commonRelatedIds.has(d.id);
         } else {
           const targetHero = selectedHeroes[0];
           if (activeCounterTab === 'synergy') {
-            isRelated = mergedSynergyRelations.some(r => r.source === d.id && r.target === targetHero);
+            // O(1) 替代 O(R) .some()
+            isRelated = hasSynergyRelation(d.id, targetHero);
           } else {
+            // O(1) 替代 O(R) .some()
             isRelated = activeCounterTab === 'counteredBy'
-              ? mergedCounterRelations.some(r => r.source === d.id && r.target === targetHero)
-              : mergedCounterRelations.some(r => r.source === targetHero && r.target === d.id);
+              ? hasCounterRelation(d.id, targetHero)
+              : hasCounterRelation(targetHero, d.id);
           }
         }
         return isRelated ? 1 : 0.7;
@@ -1392,10 +1392,11 @@ const ForceGraph = ({
       nodeGroup.select('.node-name').transition().duration(300).style('opacity', 1);
       nodeGroup.each(function (d) {
         const group = d3.select(this);
-        
+
         let relation;
         if (isMultiSelect) {
           if (commonRelatedIds.has(d.id)) {
+            // O(1) Map 查找
             const commonItem = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
               .find(item => item.hero.id === d.id);
             if (commonItem) {
@@ -1404,12 +1405,14 @@ const ForceGraph = ({
           }
         } else {
           const targetHero = selectedHeroes[0];
-          if (activeCounterTab === 'synergy') {
-            relation = mergedSynergyRelations.find(r => r.source === d.id && r.target === targetHero);
-          } else {
-            relation = activeCounterTab === 'counteredBy' 
-              ? mergedCounterRelations.find(r => r.source === d.id && r.target === targetHero) 
-              : mergedCounterRelations.find(r => r.source === targetHero && r.target === d.id);
+          // O(1) 替代 O(R) .find()
+          const str = activeCounterTab === 'synergy'
+            ? getSynergyStrength(d.id, targetHero)
+            : (activeCounterTab === 'counteredBy'
+              ? getCounterStrength(d.id, targetHero)
+              : getCounterStrength(targetHero, d.id));
+          if (str !== undefined) {
+            relation = { strength: str };
           }
         }
         
@@ -1440,13 +1443,12 @@ const ForceGraph = ({
             hasRelation = selectedHeroes.includes(d.id) || commonRelatedIds.has(d.id);
           } else {
             const targetHero = selectedHeroes[0];
-            if (activeCounterTab === 'synergy') {
-              hasRelation = d.id === targetHero || mergedSynergyRelations.some(r => r.source === d.id && r.target === targetHero);
-            } else if (activeCounterTab === 'counteredBy') {
-              hasRelation = d.id === targetHero || mergedCounterRelations.some(r => r.source === d.id && r.target === targetHero);
-            } else {
-              hasRelation = d.id === targetHero || mergedCounterRelations.some(r => r.source === targetHero && r.target === d.id);
-            }
+            // O(1) 替代 O(R) .some()
+            hasRelation = activeCounterTab === 'synergy'
+              ? (hasSynergyRelation(d.id, targetHero) || d.id === targetHero)
+              : activeCounterTab === 'counteredBy'
+                ? (hasCounterRelation(d.id, targetHero) || d.id === targetHero)
+                : (hasCounterRelation(targetHero, d.id) || d.id === targetHero);
           }
         }
         // 有关系时完全不透明，无关系时半透明
@@ -1458,10 +1460,12 @@ const ForceGraph = ({
           .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
       });
 
-      linkSelection.attr('stroke-opacity', d => {
+      // 使用 selection.each 预计算一次，避免 5 个 attr 回调各自重复 .find()
+      linkSelection.each(function(d) {
+        const el = d3.select(this);
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        
+
         let isRelevant = false;
         let s = 1;
 
@@ -1469,84 +1473,42 @@ const ForceGraph = ({
           if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
             isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.has(sourceId);
             if (isRelevant) {
-              const rel = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
-                .find(r => r.source === sourceId && r.target === targetId);
-              s = rel?.strength || 1;
+              s = activeCounterTab === 'synergy'
+                ? (getSynergyStrength(sourceId, targetId) ?? 1)
+                : (getCounterStrength(sourceId, targetId) ?? 1);
             }
           } else {
             isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.has(targetId);
-            if (isRelevant) {
-              const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
-              s = rel?.strength || 1;
-            }
+            if (isRelevant) s = getCounterStrength(sourceId, targetId) ?? 1;
           }
         } else {
           const targetHero = selectedHeroes[0];
           isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
           if (isRelevant) {
-            const rel = (activeCounterTab === 'synergy' ? mergedSynergyRelations : mergedCounterRelations)
-              .find(r => r.source === sourceId && r.target === targetId);
-            s = rel?.strength || 1;
+            s = activeCounterTab === 'synergy'
+              ? (getSynergyStrength(sourceId, targetId) ?? 1)
+              : (getCounterStrength(sourceId, targetId) ?? 1);
           }
         }
 
-        if (!isRelevant) return 0.01;
-        return s === 3 ? 1.0 : s === 2 ? 0.5 : 0.25;
-      }).attr('stroke-width', d => {
-        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        
-        let isRelevant = false;
-
-        if (isMultiSelect) {
-          if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
-            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.has(sourceId);
-          } else {
-            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.has(targetId);
-          }
+        // 一次性设置所有属性（5 次 find → 1 次 Map.get）
+        if (!isRelevant) {
+          el.attr('stroke-opacity', 0.01).attr('stroke-width', 1).attr('stroke', '#334155').attr('marker-end', null);
         } else {
-          const targetHero = selectedHeroes[0];
-          isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
-        }
-
-        if (!isRelevant) return 1;
-        
-        const rel = (activeCounterTab === 'synergy' ? mergedSynergyRelations : mergedCounterRelations)
-          .find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
-        
-        return s === 3 ? 15 : s === 2 ? 9 : 4.5;
-      }).attr('stroke', d => {
-        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
-          .find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
-        if (activeCounterTab === 'synergy') return '#a855f7';
-        if (activeCounterTab === 'counteredBy') return s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#fca5a5';
-        return s === 3 ? '#15803d' : s === 2 ? '#22c55e' : '#86efac';
-      }).attr('marker-end', d => {
-        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        
-        let isRelevant = false;
-        if (isMultiSelect) {
-          if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
-            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.has(sourceId);
+          const opacity = s === 3 ? 1.0 : s === 2 ? 0.5 : 0.25;
+          const width = s === 3 ? 15 : s === 2 ? 9 : 4.5;
+          if (activeCounterTab === 'synergy') {
+            el.attr('stroke-opacity', opacity).attr('stroke-width', width).attr('stroke', '#a855f7').attr('marker-end', null);
+          } else if (activeCounterTab === 'counteredBy') {
+            el.attr('stroke-opacity', opacity).attr('stroke-width', width)
+              .attr('stroke', s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#fca5a5')
+              .attr('marker-end', `url(#arrow-red-${s})`);
           } else {
-            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.has(targetId);
+            el.attr('stroke-opacity', opacity).attr('stroke-width', width)
+              .attr('stroke', s === 3 ? '#15803d' : s === 2 ? '#22c55e' : '#86efac')
+              .attr('marker-end', `url(#arrow-green-${s})`);
           }
-        } else {
-          const targetHero = selectedHeroes[0];
-          isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
         }
-
-        if (!isRelevant) return null;
-        if (activeCounterTab === 'synergy') return null;
-        
-        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
-        return `url(#arrow-${activeCounterTab === 'counteredBy' ? 'red' : 'green'}-${s})`;
       });
     } else {
       simulation.alpha(0.08).restart();
@@ -1569,49 +1531,25 @@ const ForceGraph = ({
           .style('opacity', isRecommended ? 1 : 0)
           .attr('transform', 'translate(0, 0)');
       });
-      linkSelection.attr('stroke-opacity', d => {
+      // 无选中状态：使用 each 预计算，4 次 O(R) find → 1 次 O(1) Map.get
+      linkSelection.each(function(d) {
+        const el = d3.select(this);
+        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+
         if (activeCounterTab === 'synergy') {
-          const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-          const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-          const synergyRel = mergedSynergyRelations.find(r => r.source === sourceId && r.target === targetId);
-          const s = synergyRel?.strength || 1;
-          return s === 3 ? 0.5 : s === 2 ? 0.15 : 0.05;
+          const s = getSynergyStrength(sourceId, targetId) ?? 1;
+          el.attr('stroke-opacity', s === 3 ? 0.5 : s === 2 ? 0.15 : 0.05)
+            .attr('stroke-width', s === 3 ? 4.5 : s === 2 ? 3 : 1.5)
+            .attr('stroke', '#a855f7')
+            .attr('marker-end', null);
+        } else {
+          const s = getCounterStrength(sourceId, targetId) ?? 1;
+          el.attr('stroke-opacity', s === 3 ? 0.5 : s === 2 ? 0.15 : 0.05)
+            .attr('stroke-width', s === 3 ? 4.5 : s === 2 ? 3 : 1.5)
+            .attr('stroke', s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#fca5a5')
+            .attr('marker-end', `url(#arrow-red-${s})`);
         }
-        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
-        return s === 3 ? 0.5 : s === 2 ? 0.15 : 0.05;
-      }).attr('stroke-width', d => {
-        // Synergy links use counter strength-based width
-        if (activeCounterTab === 'synergy') {
-          const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-          const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-          const synergyRel = mergedSynergyRelations.find(r => r.source === sourceId && r.target === targetId);
-          const s = synergyRel?.strength || 1;
-          return s === 3 ? 4.5 : s === 2 ? 3 : 1.5;
-        }
-        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
-        return s === 3 ? 4.5 : s === 2 ? 3 : 1.5;
-      }).attr('stroke', d => {
-        // Synergy links use cyan color
-        if (activeCounterTab === 'synergy') return '#a855f7';
-        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
-        return s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#fca5a5';
-      }).attr('marker-end', d => {
-        // No arrow for synergy links
-        if (activeCounterTab === 'synergy') return null;
-        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
-        const s = rel?.strength || 1;
-        return `url(#arrow-red-${s})`;
       });
     }
   }, [selectedMap, synergyPartners, counteredBy, counters]);
