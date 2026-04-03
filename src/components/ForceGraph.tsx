@@ -142,6 +142,24 @@ const ForceGraph = ({
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const animationRef = useRef<number | null>(null);
   const nodePositionsRef = useRef<Map<string, {x: number, y: number}>>(new Map());
+  const selectedHeroesRef = useRef<string[]>(selectedHeroes);
+  const onHeroSelectRef = useRef(onHeroSelect);
+
+  // D3 selection refs for incremental updates (avoid full DOM rebuild)
+  const nodeGroupRef = useRef<d3.Selection<SVGGElement, NodeDatum, SVGGElement, unknown> | null>(null);
+  const linkSelectionRef = useRef<d3.Selection<SVGLineElement, LinkDatum, SVGGElement, unknown> | null>(null);
+  const currentSelectedHeroesRef = useRef<string[]>([]);
+  const currentActiveCounterTabRef = useRef<string>('counteredBy');
+  const currentCommonRelatedIdsRef = useRef<Set<string>>(new Set());
+  const currentMatchedHeroIdsRef = useRef<Set<string>>(new Set());
+  const currentIsMultiSelectRef = useRef(false);
+  const currentMapRecommendedHeroesRef = useRef<string[]>([]);
+  const currentSelectedHeroRef = useRef<string | null>(null);
+  const currentMergedCounterRef = useRef<typeof mergedCounterRelations>([]);
+  const currentMergedSynergyRef = useRef<typeof mergedSynergyRelations>([]);
+  
+  selectedHeroesRef.current = selectedHeroes;
+  onHeroSelectRef.current = onHeroSelect;
 
   const displayedHero = selectedHeroes.length === 1 ? heroes.find(h => h.id === selectedHeroes[0]) : null;
   const selectedHero = selectedHeroes.length === 1 ? selectedHeroes[0] : null;
@@ -363,22 +381,33 @@ const ForceGraph = ({
     }
   }, [selectedHeroes.length, activeCounterTab, synergyPartners, counteredBy, counters]);
 
+  // Sync state refs with latest values (for animation loop and incremental updates)
+  currentSelectedHeroesRef.current = selectedHeroes;
+  currentActiveCounterTabRef.current = activeCounterTab;
+  currentCommonRelatedIdsRef.current = new Set(commonRelatedIds);
+  currentMatchedHeroIdsRef.current = new Set(matchedHeroIds);
+  currentIsMultiSelectRef.current = isMultiSelect;
+  currentMapRecommendedHeroesRef.current = mapRecommendedHeroes;
+  currentSelectedHeroRef.current = selectedHero;
+  currentMergedCounterRef.current = mergedCounterRelations;
+  currentMergedSynergyRef.current = mergedSynergyRelations;
+
   const handleHeroClick = useCallback((heroId: string, event: any) => {
     event.stopPropagation();
+    const currentSelected = selectedHeroesRef.current;
     if (event.shiftKey || event.ctrlKey || event.metaKey) {
-      onHeroSelect(
-        selectedHeroes.includes(heroId)
-          ? selectedHeroes.filter(id => id !== heroId)
-          : [...selectedHeroes, heroId]
+      onHeroSelectRef.current(
+        currentSelected.includes(heroId)
+          ? currentSelected.filter(id => id !== heroId)
+          : [...currentSelected, heroId]
       );
     } else {
-      onHeroSelect(
-        selectedHeroes.length === 1 && selectedHeroes[0] === heroId ? [] : [heroId]
+      onHeroSelectRef.current(
+        currentSelected.length === 1 && currentSelected[0] === heroId ? [] : [heroId]
       );
     }
-    // 清空搜索框
     setSearchQuery('');
-  }, [selectedHeroes, onHeroSelect]);
+  }, []);
 
   const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
   const [isDraggingPanel, setIsDraggingPanel] = useState(false);
@@ -819,110 +848,85 @@ const ForceGraph = ({
   }, [isDraggingPanel]);
 
   useEffect(() => {
+    let rafId: number | null = null;
     const handleResize = () => {
       if (!containerRef.current || !svgRef.current || !simulationRef.current) return;
-      const { width, height } = containerRef.current.getBoundingClientRect();
-      d3.select(svgRef.current).attr('width', width).attr('height', height);
-      simulationRef.current.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.08).restart();
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        if (!containerRef.current || !svgRef.current || !simulationRef.current) return;
+        const { width, height } = containerRef.current.getBoundingClientRect();
+        d3.select(svgRef.current).attr('width', width).attr('height', height);
+        simulationRef.current.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.08).restart();
+      });
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
-  const prepareData = useCallback(() => {
-    const nodes: NodeDatum[] = heroes
+  const prepareBaseNodes = useCallback((): NodeDatum[] => {
+    return heroes
       .filter(h => !selectedRole || h.role === selectedRole)
-      .map(h => {
-        const radiusByStrength = (heroId: string, targetIds: string[]): number => {
-          if (targetIds.length === 0) return h.role === 'tank' ? 32 : 28;
-          if (targetIds.includes(heroId)) return 42;
-          
-          let relation;
-          if (isMultiSelect) {
-            if (commonRelatedIds.includes(heroId)) {
-              const commonItem = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
-                .find(item => item.hero.id === heroId);
-              if (commonItem) {
-                relation = { strength: commonItem.strength };
-              }
-            }
-          } else {
-            const targetId = targetIds[0];
-            if (activeCounterTab === 'synergy') {
-              relation = mergedSynergyRelations.find(r => r.source === heroId && r.target === targetId);
-            } else {
-              relation = mergedCounterRelations.find(r =>
-                (r.source === heroId && r.target === targetId) ||
-                (r.target === heroId && r.source === targetId)
-              );
-            }
-          }
-          
-          if (!relation) return h.role === 'tank' ? 28 : 24;
-          const strength = relation.strength || 1;
-          if (strength === 3) return h.role === 'tank' ? 40 : 36;
-          if (strength === 2) return h.role === 'tank' ? 34 : 30;
-          return h.role === 'tank' ? 28 : 24;
-        };
-        return {
-          id: h.id,
-          name: h.name,
-          nameEn: h.nameEn,
-          role: h.role,
-          color: h.role === 'tank' ? '#f59e0b' : h.role === 'damage' ? '#ef4444' : '#22c55e',
-          image: h.image,
-          radius: radiusByStrength(h.id, selectedHeroes),
-        };
-      });
-    const nodeIds = new Set(nodes.map(n => n.id));
+      .map(h => ({
+        id: h.id,
+        name: h.name,
+        nameEn: h.nameEn,
+        role: h.role as 'tank' | 'damage' | 'support',
+        color: h.role === 'tank' ? '#f59e0b' : h.role === 'damage' ? '#ef4444' : '#22c55e',
+        image: h.image,
+        radius: h.role === 'tank' ? 32 : 28,
+      }));
+  }, [selectedRole]);
+
+  const prepareLinks = useCallback((nodeIds: Set<string>): LinkDatum[] => {
+    if (selectedHeroes.length === 0) {
+      return mergedCounterRelations
+        .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target))
+        .map(l => ({ source: l.source, target: l.target }));
+    }
     
-    // 过滤掉被筛选掉的选中英雄（只保留在 nodeIds 中的）
     const visibleSelectedHeroes = selectedHeroes.filter(id => nodeIds.has(id));
     
-    let links: LinkDatum[] = [];
-    
     if (isMultiSelect && visibleSelectedHeroes.length > 1) {
-      // For multi-select, show links between selected heroes and common related heroes
-      // 同时过滤 commonRelatedIds，只保留在 nodeIds 中的
       const visibleCommonIds = commonRelatedIds.filter(id => nodeIds.has(id));
       if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
-        // Source is common hero, Target is one of selected heroes
-        links = (activeCounterTab === 'synergy' ? mergedSynergyRelations : mergedCounterRelations)
+        return (activeCounterTab === 'synergy' ? mergedSynergyRelations : mergedCounterRelations)
           .filter(r => visibleSelectedHeroes.includes(r.target) && visibleCommonIds.includes(r.source) && nodeIds.has(r.source) && nodeIds.has(r.target))
           .map(r => ({ source: r.source, target: r.target }));
       } else {
-        // Source is one of selected heroes, Target is common hero
-        links = mergedCounterRelations
+        return mergedCounterRelations
           .filter(r => visibleSelectedHeroes.includes(r.source) && visibleCommonIds.includes(r.target) && nodeIds.has(r.source) && nodeIds.has(r.target))
           .map(r => ({ source: r.source, target: r.target }));
       }
     } else if (selectedHeroes.length === 1) {
       const selectedHeroId = selectedHeroes[0];
-      // 如果选中的英雄被筛选掉了（不在 nodeIds 中），则不显示任何 links
-      if (!nodeIds.has(selectedHeroId)) {
-        links = [];
-      } else if (activeCounterTab === 'synergy') {
-        links = mergedSynergyRelations
+      if (!nodeIds.has(selectedHeroId)) return [];
+      if (activeCounterTab === 'synergy') {
+        return mergedSynergyRelations
           .filter(r => r.target === selectedHeroId && nodeIds.has(r.source))
           .map(r => ({ source: r.source, target: r.target }));
       } else if (activeCounterTab === 'counteredBy') {
-        links = mergedCounterRelations
+        return mergedCounterRelations
           .filter(r => r.target === selectedHeroId && nodeIds.has(r.source))
           .map(r => ({ source: r.source, target: r.target }));
       } else {
-        links = mergedCounterRelations
+        return mergedCounterRelations
           .filter(r => r.source === selectedHeroId && nodeIds.has(r.target))
           .map(r => ({ source: r.source, target: r.target }));
       }
-    } else {
-      // Default: show all counter links (but filtered by node visibility)
-      links = mergedCounterRelations
-        .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target))
-        .map(l => ({ source: l.source, target: l.target }));
     }
+    return [];
+  }, [selectedHeroes, activeCounterTab, isMultiSelect, commonRelatedIds, mergedCounterRelations, mergedSynergyRelations]);
 
+  const prepareData = useCallback(() => {
+    const nodes = prepareBaseNodes();
+    const nodeIds = new Set(nodes.map(n => n.id));
+    const links = prepareLinks(nodeIds);
     return { nodes, links };
-  }, [selectedRole, selectedHeroes, activeCounterTab, isMultiSelect, commonRelatedIds, synergyPartners, counteredBy, counters, mergedCounterRelations, mergedSynergyRelations]);
+  }, [prepareBaseNodes, prepareLinks]);
 
   useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
@@ -1005,17 +1009,20 @@ const ForceGraph = ({
 
     const simulation = d3.forceSimulation<NodeDatum>(nodes)
       .velocityDecay(0.6)
-      .alphaDecay(0.02)
+      .alphaDecay(0.035)
       .velocityDecay(0.6)
       .force('link', d3.forceLink<NodeDatum, LinkDatum>(links).id(d => d.id).distance(d => {
-        if (!selectedHero) return 140;
+        const currentSelectedHero = currentSelectedHeroRef.current;
+        const currentActiveCounterTab = currentActiveCounterTabRef.current;
+        const currentMergedCounterRelations = currentMergedCounterRef.current;
+        if (!currentSelectedHero) return 140;
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
+        const rel = currentMergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
         if (!rel) return 140;
-        const isRelated = activeCounterTab === 'counteredBy' ?
-          (targetId === selectedHero || sourceId === selectedHero) :
-          (sourceId === selectedHero || targetId === selectedHero);
+        const isRelated = currentActiveCounterTab === 'counteredBy' ?
+          (targetId === currentSelectedHero || sourceId === currentSelectedHero) :
+          (sourceId === currentSelectedHero || targetId === currentSelectedHero);
         if (!isRelated) return 140;
         return rel.strength === 3 ? 100 : rel.strength === 2 ? 120 : 140;
       }))
@@ -1036,6 +1043,7 @@ const ForceGraph = ({
     simulationRef.current = simulation;
 
     const link = g.append('g').attr('class', 'links').selectAll('line').data(links).enter().append('line').attr('stroke-width', 1.5);
+    linkSelectionRef.current = link;
 
     // Animated flowing particles group
     const particleGroup = g.append('g').attr('class', 'particles');
@@ -1102,6 +1110,7 @@ const ForceGraph = ({
       .on('start', (event, d) => { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
       .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
       .on('end', (event, d) => { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
+    nodeGroupRef.current = nodeGroup;
 
     nodeGroup.append('circle').attr('r', d => d.radius + 4).attr('fill', 'none').attr('stroke', d => d.color).attr('stroke-width', 2).attr('opacity', 0.3).attr('class', 'glow-ring');
     nodeGroup.append('circle').attr('r', d => d.radius).attr('fill', '#1a1a2e').attr('stroke', d => d.color).attr('stroke-width', 3).attr('class', 'node-circle');
@@ -1171,6 +1180,32 @@ const ForceGraph = ({
 
     nodeGroup.on('click', (event, d) => { handleHeroClick(d.id, event); });
 
+    // Pre-compute link indices for O(1) lookup in animation
+    const linkIndexMap = new Map<LinkDatum, number>();
+    links.forEach((link, i) => linkIndexMap.set(link, i));
+    
+    // computeIsRelevant reads from refs so it always uses the latest state
+    const computeIsRelevant = (sourceId: string, targetId: string): boolean => {
+      const currentSelectedHeroes = currentSelectedHeroesRef.current;
+      const currentCommonRelatedIds = currentCommonRelatedIdsRef.current;
+      const currentActiveCounterTab = currentActiveCounterTabRef.current;
+      const currentIsMultiSelect = currentIsMultiSelectRef.current;
+      const selectedHeroesSet = new Set(currentSelectedHeroes);
+      if (currentIsMultiSelect) {
+        return currentActiveCounterTab === 'counteredBy' 
+          ? (selectedHeroesSet.has(targetId) && currentCommonRelatedIds.has(sourceId))
+          : (selectedHeroesSet.has(sourceId) && currentCommonRelatedIds.has(targetId));
+      } else {
+        const targetHero = currentSelectedHeroes[0];
+        if (!targetHero) return false;
+        return currentActiveCounterTab === 'synergy' 
+          ? (targetId === targetHero || sourceId === targetHero)
+          : currentActiveCounterTab === 'counteredBy' 
+            ? targetId === targetHero 
+            : sourceId === targetHero;
+      }
+    };
+
     // Track particle animation progress
     let particleProgress = 0;
     const particleSpeed = 0.015;
@@ -1188,81 +1223,56 @@ const ForceGraph = ({
       highlightProgress += highlightSpeed;
       if (highlightProgress > 1) highlightProgress = 0;
 
-      particleGroup.selectAll<SVGCircleElement, LinkDatum>('.particle')
-        .attr('opacity', (d) => {
-          // Synergy模式下取消流动粒子
-          if (activeCounterTab === 'synergy') return 0;
-          const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
-          const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-          
-          let isRelevant = false;
-          if (isMultiSelect) {
-            isRelevant = activeCounterTab === 'counteredBy' 
-              ? (selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId))
-              : (selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId));
-          } else {
-            const targetHero = selectedHeroes[0];
-            isRelevant = activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
-          }
-          
-          if (!isRelevant) return 0;
-          return 0.9;
-        })
-        .attr('cx', (d) => {
-          const source = d.source as NodeDatum;
-          const target = d.target as NodeDatum;
-          const sourceId = source.id;
-          const targetId = target.id;
-          
-          let isRelevant = false;
-          if (isMultiSelect) {
-            isRelevant = activeCounterTab === 'counteredBy' 
-              ? (selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId))
-              : (selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId));
-          } else {
-            const targetHero = selectedHeroes[0];
-            isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
-          }
-          
-          if (!isRelevant) return 0;
-          const dx = (target.x || 0) - (source.x || 0);
-          const maxPos = activeCounterTab === 'synergy' ? 0.5 : 1;
-          const pos = ((particleProgress + (links.indexOf(d) * 0.1)) % 1) * maxPos;
-          return (source.x || 0) + dx * pos;
-        })
-        .attr('cy', (d) => {
-          const source = d.source as NodeDatum;
-          const target = d.target as NodeDatum;
-          const sourceId = source.id;
-          const targetId = target.id;
-          
-          let isRelevant = false;
-          if (isMultiSelect) {
-            isRelevant = activeCounterTab === 'counteredBy' 
-              ? (selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId))
-              : (selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId));
-          } else {
-            const targetHero = selectedHeroes[0];
-            isRelevant = activeCounterTab === 'synergy' ? (targetId === targetHero || sourceId === targetHero) : activeCounterTab === 'counteredBy' ? targetId === targetHero : sourceId === targetHero;
-          }
-          
-          if (!isRelevant) return 0;
-          const dy = (target.y || 0) - (source.y || 0);
-          const maxPos = activeCounterTab === 'synergy' ? 0.5 : 1;
-          const pos = ((particleProgress + (links.indexOf(d) * 0.1)) % 1) * maxPos;
-          return (source.y || 0) + dy * pos;
-        });
+      // Synergy mode: hide all particles (read from ref for latest state)
+      const currentActiveCounterTab = currentActiveCounterTabRef.current;
+      if (currentActiveCounterTab === 'synergy') {
+        particleGroup.selectAll<SVGCircleElement, LinkDatum>('.particle').attr('opacity', 0);
+      } else {
+        particleGroup.selectAll<SVGCircleElement, LinkDatum>('.particle')
+          .attr('opacity', (d) => {
+            const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+            const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+            return computeIsRelevant(sourceId, targetId) ? 0.9 : 0;
+          })
+          .attr('cx', (d) => {
+            const source = d.source as NodeDatum;
+            const target = d.target as NodeDatum;
+            const sourceId = source.id;
+            const targetId = target.id;
+            
+            if (!computeIsRelevant(sourceId, targetId)) return 0;
+            
+            const dx = (target.x || 0) - (source.x || 0);
+            const linkIndex = linkIndexMap.get(d) ?? 0;
+            const pos = ((particleProgress + (linkIndex * 0.1)) % 1);
+            return (source.x || 0) + dx * pos;
+          })
+          .attr('cy', (d) => {
+            const source = d.source as NodeDatum;
+            const target = d.target as NodeDatum;
+            const sourceId = source.id;
+            const targetId = target.id;
+            
+            if (!computeIsRelevant(sourceId, targetId)) return 0;
+            
+            const dy = (target.y || 0) - (source.y || 0);
+            const linkIndex = linkIndexMap.get(d) ?? 0;
+            const pos = ((particleProgress + (linkIndex * 0.1)) % 1);
+            return (source.y || 0) + dy * pos;
+          });
+      }
 
-      // Update search highlight animation
+      // Update search highlight animation (read from ref)
+      const currentMatchedHeroIds = currentMatchedHeroIdsRef.current;
       nodeGroup.selectAll<SVGCircleElement, NodeDatum>('.search-highlight')
         .attr('opacity', (d: NodeDatum) => {
-          if (!matchedHeroIds.includes(d.id)) return 0;
+          if (!currentMatchedHeroIds.has(d.id)) return 0;
           // 使用正弦波创建平滑的闪烁效果
           const opacity = 0.3 + 0.7 * Math.sin(highlightProgress * Math.PI * 2);
           return opacity;
         })
         .attr('r', (d: NodeDatum) => {
-          if (!matchedHeroIds.includes(d.id)) return d.radius + 8;
+          if (!currentMatchedHeroIds.has(d.id)) return d.radius + 8;
           // 创建脉冲效果：圆环半径随时间变化
           const pulseRadius = d.radius + 8 + 4 * Math.sin(highlightProgress * Math.PI * 2);
           return pulseRadius;
@@ -1278,14 +1288,84 @@ const ForceGraph = ({
     simulation.on('tick', () => {
       link.attr('x1', d => (d.source as NodeDatum).x || 0).attr('y1', d => (d.source as NodeDatum).y || 0).attr('x2', d => (d.target as NodeDatum).x || 0).attr('y2', d => (d.target as NodeDatum).y || 0);
       nodeGroup.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
-
-      // Save node positions
-      nodes.forEach(node => {
-        if (node.x !== undefined && node.y !== undefined) {
-          nodePositionsRef.current.set(node.id, { x: node.x, y: node.y });
-        }
-      });
     });
+
+    // Debounced position saving to avoid per-tick overhead
+    let positionSaveTimer: ReturnType<typeof setTimeout> | null = null;
+    const debouncedSavePositions = () => {
+      if (positionSaveTimer) return;
+      positionSaveTimer = setTimeout(() => {
+        positionSaveTimer = null;
+        nodes.forEach(node => {
+          if (node.x !== undefined && node.y !== undefined) {
+            nodePositionsRef.current.set(node.id, { x: node.x, y: node.y });
+          }
+        });
+        try {
+          localStorage.setItem('nodePositions', JSON.stringify(Object.fromEntries(nodePositionsRef.current)));
+        } catch { /* ignore */ }
+      }, 500);
+    };
+
+    simulation.on('end', debouncedSavePositions);
+
+    // Trigger initial visual update after SVG is built
+    requestAnimationFrame(() => {
+      if (selectedHeroes.length > 0 && nodeGroupRef.current && linkSelectionRef.current && simulationRef.current) {
+        updateGraphVisuals();
+        simulationRef.current.alpha(0.1).restart();
+      }
+    });
+
+    svg.on('click', () => onHeroSelectRef.current([]));
+
+    // Save node positions when force simulation ends (after refresh)
+    const saveNodePositions = () => {
+      try {
+        const positions = Object.fromEntries(nodePositionsRef.current);
+        localStorage.setItem('nodePositions', JSON.stringify(positions));
+      } catch (e) {
+        console.error('Failed to save node positions:', e);
+      }
+    };
+    
+    // Save positions when simulation ends
+    simulation.on('end', saveNodePositions);
+
+    return () => { 
+      simulation.stop(); 
+      if (animationRef.current !== null) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+
+      // Final save when component unmounts
+      saveNodePositions();
+      nodeGroupRef.current = null;
+      linkSelectionRef.current = null;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    prepareData,
+    selectedRole,
+    language,
+    handleHeroClick,
+  ]);
+
+  // Incremental visual update function - updates DOM attributes without rebuilding SVG
+  const updateGraphVisuals = useCallback(() => {
+    const nodeGroup = nodeGroupRef.current;
+    const linkSelection = linkSelectionRef.current;
+    const simulation = simulationRef.current;
+    if (!nodeGroup || !linkSelection || !simulation) return;
+
+    const selectedHeroes = currentSelectedHeroesRef.current;
+    const activeCounterTab = currentActiveCounterTabRef.current;
+    const isMultiSelect = currentIsMultiSelectRef.current;
+    const commonRelatedIds = currentCommonRelatedIdsRef.current;
+    const mergedCounterRelations = currentMergedCounterRef.current;
+    const mergedSynergyRelations = currentMergedSynergyRef.current;
+    const mapRecommendedHeroes = currentMapRecommendedHeroesRef.current;
 
     if (selectedHeroes.length > 0) {
       simulation.alpha(0.1).restart();
@@ -1295,7 +1375,7 @@ const ForceGraph = ({
         
         let isRelated;
         if (isMultiSelect) {
-          isRelated = commonRelatedIds.includes(d.id);
+          isRelated = commonRelatedIds.has(d.id);
         } else {
           const targetHero = selectedHeroes[0];
           if (activeCounterTab === 'synergy') {
@@ -1315,9 +1395,7 @@ const ForceGraph = ({
         
         let relation;
         if (isMultiSelect) {
-          if (commonRelatedIds.includes(d.id)) {
-            // Find relations to determine strength (use average or min or just representative)
-            // For now, we use the results from getCommonXXX which already sorted/filtered
+          if (commonRelatedIds.has(d.id)) {
             const commonItem = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
               .find(item => item.hero.id === d.id);
             if (commonItem) {
@@ -1359,7 +1437,7 @@ const ForceGraph = ({
         let hasRelation = false;
         if (selectedHeroes.length > 0) {
           if (isMultiSelect) {
-            hasRelation = selectedHeroes.includes(d.id) || commonRelatedIds.includes(d.id);
+            hasRelation = selectedHeroes.includes(d.id) || commonRelatedIds.has(d.id);
           } else {
             const targetHero = selectedHeroes[0];
             if (activeCounterTab === 'synergy') {
@@ -1380,7 +1458,7 @@ const ForceGraph = ({
           .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
       });
 
-      link.attr('stroke-opacity', d => {
+      linkSelection.attr('stroke-opacity', d => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         
@@ -1389,14 +1467,14 @@ const ForceGraph = ({
 
         if (isMultiSelect) {
           if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
-            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId);
+            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.has(sourceId);
             if (isRelevant) {
               const rel = (activeCounterTab === 'synergy' ? synergyRelations : counterRelations)
                 .find(r => r.source === sourceId && r.target === targetId);
               s = rel?.strength || 1;
             }
           } else {
-            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId);
+            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.has(targetId);
             if (isRelevant) {
               const rel = mergedCounterRelations.find(r => r.source === sourceId && r.target === targetId);
               s = rel?.strength || 1;
@@ -1419,13 +1497,12 @@ const ForceGraph = ({
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
         
         let isRelevant = false;
-        let s = 1;
 
         if (isMultiSelect) {
           if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
-            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId);
+            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.has(sourceId);
           } else {
-            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId);
+            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.has(targetId);
           }
         } else {
           const targetHero = selectedHeroes[0];
@@ -1436,7 +1513,7 @@ const ForceGraph = ({
         
         const rel = (activeCounterTab === 'synergy' ? mergedSynergyRelations : mergedCounterRelations)
           .find(r => r.source === sourceId && r.target === targetId);
-        s = rel?.strength || 1;
+        const s = rel?.strength || 1;
         
         return s === 3 ? 15 : s === 2 ? 9 : 4.5;
       }).attr('stroke', d => {
@@ -1455,9 +1532,9 @@ const ForceGraph = ({
         let isRelevant = false;
         if (isMultiSelect) {
           if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
-            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.includes(sourceId);
+            isRelevant = selectedHeroes.includes(targetId) && commonRelatedIds.has(sourceId);
           } else {
-            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId);
+            isRelevant = selectedHeroes.includes(sourceId) && commonRelatedIds.has(targetId);
           }
         } else {
           const targetHero = selectedHeroes[0];
@@ -1492,7 +1569,7 @@ const ForceGraph = ({
           .style('opacity', isRecommended ? 1 : 0)
           .attr('transform', 'translate(0, 0)');
       });
-      link.attr('stroke-opacity', d => {
+      linkSelection.attr('stroke-opacity', d => {
         if (activeCounterTab === 'synergy') {
           const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
           const targetId = typeof d.target === 'string' ? d.target : d.target.id;
@@ -1537,48 +1614,13 @@ const ForceGraph = ({
         return `url(#arrow-red-${s})`;
       });
     }
+  }, [selectedMap, synergyPartners, counteredBy, counters]);
 
-    svg.on('click', () => onHeroSelect([]));
-
-    // Save node positions when force simulation ends (after refresh)
-    const saveNodePositions = () => {
-      try {
-        const positions = Object.fromEntries(nodePositionsRef.current);
-        localStorage.setItem('nodePositions', JSON.stringify(positions));
-      } catch (e) {
-        console.error('Failed to save node positions:', e);
-      }
-    };
-    
-    // Save positions when simulation ends
-    simulation.on('end', saveNodePositions);
-
-    return () => { 
-      simulation.stop(); 
-
-      // Final save when component unmounts
-      saveNodePositions();
-    };
-  }, [
-    prepareData,
-    selectedHero,
-    language,
-    activeCounterTab,
-    selectedMap,
-    mapRecommendedHeroes,
-    onHeroSelect,
-    selectedRole,
-    t,
-    matchedHeroIds,
-    debouncedSearchQuery,
-    commonRelatedIds,
-    counteredBy,
-    counters,
-    handleHeroClick,
-    isMultiSelect,
-    selectedHeroes,
-    synergyPartners
-  ]);
+  // Phase 2: Incremental visual update - only runs when visual state changes, NOT on role/language
+  useEffect(() => {
+    if (!nodeGroupRef.current || !linkSelectionRef.current || !simulationRef.current) return;
+    updateGraphVisuals();
+  }, [selectedHeroes, activeCounterTab, isMultiSelect, commonRelatedIds, matchedHeroIds, updateGraphVisuals]);
 
   const handleZoomIn = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 1.3);
   const handleZoomOut = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 0.7);
@@ -2545,7 +2587,7 @@ const ForceGraph = ({
 
       </div>
 
-      <svg ref={svgRef} className="w-full h-full cursor-move" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
+      <svg ref={svgRef} className="w-full h-full cursor-move force-graph-container" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
 
       {/* 历史记录按钮 - 英雄克制面板左下角外侧 */}
       <div className="absolute bottom-6 right-[410px] z-10 flex flex-row gap-2 pointer-events-auto">

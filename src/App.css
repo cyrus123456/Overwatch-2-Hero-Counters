@@ -14,9 +14,15 @@
   border: 2px solid #0f172a !important;
 }
 
+/* SVG 力图画布隔离渲染 - 减少样式重算范围 */
+svg.force-graph-container {
+  contain: layout style;
+}
+
 /* 节点动画 */
 .node-group {
   transition: opacity 0.2s ease;
+  user-select: none;
 }
 
 .node-group:hover .node-circle {
@@ -84,6 +90,7 @@
 
 .glow-ring {
   animation: pulse-glow 2s ease-in-out infinite;
+  will-change: opacity;
 }
 
 /* 响应式调整 */
@@ -96,11 +103,6 @@
     width: 100%;
     max-height: 300px;
   }
-}
-
-/* 禁用文本选择 */
-.node-group {
-  user-select: none;
 }
 
 /* 拖拽时的样式 */
