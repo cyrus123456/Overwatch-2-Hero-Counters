@@ -194,6 +194,18 @@ const [isMapCopied, setIsMapCopied] = useState(false);
   const [addingHeroMapId, setAddingHeroMapId] = useState<string | null>(null);
   const addHeroFormRef = useRef<HTMLDivElement>(null);
 
+  // 移动端全屏 / PWA 提示弹框状态
+  const [showMobileDialog, setShowMobileDialog] = useState(false);
+  const [mobileDialogType, setMobileDialogType] = useState<'fullscreen' | 'pwa'>('fullscreen');
+
+  // 移动端检测：兼容 iPadOS 桌面模式（UA 显示为 Mac）
+  const isMobile = typeof window !== 'undefined' && (() => {
+    const ua = navigator.userAgent;
+    if (/Android|iPhone|iPad|iPod/i.test(ua)) return true;
+    if (/Macintosh|Mac OS X/i.test(ua) && navigator.maxTouchPoints >= 5) return true;
+    return false;
+  })();
+
   useEffect(() => {
     if (selectedMap) {
       const element = document.getElementById(`map-${selectedMap}`);
@@ -205,6 +217,59 @@ const [isMapCopied, setIsMapCopied] = useState(false);
       }
     }
   }, [selectedMap]);
+
+  // 检测是否需要显示全屏或PWA安装提示
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const ua = navigator.userAgent;
+    const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|OPR/.test(ua);
+    const isIOS = /iPhone|iPad|iPod/i.test(ua)
+      || (/Macintosh|Mac OS X/i.test(ua) && navigator.maxTouchPoints >= 5);
+
+    // iOS Safari: 检测 PWA 全屏模式 (standalone)
+    if (isSafari || isIOS) {
+      const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
+        || (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+
+      if (!isInStandaloneMode) {
+        setMobileDialogType('pwa');
+        setShowMobileDialog(true);
+      }
+      return;
+    }
+
+    // Android: 检测全屏模式
+    const doc = document as Document & { webkitFullscreenElement?: Element | null };
+    const isFullscreen = doc.fullscreenElement !== null
+      || doc.webkitFullscreenElement !== null;
+
+    if (!isFullscreen) {
+      setMobileDialogType('fullscreen');
+      setShowMobileDialog(true);
+    }
+  }, [isMobile]);
+
+  const handleEnterFullscreen = () => {
+    const elem = document.documentElement;
+    try {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else {
+        const el = elem as HTMLElement & { webkitRequestFullscreen?: () => void };
+        if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen();
+        }
+      }
+    } catch {
+      console.error('Failed to enter fullscreen');
+    }
+    setShowMobileDialog(false);
+  };
+
+  const handleDismissMobileDialog = () => {
+    setShowMobileDialog(false);
+  };
 
   useEffect(() => {
     const loaded = loadCustomMapHeroes();
@@ -982,6 +1047,50 @@ const [isMapCopied, setIsMapCopied] = useState(false);
             </Suspense>
           </div>
         </main>
+
+        {/* 移动端全屏 / PWA 提示弹框 */}
+        {showMobileDialog && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <Card className="max-w-sm w-full p-6 bg-slate-800/95 border border-slate-700 shadow-2xl text-center space-y-4">
+              <div className="flex justify-center">
+                <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center">
+                  {mobileDialogType === 'pwa' ? (
+                    <Globe className="w-8 h-8 text-cyan-400" />
+                  ) : (
+                    <Target className="w-8 h-8 text-cyan-400" />
+                  )}
+                </div>
+              </div>
+
+              <h3 className="text-lg font-bold text-slate-100">
+                {mobileDialogType === 'pwa' ? t('mobilePwaTitle') : t('mobileFullscreenTitle')}
+              </h3>
+
+              <p className="text-sm text-slate-300 leading-relaxed">
+                {mobileDialogType === 'pwa' ? t('mobilePwaDesc') : t('mobileFullscreenDesc')}
+              </p>
+
+              <div className="flex gap-3 justify-center pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDismissMobileDialog}
+                  className="border-slate-600 bg-slate-700/50 text-slate-300 hover:bg-slate-700 hover:text-white px-5"
+                >
+                  {t('later')}
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleEnterFullscreen}
+                  className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 font-bold gap-2 shadow-lg shadow-cyan-900/30"
+                >
+                  {mobileDialogType === 'pwa' ? t('gotIt') : t('enterFullscreen')}
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </Card>
+          </div>
+        )}
       </div>
     </TooltipProvider>
   );
