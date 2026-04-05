@@ -1,5 +1,20 @@
 /* 自定义样式 */
 
+/* 移动端缩小根字号 */
+/* 手机小屏幕 */
+@media (pointer: coarse) and (max-width: 868px) {
+  html {
+    font-size: 7px;
+  }
+}
+
+/* 平板中等屏幕 */
+@media (pointer: coarse) and (min-width: 869px) {
+  html {
+    font-size: 9px;
+  }
+}
+
 /* 滑块样式 */
 [data-slot="slider-track"] {
   background: rgba(51, 65, 85, 0.5) !important;

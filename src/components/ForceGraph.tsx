@@ -732,11 +732,11 @@ const ForceGraph = ({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-sm font-bold text-white">{heroName}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
+                  <span className={`text-[0.625rem] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
                     {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
                   </span>
                   {isCustom && (
-                    <Badge variant="outline" className="text-[9px] px-1 py-0 text-white border-white/50 bg-white/10">
+                    <Badge variant="outline" className="text-[0.5625rem] px-1 py-0 text-white border-white/50 bg-white/10">
                       {t('custom')}
                     </Badge>
                   )}
@@ -744,11 +744,11 @@ const ForceGraph = ({
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
-                  <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
+                  <Badge variant="secondary" className="text-[0.5625rem] px-1 py-0 font-bold bg-cyan-400">
                     {t('mapRecommended')}
                   </Badge>
                 )}
-                <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${s === 3 ? 'bg-red-400' : s === 2 ? 'bg-orange-400' : 'bg-slate-400'}`}>
+                <Badge variant="secondary" className={`text-[0.5625rem] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${s === 3 ? 'bg-red-400' : s === 2 ? 'bg-orange-400' : 'bg-slate-400'}`}>
                   {s === 3 ? t('hardCounter') : s === 2 ? t('strongCounter') : t('softCounter')} LV.{s}
                 </Badge>
                 {!isMulti && (
@@ -775,7 +775,7 @@ const ForceGraph = ({
                 )}
               </div>
             </div>
-            <p className={`text-[11px] leading-relaxed mt-1 ${colorClass.includes('red') ? 'text-red-300' : 'text-green-300'}`}>
+            <p className={`text-[0.6875rem] leading-relaxed mt-1 ${colorClass.includes('red') ? 'text-red-300' : 'text-green-300'}`}>
               {formattedReason}
             </p>
           </div>
@@ -885,7 +885,14 @@ const ForceGraph = ({
     };
   }, []);
 
+  const isTouchDevice = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || (window.matchMedia?.('(pointer: coarse)')?.matches ?? false);
+  }, []);
+
   const prepareBaseNodes = useCallback((): NodeDatum[] => {
+    const baseRadius = isTouchDevice ? 14 : 32;
+    const otherRadius = isTouchDevice ? 12 : 28;
     return heroes
       .filter(h => !selectedRole || h.role === selectedRole)
       .map(h => ({
@@ -895,9 +902,9 @@ const ForceGraph = ({
         role: h.role as 'tank' | 'damage' | 'support',
         color: h.role === 'tank' ? '#f59e0b' : h.role === 'damage' ? '#ef4444' : '#22c55e',
         image: h.image,
-        radius: h.role === 'tank' ? 32 : 28,
+        radius: h.role === 'tank' ? baseRadius : otherRadius,
       }));
-  }, [selectedRole]);
+  }, [selectedRole, isTouchDevice]);
 
   const prepareLinks = useCallback((nodeIds: Set<string>): LinkDatum[] => {
     if (selectedHeroes.length === 0) {
@@ -1138,7 +1145,7 @@ const ForceGraph = ({
       .attr('opacity', 0)
       .attr('class', 'search-highlight');
     nodeGroup.append('image').attr('xlink:href', d => d.image).attr('x', d => -(d.radius - 2)).attr('y', d => -(d.radius - 2)).attr('width', d => (d.radius - 2) * 2).attr('height', d => (d.radius - 2) * 2).attr('clip-path', d => `url(#clip-${d.id})`).attr('preserveAspectRatio', 'xMidYMid slice').style('pointer-events', 'none');
-    nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', '12px').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 1px 3px rgba(0,0,0,0.8)').style('opacity', '1');
+    nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', '0.75rem').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 0.0625rem 0.1875rem rgba(0,0,0,0.8)').style('opacity', '1');
     
     // Add selection indicator (checkbox) at bottom right of the node image
     const checkGroup = nodeGroup.append('g')
@@ -1188,7 +1195,7 @@ const ForceGraph = ({
       .attr('text-anchor', 'middle')
       .attr('dy', d => -(d.radius))
       .attr('fill', '#0f172a')
-      .attr('font-size', '9px')
+      .attr('font-size', '0.5625rem')
       .attr('font-weight', '800')
       .text(t('mapRecommended'));
 
@@ -1568,7 +1575,7 @@ const ForceGraph = ({
     <div ref={containerRef} className="relative w-full h-full">
       {/* 地图数据操作面板 - 左上角 */}
       {mapDataActions && (
-        <div className={`absolute top-4 left-[410px] z-20 border border-slate-700 px-3 py-2 rounded-lg bg-slate-800/60 backdrop-blur-md transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
+        <div className={`absolute top-4 left-[25.625rem] z-20 border border-slate-700 px-3 py-2 rounded-lg bg-slate-800/60 backdrop-blur-md transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
           <span className="text-xs text-slate-400 block mb-1">{t('saveCustomData')}</span>
           <div className="flex items-center gap-2">
             <Tooltip>
@@ -1618,7 +1625,7 @@ const ForceGraph = ({
       )}
 
       {/* 自定义关系数据操作面板 - 右上角 */}
-      <div className="absolute top-4 right-[410px] z-20 border border-slate-700 px-3 py-2 rounded-lg bg-slate-800/60 backdrop-blur-md">
+      <div className="absolute top-4 right-[25.625rem] z-20 border border-slate-700 px-3 py-2 rounded-lg bg-slate-800/60 backdrop-blur-md">
         <span className="text-xs text-slate-400 block mb-1">{t('saveCustomData')}</span>
         <div className="flex items-center gap-2">
           <Tooltip>
@@ -1695,7 +1702,7 @@ const ForceGraph = ({
                 <div className="flex items-center gap-4 mb-4 flex-shrink-0" onMouseDown={handlePanelDragStart}>
                   {displayedHero ? (
                     <>
-                      <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `3px solid ${displayedHero.color}`, backgroundColor: '#1a1a2e' }}>
+                      <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `0.1875rem solid ${displayedHero.color}`, backgroundColor: '#1a1a2e' }}>
                         <img src={displayedHero.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
                       </div>
                       <div className="flex-1">
@@ -1739,17 +1746,17 @@ const ForceGraph = ({
                           if (!hero) return null;
                           return (
                             <div key={heroId} className="flex items-center gap-2 bg-slate-800/40 p-2 rounded-lg border border-slate-700/50 min-w-0 flex-shrink-0">
-                              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `2px solid ${hero.color}`, backgroundColor: '#1a1a2e' }}>
+                              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ border: `0.125rem solid ${hero.color}`, backgroundColor: '#1a1a2e' }}>
                                 <img src={hero.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
                               </div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1">
                                   <span className="text-xs font-bold text-slate-100 truncate">{getHeroName(hero, language)}</span>
-                                  <span className="text-[10px] px-1 py-0.5 rounded border font-medium" style={{ borderColor: hero.color, color: hero.color }}>
+                                  <span className="text-[0.625rem] px-1 py-0.5 rounded border font-medium" style={{ borderColor: hero.color, color: hero.color }}>
                                     {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
                                   </span>
                                 </div>
-                                <p className="text-[10px] text-slate-400 truncate">{language === 'zh' ? hero.nameEn : hero.name}</p>
+                                <p className="text-[0.625rem] text-slate-400 truncate">{language === 'zh' ? hero.nameEn : hero.name}</p>
                               </div>
                             </div>
                           );
@@ -1765,7 +1772,7 @@ const ForceGraph = ({
                       <ShieldAlert className="w-3.5 h-3.5 flex-shrink-0" />
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="text-[11px] truncate">{isMultiSelect ? t('commonPrefix') : ''}{t('counteredBy')}</span>
+                          <span className="text-[0.6875rem] truncate">{isMultiSelect ? t('commonPrefix') : ''}{t('counteredBy')}</span>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>{isMultiSelect ? t('commonPrefix') : ''}{t('counteredBy')}</p>
@@ -1777,7 +1784,7 @@ const ForceGraph = ({
                       <Swords className="w-3.5 h-3.5 flex-shrink-0" />
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="text-[11px] truncate">{isMultiSelect ? t('commonPrefix') : ''}{t('counters')}</span>
+                          <span className="text-[0.6875rem] truncate">{isMultiSelect ? t('commonPrefix') : ''}{t('counters')}</span>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>{isMultiSelect ? t('commonPrefix') : ''}{t('counters')}</p>
@@ -1789,7 +1796,7 @@ const ForceGraph = ({
                       <Users className="w-3.5 h-3.5 flex-shrink-0" />
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="text-[11px] truncate">{isMultiSelect ? t('commonPrefix') : ''}{t('synergy')}</span>
+                          <span className="text-[0.6875rem] truncate">{isMultiSelect ? t('commonPrefix') : ''}{t('synergy')}</span>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>{isMultiSelect ? t('commonPrefix') : ''}{t('synergy')}</p>
@@ -1988,11 +1995,11 @@ const ForceGraph = ({
                                       <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 flex-wrap">
                                           <span className="text-sm font-bold text-white">{getHeroName(hero, language)}</span>
-                                          <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
+                                          <span className={`text-[0.625rem] px-1.5 py-0.5 rounded border font-medium ${hero.role === 'tank' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : hero.role === 'damage' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30'}`}>
                                             {hero.role === 'tank' ? t('tank') : hero.role === 'damage' ? t('damage') : t('support')}
                                           </span>
                                           {isCustom && (
-                                            <Badge variant="outline" className="text-[9px] px-1 py-0 text-white border-white/50 bg-white/10">
+                                            <Badge variant="outline" className="text-[0.5625rem] px-1 py-0 text-white border-white/50 bg-white/10">
                                               {t('custom')}
                                             </Badge>
                                           )}
@@ -2000,11 +2007,11 @@ const ForceGraph = ({
                                       </div>
                                       <div className="flex items-center gap-1.5 flex-shrink-0">
                                         {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
-                                          <Badge variant="secondary" className="text-[9px] px-1 py-0 font-bold bg-cyan-400">
+                                          <Badge variant="secondary" className="text-[0.5625rem] px-1 py-0 font-bold bg-cyan-400">
                                             {t('mapRecommended')}
                                           </Badge>
                                         )}
-                                        <Badge variant="secondary" className={`text-[9px] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${partner.strength === 3 ? 'bg-red-500' : partner.strength === 2 ? 'bg-yellow-500' : 'bg-slate-400'}`}>
+                                        <Badge variant="secondary" className={`text-[0.5625rem] px-1 py-0 text-slate-900 font-bold shadow-sm border-none ${partner.strength === 3 ? 'bg-red-500' : partner.strength === 2 ? 'bg-yellow-500' : 'bg-slate-400'}`}>
                                           {partner.strength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : partner.strength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{partner.strength}
                                         </Badge>
                                         {!isMultiSelect && (
@@ -2030,7 +2037,7 @@ const ForceGraph = ({
                                         )}
                                       </div>
                                     </div>
-                                    <p className="text-[11px] text-purple-300 leading-relaxed mt-1">
+                                    <p className="text-[0.6875rem] text-purple-300 leading-relaxed mt-1">
                                       {!isMultiSelect 
                                         ? getSynergyReason(hero.id, selectedHeroes[0], language)
                                         : (() => {
@@ -2135,7 +2142,7 @@ const ForceGraph = ({
                       <span className="text-xs font-semibold text-white">{activeCounterTab === 'counteredBy' ? t('counteredByTemplate') : activeCounterTab === 'counters' ? t('countersTemplate') : t('synergyDesc')}</span>
                     </div>
                     {(activeCounterTab === 'synergy' ? synergyPartners.length > 0 : (activeCounterTab === 'counteredBy' ? counteredBy : counters).length > 0) && (
-                      <Button variant="ghost" size="sm" className={`h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-slate-200 ${activeCounterTab === 'synergy' ? 'hover:text-purple-400' : 'hover:text-cyan-400'}`} onClick={(e) => {
+                      <Button variant="ghost" size="sm" className={`h-7 px-2 text-[0.625rem] gap-1.5 hover:bg-slate-800 text-slate-200 ${activeCounterTab === 'synergy' ? 'hover:text-purple-400' : 'hover:text-cyan-400'}`} onClick={(e) => {
                         e.stopPropagation();
                         let text = '';
                         const commonHeroesNames = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
@@ -2194,7 +2201,7 @@ const ForceGraph = ({
                       </Button>
                     )}
                   </div>
-                  <p className="text-[10px] text-slate-200 mb-2 leading-tight">{t('copyTip')}</p>
+                  <p className="text-[0.625rem] text-slate-200 mb-2 leading-tight">{t('copyTip')}</p>
                   <div
                     className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs leading-relaxed text-slate-200 select-all cursor-pointer hover:border-slate-700 relative group transition-colors"
                     onDoubleClick={(e) => {
@@ -2323,7 +2330,7 @@ const ForceGraph = ({
                         }
                       })()
                     ) : t('noCounterData'))}
-                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"><span className="text-[10px] text-slate-200 bg-slate-900 px-1 rounded">{t('doubleClickToCopy')}</span></div>
+                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"><span className="text-[0.625rem] text-slate-200 bg-slate-900 px-1 rounded">{t('doubleClickToCopy')}</span></div>
                   </div>
                 </div>
               </div>
@@ -2339,7 +2346,7 @@ const ForceGraph = ({
         </div>
       </div>
 
-      <div className={`absolute bottom-6 left-[410px] z-10 flex flex-col gap-3 pointer-events-auto transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
+      <div className={`absolute bottom-6 left-[25.625rem] z-10 flex flex-col gap-3 pointer-events-auto transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-80'}`}>
         {/* 网络节点介绍 - 问号图标 */}
         <Popover open={isIntroOpen} onOpenChange={setIsIntroOpen}>
           <PopoverTrigger asChild>
@@ -2370,34 +2377,34 @@ const ForceGraph = ({
 
               <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-1">
                 {/* 克制强度说明 - 节点尺寸 + 连线箭头 */}
-                <div className="text-[11px] text-slate-200">
+                <div className="text-[0.6875rem] text-slate-200">
 
-                  <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('nodeSizeTip')}</p>
+                  <p className="text-[0.625rem] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('nodeSizeTip')}</p>
                   <div className="flex items-center justify-center gap-6 px-2">
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-red-500/50">
                         <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-[9px] text-red-400 font-medium">{t('nodeSizeLv3')}</span>
+                      <span className="text-[0.5625rem] text-red-400 font-medium">{t('nodeSizeLv3')}</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-orange-500/50">
                         <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-[9px] text-orange-400 font-medium">{t('nodeSizeLv2')}</span>
+                      <span className="text-[0.5625rem] text-orange-400 font-medium">{t('nodeSizeLv2')}</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-5 h-5 rounded-full overflow-hidden ring-2 ring-slate-500/50 opacity-70">
                         <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png" alt="" className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-[9px] text-slate-400 font-medium">{t('nodeSizeLv1')}</span>
+                      <span className="text-[0.5625rem] text-slate-400 font-medium">{t('nodeSizeLv1')}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="text-[11px] text-slate-200">
+                <div className="text-[0.6875rem] text-slate-200">
 
-                  <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1 pt-4">{t('arrowDirection')} <span className="text-slate-400 normal-case font-normal">({t('whoCountersWho')})</span></p>
+                  <p className="text-[0.625rem] text-cyan-400 font-semibold uppercase tracking-wider mb-1 pt-4">{t('arrowDirection')} <span className="text-slate-400 normal-case font-normal">({t('whoCountersWho')})</span></p>
                   <div className="flex items-center gap-4 px-2">
                     <div className="flex items-center gap-2">
                       <div className="flex items-center">
@@ -2439,22 +2446,22 @@ const ForceGraph = ({
                 </div>
 
                 {/* 地图优势因素说明 */}
-                <div className="text-[11px] text-slate-200">
-                  <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1 pt-4">{t('mapFactor')}</p>
+                <div className="text-[0.6875rem] text-slate-200">
+                  <p className="text-[0.625rem] text-cyan-400 font-semibold uppercase tracking-wider mb-1 pt-4">{t('mapFactor')}</p>
                   <div className="flex items-center gap-2 px-2">
                     <span className="text-slate-300">{t('mapRecommendedTip')}</span>
                   </div>
                 </div>
 
-                <div className="text-[11px] text-slate-200">
+                <div className="text-[0.6875rem] text-slate-200">
 
-                  <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('networkFilter')}</p>
-                  <p className="text-[11px] text-slate-300 leading-relaxed mb-1">{t('networkFilterDesc')}</p>
+                  <p className="text-[0.625rem] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('networkFilter')}</p>
+                  <p className="text-[0.6875rem] text-slate-300 leading-relaxed mb-1">{t('networkFilterDesc')}</p>
                 </div>
 
                 {/* 交互说明 */}
-                <div className="text-[11px] text-slate-200">
-                  <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('interactionGuide')}</p>
+                <div className="text-[0.6875rem] text-slate-200">
+                  <p className="text-[0.625rem] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('interactionGuide')}</p>
                   <div className="space-y-1.5 mt-2">
                     
                     <div className="text-amber-300 flex items-start gap-2 bg-amber-900/20 p-2 rounded-lg border border-amber-800/30">
@@ -2528,7 +2535,7 @@ const ForceGraph = ({
       <svg ref={svgRef} className="w-full h-full cursor-move force-graph-container" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
 
       {/* 历史记录按钮 - 英雄克制面板左下角外侧 */}
-      <div className="absolute bottom-6 right-[410px] z-10 flex flex-row gap-2 pointer-events-auto">
+      <div className="absolute bottom-6 right-[25.625rem] z-10 flex flex-row gap-2 pointer-events-auto">
         <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
           <PopoverTrigger asChild>
             <Button

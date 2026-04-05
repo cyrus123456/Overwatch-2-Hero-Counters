@@ -111,11 +111,11 @@ const MapHeroAvatar = React.memo(({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className={`w-[22px] h-[22px] rounded-full overflow-hidden border flex-shrink-0 shadow-md cursor-help ring-1 ${customHero ? 'border-cyan-500/50 ring-cyan-500/30' : 'border-slate-900 ring-slate-800/50'}`}>
+        <div className={`w-[1.375rem] h-[1.375rem] rounded-full overflow-hidden border flex-shrink-0 shadow-md cursor-help ring-1 ${customHero ? 'border-cyan-500/50 ring-cyan-500/30' : 'border-slate-900 ring-slate-800/50'}`}>
           <img src={hero.image} alt="" className="w-full h-full object-cover scale-110" loading="lazy" />
         </div>
       </TooltipTrigger>
-      <TooltipContent side="right" className="bg-slate-900 border-slate-700 p-3 max-w-[240px] z-[100] shadow-2xl rounded-lg backdrop-blur-xl">
+      <TooltipContent side="right" className="bg-slate-900 border-slate-700 p-3 max-w-[15rem] z-[100] shadow-2xl rounded-lg backdrop-blur-xl">
         <div className="flex flex-col gap-1.5">
           <span className="text-sm font-black text-cyan-400 tracking-wider uppercase border-b border-slate-800 pb-1">
             {language === 'zh' ? hero.name : hero.nameEn}
@@ -455,7 +455,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                     <h1 className="text-lg font-black bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent leading-none mb-1">
                       {t('title')}
                     </h1>
-                    <p className="text-[10px] text-white uppercase tracking-widest font-bold">{t('subtitle')}</p>
+                    <p className="text-[0.625rem] text-white uppercase tracking-widest font-bold">{t('subtitle')}</p>
                   </div>
                 </div>
 
@@ -463,13 +463,13 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                   <div className="flex flex-col">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-lg font-black text-cyan-400 font-mono tracking-tighter">{heroes.length}</span>
-                      <span className="text-[9px] text-white uppercase tracking-widest font-bold">{t('totalHeroes')}</span>
+                      <span className="text-[0.5625rem] text-white uppercase tracking-widest font-bold">{t('totalHeroes')}</span>
                     </div>
                   </div>
                   <div className="flex flex-col">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-lg font-black text-red-500 font-mono tracking-tighter">400+</span>
-                      <span className="text-[9px] text-white uppercase tracking-widest font-bold">{t('counterRelations')}</span>
+                      <span className="text-[0.5625rem] text-white uppercase tracking-widest font-bold">{t('counterRelations')}</span>
                     </div>
                   </div>
                 </div>
@@ -479,7 +479,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                     <div className="flex items-center gap-2">
                     <span className="text-xs text-slate-400 whitespace-nowrap">{t('selectLanguage')}</span>
                     <Select value={language} onValueChange={(v) => setLanguage(v as Language)}>
-                      <SelectTrigger className="border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-white h-8 px-3 rounded-full transition-all data-[state=open]:bg-slate-700 flex items-center gap-2 min-w-[100px]">
+                      <SelectTrigger className="border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-white h-8 px-3 rounded-full transition-all data-[state=open]:bg-slate-700 flex items-center gap-2 min-w-[6.25rem]">
                         <Globe className="w-4 h-4 text-cyan-400 flex-shrink-0" />
                         <span className="truncate text-xs">{languages.find(l => l.value === language)?.nativeName}</span>
                       </SelectTrigger>
@@ -512,7 +512,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
               <TooltipTrigger asChild>
                 <button
                   onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-                  className="absolute -right-[38px] top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
+                  className="absolute -right-[2.375rem] top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
                 >
                   <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isDrawerOpen ? '' : 'rotate-180'}`} />
                 </button>
@@ -526,14 +526,14 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                 <div className="flex items-center justify-between flex-shrink-0 gap-2">
                   <div className="flex items-center gap-3 min-w-0">
                     <MapPin className="w-6 h-6 text-cyan-400 flex-shrink-0" />
-                    <h3 className="text-xl font-bold text-slate-100 uppercase tracking-wide max-w-[170px] break-words leading-tight">{t('mapRecommendations')}</h3>
+                    <h3 className="text-xl font-bold text-slate-100 uppercase tracking-wide max-w-[10.625rem] break-words leading-tight">{t('mapRecommendations')}</h3>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <a
                       href="https://wj.qq.com/s2/25861398/c38c/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-cyan-400 hover:text-cyan-300 underline decoration-cyan-400/50 hover:decoration-cyan-400 underline-offset-2 transition-all max-w-[100px] break-words leading-tight"
+                      className="text-xs text-cyan-400 hover:text-cyan-300 underline decoration-cyan-400/50 hover:decoration-cyan-400 underline-offset-2 transition-all max-w-[6.25rem] break-words leading-tight"
                     >
                       {t('mapHeroSurvey')}
                     </a>
@@ -672,7 +672,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                             <div className="mb-2 flex items-center justify-between">
                               <div className="flex items-center gap-3">
                                 <span className="text-xs font-semibold text-white">{t('startingLineup')}</span>
-                                <span className="text-[10px] text-slate-400">{t('copyLineupTip')}</span>
+                                <span className="text-[0.625rem] text-slate-400">{t('copyLineupTip')}</span>
                               </div>
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -705,7 +705,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                      <Button 
                                        variant="ghost" 
                                        size="sm" 
-                                       className="h-7 px-2 text-[10px] gap-1.5 hover:bg-slate-800 text-white hover:text-cyan-400"
+                                       className="h-7 px-2 text-[0.625rem] gap-1.5 hover:bg-slate-800 text-white hover:text-cyan-400"
                                      >
                                        {isMapCopied ? <Copy className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
                                         <span>{isMapCopied ? t('copied') : t('copy')}</span>
@@ -715,7 +715,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   <TooltipContent side="top" className="p-3 bg-slate-900 border-slate-700 max-w-lg z-[100]">
                                    <div className="space-y-2">
                                       <p className="text-xs font-bold text-cyan-400">{t('previewContent')}</p>
-                                       <div className="text-[10px] text-white whitespace-pre-wrap bg-slate-800 p-2 rounded max-h-64 overflow-y-auto">
+                                       <div className="text-[0.625rem] text-white whitespace-pre-wrap bg-slate-800 p-2 rounded max-h-64 overflow-y-auto">
                                          {(() => {
                                            const sortedHeroes = sortHeroesByRole(map.recommendedHeroes);
                                            const heroNames = sortedHeroes.map(heroId => {
@@ -769,11 +769,11 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                     <div className="flex-1 min-w-0">
                                       <div className="flex items-center gap-2 flex-wrap">
                                         <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
-                                        <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
+                                        <span className={`text-[0.625rem] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
                                           {roleNames[hero.role]}
                                         </span>
                                       </div>
-                                      <p className="text-[11px] text-slate-300 leading-relaxed mt-1">{map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || ''}</p>
+                                      <p className="text-[0.6875rem] text-slate-300 leading-relaxed mt-1">{map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || ''}</p>
                                     </div>
                                     <Button
                                       variant="ghost"
@@ -814,14 +814,14 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                     <div className="flex-1 min-w-0">
                                       <div className="flex items-center gap-2 flex-wrap">
                                         <p className="text-sm font-black text-slate-200 tracking-tight">{language === 'zh' ? hero.name : hero.nameEn}</p>
-                                        <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
+                                        <span className={`text-[0.625rem] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
                                           {roleNames[hero.role]}
                                         </span>
-                                        <Badge variant="outline" className="text-[9px] px-1 py-0 text-white border-white/50 bg-white/10">
+                                        <Badge variant="outline" className="text-[0.5625rem] px-1 py-0 text-white border-white/50 bg-white/10">
                                           {t('custom')}
                                         </Badge>
                                       </div>
-                                      <p className="text-[11px] text-slate-300 leading-relaxed mt-1">{customHero.reason}</p>
+                                      <p className="text-[0.6875rem] text-slate-300 leading-relaxed mt-1">{customHero.reason}</p>
                                     </div>
                                     <Button
                                       variant="ghost"
@@ -928,7 +928,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                 onClick={() => setSelectedRole(null)}
               >
                 <Target className="w-4 h-4" />
-                <span className="text-[11px] font-black uppercase tracking-widest">{t('allHeroes')}</span>
+                <span className="text-[0.6875rem] font-black uppercase tracking-widest">{t('allHeroes')}</span>
               </Button>
               <div className="w-px h-4 bg-slate-800 mx-1" />
               {roles.map(role => (
@@ -944,10 +944,10 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                   onClick={() => setSelectedRole(role.id)}
                 >
                   <role.icon className="w-4 h-4" style={{ color: selectedRole === role.id ? '#fff' : role.color }} />
-                  <span className="text-[11px] font-black uppercase tracking-widest">{role.name}</span>
+                  <span className="text-[0.6875rem] font-black uppercase tracking-widest">{role.name}</span>
                   <Badge 
                     variant="secondary" 
-                    className={`ml-1 text-[10px] h-4.5 px-2 font-mono font-black ${
+                    className={`ml-1 text-[0.625rem] h-4.5 px-2 font-mono font-black ${
                       selectedRole === role.id ? 'bg-white/20 text-white border-transparent' : 'bg-slate-900 text-white border-slate-800'
                     }`}
                   >
