@@ -29,9 +29,11 @@ import useDebounce from '@/hooks/useDebounce';
 import { useMemoizedHeroes } from '@/hooks/useMemoizedHeroes';
 import { useRelationMaps } from '@/hooks/useRelationMaps';
 import { useI18n } from '@/i18n';
+import { cn } from '@/lib/utils';
 import * as d3 from 'd3';
 import {
   Check,
+  ChevronLeft,
   Copy,
   FileText,
   HelpCircle,
@@ -172,6 +174,7 @@ const ForceGraph = ({
   const [heroSnapshots, setHeroSnapshots] = useState<{ id: string; heroIds: string[]; timestamp: number }[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isCounterPanelCollapsed, setIsCounterPanelCollapsed] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const isMultiSelect = selectedHeroes.length > 1;
 
@@ -1625,7 +1628,10 @@ const ForceGraph = ({
       )}
 
       {/* 自定义关系数据操作面板 - 右上角 */}
-      <div className="absolute top-4 right-[25.625rem] z-20 border border-slate-700 px-3 py-2 rounded-lg bg-slate-800/60 backdrop-blur-md">
+      <div className={cn(
+        "absolute top-4 right-[25.625rem] z-20 border border-slate-700 px-3 py-2 rounded-lg bg-slate-800/60 backdrop-blur-md transition-transform duration-300",
+        isCounterPanelCollapsed ? "translate-x-80" : "translate-x-0"
+      )}>
         <span className="text-xs text-slate-400 block mb-1">{t('saveCustomData')}</span>
         <div className="flex items-center gap-2">
           <Tooltip>
@@ -1674,8 +1680,25 @@ const ForceGraph = ({
       </div>
 
       {/* 英雄详情面板 */}
-      <div className="absolute z-10 w-96 flex flex-col" style={{ top: '1rem', right: '1rem', bottom: '1rem' }}>
-        <div className="flex-1 overflow-hidden pointer-events-auto h-full">
+      <div className={cn(
+        "absolute z-10 w-96 flex flex-col transition-transform duration-300",
+        isCounterPanelCollapsed ? "translate-x-80" : "translate-x-0"
+      )} style={{ top: '1rem', right: '1rem', bottom: '1rem' }}>
+        {/* 折叠按钮 - 放在面板左侧外面 */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => setIsCounterPanelCollapsed(!isCounterPanelCollapsed)}
+              className="absolute -left-[2.375rem] top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
+            >
+              <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isCounterPanelCollapsed ? '' : 'rotate-180'}`} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="left">
+            <p>{isCounterPanelCollapsed ? '展开面板' : '收起面板'}</p>
+          </TooltipContent>
+        </Tooltip>
+        <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
           <Card className="p-3 bg-slate-800/60 border-slate-700 backdrop-blur-md shadow-xl h-full flex flex-col gap-1">
             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-700/50 flex-shrink-0">
               <ShieldAlert className="w-5 h-5 text-cyan-400 flex-shrink-0" />
@@ -2535,7 +2558,10 @@ const ForceGraph = ({
       <svg ref={svgRef} className="w-full h-full cursor-move force-graph-container" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
 
       {/* 历史记录按钮 - 英雄克制面板左下角外侧 */}
-      <div className="absolute bottom-6 right-[25.625rem] z-10 flex flex-row gap-2 pointer-events-auto">
+      <div className={cn(
+        "absolute bottom-6 right-[25.625rem] z-10 flex flex-row gap-2 pointer-events-auto transition-transform duration-300",
+        isCounterPanelCollapsed ? "translate-x-80" : "translate-x-0"
+      )}>
         <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -2618,8 +2644,7 @@ const ForceGraph = ({
           </PopoverContent>
         </Popover>
       </div>
-      
-      {/* 英雄搜索框 */}
+
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 w-80 pointer-events-auto">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white z-10" />
