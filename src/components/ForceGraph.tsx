@@ -897,8 +897,6 @@ const ForceGraph = ({
   }, []);
 
   const prepareBaseNodes = useCallback((): NodeDatum[] => {
-    const baseRadius = isTouchDevice ? 14 : 32;
-    const otherRadius = isTouchDevice ? 12 : 28;
     return heroes
       .filter(h => !selectedRole || h.role === selectedRole)
       .map(h => ({
@@ -908,7 +906,7 @@ const ForceGraph = ({
         role: h.role as 'tank' | 'damage' | 'support',
         color: h.role === 'tank' ? '#f59e0b' : h.role === 'damage' ? '#ef4444' : '#22c55e',
         image: h.image,
-        radius: h.role === 'tank' ? baseRadius : otherRadius,
+        radius: h.role === 'tank' ? 32 : 28,
       }));
   }, [selectedRole, isTouchDevice]);
 
