@@ -123,8 +123,16 @@ useEffect(() => {
 }, []);
 ```
 
-## TailwindCSS
+## TailwindCSS & Styling Guidelines
 
+### Unit Conventions
+- **CSS files**: Prioritize `rem` units over `px`
+- **TailwindCSS classes**: Never use arbitrary value syntax with `px` units, e.g., `[22.5rem]`, `[2.375rem]`
+  - Instead, use Tailwind's built-in spacing scale: divide the pixel value by 4 and use `left-{value}/4`, `w-{value}/4`, etc.
+  - Example: `22.5rem` → calculate rem equivalent or use `translate-x-[22rem]`; for pixel values like `38px` → `w-[9.5rem]` or find closest Tailwind class
+  - For common sizes, prefer standard Tailwind classes: `w-7` (1.75rem/28px), `h-14` (3.5rem/56px), etc.
+
+### TailwindCSS
 - Use `cn()` from `@/lib/utils` for conditional classes
 - Follow custom colors in `tailwind.config.js`
 
