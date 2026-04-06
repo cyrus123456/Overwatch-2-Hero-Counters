@@ -120,6 +120,9 @@ const ForceGraph = ({
   deletedDefaultHeroes = {},
   mapDataActions
 }: ForceGraphProps) => {
+  /** 移动端画布整体等比缩放倍数 */
+  const MOBILE_SCALE = 0.6;
+
   const selectedMapData = useMemo(() => selectedMap ? maps.find(m => m.id === selectedMap) : null, [selectedMap]);
   const mapRecommendedHeroes = useMemo(() => {
     if (!selectedMapData || !selectedMap) return [];
@@ -1019,8 +1022,11 @@ const ForceGraph = ({
       })
       .on('zoom', (event) => g.attr('transform', event.transform));
     svg.call(zoom);
-    // 初始化时设置 transform 为 identity，确保 D3 内部状态与 DOM 一致，避免首次拖拽时画布跳跃
-    svg.call(zoom.transform, d3.zoomIdentity);
+    // 初始化时设置 transform：移动端按 MOBILE_SCALE 围绕画布中心等比缩小，桌面端为 identity
+    const initialTransform = isTouchDevice
+      ? d3.zoomIdentity.translate(width / 2, height / 2).scale(MOBILE_SCALE).translate(-width / 2, -height / 2)
+      : d3.zoomIdentity;
+    svg.call(zoom.transform, initialTransform);
     zoomRef.current = zoom;
 
     const { nodes, links } = prepareData();
