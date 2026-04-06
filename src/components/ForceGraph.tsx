@@ -1152,7 +1152,7 @@ const ForceGraph = ({
       .attr('opacity', 0)
       .attr('class', 'search-highlight');
     nodeGroup.append('image').attr('xlink:href', d => d.image).attr('x', d => -(d.radius - 2)).attr('y', d => -(d.radius - 2)).attr('width', d => (d.radius - 2) * 2).attr('height', d => (d.radius - 2) * 2).attr('clip-path', d => `url(#clip-${d.id})`).attr('preserveAspectRatio', 'xMidYMid slice').style('pointer-events', 'none');
-    nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', '0.75rem').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 0.0625rem 0.1875rem rgba(0,0,0,0.8)').style('opacity', '1');
+    nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', isTouchDevice ? '2.25rem' : '0.75rem').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 0.0625rem 0.1875rem rgba(0,0,0,0.8)').style('opacity', '1');
     
     // Add selection indicator (checkbox) at bottom right of the node image
     const checkGroup = nodeGroup.append('g')
@@ -1202,7 +1202,7 @@ const ForceGraph = ({
       .attr('text-anchor', 'middle')
       .attr('dy', d => -(d.radius))
       .attr('fill', '#0f172a')
-      .attr('font-size', '0.5625rem')
+      .attr('font-size', isTouchDevice ? '1.25rem' : '0.5625rem')
       .attr('font-weight', '800')
       .text(t('mapRecommended'));
 
