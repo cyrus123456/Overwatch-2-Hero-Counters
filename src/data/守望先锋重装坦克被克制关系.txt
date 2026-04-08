@@ -1,6 +1,6 @@
 1. D.Va (D.Va)
 被这些英雄克制：
- 渣客女王 (Junker Queen) 西格玛 (Sigma) 查莉娅 (Zarya) 莫伊拉 (Moira) 禅雅塔 (Zenyatta) 安娜 (Ana) 秩序之光 (Symmetra) 回声 (Echo) 黑影 (Sombra) 黑百合 (Widowmaker) 小美 (Mei) 半藏 (Hanzo) 安燃 斩仇
+ 渣客女王 (Junker Queen) 西格玛 (Sigma) 查莉娅 (Zarya) 莫伊拉 (Moira) 禅雅塔 (Zenyatta) 安娜 (Ana) 秩序之光 (Symmetra) 回声 (Echo) 黑影 (Sombra) 小美 (Mei) 半藏 (Hanzo) 安燃 斩仇
 
 2. 末日铁拳 (Doomfist)
 被这些英雄克制：
@@ -36,7 +36,7 @@
 7. 西格玛
 被这些英雄克制：
 
- 铁拳 温斯顿 (Winston) 莱因哈特 (Reinhardt) 拉玛刹 (Ramattra) 秩序之光 小美 黑影 (Sombra) 法老之鹰 (Pharah) 雾子 (Kiriko) 布丽吉塔 (Brigitte) 禅雅塔 (Zenyatta) 生命之梭 莫伊拉 (Moira) 金驭 无漾
+ 铁拳 温斯顿 (Winston) 莱因哈特 (Reinhardt) 拉玛刹 (Ramattra) 秩序之光 小美 黑影 (Sombra) 法老之鹰 (Pharah) 雾子 (Kiriko) 布丽吉塔 (Brigitte) 禅雅塔 (Zenyatta) 生命之梭 莫伊拉 (Moira) 无漾
 
 8. 毛加
 被这些英雄克制：
@@ -67,7 +67,7 @@
 12. 拉玛刹
 被这些英雄克制：
 
-西格玛 渣克女王 毛加 路霸 骇灾 堡垒 法老之鹰 源氏 托比昂 索杰恩 死神 小美 猎空 回声 朱诺 安娜 巴蒂斯特 伊拉锐 禅雅塔 金驭 飞天猫
+西格玛 渣克女王 毛加 路霸 骇灾 堡垒 法老之鹰 源氏 托比昂 索杰恩 死神 小美 猎空 回声 朱诺 安娜 巴蒂斯特 伊拉锐 禅雅塔 飞天猫
 
 网友建议 
 
@@ -76,7 +76,7 @@
 温斯顿 破坏球 拉玛刹 莱茵哈特 黑百合 小美 艾什 禅雅塔 生命之梭
 
 14 金驭
-被这些英雄克制：温斯顿 破坏球 死神 堡垒 狂鼠 黑影 D.Va 猎空 斩仇 无漾 
+被这些英雄克制：温斯顿 破坏球 死神 堡垒 狂鼠 黑影 猎空 斩仇 无漾 西格玛 拉玛刹
 铁拳（Doomfist）莱因哈特（Reinhardt）
 
 网友建议 没有伊拉瑞

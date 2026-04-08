@@ -150,7 +150,6 @@ export const counterRelations: CounterRelation[] = [
   { source: 'symmetra', target: 'dva', strength: 3 },
   { source: 'echo', target: 'dva', strength: 3 },
   { source: 'sombra', target: 'dva', strength: 3 },
-  { source: 'widowmaker', target: 'dva', strength: 3 },
   { source: 'mei', target: 'dva', strength: 3 },
   { source: 'hanzo', target: 'dva', strength: 3 },
   { source: 'anran', target: 'dva', strength: 3 }, // 补充：D.Va还被安燃克制
@@ -259,7 +258,6 @@ export const counterRelations: CounterRelation[] = [
   { source: 'zenyatta', target: 'sigma', strength: 3 },
   { source: 'lifeweaver', target: 'sigma', strength: 3 },
   { source: 'moira', target: 'sigma', strength: 3 },
-  { source: 'jinyu', target: 'sigma', strength: 3 }, // 补充：西格玛还被金驭克制
   { source: 'wuyang', target: 'sigma', strength: 3 }, // 补充：西格玛还被无漾克制
   
   // 8. 毛加被克制
@@ -350,7 +348,6 @@ export const counterRelations: CounterRelation[] = [
   { source: 'baptiste', target: 'ramattra', strength: 3 },
   { source: 'illari', target: 'ramattra', strength: 3 },
   { source: 'zenyatta', target: 'ramattra', strength: 3 },
-  { source: 'jinyu', target: 'ramattra', strength: 3 }, // 补充：拉玛刹还被金驭克制
   { source: 'feitianmao', target: 'ramattra', strength: 3 }, // 补充：拉玛刹还被飞天猫克制
   
   // 13. 查莉娅被克制
@@ -399,7 +396,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'lucio', target: 'reaper', strength: 3 },
   { source: 'illari', target: 'reaper', strength: 3 },
   { source: 'juno', target: 'reaper', strength: 3 },
-  { source: 'anran', target: 'reaper', strength: 3 }, // 补充：死神还被安燃克制
+  { source: 'junkrat', target: 'reaper', strength: 3 }, // 补充：死神还被狂鼠克制
   
   // 3. 堡垒被克制
   { source: 'sigma', target: 'bastion', strength: 3 },
@@ -559,6 +556,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'brigitte', target: 'tracer', strength: 3 },
   { source: 'illari', target: 'tracer', strength: 3 },
   { source: 'juno', target: 'tracer', strength: 3 },
+  { source: 'reaper', target: 'tracer', strength: 3 }, // 补充：猎空还被死神克制
   
   // 14. 狂鼠被克制
   { source: 'zarya', target: 'junkrat', strength: 3 },
@@ -614,6 +612,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'genji', target: 'widowmaker', strength: 3 },
   { source: 'kiriko', target: 'widowmaker', strength: 3 },
   { source: 'lucio', target: 'widowmaker', strength: 3 },
+  { source: 'feitianmao', target: 'widowmaker', strength: 3 }, // 补充：黑百合还被飞天猫克制
+  { source: 'dva', target: 'widowmaker', strength: 3 }, // 补充：黑百合还被D.Va克制（D.Va克制黑百合）
   
   // 18. 法老之鹰被克制
   { source: 'dva', target: 'pharah', strength: 3 },
@@ -841,6 +841,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'wuyang', target: 'jinyu', strength: 3 },
   { source: 'doomfist', target: 'jinyu', strength: 3 }, // 补充：金驭还被铁拳克制
   { source: 'reinhardt', target: 'jinyu', strength: 3 }, // 补充：金驭还被莱因哈特克制
+  { source: 'sigma', target: 'jinyu', strength: 3 }, // 补充：金驭还被西格玛克制（西格玛克制金驭）
+  { source: 'ramattra', target: 'jinyu', strength: 3 }, // 补充：金驭还被拉玛刹克制（拉玛刹克制金驭）
   
   // 二、埃姆雷（Emrey）被克制 - 完全修改
   { source: 'genji', target: 'emrey', strength: 3 },
@@ -867,6 +869,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'zenyatta', target: 'anran', strength: 3 },
   { source: 'moira', target: 'anran', strength: 3 },
   { source: 'genji', target: 'anran', strength: 3 }, // 补充：安燃还被源氏克制
+  { source: 'reaper', target: 'anran', strength: 3 }, // 补充：安燃还被死神克制（死神克制安燃）
   
   // 四、无漾（Wuyang）被克制 - 完全修改
   { source: 'soldier76', target: 'wuyang', strength: 3 },
