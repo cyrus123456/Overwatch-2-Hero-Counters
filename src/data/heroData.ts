@@ -154,6 +154,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'hanzo', target: 'dva', strength: 3 },
   { source: 'anran', target: 'dva', strength: 3 }, // 补充：D.Va还被安燃克制
   { source: 'vendetta', target: 'dva', strength: 3 }, // 补充：D.Va还被斩仇克制
+  { source: 'brigitte', target: 'dva', strength: 3 }, // 补充：D.Va还被布丽吉塔克制
+  { source: 'ruixi', target: 'dva', strength: 3 }, // 补充：D.Va还被瑞稀克制
   
   // 2. 末日铁拳被克制
   { source: 'roadhog', target: 'doomfist', strength: 3 },
