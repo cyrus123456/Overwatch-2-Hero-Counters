@@ -169,6 +169,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'brigitte', target: 'doomfist', strength: 3 },
   { source: 'ruixi', target: 'doomfist', strength: 3 }, // 补充：末日铁拳还被瑞稀克制
   { source: 'feitianmao', target: 'doomfist', strength: 3 }, // 补充：末日铁拳还被飞天猫克制
+  { source: 'symmetra', target: 'doomfist', strength: 3 }, // 补充：末日铁拳还被秩序之光克制
   
   // 3. 莱因哈特被克制
   { source: 'orisa', target: 'reinhardt', strength: 3 },
@@ -872,6 +873,9 @@ export const counterRelations: CounterRelation[] = [
   { source: 'moira', target: 'anran', strength: 3 },
   { source: 'genji', target: 'anran', strength: 3 }, // 补充：安燃还被源氏克制
   { source: 'reaper', target: 'anran', strength: 3 }, // 补充：安燃还被死神克制（死神克制安燃）
+  { source: 'junkrat', target: 'anran', strength: 3 }, // 补充：安燃还被狂鼠克制
+  { source: 'venture', target: 'anran', strength: 3 }, // 补充：安燃还被探奇克制
+  { source: 'ruixi', target: 'anran', strength: 3 }, // 补充：安燃还被瑞稀克制
   
   // 四、无漾（Wuyang）被克制 - 完全修改
   { source: 'soldier76', target: 'wuyang', strength: 3 },
