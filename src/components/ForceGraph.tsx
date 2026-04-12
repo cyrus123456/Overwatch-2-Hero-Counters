@@ -52,7 +52,7 @@ import {
   ZoomIn,
   ZoomOut
 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 interface NodeDatum extends d3.SimulationNodeDatum {
   id: string;
@@ -2674,4 +2674,4 @@ const ForceGraph = ({
 
 };
 
-export default ForceGraph;
+export default React.memo(ForceGraph);

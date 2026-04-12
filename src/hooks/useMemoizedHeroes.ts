@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { heroes, type Hero } from '@/data/heroData';
+import { useCallback, useMemo } from 'react';
 
 /**
  * 性能优化 hook：预构建英雄查找表，避免重复的 Array.find() 调用
@@ -19,14 +19,14 @@ export function useMemoizedHeroes() {
   }, []);
 
   /** O(1) 查找英雄 */
-  const getHero = (id: string): Hero | undefined => heroMap.get(id);
+  const getHero = useCallback((id: string): Hero | undefined => heroMap.get(id), [heroMap]);
 
   /** 获取英雄名称（带缓存） */
-  const getHeroName = (heroId: string, language: string): string => {
+  const getHeroName = useCallback((heroId: string, language: string): string => {
     const hero = heroMap.get(heroId);
     if (!hero) return '';
     return language === 'zh' ? hero.name : hero.nameEn;
-  };
+  }, [heroMap]);
 
   return { heroes, heroMap, getHero, getHeroName };
 }

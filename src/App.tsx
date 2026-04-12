@@ -35,7 +35,8 @@ import {
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { getMapName, getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
-import { useMemoizedHeroes, sortByRole } from '@/hooks/useMemoizedHeroes';
+import useDebounce from '@/hooks/useDebounce';
+import { sortByRole, useMemoizedHeroes } from '@/hooks/useMemoizedHeroes';
 
 import type { Language } from '@/i18n';
 import { useI18n } from '@/i18n';
@@ -182,6 +183,7 @@ function AppContent() {
   const [selectedHeroes, setSelectedHeroes] = useState<string[]>([]);
   const [selectedMap, setSelectedMap] = useState<string | null>(null);
   const [mapSearch, setMapSearch] = useState('');
+  const debouncedMapSearch = useDebounce(mapSearch, 300);
   const [activeMapType, setActiveMapType] = useState<string>('all');
 const [isMapCopied, setIsMapCopied] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
@@ -337,7 +339,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     setHasUnsavedChanges(true);
   };
 
-  const exportData = () => {
+  const exportData = useCallback(() => {
     const data = {
       customMapHeroes,
       deletedDefaultHeroes,
@@ -354,9 +356,9 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     setHasUnsavedChanges(false);
-  };
+  }, [customMapHeroes, deletedDefaultHeroes]);
 
-  const importData = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const importData = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -380,9 +382,9 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     };
     reader.readAsText(file);
     event.target.value = '';
-  };
+  }, [t]);
 
-  const clearAllData = () => {
+  const clearAllData = useCallback(() => {
     if (confirm(t('confirmClearAll'))) {
       setCustomMapHeroes({});
       setDeletedDefaultHeroes({});
@@ -390,7 +392,14 @@ const [isMapCopied, setIsMapCopied] = useState(false);
       saveDeletedDefaultHeroes({});
       setHasUnsavedChanges(false);
     }
-  };
+  }, [t]);
+
+  const mapDataActions = useMemo(() => ({
+    exportMapData: exportData,
+    importMapData: importData,
+    clearAllMapData: clearAllData,
+    hasMapUnsavedChanges: hasUnsavedChanges,
+  }), [exportData, importData, clearAllData, hasUnsavedChanges]);
 
   const sortHeroesByRole = useCallback((heroIds: string[]): string[] => {
     return sortByRole(heroIds.map(id => getHero(id)).filter((h): h is Exclude<typeof h, undefined> => h !== undefined)).map(h => h.id);
@@ -465,15 +474,15 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     if (activeMapType !== 'all') {
       result = result.filter(m => m.type === activeMapType);
     }
-    if (mapSearch) {
-      const search = mapSearch.toLowerCase();
+    if (debouncedMapSearch) {
+      const search = debouncedMapSearch.toLowerCase();
       result = result.filter(m => 
         m.name.toLowerCase().includes(search) || 
         m.nameEn.toLowerCase().includes(search)
       );
     }
     return result;
-  }, [mapSearch, activeMapType]);
+  }, [debouncedMapSearch, activeMapType]);
 
   const roles = [
     { id: 'tank', name: t('tank'), nameEn: 'Tank', icon: Shield, color: '#f59e0b' },
@@ -1037,12 +1046,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
               selectedMap={selectedMap}
               customMapHeroes={customMapHeroes}
               deletedDefaultHeroes={deletedDefaultHeroes}
-              mapDataActions={{
-                exportMapData: exportData,
-                importMapData: importData,
-                clearAllMapData: clearAllData,
-                hasMapUnsavedChanges: hasUnsavedChanges,
-              }}
+              mapDataActions={mapDataActions}
             />
             </Suspense>
           </div>
