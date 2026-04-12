@@ -1,4 +1,4 @@
-import { heroes, type Hero } from '@/data/heroData';
+import { heroes, type Hero, type HeroId } from '@/data/heroData';
 import { useCallback, useMemo } from 'react';
 
 /**
@@ -11,7 +11,7 @@ import { useCallback, useMemo } from 'react';
  */
 export function useMemoizedHeroes() {
   const heroMap = useMemo(() => {
-    const map = new Map<string, Hero>();
+    const map = new Map<HeroId, Hero>();
     for (const hero of heroes) {
       map.set(hero.id, hero);
     }
@@ -19,10 +19,10 @@ export function useMemoizedHeroes() {
   }, []);
 
   /** O(1) 查找英雄 */
-  const getHero = useCallback((id: string): Hero | undefined => heroMap.get(id), [heroMap]);
+  const getHero = useCallback((id: HeroId): Hero | undefined => heroMap.get(id), [heroMap]);
 
   /** 获取英雄名称（带缓存） */
-  const getHeroName = useCallback((heroId: string, language: string): string => {
+  const getHeroName = useCallback((heroId: HeroId, language: string): string => {
     const hero = heroMap.get(heroId);
     if (!hero) return '';
     return language === 'zh' ? hero.name : hero.nameEn;

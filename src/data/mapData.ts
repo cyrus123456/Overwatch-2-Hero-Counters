@@ -1,3 +1,5 @@
+import type { HeroId } from './heroData';
+
 export type MapLanguage = 'zh' | 'en' | 'ja' | 'ko' | 'zh-TW' | 'es' | 'fr' | 'de' | 'pt' | 'ru' | 'it';
 
 export type MapDimensionLength = 'long' | 'medium' | 'short';
@@ -17,8 +19,8 @@ export interface Map {
   nameEn: string;
   type: 'control' | 'hybrid' | 'escort' | 'push' | 'flashpoint';
   dimensions: MapDimensions;
-  recommendedHeroes: string[];
-  heroReasons: Record<string, Partial<Record<MapLanguage, string>>>;
+  recommendedHeroes: HeroId[];
+  heroReasons: Partial<Record<HeroId, Partial<Record<MapLanguage, string>>>>;
   description?: Partial<Record<MapLanguage, string>>;
 }
 
@@ -357,14 +359,14 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Hollywood',
     type: 'hybrid',
     dimensions: { length: 'medium', width: 'medium', height: 'medium', isOutdoor: false },
-    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'junkrat', 'torbjorn', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'widowmaker', 'sojourn', 'ashe', 'hanzo', 'ana', 'illari', 'soldier76', 'baptiste', 'zenyatta', 'mercy', 'orisa', 'sigma', 'zarya', 'junker_queen', 'jinyu', 'pharah'],
+    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'junkrat', 'torbjorn', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'widowmaker', 'sojourn', 'ashe', 'hanzo', 'ana', 'illari', 'soldier76', 'baptiste', 'zenyatta', 'mercy', 'orisa', 'sigma', 'zarya', 'junker_queen', 'domina', 'pharah'],
     heroReasons: {
       orisa: { zh: '高地A点强控能力强', en: 'Strong CC at high ground point A' },
       sigma: { zh: '侧翼小巷可以利用掩体', en: 'Can use cover in flank alleys' },
       zarya: { zh: '开放后段护盾价值高', en: 'Bubbles high value in open back section' },
       reinhardt: { zh: 'A点地推能力强，狭窄区域举盾', en: 'Strong brawl at point A, shield in narrow areas' },
       junker_queen: { zh: '狭窄区域近战强', en: 'Strong melee in narrow areas' },
-      jinyu: { zh: '机动性强，可以控制高地', en: 'High mobility, can control high ground' },
+      domina: { zh: '机动性强，可以控制高地', en: 'High mobility, can control high ground' },
       widowmaker: { zh: '高地A点狙击位置', en: 'Sniper position at high ground A' },
       hanzo: { zh: '侧翼小巷和高点输出', en: 'Damage from flank alleys and high ground' },
       sojourn: { zh: '开放后段超频效果好', en: 'Overclock effective in open back' },
@@ -482,7 +484,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Numbani',
     type: 'hybrid',
     dimensions: { length: 'long', width: 'wide', height: 'high', isOutdoor: true },
-    recommendedHeroes: ['widowmaker', 'sojourn', 'ashe', 'ana', 'illari', 'soldier76', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'baptiste', 'zenyatta', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'jinyu', 'lucio', 'kiriko', 'lifeweaver'],
+    recommendedHeroes: ['widowmaker', 'sojourn', 'ashe', 'ana', 'illari', 'soldier76', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'baptiste', 'zenyatta', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'domina', 'lucio', 'kiriko', 'lifeweaver'],
     heroReasons: {
       widowmaker: { zh: '长视线远程狙击优势巨大，室外高地视野开阔', en: 'Huge sniping advantage on long sightlines, open outdoor high ground' },
       sojourn: { zh: '长视线超频输出优势大', en: 'Overclock advantage on long sightlines' },
@@ -509,7 +511,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       wrecking_ball: { zh: '宽大地图机动绕后', en: 'Mobile flanking on wide map' },
       sigma: { zh: '高地两侧利用掩体消耗，长视线优势', en: 'Use cover on both high grounds, long sightline advantage' },
       orisa: { zh: '机器人高点区域控制', en: 'Area control at robot high ground' },
-      jinyu: { zh: '区域控制和机动性强', en: 'Area control and high mobility' },
+      domina: { zh: '区域控制和机动性强', en: 'Area control and high mobility' },
       lucio: { zh: '宽大地图快速转点', en: 'Fast rotations on wide map' },
       kiriko: { zh: '瞬快速支援', en: 'Swift Step for fast support' },
       lifeweaver: { zh: '生命平台可以利用高地优势', en: 'Life Platform can utilize high ground advantage' },

@@ -2,10 +2,12 @@
 // 配合强度: strength = 3 (核心搭档/Must Pick), 2 (优秀配合/Good Synergy), 1 (良好配合/Decent)
 // 数据来源: overpicker.com synergy chart + 2025-2026 meta
 
+import type { HeroId } from './heroData';
+
 export interface SynergyRelation {
-  source: string; // 拍档方英雄ID
-  target: string; // 被配对方英雄ID (即当前查看的英雄)
-  strength?: number; // 3=核心搭档, 2=优秀配合, 1=良好配合
+  source: HeroId;
+  target: HeroId;
+  strength?: number;
 }
 
 // 最佳拍档关系数据 - 根据实际配合效果设置，非固定数量
@@ -111,9 +113,9 @@ export const synergyRelations: SynergyRelation[] = [
   { source: 'reaper', target: 'domina', strength: 2 },
 
   // 金驭
-  { source: 'kiriko', target: 'jinyu', strength: 3 },
-  { source: 'zarya', target: 'jinyu', strength: 2 },
-  { source: 'genji', target: 'jinyu', strength: 2 },
+  { source: 'kiriko', target: 'domina', strength: 3 },
+  { source: 'zarya', target: 'domina', strength: 2 },
+  { source: 'genji', target: 'domina', strength: 2 },
 
   // ========== DPS 英雄的最佳拍档 ==========
   // 艾什 - 需要保护
@@ -306,9 +308,9 @@ export const synergyRelations: SynergyRelation[] = [
   { source: 'hanzo', target: 'wuyang', strength: 2 },
 
   // 瑞稀 - 新支援
-  { source: 'dva', target: 'ruixi', strength: 3 },
-  { source: 'genji', target: 'ruixi', strength: 2 },
-  { source: 'tracer', target: 'ruixi', strength: 2 },
+  { source: 'dva', target: 'mizuki', strength: 3 },
+  { source: 'genji', target: 'mizuki', strength: 2 },
+  { source: 'tracer', target: 'mizuki', strength: 2 },
 
   // 飞天猫 - 新支援
   { source: 'kiriko', target: 'feitianmao', strength: 2 },

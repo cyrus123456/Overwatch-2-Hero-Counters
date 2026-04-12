@@ -21,7 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getCounterReason } from '@/data/counterReasons';
-import { counterRelations, getHeroName, getRoleName, heroes, type Hero } from '@/data/heroData';
+import { counterRelations, getHeroName, getRoleName, heroes, type Hero, type HeroId } from '@/data/heroData';
 import { maps } from '@/data/mapData';
 import { getSynergyReason } from '@/data/synergyReasons';
 import { synergyRelations } from '@/data/synergyRelations';
@@ -55,7 +55,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 interface NodeDatum extends d3.SimulationNodeDatum {
-  id: string;
+  id: HeroId;
   name: string;
   nameEn: string;
   role: 'tank' | 'damage' | 'support';
@@ -69,39 +69,39 @@ interface NodeDatum extends d3.SimulationNodeDatum {
 }
 
 interface LinkDatum extends d3.SimulationLinkDatum<NodeDatum> {
-  source: string | NodeDatum;
-  target: string | NodeDatum;
+  source: HeroId | NodeDatum;
+  target: HeroId | NodeDatum;
 }
 
 interface CustomMapHero {
-  heroId: string;
+  heroId: HeroId;
   reason: string;
 }
 
 // 自定义克制关系数据结构
 interface CustomCounterRelation {
-  source: string; // 克制方英雄ID
-  target: string; // 被克制方英雄ID
-  strength: number; // 1-3
-  isCustom: boolean; // 标记是否为自定义添加
+  source: HeroId;
+  target: HeroId;
+  strength: number;
+  isCustom: boolean;
 }
 
 // 自定义协同关系数据结构
 interface CustomSynergyRelation {
-  source: string; // 协同方英雄ID
-  target: string; // 被协同方英雄ID
-  strength: number; // 1-3
-  isCustom: boolean; // 标记是否为自定义添加
+  source: HeroId;
+  target: HeroId;
+  strength: number;
+  isCustom: boolean;
 }
 
 interface ForceGraphProps {
   selectedRole: string | null;
-  selectedHeroes: string[];
-  onHeroSelect: (heroIds: string[]) => void;
+  selectedHeroes: HeroId[];
+  onHeroSelect: (heroIds: HeroId[]) => void;
   isDrawerOpen?: boolean;
   selectedMap?: string | null;
   customMapHeroes?: Record<string, CustomMapHero[]>;
-  deletedDefaultHeroes?: Record<string, string[]>;
+  deletedDefaultHeroes?: Record<string, HeroId[]>;
   mapDataActions?: {
     exportMapData: () => void;
     importMapData: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -150,7 +150,7 @@ const ForceGraph = ({
   const animationRef = useRef<number | null>(null);
   const nodePositionsRef = useRef<Map<string, {x: number, y: number}>>(new Map());
   const savePositionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const selectedHeroesRef = useRef<string[]>(selectedHeroes);
+  const selectedHeroesRef = useRef<HeroId[]>(selectedHeroes);
   const onHeroSelectRef = useRef(onHeroSelect);
 
   // D3 selection refs for incremental updates (avoid full DOM rebuild)
@@ -174,7 +174,7 @@ const ForceGraph = ({
   const [activeCounterTab, setActiveCounterTab] = useState<'counteredBy' | 'counters' | 'synergy'>('counteredBy');
   const [isCopied, setIsCopied] = useState(false);
   const [isIntroOpen, setIsIntroOpen] = useState(false);
-  const [heroSnapshots, setHeroSnapshots] = useState<{ id: string; heroIds: string[]; timestamp: number }[]>([]);
+  const [heroSnapshots, setHeroSnapshots] = useState<{ id: string; heroIds: HeroId[]; timestamp: number }[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isCounterPanelCollapsed, setIsCounterPanelCollapsed] = useState(false);
@@ -202,9 +202,9 @@ const ForceGraph = ({
 
   // 自定义克制关系状态
   const [customCounterRelations, setCustomCounterRelations] = useState<CustomCounterRelation[]>([]);
-  const [deletedDefaultRelations, setDeletedDefaultRelations] = useState<string[]>([]); // 存储被删除的默认关系ID (source-target)
+  const [deletedDefaultRelations, setDeletedDefaultRelations] = useState<string[]>([]);
   const [isAddingCustomRelation, setIsAddingCustomRelation] = useState(false);
-  const [newRelationTarget, setNewRelationTarget] = useState<string>('');
+  const [newRelationTarget, setNewRelationTarget] = useState<HeroId | ''>('');
   const [newRelationStrength, setNewRelationStrength] = useState<number>(2);
   const addRelationFormRef = useRef<HTMLDivElement>(null);
 
@@ -212,7 +212,7 @@ const ForceGraph = ({
   const [customSynergyRelations, setCustomSynergyRelations] = useState<CustomSynergyRelation[]>([]);
   const [deletedDefaultSynergyRelations, setDeletedDefaultSynergyRelations] = useState<string[]>([]);
   const [isAddingCustomSynergy, setIsAddingCustomSynergy] = useState(false);
-  const [newSynergyTarget, setNewSynergyTarget] = useState<string>('');
+  const [newSynergyTarget, setNewSynergyTarget] = useState<HeroId | ''>('');
   const [newSynergyStrength, setNewSynergyStrength] = useState<number>(2);
   const addSynergyFormRef = useRef<HTMLDivElement>(null);
 
@@ -278,10 +278,9 @@ const ForceGraph = ({
   // O(1) 英雄查找
   const { getHero } = useMemoizedHeroes();
 
-  const getCommonCounters = useCallback((heroIds: string[]) => {
+  const getCommonCounters = useCallback((heroIds: HeroId[]) => {
     if (heroIds.length === 0) return [];
 
-    // 使用 O(1) Map.get 替代 O(R) .find()，复杂度从 O(H*S*R) → O(H*S)
     return heroes
       .map(h => {
         const relations = heroIds.map(targetId =>
@@ -299,7 +298,7 @@ const ForceGraph = ({
       .sort((a, b) => b.strength - a.strength);
   }, [counterRelationMap]);
 
-  const getCommonCounted = useCallback((heroIds: string[]) => {
+  const getCommonCounted = useCallback((heroIds: HeroId[]) => {
     if (heroIds.length === 0) return [];
 
     return heroes
@@ -331,7 +330,7 @@ const ForceGraph = ({
           source: r.source,
           target: r.target
         }))
-        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
+        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: HeroId; target: HeroId } => item.hero !== undefined)
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonCounters(selectedHeroes);
@@ -349,13 +348,13 @@ const ForceGraph = ({
           source: r.source,
           target: r.target
         }))
-        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
+        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: HeroId; target: HeroId } => item.hero !== undefined)
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonCounted(selectedHeroes);
   }, [selectedHeroes, getCommonCounted, mergedCounterRelations, getHero]);
 
-  const getCommonSynergies = useCallback((heroIds: string[]) => {
+  const getCommonSynergies = useCallback((heroIds: HeroId[]) => {
     if (heroIds.length === 0) return [];
 
     // O(1) Map.get 替代 O(R) .find()
@@ -388,7 +387,7 @@ const ForceGraph = ({
           source: r.source,
           target: r.target
         }))
-        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: string; target: string } => item.hero !== undefined)
+        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: HeroId; target: HeroId } => item.hero !== undefined)
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonSynergies(selectedHeroes);
@@ -416,7 +415,7 @@ const ForceGraph = ({
   currentMergedCounterRef.current = mergedCounterRelations;
   currentMergedSynergyRef.current = mergedSynergyRelations;
 
-  const handleHeroClick = useCallback((heroId: string, event: any) => {
+  const handleHeroClick = useCallback((heroId: HeroId, event: any) => {
     event.stopPropagation();
     const currentSelected = selectedHeroesRef.current;
     if (event.shiftKey || event.ctrlKey || event.metaKey) {
@@ -510,8 +509,10 @@ const ForceGraph = ({
   // 添加自定义克制关系
   const addCustomCounterRelation = () => {
     if (!selectedHero || !newRelationTarget) return;
-    const sourceHero = activeCounterTab === 'counters' ? selectedHero : newRelationTarget;
-    const targetHero = activeCounterTab === 'counters' ? newRelationTarget : selectedHero;
+    
+    // 此时 selectedHero 和 newRelationTarget 都已被类型收窄为 HeroId
+    const sourceHero: HeroId = activeCounterTab === 'counters' ? selectedHero : newRelationTarget;
+    const targetHero: HeroId = activeCounterTab === 'counters' ? newRelationTarget : selectedHero;
 
     const newRelation: CustomCounterRelation = {
       source: sourceHero,
@@ -1856,7 +1857,7 @@ const ForceGraph = ({
                               </button>
                             ) : (
                               <div ref={addRelationFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-red-500/30">
-                                <Select value={newRelationTarget} onValueChange={setNewRelationTarget}>
+                                <Select value={newRelationTarget} onValueChange={(value) => setNewRelationTarget(value as HeroId)}>
                                   <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
                                     <span className={newRelationTarget ? 'text-white' : 'text-slate-400'}>
                                       {newRelationTarget ? getHeroName(heroes.find(h => h.id === newRelationTarget), language) : t('selectTargetHero')}
@@ -1939,7 +1940,7 @@ const ForceGraph = ({
                               </button>
                             ) : (
                               <div ref={addRelationFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-green-500/30">
-                                <Select value={newRelationTarget} onValueChange={setNewRelationTarget}>
+                                <Select value={newRelationTarget} onValueChange={(value) => setNewRelationTarget(value as HeroId)}>
                                   <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
                                     <span className={newRelationTarget ? 'text-white' : 'text-slate-400'}>
                                       {newRelationTarget ? getHeroName(heroes.find(h => h.id === newRelationTarget), language) : t('selectTargetHero')}
@@ -2100,7 +2101,7 @@ const ForceGraph = ({
                                   </button>
                                 ) : (
                                   <div ref={addSynergyFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-purple-500/30">
-                                    <Select value={newSynergyTarget} onValueChange={setNewSynergyTarget}>
+                                    <Select value={newSynergyTarget} onValueChange={(value) => setNewSynergyTarget(value as HeroId)}>
                                       <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
                                         <span className={newSynergyTarget ? 'text-white' : 'text-slate-400'}>
                                           {newSynergyTarget ? getHeroName(heroes.find(h => h.id === newSynergyTarget), language) : t('selectTargetHero')}

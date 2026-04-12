@@ -35,6 +35,7 @@ import {
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { getMapName, getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
+import type { HeroId } from '@/data/heroData';
 import useDebounce from '@/hooks/useDebounce';
 import { sortByRole, useMemoizedHeroes } from '@/hooks/useMemoizedHeroes';
 
@@ -46,7 +47,7 @@ import './App.css';
 const ForceGraph = lazy(() => import('@/components/ForceGraph').then(m => ({ default: m.default })));
 
 interface CustomMapHero {
-  heroId: string;
+  heroId: HeroId;
   reason: string;
 }
 
@@ -73,7 +74,7 @@ function saveCustomMapHeroes(data: Record<string, CustomMapHero[]>): void {
   }
 }
 
-function loadDeletedDefaultHeroes(): Record<string, string[]> {
+function loadDeletedDefaultHeroes(): Record<string, HeroId[]> {
   try {
     const stored = localStorage.getItem(DELETED_DEFAULT_HEROES_KEY);
     if (stored) {
@@ -85,7 +86,7 @@ function loadDeletedDefaultHeroes(): Record<string, string[]> {
   return {};
 }
 
-function saveDeletedDefaultHeroes(data: Record<string, string[]>): void {
+function saveDeletedDefaultHeroes(data: Record<string, HeroId[]>): void {
   try {
     localStorage.setItem(DELETED_DEFAULT_HEROES_KEY, JSON.stringify(data));
   } catch {
@@ -100,7 +101,7 @@ function saveDeletedDefaultHeroes(data: Record<string, string[]>): void {
 const MapHeroAvatar = React.memo(({ 
   heroId, customHero, reason, language,
 }: { 
-  heroId: string; 
+  heroId: HeroId; 
   customHero: CustomMapHero | undefined; 
   reason: string;
   language: string;
@@ -136,9 +137,9 @@ const MapHeroesList = React.memo(({
   deletedDefaultForMap,
   language,
 }: {
-  defaultHeroes: string[];
+  defaultHeroes: HeroId[];
   customMapHeroesForMap: CustomMapHero[];
-  deletedDefaultForMap: string[];
+  deletedDefaultForMap: HeroId[];
   language: string;
 }) => {
   const { getHero } = useMemoizedHeroes();
@@ -180,7 +181,7 @@ function AppContent() {
   const { getHero, heroes } = useMemoizedHeroes();
   
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const [selectedHeroes, setSelectedHeroes] = useState<string[]>([]);
+  const [selectedHeroes, setSelectedHeroes] = useState<HeroId[]>([]);
   const [selectedMap, setSelectedMap] = useState<string | null>(null);
   const [mapSearch, setMapSearch] = useState('');
   const debouncedMapSearch = useDebounce(mapSearch, 300);
@@ -190,8 +191,8 @@ const [isMapCopied, setIsMapCopied] = useState(false);
   const [hoverTimer, setHoverTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const [customMapHeroes, setCustomMapHeroes] = useState<Record<string, CustomMapHero[]>>({});
-  const [deletedDefaultHeroes, setDeletedDefaultHeroes] = useState<Record<string, string[]>>({});
-  const [newHeroId, setNewHeroId] = useState<string>('');
+  const [deletedDefaultHeroes, setDeletedDefaultHeroes] = useState<Record<string, HeroId[]>>({});
+  const [newHeroId, setNewHeroId] = useState<HeroId | ''>('');
   const [newHeroReason, setNewHeroReason] = useState<string>('');
   const [addingHeroMapId, setAddingHeroMapId] = useState<string | null>(null);
   const addHeroFormRef = useRef<HTMLDivElement>(null);
@@ -282,7 +283,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  const addCustomHero = (mapId: string, heroId: string, reason: string) => {
+  const addCustomHero = (mapId: string, heroId: HeroId, reason: string) => {
     if (!heroId.trim()) return;
     setCustomMapHeroes(prev => {
       const updated = {
@@ -311,7 +312,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     setHasUnsavedChanges(true);
   };
 
-  const deleteDefaultHero = (mapId: string, heroId: string) => {
+  const deleteDefaultHero = (mapId: string, heroId: HeroId) => {
     setDeletedDefaultHeroes(prev => {
       const updated = {
         ...prev,
@@ -401,7 +402,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     hasMapUnsavedChanges: hasUnsavedChanges,
   }), [exportData, importData, clearAllData, hasUnsavedChanges]);
 
-  const sortHeroesByRole = useCallback((heroIds: string[]): string[] => {
+  const sortHeroesByRole = useCallback((heroIds: HeroId[]): HeroId[] => {
     return sortByRole(heroIds.map(id => getHero(id)).filter((h): h is Exclude<typeof h, undefined> => h !== undefined)).map(h => h.id);
   }, [getHero]);
   
@@ -910,7 +911,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                               })}
                               {addingHeroMapId === map.id ? (
                                 <div ref={addHeroFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-cyan-500/30">
-                                  <Select value={newHeroId} onValueChange={setNewHeroId}>
+                                  <Select value={newHeroId} onValueChange={(value) => setNewHeroId(value as HeroId)}>
                                     <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
                                       <span className={newHeroId ? 'text-white' : 'text-slate-400'}>
                                         {newHeroId ? (language === 'zh' ? getHero(newHeroId)!.name : getHero(newHeroId)!.nameEn) : t('selectHero')}
@@ -952,7 +953,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                     <Button
                                       size="sm"
                                       className="h-7 px-2 text-xs bg-cyan-600 hover:bg-cyan-700"
-                                      onClick={(e) => { e.stopPropagation(); addCustomHero(map.id, newHeroId, newHeroReason); }}
+                                      onClick={(e) => { e.stopPropagation(); if (newHeroId) addCustomHero(map.id, newHeroId, newHeroReason); }}
                                       disabled={!newHeroId}
                                     >
                                       <Plus className="w-3 h-3 mr-1" />
