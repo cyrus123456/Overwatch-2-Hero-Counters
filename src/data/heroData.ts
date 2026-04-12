@@ -76,6 +76,7 @@ const heroImages: Record<string, string> = {
   wuyang: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/e4157a71bb307b4ca910d901773f43d187c22101c5f4284a0a5f3caba8ec4bdd.png`,
   ruixi: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/a2c8dd2fdc10e5b5110062e2bd5dc3fc56e692a812f35f0fcea3b580fd01f578.png`,
   feitianmao: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/03a184cd0de27091e0099ac22635ad9615a8f6997881a5c25cc5f2444764f729.png`,
+  sierra: '',
 };
 
 // 英雄数据
@@ -119,7 +120,8 @@ export const heroes: Hero[] = [
   { id: 'vendetta', name: '斩仇', nameEn: 'VENDETTA', role: 'damage', color: '#ef4444', image: heroImages.vendetta },
   { id: 'anran', name: '安燃', nameEn: 'Anran', role: 'damage', color: '#ef4444', image: heroImages.anran },
   { id: 'emrey', name: '埃姆雷', nameEn: 'Emrey', role: 'damage', color: '#ef4444', image: heroImages.emrey },
-  
+  { id: 'sierra', name: '希拉', nameEn: 'Sierra', role: 'damage', color: '#ef4444', image: heroImages.sierra },
+
   // 支援英雄
   { id: 'ana', name: '安娜', nameEn: 'Ana', nickname: '安娜奶奶', role: 'support', color: '#22c55e', image: heroImages.ana },
   { id: 'baptiste', name: '巴蒂斯特', nameEn: 'Baptiste', role: 'support', color: '#22c55e', image: heroImages.baptiste },
@@ -477,6 +479,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'echo', strength: 3 },
   { source: 'baptiste', target: 'echo', strength: 3 },
   { source: 'illari', target: 'echo', strength: 3 },
+  { source: 'sierra', target: 'echo', strength: 2 }, // 补充：回声被Sierra强克制
   
   // 8. 黑影被克制
   { source: 'winston', target: 'sombra', strength: 3 },
@@ -490,6 +493,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'cassidy', target: 'sombra', strength: 3 },
   { source: 'brigitte', target: 'sombra', strength: 3 },
   { source: 'lucio', target: 'sombra', strength: 3 },
+  { source: 'sierra', target: 'sombra', strength: 3 }, // 补充：黑影被Sierra硬克制
   
   // 9. 秩序之光被克制
   { source: 'winston', target: 'symmetra', strength: 3 },
@@ -560,6 +564,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'illari', target: 'tracer', strength: 3 },
   { source: 'juno', target: 'tracer', strength: 3 },
   { source: 'reaper', target: 'tracer', strength: 3 }, // 补充：猎空还被死神克制
+  { source: 'sierra', target: 'tracer', strength: 3 }, // 补充：猎空被Sierra硬克制
   
   // 14. 狂鼠被克制
   { source: 'zarya', target: 'junkrat', strength: 3 },
@@ -629,6 +634,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'illari', target: 'pharah', strength: 3 },
   { source: 'feitianmao', target: 'pharah', strength: 3 }, // 补充：法老之鹰还被飞天猫克制
   { source: 'mauga', target: 'pharah', strength: 3 }, // 补充：法老之鹰被毛加克制
+  { source: 'sierra', target: 'pharah', strength: 2 }, // 补充：法老之鹰被Sierra强克制
   
   // ========== 芙蕾雅（Freja）克制关系 ==========
   // 芙蕾雅被克制 - 强化弩箭滞空输出，惧怕反弹和突进
@@ -718,6 +724,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'juno', target: 'lucio', strength: 3 },
   { source: 'ana', target: 'lucio', strength: 3 },
   { source: 'baptiste', target: 'lucio', strength: 3 },
+  { source: 'sierra', target: 'lucio', strength: 3 }, // 补充：卢西奥被Sierra硬克制
   
   // 5. 布丽吉塔被克制
   { source: 'hazard', target: 'brigitte', strength: 3 },
@@ -910,9 +917,20 @@ export const counterRelations: CounterRelation[] = [
   { source: 'echo', target: 'feitianmao', strength: 3 },
   { source: 'juno', target: 'feitianmao', strength: 3 },
   { source: 'baptiste', target: 'feitianmao', strength: 3 },
-  
-  
-  ];
+  { source: 'sierra', target: 'feitianmao', strength: 2 }, // 补充：飞天猫被Sierra强克制
+
+
+  // Sierra 被克制 - 硬克制（strength: 3）
+  { source: 'genji', target: 'sierra', strength: 3 }, // Sierra被源氏硬克制（反弹技能）
+  { source: 'widowmaker', target: 'sierra', strength: 3 }, // Sierra被黑百合硬克制
+  { source: 'cassidy', target: 'sierra', strength: 3 }, // Sierra被卡西迪硬克制
+  { source: 'ashe', target: 'sierra', strength: 3 }, // Sierra被艾什硬克制
+  // Sierra 被克制 - 强克制（strength: 2）
+  { source: 'reaper', target: 'sierra', strength: 2 }, // Sierra被死神强克制
+  { source: 'winston', target: 'sierra', strength: 2 }, // Sierra被温斯顿强克制
+  { source: 'dva', target: 'sierra', strength: 2 }, // Sierra被D.Va强克制
+
+];
 
 // 获取角色颜色
 export const getRoleColor = (role: string): string => {
