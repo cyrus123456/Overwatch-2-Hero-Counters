@@ -21,7 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getCounterReason } from '@/data/counterReasons';
-import { counterRelations, getHeroName, getRoleName, heroes, type Hero, type HeroId } from '@/data/heroData';
+import { counterRelations, getHeroName, getRoleName, heroes, type Hero, type HeroId, type RelationStrength, type Role } from '@/data/heroData';
 import { maps } from '@/data/mapData';
 import { getSynergyReason } from '@/data/synergyReasons';
 import { synergyRelations } from '@/data/synergyRelations';
@@ -58,7 +58,7 @@ interface NodeDatum extends d3.SimulationNodeDatum {
   id: HeroId;
   name: string;
   nameEn: string;
-  role: 'tank' | 'damage' | 'support';
+  role: Role;
   color: string;
   image: string;
   radius: number;
@@ -82,7 +82,7 @@ interface CustomMapHero {
 interface CustomCounterRelation {
   source: HeroId;
   target: HeroId;
-  strength: number;
+  strength: RelationStrength;
   isCustom: boolean;
 }
 
@@ -90,7 +90,7 @@ interface CustomCounterRelation {
 interface CustomSynergyRelation {
   source: HeroId;
   target: HeroId;
-  strength: number;
+  strength: RelationStrength;
   isCustom: boolean;
 }
 
@@ -156,7 +156,7 @@ const ForceGraph = ({
   // D3 selection refs for incremental updates (avoid full DOM rebuild)
   const nodeGroupRef = useRef<d3.Selection<SVGGElement, NodeDatum, SVGGElement, unknown> | null>(null);
   const linkSelectionRef = useRef<d3.Selection<SVGLineElement, LinkDatum, SVGGElement, unknown> | null>(null);
-  const currentSelectedHeroesRef = useRef<string[]>([]);
+  const currentSelectedHeroesRef = useRef<HeroId[]>([]);
   const currentActiveCounterTabRef = useRef<string>('counteredBy');
   const currentCommonRelatedIdsRef = useRef<Set<string>>(new Set());
   const currentMatchedHeroIdsRef = useRef<Set<string>>(new Set());
@@ -205,7 +205,7 @@ const ForceGraph = ({
   const [deletedDefaultRelations, setDeletedDefaultRelations] = useState<string[]>([]);
   const [isAddingCustomRelation, setIsAddingCustomRelation] = useState(false);
   const [newRelationTarget, setNewRelationTarget] = useState<HeroId | ''>('');
-  const [newRelationStrength, setNewRelationStrength] = useState<number>(2);
+  const [newRelationStrength, setNewRelationStrength] = useState<RelationStrength>(2);
   const addRelationFormRef = useRef<HTMLDivElement>(null);
 
   // 自定义协同关系状态
@@ -213,7 +213,7 @@ const ForceGraph = ({
   const [deletedDefaultSynergyRelations, setDeletedDefaultSynergyRelations] = useState<string[]>([]);
   const [isAddingCustomSynergy, setIsAddingCustomSynergy] = useState(false);
   const [newSynergyTarget, setNewSynergyTarget] = useState<HeroId | ''>('');
-  const [newSynergyStrength, setNewSynergyStrength] = useState<number>(2);
+  const [newSynergyStrength, setNewSynergyStrength] = useState<RelationStrength>(2);
   const addSynergyFormRef = useRef<HTMLDivElement>(null);
 
   // 计算搜索匹配的英雄 ID
@@ -330,7 +330,7 @@ const ForceGraph = ({
           source: r.source,
           target: r.target
         }))
-        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: HeroId; target: HeroId } => item.hero !== undefined)
+        .filter((item): item is { hero: Hero; strength: RelationStrength; isCustom: boolean; source: HeroId; target: HeroId } => item.hero !== undefined)
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonCounters(selectedHeroes);
@@ -348,7 +348,7 @@ const ForceGraph = ({
           source: r.source,
           target: r.target
         }))
-        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: HeroId; target: HeroId } => item.hero !== undefined)
+        .filter((item): item is { hero: Hero; strength: RelationStrength; isCustom: boolean; source: HeroId; target: HeroId } => item.hero !== undefined)
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonCounted(selectedHeroes);
@@ -387,7 +387,7 @@ const ForceGraph = ({
           source: r.source,
           target: r.target
         }))
-        .filter((item): item is { hero: Hero; strength: number; isCustom: boolean; source: HeroId; target: HeroId } => item.hero !== undefined)
+        .filter((item): item is { hero: Hero; strength: RelationStrength; isCustom: boolean; source: HeroId; target: HeroId } => item.hero !== undefined)
         .sort((a, b) => b.strength - a.strength);
     }
     return getCommonSynergies(selectedHeroes);
@@ -1214,7 +1214,7 @@ const ForceGraph = ({
     links.forEach((link, i) => linkIndexMap.set(link, i));
     
     // computeIsRelevant reads from refs so it always uses the latest state
-    const computeIsRelevant = (sourceId: string, targetId: string): boolean => {
+    const computeIsRelevant = (sourceId: HeroId, targetId: HeroId): boolean => {
       const currentSelectedHeroes = currentSelectedHeroesRef.current;
       const currentCommonRelatedIds = currentCommonRelatedIdsRef.current;
       const currentActiveCounterTab = currentActiveCounterTabRef.current;
@@ -1390,12 +1390,10 @@ const ForceGraph = ({
         if (isMultiSelect) {
           isRelated = commonRelatedIds.has(d.id);
         } else {
-          const targetHero = selectedHeroes[0];
+          const targetHero: HeroId = selectedHeroes[0];
           if (activeCounterTab === 'synergy') {
-            // O(1) 替代 O(R) .some()
             isRelated = hasSynergyRelation(d.id, targetHero);
           } else {
-            // O(1) 替代 O(R) .some()
             isRelated = activeCounterTab === 'counteredBy'
               ? hasCounterRelation(d.id, targetHero)
               : hasCounterRelation(targetHero, d.id);
@@ -1419,8 +1417,7 @@ const ForceGraph = ({
             }
           }
         } else {
-          const targetHero = selectedHeroes[0];
-          // O(1) 替代 O(R) .find()
+          const targetHero: HeroId = selectedHeroes[0];
           const str = activeCounterTab === 'synergy'
             ? getSynergyStrength(d.id, targetHero)
             : (activeCounterTab === 'counteredBy'
@@ -1457,8 +1454,7 @@ const ForceGraph = ({
           if (isMultiSelect) {
             hasRelation = selectedHeroes.includes(d.id) || commonRelatedIds.has(d.id);
           } else {
-            const targetHero = selectedHeroes[0];
-            // O(1) 替代 O(R) .some()
+            const targetHero: HeroId = selectedHeroes[0];
             hasRelation = activeCounterTab === 'synergy'
               ? (hasSynergyRelation(d.id, targetHero) || d.id === targetHero)
               : activeCounterTab === 'counteredBy'
@@ -1877,7 +1873,7 @@ const ForceGraph = ({
                                       ))}
                                   </SelectContent>
                                 </Select>
-                                <Select value={String(newRelationStrength)} onValueChange={(v) => setNewRelationStrength(Number(v))}>
+                                <Select value={String(newRelationStrength)} onValueChange={(v) => setNewRelationStrength(Number(v) as RelationStrength)}>
                                   <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
                                     <span className="text-white">{newRelationStrength === 3 ? t('hardCounter') : newRelationStrength === 2 ? t('strongCounter') : t('softCounter')} LV.{newRelationStrength}</span>
                                   </SelectTrigger>
@@ -1960,7 +1956,7 @@ const ForceGraph = ({
                                       ))}
                                   </SelectContent>
                                 </Select>
-                                <Select value={String(newRelationStrength)} onValueChange={(v) => setNewRelationStrength(Number(v))}>
+                                <Select value={String(newRelationStrength)} onValueChange={(v) => setNewRelationStrength(Number(v) as RelationStrength)}>
                                   <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
                                     <span className="text-white">{newRelationStrength === 3 ? t('hardCounter') : newRelationStrength === 2 ? t('strongCounter') : t('softCounter')} LV.{newRelationStrength}</span>
                                   </SelectTrigger>
@@ -2121,7 +2117,7 @@ const ForceGraph = ({
                                           ))}
                                       </SelectContent>
                                     </Select>
-                                    <Select value={String(newSynergyStrength)} onValueChange={(v) => setNewSynergyStrength(Number(v))}>
+                                    <Select value={String(newSynergyStrength)} onValueChange={(v) => setNewSynergyStrength(Number(v) as RelationStrength)}>
                                       <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
                                         <span className="text-white">{newSynergyStrength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : newSynergyStrength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{newSynergyStrength}</span>
                                       </SelectTrigger>

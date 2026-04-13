@@ -2,12 +2,12 @@
 // 配合强度: strength = 3 (核心搭档/Must Pick), 2 (优秀配合/Good Synergy), 1 (良好配合/Decent)
 // 数据来源: overpicker.com synergy chart + 2025-2026 meta
 
-import type { HeroId } from './heroData';
+import type { HeroId, RelationStrength } from './heroData';
 
 export interface SynergyRelation {
   source: HeroId;
   target: HeroId;
-  strength?: number;
+  strength?: RelationStrength;
 }
 
 // 最佳拍档关系数据 - 根据实际配合效果设置，非固定数量

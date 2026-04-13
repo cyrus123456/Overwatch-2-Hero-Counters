@@ -1,4 +1,4 @@
-import { heroes, type Hero, type HeroId } from '@/data/heroData';
+import { heroes, type Hero, type HeroId, type Role } from '@/data/heroData';
 import { useCallback, useMemo } from 'react';
 
 /**
@@ -32,7 +32,7 @@ export function useMemoizedHeroes() {
 }
 
 /** 角色排序权重（预定义常量，避免每次渲染重新创建） */
-export const ROLE_ORDER: Record<string, number> = Object.freeze({
+export const ROLE_ORDER: Record<Role, number> = Object.freeze({
   tank: 0,
   damage: 1,
   support: 2,
@@ -41,6 +41,6 @@ export const ROLE_ORDER: Record<string, number> = Object.freeze({
 /**
  * 预计算的角色排序函数（稳定排序）
  */
-export function sortByRole<T extends { role: string }>(items: T[]): T[] {
+export function sortByRole<T extends { role: Role }>(items: T[]): T[] {
   return [...items].sort((a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role]);
 }

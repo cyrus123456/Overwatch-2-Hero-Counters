@@ -34,8 +34,9 @@ import {
 } from 'lucide-react';
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import type { HeroId, Role } from '@/data/heroData';
+import type { ActiveMapType, MapId } from '@/data/mapData';
 import { getMapName, getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
-import type { HeroId } from '@/data/heroData';
 import useDebounce from '@/hooks/useDebounce';
 import { sortByRole, useMemoizedHeroes } from '@/hooks/useMemoizedHeroes';
 
@@ -180,12 +181,12 @@ function AppContent() {
   const { t, language, setLanguage } = useI18n();
   const { getHero, heroes } = useMemoizedHeroes();
   
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [selectedHeroes, setSelectedHeroes] = useState<HeroId[]>([]);
-  const [selectedMap, setSelectedMap] = useState<string | null>(null);
+  const [selectedMap, setSelectedMap] = useState<MapId | null>(null);
   const [mapSearch, setMapSearch] = useState('');
   const debouncedMapSearch = useDebounce(mapSearch, 300);
-  const [activeMapType, setActiveMapType] = useState<string>('all');
+  const [activeMapType, setActiveMapType] = useState<ActiveMapType>('all');
 const [isMapCopied, setIsMapCopied] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [hoverTimer, setHoverTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
@@ -461,7 +462,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     });
   };
 
-  const mapTypes = [
+  const mapTypes: { id: ActiveMapType; name: string }[] = [
     { id: 'all', name: t('all') },
     { id: 'control', name: t('control') },
     { id: 'hybrid', name: t('hybrid') },
@@ -485,7 +486,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     return result;
   }, [debouncedMapSearch, activeMapType]);
 
-  const roles = [
+  const roles: { id: Role; name: string; nameEn: string; icon: typeof Shield; color: string }[] = [
     { id: 'tank', name: t('tank'), nameEn: 'Tank', icon: Shield, color: '#f59e0b' },
     { id: 'damage', name: t('damage'), nameEn: 'Damage', icon: Crosshair, color: '#ef4444' },
     { id: 'support', name: t('support'), nameEn: 'Support', icon: Heart, color: '#22c55e' },

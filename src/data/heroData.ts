@@ -10,12 +10,16 @@ export type HeroId =
   | 'ana' | 'baptiste' | 'brigitte' | 'illari' | 'juno' | 'kiriko' | 'lifeweaver' 
   | 'lucio' | 'mercy' | 'moira' | 'zenyatta' | 'wuyang' | 'mizuki' | 'feitianmao';
 
+export type Role = 'tank' | 'damage' | 'support';
+
+export type RelationStrength = 1 | 2 | 3;
+
 export interface Hero {
   id: HeroId;
   name: string;
   nameEn: string;
   nickname?: string;
-  role: 'tank' | 'damage' | 'support';
+  role: Role;
   color: string;
   image: string;
 }
@@ -23,7 +27,7 @@ export interface Hero {
 export interface CounterRelation {
   source: HeroId;
   target: HeroId;
-  strength?: number;
+  strength?: RelationStrength;
 }
 
 
@@ -943,19 +947,16 @@ export const counterRelations: CounterRelation[] = [
 
 ];
 
-// 获取角色颜色
-export const getRoleColor = (role: string): string => {
+export const getRoleColor = (role: Role): string => {
   switch (role) {
     case 'tank': return '#f59e0b';
     case 'damage': return '#ef4444';
     case 'support': return '#22c55e';
-    default: return '#6b7280';
   }
 };
    
-// 获取角色名称
-export const getRoleName = (role: string, language: string = 'zh'): string => {
-  const roleNames: Record<string, Record<string, string>> = {
+export const getRoleName = (role: Role, language: string = 'zh'): string => {
+  const roleNames: Record<Role, Record<string, string>> = {
     tank: { zh: '坦克', en: 'Tank', ja: 'タンク', ko: '탱크', 'zh-TW': '坦克', es: 'Tanque', fr: 'Tank', de: 'Tank', pt: 'Tanque', ru: 'Танк', it: 'Tank' },
     damage: { zh: '输出', en: 'Damage', ja: 'ダメージ', ko: '딜러', 'zh-TW': '輸出', es: 'Daño', fr: 'Dégâts', de: 'Schaden', pt: 'Dano', ru: 'ДПС', it: 'Danno' },
     support: { zh: '支援', en: 'Support', ja: 'サポート', ko: '서포터', 'zh-TW': '支援', es: 'Apoyo', fr: 'Support', de: 'Support', pt: 'Suporte', ru: 'Поддержка', it: 'Support' },
@@ -963,13 +964,11 @@ export const getRoleName = (role: string, language: string = 'zh'): string => {
   return roleNames[role]?.[language] || roleNames[role]?.['en'] || role;
 };
 
-// 获取角色英文名称
-export const getRoleNameEn = (role: string): string => {
+export const getRoleNameEn = (role: Role): string => {
   switch (role) {
     case 'tank': return 'Tank';
     case 'damage': return 'Damage';
     case 'support': return 'Support';
-    default: return 'Unknown';
   }
 };
 

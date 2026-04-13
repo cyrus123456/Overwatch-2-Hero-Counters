@@ -1,20 +1,19 @@
 import { useMemo } from 'react';
 
-/**
- * 关系数据接口 - 本地定义避免循环导入
- */
+import type { HeroId, RelationStrength } from '@/data/heroData';
+
 interface RelationData {
-  source: string;
-  target: string;
-  strength: number;
+  source: HeroId;
+  target: HeroId;
+  strength: RelationStrength;
   isCustom: boolean;
 }
 
 /** 克制/协同关系输入格式 */
 export type RelationInput = {
-  source: string;
-  target: string;
-  strength?: number;
+  source: HeroId;
+  target: HeroId;
+  strength?: RelationStrength;
   isCustom?: boolean;
 };
 
@@ -37,7 +36,7 @@ export function useRelationMaps(
     return new Map(
       counterRelations.map(r => [
         `${r.source}-${r.target}`,
-        { source: r.source, target: r.target, strength: r.strength || 1, isCustom: r.isCustom || false }
+        { source: r.source, target: r.target, strength: (r.strength || 1) as RelationStrength, isCustom: r.isCustom || false }
       ])
     );
   }, [counterRelations]);
@@ -46,7 +45,7 @@ export function useRelationMaps(
     return new Map(
       synergyRelations.map(r => [
         `${r.source}-${r.target}`,
-        { source: r.source, target: r.target, strength: r.strength || 1, isCustom: r.isCustom || false }
+        { source: r.source, target: r.target, strength: (r.strength || 1) as RelationStrength, isCustom: r.isCustom || false }
       ])
     );
   }, [synergyRelations]);
@@ -54,28 +53,28 @@ export function useRelationMaps(
   /**
    * O(1) 查找克制关系强度，返回 undefined 表示不存在
    */
-  const getCounterStrength = (sourceId: string, targetId: string): number | undefined => {
+  const getCounterStrength = (sourceId: HeroId, targetId: HeroId): RelationStrength | undefined => {
     return counterMap.get(`${sourceId}-${targetId}`)?.strength;
   };
 
   /**
    * O(1) 判断克制关系是否存在
    */
-  const hasCounterRelation = (sourceId: string, targetId: string): boolean => {
+  const hasCounterRelation = (sourceId: HeroId, targetId: HeroId): boolean => {
     return counterMap.has(`${sourceId}-${targetId}`);
   };
 
   /**
    * O(1) 查找协同关系强度
    */
-  const getSynergyStrength = (sourceId: string, targetId: string): number | undefined => {
+  const getSynergyStrength = (sourceId: HeroId, targetId: HeroId): RelationStrength | undefined => {
     return synergyMap.get(`${sourceId}-${targetId}`)?.strength;
   };
 
   /**
    * O(1) 判断协同关系是否存在
    */
-  const hasSynergyRelation = (sourceId: string, targetId: string): boolean => {
+  const hasSynergyRelation = (sourceId: HeroId, targetId: HeroId): boolean => {
     return synergyMap.has(`${sourceId}-${targetId}`);
   };
 
