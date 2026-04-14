@@ -1008,15 +1008,19 @@ const [isMapCopied, setIsMapCopied] = useState(false);
               </Button>
               <div className="w-px h-4 bg-slate-800 mx-1" />
               {roles.map(role => (
-                <Button 
-                  key={role.id} 
-                  variant={selectedRole === role.id ? 'default' : 'ghost'} 
-                  size="sm" 
+                <Button
+                  key={role.id}
+                  variant={selectedRole === role.id ? 'default' : 'ghost'}
+                  size="sm"
                   className={`rounded-full px-5 gap-2 transition-all duration-300 h-9 ${
-                    selectedRole === role.id 
-                      ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-900/40 scale-105' 
+                    selectedRole === role.id
+                      ? 'text-white shadow-lg scale-105'
                       : 'text-white hover:text-white hover:bg-slate-800'
-                  }`} 
+                  }`}
+                  style={selectedRole === role.id ? {
+                    backgroundColor: role.color,
+                    boxShadow: `0 10px 15px -3px ${role.color}40`,
+                  } : undefined}
                   onClick={() => setSelectedRole(role.id)}
                 >
                   <role.icon className="w-4 h-4" style={{ color: selectedRole === role.id ? '#fff' : role.color }} />
