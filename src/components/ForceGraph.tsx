@@ -121,7 +121,7 @@ const ForceGraph = ({
   mapDataActions
 }: ForceGraphProps) => {
   /** 移动端画布整体等比缩放倍数 */
-  const MOBILE_SCALE = 0.6;
+  const MOBILE_SCALE = 0.3;
 
   const selectedMapData = useMemo(() => selectedMap ? maps.find(m => m.id === selectedMap) : null, [selectedMap]);
   const mapRecommendedHeroes = useMemo(() => {
