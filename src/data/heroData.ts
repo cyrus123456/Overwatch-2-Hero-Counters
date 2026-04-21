@@ -407,7 +407,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'tracer', target: 'reaper', strength: 3 },
   { source: 'sojourn', target: 'reaper', strength: 3 },
   { source: 'torbjorn', target: 'reaper', strength: 3 },
-  { source: 'genji', target: 'reaper', strength: 3 },
+  { source: 'genji', target: 'reaper', strength: 2 },
   { source: 'symmetra', target: 'reaper', strength: 3 },
   { source: 'ana', target: 'reaper', strength: 3 },
   { source: 'baptiste', target: 'reaper', strength: 3 },
@@ -533,6 +533,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'brigitte', target: 'genji', strength: 3 },
   { source: 'zenyatta', target: 'genji', strength: 3 },
   { source: 'moira', target: 'genji', strength: 3 },
+  { source: 'reaper', target: 'genji', strength: 2 }, // 补充：源氏还被死神强克制
   { source: 'symmetra', target: 'genji', strength: 3 }, // 补充：源氏被秩序之光克制
   { source: 'emrey', target: 'genji', strength: 3 }, // 补充：源氏还被埃姆雷克制
   { source: 'mizuki', target: 'genji', strength: 3 }, // 补充：源氏还被瑞稀克制
