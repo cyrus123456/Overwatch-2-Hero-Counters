@@ -21,7 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getCounterReason } from '@/data/counterReasons';
-import { counterRelations, getHeroName, getRoleName, heroes, type Hero, type HeroId, type RelationStrength, type Role } from '@/data/heroData';
+import { counterRelations, getHeroName, getRoleName, heroes, type CounterType, type Hero, type HeroId, type RelationStrength, type Role } from '@/data/heroData';
 import { maps } from '@/data/mapData';
 import { getSynergyReason } from '@/data/synergyReasons';
 import { synergyRelations } from '@/data/synergyRelations';
@@ -730,7 +730,24 @@ const {
       const relationSource = source || (swapSourceTarget ? hero.id : targetHeroIds[0]);
       const relationTarget = target || (swapSourceTarget ? targetHeroIds[0] : hero.id);
 
-      const counterType = getCounterType(relationSource as HeroId, relationTarget as HeroId);
+      // 获取克制类型：多选模式下查找与任意选中英雄有关的克制类型
+      let counterType: CounterType | undefined;
+      if (targetHeroIds.length > 1) {
+        for (const targetId of targetHeroIds) {
+          // counteredBy: 列表英雄克制选中英雄 (列表英雄→选中英雄)
+          // counters: 选中英雄克制列表英雄 (选中英雄→列表英雄)
+          const src = swapSourceTarget ? targetId : hero.id;
+          const tgt = swapSourceTarget ? hero.id : targetId;
+          const type = getCounterType(src as HeroId, tgt as HeroId);
+          if (type) {
+            counterType = type;
+            break;
+          }
+        }
+      } else {
+        counterType = getCounterType(relationSource as HeroId, relationTarget as HeroId);
+      }
+
       const typeLabels: Record<string, string> = {
         skill: t('counterTypeSkill'),
         numeric: t('counterTypeNumeric'),
