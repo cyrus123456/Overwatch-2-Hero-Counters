@@ -14,6 +14,8 @@ export type Role = 'tank' | 'damage' | 'support';
 
 export type RelationStrength = 1 | 2 | 3;
 
+export type CounterType = 'skill' | 'numeric' | 'range' | 'role';
+
 export interface Hero {
   id: HeroId;
   name: string;
@@ -28,6 +30,7 @@ export interface CounterRelation {
   source: HeroId;
   target: HeroId;
   strength?: RelationStrength;
+  type?: CounterType;
 }
 
 
@@ -155,684 +158,689 @@ export const heroes: Hero[] = [
 ];
 
 // 被克制关系数据 - 基于参考图片整理
+// 克制类型说明：
+// skill: 技能组克制（如源氏反弹、黑影黑客、小美冰冻等）
+// numeric: 数值克制（如血量、伤害数值差异）
+// range: 射程克制（远程压制近战、空中对地面等）
+// role: 职责克制（重装克制支援、输出克制支援等）
 export const counterRelations: CounterRelation[] = [
   // ========== 坦克篇 ==========
   // 1. D.Va被克制
-  { source: 'junker_queen', target: 'dva', strength: 3 },
-  { source: 'sigma', target: 'dva', strength: 3 },
-  { source: 'zarya', target: 'dva', strength: 3 },
-  { source: 'moira', target: 'dva', strength: 3 },
-  { source: 'zenyatta', target: 'dva', strength: 3 },
-  { source: 'ana', target: 'dva', strength: 3 },
-  { source: 'symmetra', target: 'dva', strength: 3 },
-  { source: 'echo', target: 'dva', strength: 3 },
-  { source: 'sombra', target: 'dva', strength: 3 },
-  { source: 'mei', target: 'dva', strength: 3 },
-  { source: 'hanzo', target: 'dva', strength: 3 },
-  { source: 'anran', target: 'dva', strength: 3 }, // 补充：D.Va还被安燃克制
-  { source: 'vendetta', target: 'dva', strength: 3 }, // 补充：D.Va还被斩仇克制
-  { source: 'brigitte', target: 'dva', strength: 3 }, // 补充：D.Va还被布丽吉塔克制
-  { source: 'mizuki', target: 'dva', strength: 3 }, // 补充：D.Va还被瑞稀克制
+  { source: 'junker_queen', target: 'dva', strength: 3, type: 'skill' }, // 抗治疗+近战压制
+  { source: 'sigma', target: 'dva', strength: 3, type: 'skill' }, // 动能捕获吸收弹药
+  { source: 'zarya', target: 'dva', strength: 3, type: 'numeric' }, // 高能量输出压制
+  { source: 'moira', target: 'dva', strength: 3, type: 'skill' }, // 锁定光束无法被防御矩阵阻挡
+  { source: 'zenyatta', target: 'dva', strength: 3, type: 'numeric' }, // 增伤加快击杀
+  { source: 'ana', target: 'dva', strength: 3, type: 'skill' }, // 禁疗+睡眠控制
+  { source: 'symmetra', target: 'dva', strength: 3, type: 'skill' }, // 光束穿透防御矩阵
+  { source: 'echo', target: 'dva', strength: 3, type: 'range' }, // 飞行追击+粘弹爆发
+  { source: 'sombra', target: 'dva', strength: 3, type: 'skill' }, // 黑客禁用防御矩阵
+  { source: 'mei', target: 'dva', strength: 3, type: 'skill' }, // 冰冻减速
+  { source: 'hanzo', target: 'dva', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'anran', target: 'dva', strength: 3, type: 'skill' }, // 火焰突进克制机甲
+  { source: 'vendetta', target: 'dva', strength: 3, type: 'skill' }, // 近战爆发克制机甲
+  { source: 'brigitte', target: 'dva', strength: 3, type: 'skill' }, // 盾击打断
+  { source: 'mizuki', target: 'dva', strength: 3, type: 'skill' }, // 护魂结界克制
   
   // 2. 末日铁拳被克制
-  { source: 'roadhog', target: 'doomfist', strength: 3 },
-  { source: 'zarya', target: 'doomfist', strength: 3 },
-  { source: 'orisa', target: 'doomfist', strength: 3 },
-  { source: 'sombra', target: 'doomfist', strength: 3 },
-  { source: 'cassidy', target: 'doomfist', strength: 3 },
-  { source: 'tracer', target: 'doomfist', strength: 3 },
-  { source: 'ana', target: 'doomfist', strength: 3 },
-  { source: 'juno', target: 'doomfist', strength: 3 },
-  { source: 'brigitte', target: 'doomfist', strength: 3 },
-  { source: 'mizuki', target: 'doomfist', strength: 3 }, // 补充：末日铁拳还被瑞稀克制
-  { source: 'feitianmao', target: 'doomfist', strength: 3 }, // 补充：末日铁拳还被飞天猫克制
-  { source: 'symmetra', target: 'doomfist', strength: 3 }, // 补充：末日铁拳还被秩序之光克制
+  { source: 'roadhog', target: 'doomfist', strength: 3, type: 'skill' }, // 钩子克制突进
+  { source: 'zarya', target: 'doomfist', strength: 3, type: 'skill' }, // 护盾吸收伤害
+  { source: 'orisa', target: 'doomfist', strength: 3, type: 'skill' }, // 长矛眩晕+坚毅
+  { source: 'sombra', target: 'doomfist', strength: 3, type: 'skill' }, // 黑客禁用技能
+  { source: 'cassidy', target: 'doomfist', strength: 3, type: 'skill' }, // 闪光弹+三连
+  { source: 'tracer', target: 'doomfist', strength: 3, type: 'skill' }, // 高机动闪避
+  { source: 'ana', target: 'doomfist', strength: 3, type: 'skill' }, // 睡眠针打断
+  { source: 'juno', target: 'doomfist', strength: 3, type: 'skill' }, // 环形轨道控制
+  { source: 'brigitte', target: 'doomfist', strength: 3, type: 'skill' }, // 盾击打断
+  { source: 'mizuki', target: 'doomfist', strength: 3, type: 'skill' }, // 护魂结界
+  { source: 'feitianmao', target: 'doomfist', strength: 3, type: 'range' }, // 空中压制
+  { source: 'symmetra', target: 'doomfist', strength: 3, type: 'skill' }, // 光束克制近战
   
   // 3. 莱因哈特被克制
-  { source: 'orisa', target: 'reinhardt', strength: 3 },
-  { source: 'winston', target: 'reinhardt', strength: 3 },
-  { source: 'ramattra', target: 'reinhardt', strength: 3 },
-  { source: 'pharah', target: 'reinhardt', strength: 3 },
-  { source: 'ashe', target: 'reinhardt', strength: 3 },
-  { source: 'echo', target: 'reinhardt', strength: 3 },
-  { source: 'bastion', target: 'reinhardt', strength: 3 },
-  { source: 'mei', target: 'reinhardt', strength: 3 },
-  { source: 'junkrat', target: 'reinhardt', strength: 3 },
-  { source: 'torbjorn', target: 'reinhardt', strength: 3 },
-  { source: 'ana', target: 'reinhardt', strength: 3 },
-  { source: 'baptiste', target: 'reinhardt', strength: 3 },
-  { source: 'brigitte', target: 'reinhardt', strength: 3 },
-  { source: 'zenyatta', target: 'reinhardt', strength: 3 },
-  { source: 'lucio', target: 'reinhardt', strength: 3 },
-  { source: 'illari', target: 'reinhardt', strength: 3 },
-  { source: 'anran', target: 'reinhardt', strength: 3 }, // 补充：莱因哈特还被安燃克制
-  { source: 'feitianmao', target: 'reinhardt', strength: 3 }, // 补充：莱因哈特还被飞天猫克制
-  { source: 'wuyang', target: 'reinhardt', strength: 3 }, // 补充：莱因哈特还被无漾克制
-  { source: 'juno', target: 'reinhardt', strength: 3 }, // 补充：莱因哈特还被朱诺克制
+  { source: 'orisa', target: 'reinhardt', strength: 3, type: 'skill' }, // 长矛克制举盾
+  { source: 'winston', target: 'reinhardt', strength: 3, type: 'role' }, // 机动突击克制站桩
+  { source: 'ramattra', target: 'reinhardt', strength: 3, type: 'skill' }, // 涅槃形态克制
+  { source: 'pharah', target: 'reinhardt', strength: 3, type: 'range' }, // 空中输出
+  { source: 'ashe', target: 'reinhardt', strength: 3, type: 'range' }, // 远程狙击
+  { source: 'echo', target: 'reinhardt', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'bastion', target: 'reinhardt', strength: 3, type: 'numeric' }, // 高DPS破盾
+  { source: 'mei', target: 'reinhardt', strength: 3, type: 'skill' }, // 冰冻限制
+  { source: 'junkrat', target: 'reinhardt', strength: 3, type: 'numeric' }, // 炸弹破盾
+  { source: 'torbjorn', target: 'reinhardt', strength: 3, type: 'numeric' }, // 炮塔输出
+  { source: 'ana', target: 'reinhardt', strength: 3, type: 'skill' }, // 禁疗+睡眠
+  { source: 'baptiste', target: 'reinhardt', strength: 3, type: 'skill' }, // 矩阵保护队友
+  { source: 'brigitte', target: 'reinhardt', strength: 3, type: 'skill' }, // 击退
+  { source: 'zenyatta', target: 'reinhardt', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'lucio', target: 'reinhardt', strength: 3, type: 'skill' }, // 加速拉扯
+  { source: 'illari', target: 'reinhardt', strength: 3, type: 'range' }, // 远程输出
+  { source: 'anran', target: 'reinhardt', strength: 3, type: 'skill' }, // 火焰克制
+  { source: 'feitianmao', target: 'reinhardt', strength: 3, type: 'range' }, // 空中压制
+  { source: 'wuyang', target: 'reinhardt', strength: 3, type: 'skill' }, // 水元素控制
+  { source: 'juno', target: 'reinhardt', strength: 3, type: 'skill' }, // 远程控制
   
   // 4. 骇灾被克制
-  { source: 'dva', target: 'hazard', strength: 3 },
-  { source: 'sigma', target: 'hazard', strength: 3 },
-  { source: 'doomfist', target: 'hazard', strength: 3 },
-  { source: 'roadhog', target: 'hazard', strength: 3 },
-  { source: 'orisa', target: 'hazard', strength: 3 },
-  { source: 'zarya', target: 'hazard', strength: 3 },
-  { source: 'tracer', target: 'hazard', strength: 3 },
-  { source: 'sojourn', target: 'hazard', strength: 3 },
-  { source: 'torbjorn', target: 'hazard', strength: 3 },
-  { source: 'echo', target: 'hazard', strength: 3 },
-  { source: 'ana', target: 'hazard', strength: 3 },
-  { source: 'zenyatta', target: 'hazard', strength: 3 },
-  { source: 'brigitte', target: 'hazard', strength: 3 }, // 补充：骇灾还被布丽吉塔克制
+  { source: 'dva', target: 'hazard', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'sigma', target: 'hazard', strength: 3, type: 'skill' }, // 动能捕获
+  { source: 'doomfist', target: 'hazard', strength: 3, type: 'skill' }, // 高机动突进
+  { source: 'roadhog', target: 'hazard', strength: 3, type: 'skill' }, // 钩子秒杀
+  { source: 'orisa', target: 'hazard', strength: 3, type: 'skill' }, // 长矛+坚毅
+  { source: 'zarya', target: 'hazard', strength: 3, type: 'numeric' }, // 高能量输出
+  { source: 'tracer', target: 'hazard', strength: 3, type: 'skill' }, // 高机动骚扰
+  { source: 'sojourn', target: 'hazard', strength: 3, type: 'range' }, // 远程点射
+  { source: 'torbjorn', target: 'hazard', strength: 3, type: 'numeric' }, // 炮塔输出
+  { source: 'echo', target: 'hazard', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'ana', target: 'hazard', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'zenyatta', target: 'hazard', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'brigitte', target: 'hazard', strength: 3, type: 'skill' }, // 盾击
   
   // 5. 路霸被克制
-  { source: 'junker_queen', target: 'roadhog', strength: 3 },
-  { source: 'zarya', target: 'roadhog', strength: 3 },
-  { source: 'orisa', target: 'roadhog', strength: 3 },
-  { source: 'doomfist', target: 'roadhog', strength: 3 },
-  { source: 'mauga', target: 'roadhog', strength: 3 },
-  { source: 'reinhardt', target: 'roadhog', strength: 3 },
-  { source: 'echo', target: 'roadhog', strength: 3 },
-  { source: 'widowmaker', target: 'roadhog', strength: 3 },
-  { source: 'mei', target: 'roadhog', strength: 3 },
-  { source: 'pharah', target: 'roadhog', strength: 3 },
-  { source: 'reaper', target: 'roadhog', strength: 3 },
-  { source: 'sojourn', target: 'roadhog', strength: 3 },
-  { source: 'genji', target: 'roadhog', strength: 3 },
-  { source: 'ashe', target: 'roadhog', strength: 3 },
-  { source: 'hanzo', target: 'roadhog', strength: 3 },
-  { source: 'sombra', target: 'roadhog', strength: 3 },
-  { source: 'zenyatta', target: 'roadhog', strength: 3 },
-  { source: 'ana', target: 'roadhog', strength: 3 },
-  { source: 'baptiste', target: 'roadhog', strength: 3 },
-  { source: 'brigitte', target: 'roadhog', strength: 3 },
-  { source: 'anran', target: 'roadhog', strength: 3 }, // 补充：路霸还被安燃克制
+  { source: 'junker_queen', target: 'roadhog', strength: 3, type: 'skill' }, // 抗治疗克制回血
+  { source: 'zarya', target: 'roadhog', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'orisa', target: 'roadhog', strength: 3, type: 'skill' }, // 长矛眩晕
+  { source: 'doomfist', target: 'roadhog', strength: 3, type: 'skill' }, // 高机动躲钩子
+  { source: 'mauga', target: 'roadhog', strength: 3, type: 'numeric' }, // 双枪压制
+  { source: 'reinhardt', target: 'roadhog', strength: 3, type: 'skill' }, // 举盾挡钩子
+  { source: 'echo', target: 'roadhog', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'widowmaker', target: 'roadhog', strength: 3, type: 'range' }, // 狙击
+  { source: 'mei', target: 'roadhog', strength: 3, type: 'skill' }, // 冰冻
+  { source: 'pharah', target: 'roadhog', strength: 3, type: 'range' }, // 空中输出
+  { source: 'reaper', target: 'roadhog', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'sojourn', target: 'roadhog', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'genji', target: 'roadhog', strength: 3, type: 'skill' }, // 反弹钩子
+  { source: 'ashe', target: 'roadhog', strength: 3, type: 'range' }, // 狙击
+  { source: 'hanzo', target: 'roadhog', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'sombra', target: 'roadhog', strength: 3, type: 'skill' }, // 黑客
+  { source: 'zenyatta', target: 'roadhog', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'ana', target: 'roadhog', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'baptiste', target: 'roadhog', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'brigitte', target: 'roadhog', strength: 3, type: 'skill' }, // 击退还血
+  { source: 'anran', target: 'roadhog', strength: 3, type: 'skill' }, // 火焰克制
   
   // 6. 渣客女王被克制
-  { source: 'orisa', target: 'junker_queen', strength: 3 },
-  { source: 'doomfist', target: 'junker_queen', strength: 3 },
-  { source: 'mauga', target: 'junker_queen', strength: 3 },
-  { source: 'hazard', target: 'junker_queen', strength: 3 },
-  { source: 'zarya', target: 'junker_queen', strength: 3 },
-  { source: 'pharah', target: 'junker_queen', strength: 3 },
-  { source: 'mei', target: 'junker_queen', strength: 3 },
-  { source: 'torbjorn', target: 'junker_queen', strength: 3 },
-  { source: 'sojourn', target: 'junker_queen', strength: 3 },
-  { source: 'echo', target: 'junker_queen', strength: 3 },
-  { source: 'juno', target: 'junker_queen', strength: 3 },
-  { source: 'ana', target: 'junker_queen', strength: 3 },
-  { source: 'lucio', target: 'junker_queen', strength: 3 },
-  { source: 'kiriko', target: 'junker_queen', strength: 3 },
+  { source: 'orisa', target: 'junker_queen', strength: 3, type: 'skill' }, // 长矛克制近战
+  { source: 'doomfist', target: 'junker_queen', strength: 3, type: 'skill' }, // 高机动
+  { source: 'mauga', target: 'junker_queen', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'hazard', target: 'junker_queen', strength: 3, type: 'skill' }, // 毒素克制
+  { source: 'zarya', target: 'junker_queen', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'pharah', target: 'junker_queen', strength: 3, type: 'range' }, // 空中输出
+  { source: 'mei', target: 'junker_queen', strength: 3, type: 'skill' }, // 冰冻
+  { source: 'torbjorn', target: 'junker_queen', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'sojourn', target: 'junker_queen', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'echo', target: 'junker_queen', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'juno', target: 'junker_queen', strength: 3, type: 'skill' }, // 控制
+  { source: 'ana', target: 'junker_queen', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'lucio', target: 'junker_queen', strength: 3, type: 'skill' }, // 加速拉扯
+  { source: 'kiriko', target: 'junker_queen', strength: 3, type: 'skill' }, // 净化抗治疗
   
   // 7. 西格玛被克制
-  { source: 'doomfist', target: 'sigma', strength: 3 },
-  { source: 'winston', target: 'sigma', strength: 3 },
-  { source: 'reinhardt', target: 'sigma', strength: 3 },
-  { source: 'ramattra', target: 'sigma', strength: 3 },
-  { source: 'symmetra', target: 'sigma', strength: 3 },
-  { source: 'mei', target: 'sigma', strength: 3 },
-  { source: 'sombra', target: 'sigma', strength: 3 },
-  { source: 'pharah', target: 'sigma', strength: 3 },
-  { source: 'kiriko', target: 'sigma', strength: 3 },
-  { source: 'brigitte', target: 'sigma', strength: 3 },
-  { source: 'zenyatta', target: 'sigma', strength: 3 },
-  { source: 'lifeweaver', target: 'sigma', strength: 3 },
-  { source: 'moira', target: 'sigma', strength: 3 },
-  { source: 'wuyang', target: 'sigma', strength: 3 }, // 补充：西格玛还被无漾克制
+  { source: 'doomfist', target: 'sigma', strength: 3, type: 'skill' }, // 近战克制
+  { source: 'winston', target: 'sigma', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'reinhardt', target: 'sigma', strength: 3, type: 'skill' }, // 近身锤击
+  { source: 'ramattra', target: 'sigma', strength: 3, type: 'skill' }, // 涅槃形态
+  { source: 'symmetra', target: 'sigma', strength: 3, type: 'skill' }, // 光束
+  { source: 'mei', target: 'sigma', strength: 3, type: 'skill' }, // 冰冻
+  { source: 'sombra', target: 'sigma', strength: 3, type: 'skill' }, // 黑客
+  { source: 'pharah', target: 'sigma', strength: 3, type: 'range' }, // 空中输出
+  { source: 'kiriko', target: 'sigma', strength: 3, type: 'skill' }, // 净化
+  { source: 'brigitte', target: 'sigma', strength: 3, type: 'skill' }, // 近战
+  { source: 'zenyatta', target: 'sigma', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'lifeweaver', target: 'sigma', strength: 3, type: 'skill' }, // 控制
+  { source: 'moira', target: 'sigma', strength: 3, type: 'skill' }, // 光束
+  { source: 'wuyang', target: 'sigma', strength: 3, type: 'skill' }, // 水元素
   
   // 8. 毛加被克制
-  { source: 'sigma', target: 'mauga', strength: 3 },
-  { source: 'zarya', target: 'mauga', strength: 3 },
-  { source: 'orisa', target: 'mauga', strength: 3 },
-  { source: 'echo', target: 'mauga', strength: 3 },
-  { source: 'reaper', target: 'mauga', strength: 3 },
-  { source: 'sojourn', target: 'mauga', strength: 3 },
-  { source: 'widowmaker', target: 'mauga', strength: 3 },
-  { source: 'zenyatta', target: 'mauga', strength: 3 },
-  { source: 'ana', target: 'mauga', strength: 3 },
-  { source: 'juno', target: 'mauga', strength: 3 },
+  { source: 'sigma', target: 'mauga', strength: 3, type: 'skill' }, // 石头控制
+  { source: 'zarya', target: 'mauga', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'orisa', target: 'mauga', strength: 3, type: 'skill' }, // 长矛
+  { source: 'echo', target: 'mauga', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'reaper', target: 'mauga', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'sojourn', target: 'mauga', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'widowmaker', target: 'mauga', strength: 3, type: 'range' }, // 狙击
+  { source: 'zenyatta', target: 'mauga', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'ana', target: 'mauga', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'juno', target: 'mauga', strength: 3, type: 'skill' }, // 控制
   
   // 9. 温斯顿被克制
-  { source: 'hazard', target: 'winston', strength: 3 },
-  { source: 'mauga', target: 'winston', strength: 3 },
-  { source: 'junker_queen', target: 'winston', strength: 3 },
-  { source: 'dva', target: 'winston', strength: 3 },
-  { source: 'torbjorn', target: 'winston', strength: 3 },
-  { source: 'bastion', target: 'winston', strength: 3 },
-  { source: 'reaper', target: 'winston', strength: 3 },
-  { source: 'cassidy', target: 'winston', strength: 3 },
-  { source: 'echo', target: 'winston', strength: 3 },
-  { source: 'junkrat', target: 'winston', strength: 3 },
-  { source: 'lucio', target: 'winston', strength: 3 },
-  { source: 'illari', target: 'winston', strength: 3 },
-  { source: 'ana', target: 'winston', strength: 3 },
-  { source: 'brigitte', target: 'winston', strength: 3 },
-  { source: 'zenyatta', target: 'winston', strength: 3 },
-  { source: 'hanzo', target: 'winston', strength: 3 },
-  { source: 'mizuki', target: 'winston', strength: 3 }, // 补充：温斯顿还被瑞稀克制
+  { source: 'hazard', target: 'winston', strength: 3, type: 'skill' }, // 毒素
+  { source: 'mauga', target: 'winston', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'junker_queen', target: 'winston', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'dva', target: 'winston', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'torbjorn', target: 'winston', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'bastion', target: 'winston', strength: 3, type: 'numeric' }, // 高DPS
+  { source: 'reaper', target: 'winston', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'cassidy', target: 'winston', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'echo', target: 'winston', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'junkrat', target: 'winston', strength: 3, type: 'numeric' }, // 炸弹
+  { source: 'lucio', target: 'winston', strength: 3, type: 'skill' }, // 加速拉扯
+  { source: 'illari', target: 'winston', strength: 3, type: 'range' }, // 远程输出
+  { source: 'ana', target: 'winston', strength: 3, type: 'skill' }, // 睡眠针
+  { source: 'brigitte', target: 'winston', strength: 3, type: 'skill' }, // 击退还血
+  { source: 'zenyatta', target: 'winston', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'hanzo', target: 'winston', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'mizuki', target: 'winston', strength: 3, type: 'skill' }, // 护魂结界
   
   // 10. 奥丽莎被克制
-  { source: 'sigma', target: 'orisa', strength: 3 },
-  { source: 'winston', target: 'orisa', strength: 3 },
-  { source: 'zarya', target: 'orisa', strength: 3 },
-  { source: 'wrecking_ball', target: 'orisa', strength: 3 },
-  { source: 'baptiste', target: 'orisa', strength: 3 },
-  { source: 'hanzo', target: 'orisa', strength: 3 },
-  { source: 'ashe', target: 'orisa', strength: 3 },
-  { source: 'sojourn', target: 'orisa', strength: 3 },
-  { source: 'tracer', target: 'orisa', strength: 3 },
-  { source: 'junkrat', target: 'orisa', strength: 3 },
-  { source: 'echo', target: 'orisa', strength: 3 },
-  { source: 'widowmaker', target: 'orisa', strength: 3 },
-  { source: 'pharah', target: 'orisa', strength: 3 },
-  { source: 'bastion', target: 'orisa', strength: 3 },
-  { source: 'ana', target: 'orisa', strength: 3 },
-  { source: 'illari', target: 'orisa', strength: 3 },
-  { source: 'zenyatta', target: 'orisa', strength: 3 },
+  { source: 'sigma', target: 'orisa', strength: 3, type: 'skill' }, // 石头+动能捕获
+  { source: 'winston', target: 'orisa', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'zarya', target: 'orisa', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'wrecking_ball', target: 'orisa', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'baptiste', target: 'orisa', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'hanzo', target: 'orisa', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'ashe', target: 'orisa', strength: 3, type: 'range' }, // 狙击
+  { source: 'sojourn', target: 'orisa', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'tracer', target: 'orisa', strength: 3, type: 'skill' }, // 高机动
+  { source: 'junkrat', target: 'orisa', strength: 3, type: 'numeric' }, // 炸弹
+  { source: 'echo', target: 'orisa', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'widowmaker', target: 'orisa', strength: 3, type: 'range' }, // 狙击
+  { source: 'pharah', target: 'orisa', strength: 3, type: 'range' }, // 空中输出
+  { source: 'bastion', target: 'orisa', strength: 3, type: 'numeric' }, // 高DPS
+  { source: 'ana', target: 'orisa', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'illari', target: 'orisa', strength: 3, type: 'range' }, // 远程输出
+  { source: 'zenyatta', target: 'orisa', strength: 3, type: 'numeric' }, // 增伤
   
   // 11. 破坏球被克制
-  { source: 'orisa', target: 'wrecking_ball', strength: 3 },
-  { source: 'dva', target: 'wrecking_ball', strength: 3 },
-  { source: 'doomfist', target: 'wrecking_ball', strength: 3 },
-  { source: 'mauga', target: 'wrecking_ball', strength: 3 },
-  { source: 'roadhog', target: 'wrecking_ball', strength: 3 },
-  { source: 'sombra', target: 'wrecking_ball', strength: 3 },
-  { source: 'cassidy', target: 'wrecking_ball', strength: 3 },
-  { source: 'tracer', target: 'wrecking_ball', strength: 3 },
-  { source: 'sojourn', target: 'wrecking_ball', strength: 3 },
-  { source: 'torbjorn', target: 'wrecking_ball', strength: 3 },
-  { source: 'ana', target: 'wrecking_ball', strength: 3 },
-  { source: 'brigitte', target: 'wrecking_ball', strength: 3 },
-  { source: 'lucio', target: 'wrecking_ball', strength: 3 },
-  { source: 'domina', target: 'wrecking_ball', strength: 3 }, // 补充：破坏球还被金驭克制
-  { source: 'feitianmao', target: 'wrecking_ball', strength: 3 }, // 补充：破坏球还被飞天猫克制
-  { source: 'mizuki', target: 'wrecking_ball', strength: 3 }, // 补充：破坏球还被瑞稀克制
+  { source: 'orisa', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 长矛
+  { source: 'dva', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'doomfist', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 高机动
+  { source: 'mauga', target: 'wrecking_ball', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'roadhog', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 钩子
+  { source: 'sombra', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 黑客
+  { source: 'cassidy', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'tracer', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 高机动
+  { source: 'sojourn', target: 'wrecking_ball', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'torbjorn', target: 'wrecking_ball', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'ana', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 睡眠针
+  { source: 'brigitte', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 盾击
+  { source: 'lucio', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 加速拉扯
+  { source: 'domina', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 金驭克制
+  { source: 'feitianmao', target: 'wrecking_ball', strength: 3, type: 'range' }, // 空中压制
+  { source: 'mizuki', target: 'wrecking_ball', strength: 3, type: 'skill' }, // 护魂结界
   
   // 12. 拉玛刹被克制
-  { source: 'sigma', target: 'ramattra', strength: 3 },
-  { source: 'junker_queen', target: 'ramattra', strength: 3 },
-  { source: 'mauga', target: 'ramattra', strength: 3 },
-  { source: 'roadhog', target: 'ramattra', strength: 3 },
-  { source: 'hazard', target: 'ramattra', strength: 3 },
-  { source: 'bastion', target: 'ramattra', strength: 3 },
-  { source: 'pharah', target: 'ramattra', strength: 3 },
-  { source: 'genji', target: 'ramattra', strength: 3 },
-  { source: 'torbjorn', target: 'ramattra', strength: 3 },
-  { source: 'sojourn', target: 'ramattra', strength: 3 },
-  { source: 'reaper', target: 'ramattra', strength: 3 },
-  { source: 'mei', target: 'ramattra', strength: 3 },
-  { source: 'tracer', target: 'ramattra', strength: 3 },
-  { source: 'echo', target: 'ramattra', strength: 3 },
-  { source: 'juno', target: 'ramattra', strength: 3 },
-  { source: 'ana', target: 'ramattra', strength: 3 },
-  { source: 'baptiste', target: 'ramattra', strength: 3 },
-  { source: 'illari', target: 'ramattra', strength: 3 },
-  { source: 'zenyatta', target: 'ramattra', strength: 3 },
-  { source: 'feitianmao', target: 'ramattra', strength: 3 }, // 补充：拉玛刹还被飞天猫克制
+  { source: 'sigma', target: 'ramattra', strength: 3, type: 'skill' }, // 动能捕获
+  { source: 'junker_queen', target: 'ramattra', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'mauga', target: 'ramattra', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'roadhog', target: 'ramattra', strength: 3, type: 'skill' }, // 钩子
+  { source: 'hazard', target: 'ramattra', strength: 3, type: 'skill' }, // 毒素
+  { source: 'bastion', target: 'ramattra', strength: 3, type: 'numeric' }, // 高DPS
+  { source: 'pharah', target: 'ramattra', strength: 3, type: 'range' }, // 空中输出
+  { source: 'genji', target: 'ramattra', strength: 3, type: 'skill' }, // 反弹
+  { source: 'torbjorn', target: 'ramattra', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'sojourn', target: 'ramattra', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'reaper', target: 'ramattra', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'mei', target: 'ramattra', strength: 3, type: 'skill' }, // 冰冻
+  { source: 'tracer', target: 'ramattra', strength: 3, type: 'skill' }, // 高机动
+  { source: 'echo', target: 'ramattra', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'juno', target: 'ramattra', strength: 3, type: 'skill' }, // 控制
+  { source: 'ana', target: 'ramattra', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'baptiste', target: 'ramattra', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'illari', target: 'ramattra', strength: 3, type: 'range' }, // 远程输出
+  { source: 'zenyatta', target: 'ramattra', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'feitianmao', target: 'ramattra', strength: 3, type: 'range' }, // 空中压制
   
   // 13. 查莉娅被克制
-  { source: 'winston', target: 'zarya', strength: 3 },
-  { source: 'wrecking_ball', target: 'zarya', strength: 3 },
-  { source: 'ramattra', target: 'zarya', strength: 3 },
-  { source: 'reinhardt', target: 'zarya', strength: 3 },
-  { source: 'widowmaker', target: 'zarya', strength: 3 },
-  { source: 'mei', target: 'zarya', strength: 3 },
-  { source: 'ashe', target: 'zarya', strength: 3 },
-  { source: 'zenyatta', target: 'zarya', strength: 3 },
-  { source: 'lifeweaver', target: 'zarya', strength: 3 },
+  { source: 'winston', target: 'zarya', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'wrecking_ball', target: 'zarya', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'ramattra', target: 'zarya', strength: 3, type: 'skill' }, // 涅槃形态
+  { source: 'reinhardt', target: 'zarya', strength: 3, type: 'skill' }, // 举盾推进
+  { source: 'widowmaker', target: 'zarya', strength: 3, type: 'range' }, // 狙击
+  { source: 'mei', target: 'zarya', strength: 3, type: 'skill' }, // 冰冻
+  { source: 'ashe', target: 'zarya', strength: 3, type: 'range' }, // 狙击
+  { source: 'zenyatta', target: 'zarya', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'lifeweaver', target: 'zarya', strength: 3, type: 'skill' }, // 控制
   
   // ========== 输出篇 ==========
   // 1. 艾什被克制
-  { source: 'winston', target: 'ashe', strength: 3 },
-  { source: 'ramattra', target: 'ashe', strength: 3 },
-  { source: 'hazard', target: 'ashe', strength: 3 },
-  { source: 'hanzo', target: 'ashe', strength: 3 },
-  { source: 'widowmaker', target: 'ashe', strength: 3 },
-  { source: 'tracer', target: 'ashe', strength: 3 },
-  { source: 'sojourn', target: 'ashe', strength: 3 },
-  { source: 'zenyatta', target: 'ashe', strength: 3 },
-  { source: 'illari', target: 'ashe', strength: 3 },
-  { source: 'freja', target: 'ashe', strength: 3 }, // 补充：艾什还被芙蕾雅克制
+  { source: 'winston', target: 'ashe', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'ramattra', target: 'ashe', strength: 3, type: 'skill' }, // 远程控制
+  { source: 'hazard', target: 'ashe', strength: 3, type: 'skill' }, // 毒素
+  { source: 'hanzo', target: 'ashe', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'widowmaker', target: 'ashe', strength: 3, type: 'range' }, // 狙击克制
+  { source: 'tracer', target: 'ashe', strength: 3, type: 'skill' }, // 高机动
+  { source: 'sojourn', target: 'ashe', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'zenyatta', target: 'ashe', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'illari', target: 'ashe', strength: 3, type: 'range' }, // 远程输出
+  { source: 'freja', target: 'ashe', strength: 3, type: 'skill' }, // 芙蕾雅克制
   
   // 2. 死神被克制
-  { source: 'sigma', target: 'reaper', strength: 3 },
-  { source: 'zarya', target: 'reaper', strength: 3 },
-  { source: 'orisa', target: 'reaper', strength: 3 },
-  { source: 'ashe', target: 'reaper', strength: 3 },
-  { source: 'hanzo', target: 'reaper', strength: 3 },
-  { source: 'pharah', target: 'reaper', strength: 3 },
-  { source: 'widowmaker', target: 'reaper', strength: 3 },
-  { source: 'cassidy', target: 'reaper', strength: 3 },
-  { source: 'echo', target: 'reaper', strength: 3 },
-  { source: 'tracer', target: 'reaper', strength: 3 },
-  { source: 'sojourn', target: 'reaper', strength: 3 },
-  { source: 'torbjorn', target: 'reaper', strength: 3 },
-  { source: 'genji', target: 'reaper', strength: 2 },
-  { source: 'symmetra', target: 'reaper', strength: 3 },
-  { source: 'ana', target: 'reaper', strength: 3 },
-  { source: 'baptiste', target: 'reaper', strength: 3 },
-  { source: 'brigitte', target: 'reaper', strength: 3 },
-  { source: 'zenyatta', target: 'reaper', strength: 3 },
-  { source: 'lucio', target: 'reaper', strength: 3 },
-  { source: 'illari', target: 'reaper', strength: 3 },
-  { source: 'juno', target: 'reaper', strength: 3 },
-  { source: 'junkrat', target: 'reaper', strength: 3 }, // 补充：死神还被狂鼠克制
+  { source: 'sigma', target: 'reaper', strength: 3, type: 'skill' }, // 动能捕获
+  { source: 'zarya', target: 'reaper', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'orisa', target: 'reaper', strength: 3, type: 'skill' }, // 长矛
+  { source: 'ashe', target: 'reaper', strength: 3, type: 'range' }, // 狙击
+  { source: 'hanzo', target: 'reaper', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'pharah', target: 'reaper', strength: 3, type: 'range' }, // 空中输出
+  { source: 'widowmaker', target: 'reaper', strength: 3, type: 'range' }, // 狙击
+  { source: 'cassidy', target: 'reaper', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'echo', target: 'reaper', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'tracer', target: 'reaper', strength: 3, type: 'skill' }, // 高机动
+  { source: 'sojourn', target: 'reaper', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'torbjorn', target: 'reaper', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'genji', target: 'reaper', strength: 2, type: 'skill' }, // 反弹
+  { source: 'symmetra', target: 'reaper', strength: 3, type: 'skill' }, // 光束
+  { source: 'ana', target: 'reaper', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'baptiste', target: 'reaper', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'brigitte', target: 'reaper', strength: 3, type: 'skill' }, // 击退
+  { source: 'zenyatta', target: 'reaper', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'lucio', target: 'reaper', strength: 3, type: 'skill' }, // 加速拉扯
+  { source: 'illari', target: 'reaper', strength: 3, type: 'range' }, // 远程输出
+  { source: 'juno', target: 'reaper', strength: 3, type: 'skill' }, // 控制
+  { source: 'junkrat', target: 'reaper', strength: 3, type: 'numeric' }, // 炸弹
   
   // 3. 堡垒被克制
-  { source: 'sigma', target: 'bastion', strength: 3 },
-  { source: 'junker_queen', target: 'bastion', strength: 3 },
-  { source: 'dva', target: 'bastion', strength: 3 },
-  { source: 'hazard', target: 'bastion', strength: 3 },
-  { source: 'mauga', target: 'bastion', strength: 3 },
-  { source: 'ashe', target: 'bastion', strength: 3 },
-  { source: 'hanzo', target: 'bastion', strength: 3 },
-  { source: 'widowmaker', target: 'bastion', strength: 3 },
-  { source: 'echo', target: 'bastion', strength: 3 },
-  { source: 'junkrat', target: 'bastion', strength: 3 },
-  { source: 'pharah', target: 'bastion', strength: 3 },
-  { source: 'sojourn', target: 'bastion', strength: 3 },
-  { source: 'genji', target: 'bastion', strength: 3 },
-  { source: 'symmetra', target: 'bastion', strength: 3 },
-  { source: 'ana', target: 'bastion', strength: 3 },
-  { source: 'zenyatta', target: 'bastion', strength: 3 },
-  { source: 'illari', target: 'bastion', strength: 3 },
-  { source: 'domina', target: 'bastion', strength: 3 }, // 补充：堡垒还被金驭克制
-  { source: 'wuyang', target: 'bastion', strength: 3 }, // 补充：堡垒还被无漾克制
+  { source: 'sigma', target: 'bastion', strength: 3, type: 'skill' }, // 动能捕获
+  { source: 'junker_queen', target: 'bastion', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'dva', target: 'bastion', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'hazard', target: 'bastion', strength: 3, type: 'skill' }, // 毒素
+  { source: 'mauga', target: 'bastion', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'ashe', target: 'bastion', strength: 3, type: 'range' }, // 狙击
+  { source: 'hanzo', target: 'bastion', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'widowmaker', target: 'bastion', strength: 3, type: 'range' }, // 狙击
+  { source: 'echo', target: 'bastion', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'junkrat', target: 'bastion', strength: 3, type: 'numeric' }, // 炸弹
+  { source: 'pharah', target: 'bastion', strength: 3, type: 'range' }, // 空中输出
+  { source: 'sojourn', target: 'bastion', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'genji', target: 'bastion', strength: 3, type: 'skill' }, // 反弹
+  { source: 'symmetra', target: 'bastion', strength: 3, type: 'skill' }, // 光束
+  { source: 'ana', target: 'bastion', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'zenyatta', target: 'bastion', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'illari', target: 'bastion', strength: 3, type: 'range' }, // 远程输出
+  { source: 'domina', target: 'bastion', strength: 3, type: 'skill' }, // 金驭克制
+  { source: 'wuyang', target: 'bastion', strength: 3, type: 'skill' }, // 水元素
   
   // 4. 索杰恩被克制
-  { source: 'winston', target: 'sojourn', strength: 3 },
-  { source: 'widowmaker', target: 'sojourn', strength: 3 },
-  { source: 'echo', target: 'sojourn', strength: 3 },
-  { source: 'tracer', target: 'sojourn', strength: 3 },
-  { source: 'symmetra', target: 'sojourn', strength: 3 },
+  { source: 'winston', target: 'sojourn', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'widowmaker', target: 'sojourn', strength: 3, type: 'range' }, // 狙击克制
+  { source: 'echo', target: 'sojourn', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'tracer', target: 'sojourn', strength: 3, type: 'skill' }, // 高机动
+  { source: 'symmetra', target: 'sojourn', strength: 3, type: 'skill' }, // 光束
   
   // 5. 卡西迪被克制
-  { source: 'hazard', target: 'cassidy', strength: 3 },
-  { source: 'zarya', target: 'cassidy', strength: 3 },
-  { source: 'orisa', target: 'cassidy', strength: 3 },
-  { source: 'mauga', target: 'cassidy', strength: 3 },
-  { source: 'mei', target: 'cassidy', strength: 3 },
-  { source: 'ashe', target: 'cassidy', strength: 3 },
-  { source: 'sojourn', target: 'cassidy', strength: 3 },
-  { source: 'hanzo', target: 'cassidy', strength: 3 },
-  { source: 'soldier76', target: 'cassidy', strength: 3 },
-  { source: 'torbjorn', target: 'cassidy', strength: 3 },
-  { source: 'widowmaker', target: 'cassidy', strength: 3 },
-  { source: 'zenyatta', target: 'cassidy', strength: 3 },
-  { source: 'baptiste', target: 'cassidy', strength: 3 },
-  { source: 'ana', target: 'cassidy', strength: 3 },
-  { source: 'illari', target: 'cassidy', strength: 3 },
-  { source: 'emrey', target: 'cassidy', strength: 3 }, // 补充：卡西迪还被埃姆雷克制
+  { source: 'hazard', target: 'cassidy', strength: 3, type: 'skill' }, // 毒素
+  { source: 'zarya', target: 'cassidy', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'orisa', target: 'cassidy', strength: 3, type: 'skill' }, // 长矛
+  { source: 'mauga', target: 'cassidy', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'mei', target: 'cassidy', strength: 3, type: 'skill' }, // 冰冻
+  { source: 'ashe', target: 'cassidy', strength: 3, type: 'range' }, // 狙击
+  { source: 'sojourn', target: 'cassidy', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'hanzo', target: 'cassidy', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'soldier76', target: 'cassidy', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'torbjorn', target: 'cassidy', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'widowmaker', target: 'cassidy', strength: 3, type: 'range' }, // 狙击
+  { source: 'zenyatta', target: 'cassidy', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'baptiste', target: 'cassidy', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'ana', target: 'cassidy', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'illari', target: 'cassidy', strength: 3, type: 'range' }, // 远程输出
+  { source: 'emrey', target: 'cassidy', strength: 3, type: 'skill' }, // 埃姆雷克制
   
   // 6. 士兵76被克制
-  { source: 'sigma', target: 'soldier76', strength: 3 },
-  { source: 'winston', target: 'soldier76', strength: 3 },
-  { source: 'doomfist', target: 'soldier76', strength: 3 },
-  { source: 'wrecking_ball', target: 'soldier76', strength: 3 },
-  { source: 'junker_queen', target: 'soldier76', strength: 3 },
-  { source: 'mauga', target: 'soldier76', strength: 3 },
-  { source: 'hazard', target: 'soldier76', strength: 3 },
-  { source: 'dva', target: 'soldier76', strength: 3 },
-  { source: 'sojourn', target: 'soldier76', strength: 3 },
-  { source: 'reaper', target: 'soldier76', strength: 3 },
-  { source: 'bastion', target: 'soldier76', strength: 3 },
-  { source: 'ashe', target: 'soldier76', strength: 3 },
-  { source: 'widowmaker', target: 'soldier76', strength: 3 },
-  { source: 'hanzo', target: 'soldier76', strength: 3 },
-  { source: 'zenyatta', target: 'soldier76', strength: 3 },
-  { source: 'baptiste', target: 'soldier76', strength: 3 },
-  { source: 'illari', target: 'soldier76', strength: 3 },
-  { source: 'emrey', target: 'soldier76', strength: 3 }, // 补充：士兵76还被埃姆雷克制
-  { source: 'vendetta', target: 'soldier76', strength: 3 }, // 补充：士兵76还被斩仇克制
+  { source: 'sigma', target: 'soldier76', strength: 3, type: 'skill' }, // 动能捕获
+  { source: 'winston', target: 'soldier76', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'doomfist', target: 'soldier76', strength: 3, type: 'skill' }, // 高机动
+  { source: 'wrecking_ball', target: 'soldier76', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'junker_queen', target: 'soldier76', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'mauga', target: 'soldier76', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'hazard', target: 'soldier76', strength: 3, type: 'skill' }, // 毒素
+  { source: 'dva', target: 'soldier76', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'sojourn', target: 'soldier76', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'reaper', target: 'soldier76', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'bastion', target: 'soldier76', strength: 3, type: 'numeric' }, // 高DPS
+  { source: 'ashe', target: 'soldier76', strength: 3, type: 'range' }, // 狙击
+  { source: 'widowmaker', target: 'soldier76', strength: 3, type: 'range' }, // 狙击
+  { source: 'hanzo', target: 'soldier76', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'zenyatta', target: 'soldier76', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'baptiste', target: 'soldier76', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'illari', target: 'soldier76', strength: 3, type: 'range' }, // 远程输出
+  { source: 'emrey', target: 'soldier76', strength: 3, type: 'skill' }, // 埃姆雷克制
+  { source: 'vendetta', target: 'soldier76', strength: 3, type: 'skill' }, // 斩仇克制
   
   // 7. 回声被克制
-  { source: 'winston', target: 'echo', strength: 3 },
-  { source: 'zarya', target: 'echo', strength: 3 },
-  { source: 'ashe', target: 'echo', strength: 3 },
-  { source: 'soldier76', target: 'echo', strength: 3 },
-  { source: 'widowmaker', target: 'echo', strength: 3 },
-  { source: 'ana', target: 'echo', strength: 3 },
-  { source: 'baptiste', target: 'echo', strength: 3 },
-  { source: 'illari', target: 'echo', strength: 3 },
-  { source: 'sierra', target: 'echo', strength: 2 }, // 补充：回声被Sierra强克制
+  { source: 'winston', target: 'echo', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'zarya', target: 'echo', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'ashe', target: 'echo', strength: 3, type: 'range' }, // 狙击
+  { source: 'soldier76', target: 'echo', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'widowmaker', target: 'echo', strength: 3, type: 'range' }, // 狙击
+  { source: 'ana', target: 'echo', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'baptiste', target: 'echo', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'illari', target: 'echo', strength: 3, type: 'range' }, // 远程输出
+  { source: 'sierra', target: 'echo', strength: 2, type: 'skill' }, // Sierra克制
   
   // 8. 黑影被克制
-  { source: 'winston', target: 'sombra', strength: 3 },
-  { source: 'zarya', target: 'sombra', strength: 3 },
-  { source: 'dva', target: 'sombra', strength: 3 },
-  { source: 'torbjorn', target: 'sombra', strength: 3 },
-  { source: 'tracer', target: 'sombra', strength: 3 },
-  { source: 'soldier76', target: 'sombra', strength: 3 },
-  { source: 'sojourn', target: 'sombra', strength: 3 },
-  { source: 'symmetra', target: 'sombra', strength: 3 },
-  { source: 'cassidy', target: 'sombra', strength: 3 },
-  { source: 'brigitte', target: 'sombra', strength: 3 },
-  { source: 'lucio', target: 'sombra', strength: 3 },
-  { source: 'sierra', target: 'sombra', strength: 3 }, // 补充：黑影被Sierra硬克制
+  { source: 'winston', target: 'sombra', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'zarya', target: 'sombra', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'dva', target: 'sombra', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'torbjorn', target: 'sombra', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'tracer', target: 'sombra', strength: 3, type: 'skill' }, // 高机动
+  { source: 'soldier76', target: 'sombra', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'sojourn', target: 'sombra', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'symmetra', target: 'sombra', strength: 3, type: 'skill' }, // 光束
+  { source: 'cassidy', target: 'sombra', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'brigitte', target: 'sombra', strength: 3, type: 'skill' }, // 盾击
+  { source: 'lucio', target: 'sombra', strength: 3, type: 'skill' }, // 加速拉扯
+  { source: 'sierra', target: 'sombra', strength: 3, type: 'skill' }, // Sierra克制
   
   // 9. 秩序之光被克制
-  { source: 'winston', target: 'symmetra', strength: 3 },
-  { source: 'zarya', target: 'symmetra', strength: 3 },
-  { source: 'venture', target: 'symmetra', strength: 3 },
-  { source: 'pharah', target: 'symmetra', strength: 3 },
-  { source: 'widowmaker', target: 'symmetra', strength: 3 },
-  { source: 'echo', target: 'symmetra', strength: 3 },
-  { source: 'ashe', target: 'symmetra', strength: 3 },
-  { source: 'ana', target: 'symmetra', strength: 3 },
-  { source: 'zenyatta', target: 'symmetra', strength: 3 },
-  { source: 'brigitte', target: 'symmetra', strength: 3 },
-  { source: 'kiriko', target: 'symmetra', strength: 3 },
+  { source: 'winston', target: 'symmetra', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'zarya', target: 'symmetra', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'venture', target: 'symmetra', strength: 3, type: 'skill' }, // 机动性
+  { source: 'pharah', target: 'symmetra', strength: 3, type: 'range' }, // 空中输出
+  { source: 'widowmaker', target: 'symmetra', strength: 3, type: 'range' }, // 狙击
+  { source: 'echo', target: 'symmetra', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'ashe', target: 'symmetra', strength: 3, type: 'range' }, // 狙击
+  { source: 'ana', target: 'symmetra', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'zenyatta', target: 'symmetra', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'brigitte', target: 'symmetra', strength: 3, type: 'skill' }, // 盾击
+  { source: 'kiriko', target: 'symmetra', strength: 3, type: 'skill' }, // 净化
   
   // 10. 源氏被克制
-  { source: 'winston', target: 'genji', strength: 3 },
-  { source: 'zarya', target: 'genji', strength: 3 },
-  { source: 'pharah', target: 'genji', strength: 3 },
-  { source: 'echo', target: 'genji', strength: 3 },
-  { source: 'torbjorn', target: 'genji', strength: 3 },
-  { source: 'cassidy', target: 'genji', strength: 3 },
-  { source: 'brigitte', target: 'genji', strength: 3 },
-  { source: 'zenyatta', target: 'genji', strength: 3 },
-  { source: 'moira', target: 'genji', strength: 3 },
-  { source: 'reaper', target: 'genji', strength: 2 }, // 补充：源氏还被死神强克制
-  { source: 'symmetra', target: 'genji', strength: 3 }, // 补充：源氏被秩序之光克制
-  { source: 'emrey', target: 'genji', strength: 3 }, // 补充：源氏还被埃姆雷克制
-  { source: 'mizuki', target: 'genji', strength: 3 }, // 补充：源氏还被瑞稀克制
+  { source: 'winston', target: 'genji', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'zarya', target: 'genji', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'pharah', target: 'genji', strength: 3, type: 'range' }, // 空中输出
+  { source: 'echo', target: 'genji', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'torbjorn', target: 'genji', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'cassidy', target: 'genji', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'brigitte', target: 'genji', strength: 3, type: 'skill' }, // 盾击
+  { source: 'zenyatta', target: 'genji', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'moira', target: 'genji', strength: 3, type: 'skill' }, // 光束
+  { source: 'reaper', target: 'genji', strength: 2, type: 'numeric' }, // 近距离爆发
+  { source: 'symmetra', target: 'genji', strength: 3, type: 'skill' }, // 光束
+  { source: 'emrey', target: 'genji', strength: 3, type: 'skill' }, // 埃姆雷克制
+  { source: 'mizuki', target: 'genji', strength: 3, type: 'skill' }, // 护魂结界
   
   // 11. 托比昂被克制
-  { source: 'orisa', target: 'torbjorn', strength: 3 },
-  { source: 'zarya', target: 'torbjorn', strength: 3 },
-  { source: 'mei', target: 'torbjorn', strength: 3 },
-  { source: 'widowmaker', target: 'torbjorn', strength: 3 },
-  { source: 'echo', target: 'torbjorn', strength: 3 },
-  { source: 'junkrat', target: 'torbjorn', strength: 3 },
-  { source: 'bastion', target: 'torbjorn', strength: 3 },
-  { source: 'pharah', target: 'torbjorn', strength: 3 },
-  { source: 'hanzo', target: 'torbjorn', strength: 3 },
-  { source: 'ashe', target: 'torbjorn', strength: 3 },
-  { source: 'sojourn', target: 'torbjorn', strength: 3 },
-  { source: 'zenyatta', target: 'torbjorn', strength: 3 },
-  { source: 'ana', target: 'torbjorn', strength: 3 },
+  { source: 'orisa', target: 'torbjorn', strength: 3, type: 'skill' }, // 长矛
+  { source: 'zarya', target: 'torbjorn', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'mei', target: 'torbjorn', strength: 3, type: 'skill' }, // 冰冻
+  { source: 'widowmaker', target: 'torbjorn', strength: 3, type: 'range' }, // 狙击
+  { source: 'echo', target: 'torbjorn', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'junkrat', target: 'torbjorn', strength: 3, type: 'numeric' }, // 炸弹
+  { source: 'bastion', target: 'torbjorn', strength: 3, type: 'numeric' }, // 高DPS
+  { source: 'pharah', target: 'torbjorn', strength: 3, type: 'range' }, // 空中输出
+  { source: 'hanzo', target: 'torbjorn', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'ashe', target: 'torbjorn', strength: 3, type: 'range' }, // 狙击
+  { source: 'sojourn', target: 'torbjorn', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'zenyatta', target: 'torbjorn', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'ana', target: 'torbjorn', strength: 3, type: 'skill' }, // 禁疗
   
   // 12. 半藏被克制
-  { source: 'wrecking_ball', target: 'hanzo', strength: 3 },
-  { source: 'winston', target: 'hanzo', strength: 3 },
-  { source: 'hazard', target: 'hanzo', strength: 3 },
-  { source: 'doomfist', target: 'hanzo', strength: 3 },
-  { source: 'sombra', target: 'hanzo', strength: 3 },
-  { source: 'echo', target: 'hanzo', strength: 3 },
-  { source: 'tracer', target: 'hanzo', strength: 3 },
-  { source: 'genji', target: 'hanzo', strength: 3 },
-  { source: 'pharah', target: 'hanzo', strength: 3 },
-  { source: 'lucio', target: 'hanzo', strength: 3 },
-  { source: 'venture', target: 'hanzo', strength: 3 },
-  { source: 'juno', target: 'hanzo', strength: 3 },
-  { source: 'kiriko', target: 'hanzo', strength: 3 },
-  { source: 'moira', target: 'hanzo', strength: 3 },
-  { source: 'emrey', target: 'hanzo', strength: 3 }, // 补充：半藏还被埃姆雷克制
-  { source: 'freja', target: 'hanzo', strength: 3 }, // 补充：半藏还被芙蕾雅克制
+  { source: 'wrecking_ball', target: 'hanzo', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'winston', target: 'hanzo', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'hazard', target: 'hanzo', strength: 3, type: 'skill' }, // 毒素
+  { source: 'doomfist', target: 'hanzo', strength: 3, type: 'skill' }, // 高机动
+  { source: 'sombra', target: 'hanzo', strength: 3, type: 'skill' }, // 黑客
+  { source: 'echo', target: 'hanzo', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'tracer', target: 'hanzo', strength: 3, type: 'skill' }, // 高机动
+  { source: 'genji', target: 'hanzo', strength: 3, type: 'skill' }, // 反弹+高机动
+  { source: 'pharah', target: 'hanzo', strength: 3, type: 'range' }, // 空中输出
+  { source: 'lucio', target: 'hanzo', strength: 3, type: 'skill' }, // 加速拉扯
+  { source: 'venture', target: 'hanzo', strength: 3, type: 'skill' }, // 机动性
+  { source: 'juno', target: 'hanzo', strength: 3, type: 'skill' }, // 控制
+  { source: 'kiriko', target: 'hanzo', strength: 3, type: 'skill' }, // 净化
+  { source: 'moira', target: 'hanzo', strength: 3, type: 'skill' }, // 光束
+  { source: 'emrey', target: 'hanzo', strength: 3, type: 'skill' }, // 埃姆雷克制
+  { source: 'freja', target: 'hanzo', strength: 3, type: 'skill' }, // 芙蕾雅克制
   
   // 13. 猎空被克制
-  { source: 'dva', target: 'tracer', strength: 3 },
-  { source: 'cassidy', target: 'tracer', strength: 3 },
-  { source: 'torbjorn', target: 'tracer', strength: 3 },
-  { source: 'baptiste', target: 'tracer', strength: 3 },
-  { source: 'brigitte', target: 'tracer', strength: 3 },
-  { source: 'illari', target: 'tracer', strength: 3 },
-  { source: 'juno', target: 'tracer', strength: 3 },
-  { source: 'reaper', target: 'tracer', strength: 3 }, // 补充：猎空还被死神克制
-  { source: 'sierra', target: 'tracer', strength: 3 }, // 补充：猎空被Sierra硬克制
+  { source: 'dva', target: 'tracer', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'cassidy', target: 'tracer', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'torbjorn', target: 'tracer', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'baptiste', target: 'tracer', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'brigitte', target: 'tracer', strength: 3, type: 'skill' }, // 盾击
+  { source: 'illari', target: 'tracer', strength: 3, type: 'range' }, // 远程输出
+  { source: 'juno', target: 'tracer', strength: 3, type: 'skill' }, // 控制
+  { source: 'reaper', target: 'tracer', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'sierra', target: 'tracer', strength: 3, type: 'skill' }, // Sierra克制
   
   // 14. 狂鼠被克制
-  { source: 'zarya', target: 'junkrat', strength: 3 },
-  { source: 'ashe', target: 'junkrat', strength: 3 },
-  { source: 'hanzo', target: 'junkrat', strength: 3 },
-  { source: 'pharah', target: 'junkrat', strength: 3 },
-  { source: 'echo', target: 'junkrat', strength: 3 },
-  { source: 'tracer', target: 'junkrat', strength: 3 },
-  { source: 'genji', target: 'junkrat', strength: 3 },
-  { source: 'juno', target: 'junkrat', strength: 3 },
-  { source: 'zenyatta', target: 'junkrat', strength: 3 },
-  { source: 'domina', target: 'junkrat', strength: 3 }, // 补充：狂鼠还被金驭克制
+  { source: 'zarya', target: 'junkrat', strength: 3, type: 'skill' }, // 护盾吸收
+  { source: 'ashe', target: 'junkrat', strength: 3, type: 'range' }, // 狙击
+  { source: 'hanzo', target: 'junkrat', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'pharah', target: 'junkrat', strength: 3, type: 'range' }, // 空中输出
+  { source: 'echo', target: 'junkrat', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'tracer', target: 'junkrat', strength: 3, type: 'skill' }, // 高机动
+  { source: 'genji', target: 'junkrat', strength: 3, type: 'skill' }, // 反弹
+  { source: 'juno', target: 'junkrat', strength: 3, type: 'skill' }, // 控制
+  { source: 'zenyatta', target: 'junkrat', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'domina', target: 'junkrat', strength: 3, type: 'skill' }, // 金驭克制
   
   // 15. 探奇被克制
-  { source: 'roadhog', target: 'venture', strength: 3 },
-  { source: 'doomfist', target: 'venture', strength: 3 },
-  { source: 'orisa', target: 'venture', strength: 3 },
-  { source: 'sojourn', target: 'venture', strength: 3 },
-  { source: 'echo', target: 'venture', strength: 3 },
-  { source: 'pharah', target: 'venture', strength: 3 },
-  { source: 'tracer', target: 'venture', strength: 3 },
-  { source: 'cassidy', target: 'venture', strength: 3 },
-  { source: 'juno', target: 'venture', strength: 3 },
-  { source: 'kiriko', target: 'venture', strength: 3 },
-  { source: 'brigitte', target: 'venture', strength: 3 },
-  { source: 'lucio', target: 'venture', strength: 3 },
-  { source: 'mercy', target: 'venture', strength: 3 },
-  { source: 'moira', target: 'venture', strength: 3 },
+  { source: 'roadhog', target: 'venture', strength: 3, type: 'skill' }, // 钩子
+  { source: 'doomfist', target: 'venture', strength: 3, type: 'skill' }, // 高机动
+  { source: 'orisa', target: 'venture', strength: 3, type: 'skill' }, // 长矛
+  { source: 'sojourn', target: 'venture', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'echo', target: 'venture', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'pharah', target: 'venture', strength: 3, type: 'range' }, // 空中输出
+  { source: 'tracer', target: 'venture', strength: 3, type: 'skill' }, // 高机动
+  { source: 'cassidy', target: 'venture', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'juno', target: 'venture', strength: 3, type: 'skill' }, // 控制
+  { source: 'kiriko', target: 'venture', strength: 3, type: 'skill' }, // 净化
+  { source: 'brigitte', target: 'venture', strength: 3, type: 'skill' }, // 盾击
+  { source: 'lucio', target: 'venture', strength: 3, type: 'skill' }, // 加速拉扯
+  { source: 'mercy', target: 'venture', strength: 3, type: 'skill' }, // 复活+机动性
+  { source: 'moira', target: 'venture', strength: 3, type: 'skill' }, // 光束
   
   // 16. 小美被克制
-  { source: 'ashe', target: 'mei', strength: 3 },
-  { source: 'pharah', target: 'mei', strength: 3 },
-  { source: 'widowmaker', target: 'mei', strength: 3 },
-  { source: 'cassidy', target: 'mei', strength: 3 },
-  { source: 'echo', target: 'mei', strength: 3 },
-  { source: 'hanzo', target: 'mei', strength: 3 },
-  { source: 'reaper', target: 'mei', strength: 3 },
-  { source: 'venture', target: 'mei', strength: 3 },
-  { source: 'zenyatta', target: 'mei', strength: 3 },
-  { source: 'baptiste', target: 'mei', strength: 3 },
-  { source: 'ana', target: 'mei', strength: 3 },
-  { source: 'juno', target: 'mei', strength: 3 },
-  { source: 'illari', target: 'mei', strength: 3 },
+  { source: 'ashe', target: 'mei', strength: 3, type: 'range' }, // 狙击
+  { source: 'pharah', target: 'mei', strength: 3, type: 'range' }, // 空中输出
+  { source: 'widowmaker', target: 'mei', strength: 3, type: 'range' }, // 狙击
+  { source: 'cassidy', target: 'mei', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'echo', target: 'mei', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'hanzo', target: 'mei', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'reaper', target: 'mei', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'venture', target: 'mei', strength: 3, type: 'skill' }, // 机动性
+  { source: 'zenyatta', target: 'mei', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'baptiste', target: 'mei', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'ana', target: 'mei', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'juno', target: 'mei', strength: 3, type: 'skill' }, // 控制
+  { source: 'illari', target: 'mei', strength: 3, type: 'range' }, // 远程输出
   
   // 17. 黑百合被克制
-  { source: 'wrecking_ball', target: 'widowmaker', strength: 3 },
-  { source: 'doomfist', target: 'widowmaker', strength: 3 },
-  { source: 'sigma', target: 'widowmaker', strength: 3 },
-  { source: 'winston', target: 'widowmaker', strength: 3 },
-  { source: 'widowmaker', target: 'widowmaker', strength: 3 },
-  { source: 'sombra', target: 'widowmaker', strength: 3 },
-  { source: 'tracer', target: 'widowmaker', strength: 3 },
-  { source: 'genji', target: 'widowmaker', strength: 3 },
-  { source: 'kiriko', target: 'widowmaker', strength: 3 },
-  { source: 'lucio', target: 'widowmaker', strength: 3 },
-  { source: 'feitianmao', target: 'widowmaker', strength: 3 }, // 补充：黑百合还被飞天猫克制
-  { source: 'dva', target: 'widowmaker', strength: 3 }, // 补充：黑百合还被D.Va克制（D.Va克制黑百合）
+  { source: 'wrecking_ball', target: 'widowmaker', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'doomfist', target: 'widowmaker', strength: 3, type: 'skill' }, // 高机动
+  { source: 'sigma', target: 'widowmaker', strength: 3, type: 'skill' }, // 动能捕获
+  { source: 'winston', target: 'widowmaker', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'widowmaker', target: 'widowmaker', strength: 3, type: 'range' }, // 狙击克制
+  { source: 'sombra', target: 'widowmaker', strength: 3, type: 'skill' }, // 黑客
+  { source: 'tracer', target: 'widowmaker', strength: 3, type: 'skill' }, // 高机动
+  { source: 'genji', target: 'widowmaker', strength: 3, type: 'skill' }, // 反弹
+  { source: 'kiriko', target: 'widowmaker', strength: 3, type: 'skill' }, // 净化
+  { source: 'lucio', target: 'widowmaker', strength: 3, type: 'skill' }, // 加速拉扯
+  { source: 'feitianmao', target: 'widowmaker', strength: 3, type: 'range' }, // 空中压制
+  { source: 'dva', target: 'widowmaker', strength: 3, type: 'skill' }, // 防御矩阵
   
   // 18. 法老之鹰被克制
-  { source: 'dva', target: 'pharah', strength: 3 },
-  { source: 'wrecking_ball', target: 'pharah', strength: 3 },
-  { source: 'ashe', target: 'pharah', strength: 3 },
-  { source: 'echo', target: 'pharah', strength: 3 },
-  { source: 'soldier76', target: 'pharah', strength: 3 },
-  { source: 'widowmaker', target: 'pharah', strength: 3 },
-  { source: 'baptiste', target: 'pharah', strength: 3 },
-  { source: 'illari', target: 'pharah', strength: 3 },
-  { source: 'feitianmao', target: 'pharah', strength: 3 }, // 补充：法老之鹰还被飞天猫克制
-  { source: 'mauga', target: 'pharah', strength: 3 }, // 补充：法老之鹰被毛加克制
-  { source: 'sierra', target: 'pharah', strength: 2 }, // 补充：法老之鹰被Sierra强克制
+  { source: 'dva', target: 'pharah', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'wrecking_ball', target: 'pharah', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'ashe', target: 'pharah', strength: 3, type: 'range' }, // 狙击
+  { source: 'echo', target: 'pharah', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'soldier76', target: 'pharah', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'widowmaker', target: 'pharah', strength: 3, type: 'range' }, // 狙击
+  { source: 'baptiste', target: 'pharah', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'illari', target: 'pharah', strength: 3, type: 'range' }, // 远程输出
+  { source: 'feitianmao', target: 'pharah', strength: 3, type: 'range' }, // 空中压制
+  { source: 'mauga', target: 'pharah', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'sierra', target: 'pharah', strength: 2, type: 'skill' }, // Sierra克制
   
   // ========== 芙蕾雅（Freja）克制关系 ==========
   // 芙蕾雅被克制 - 强化弩箭滞空输出，惧怕反弹和突进
   // 1. 源氏（核心克制 - 反弹弩箭）
-  { source: 'genji', target: 'freja', strength: 3 },
+  { source: 'genji', target: 'freja', strength: 3, type: 'skill' }, // 反弹
   
   // 2. 高机动突进英雄
-  { source: 'tracer', target: 'freja', strength: 3 },
-  { source: 'sombra', target: 'freja', strength: 3 },
+  { source: 'tracer', target: 'freja', strength: 3, type: 'skill' }, // 高机动
+  { source: 'sombra', target: 'freja', strength: 3, type: 'skill' }, // 黑客
   
   // 3. 即时命中长枪（针对滞空）
-  { source: 'widowmaker', target: 'freja', strength: 3 },
-  { source: 'ashe', target: 'freja', strength: 3 },
-  { source: 'soldier76', target: 'freja', strength: 3 },
-  { source: 'cassidy', target: 'freja', strength: 3 },
+  { source: 'widowmaker', target: 'freja', strength: 3, type: 'range' }, // 狙击
+  { source: 'ashe', target: 'freja', strength: 3, type: 'range' }, // 狙击
+  { source: 'soldier76', target: 'freja', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'cassidy', target: 'freja', strength: 3, type: 'skill' }, // 闪光弹
 
   // 4. 其他克制
-  { source: 'dva', target: 'freja', strength: 3 }, // 补充：芙蕾雅还被D.Va克制
-  { source: 'reaper', target: 'freja', strength: 3 }, // 补充：芙蕾雅还被死神克制
+  { source: 'dva', target: 'freja', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'reaper', target: 'freja', strength: 3, type: 'numeric' }, // 近距离爆发
   
   // ========== 斩仇（Vendetta/Zhanchou）克制关系 ==========
   // 斩仇被克制 - 完全修改
-  { source: 'roadhog', target: 'vendetta', strength: 3 },
-  { source: 'pharah', target: 'vendetta', strength: 3 },
-  { source: 'widowmaker', target: 'vendetta', strength: 3 },
-  { source: 'bastion', target: 'vendetta', strength: 3 },
-  { source: 'hanzo', target: 'vendetta', strength: 3 },
-  { source: 'ashe', target: 'vendetta', strength: 3 },
-  { source: 'soldier76', target: 'vendetta', strength: 3 },
-  { source: 'ana', target: 'vendetta', strength: 3 },
-  { source: 'zarya', target: 'vendetta', strength: 3 },
-  { source: 'mizuki', target: 'vendetta', strength: 3 },
-  { source: 'echo', target: 'vendetta', strength: 3 }, // 补充：斩仇还被回声克制
-  { source: 'cassidy', target: 'vendetta', strength: 3 }, // 补充：斩仇还被卡西迪克制
-  { source: 'moira', target: 'vendetta', strength: 3 }, // 补充：斩仇还被莫伊拉克制
+  { source: 'roadhog', target: 'vendetta', strength: 3, type: 'skill' }, // 钩子
+  { source: 'pharah', target: 'vendetta', strength: 3, type: 'range' }, // 空中输出
+  { source: 'widowmaker', target: 'vendetta', strength: 3, type: 'range' }, // 狙击
+  { source: 'bastion', target: 'vendetta', strength: 3, type: 'numeric' }, // 高DPS
+  { source: 'hanzo', target: 'vendetta', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'ashe', target: 'vendetta', strength: 3, type: 'range' }, // 狙击
+  { source: 'soldier76', target: 'vendetta', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'ana', target: 'vendetta', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'zarya', target: 'vendetta', strength: 3, type: 'numeric' }, // 高能量
+  { source: 'mizuki', target: 'vendetta', strength: 3, type: 'skill' }, // 护魂结界
+  { source: 'echo', target: 'vendetta', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'cassidy', target: 'vendetta', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'moira', target: 'vendetta', strength: 3, type: 'skill' }, // 光束
   
   // ========== 辅助篇 ==========
   // 1. 安娜被克制
-  { source: 'orisa', target: 'ana', strength: 3 },
-  { source: 'junker_queen', target: 'ana', strength: 3 },
-  { source: 'wrecking_ball', target: 'ana', strength: 3 },
-  { source: 'doomfist', target: 'ana', strength: 3 },
-  { source: 'winston', target: 'ana', strength: 3 },
-  { source: 'tracer', target: 'ana', strength: 3 },
-  { source: 'sombra', target: 'ana', strength: 3 },
-  { source: 'widowmaker', target: 'ana', strength: 3 },
-  { source: 'venture', target: 'ana', strength: 3 },
-  { source: 'hanzo', target: 'ana', strength: 3 },
-  { source: 'genji', target: 'ana', strength: 3 },
-  { source: 'kiriko', target: 'ana', strength: 3 },
-  { source: 'zenyatta', target: 'ana', strength: 3 },
-  { source: 'vendetta', target: 'ana', strength: 3 }, // 补充：安娜还被斩仇克制
-  { source: 'freja', target: 'ana', strength: 3 }, // 补充：安娜还被芙蕾雅克制
+  { source: 'orisa', target: 'ana', strength: 3, type: 'skill' }, // 长矛
+  { source: 'junker_queen', target: 'ana', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'wrecking_ball', target: 'ana', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'doomfist', target: 'ana', strength: 3, type: 'skill' }, // 高机动
+  { source: 'winston', target: 'ana', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'tracer', target: 'ana', strength: 3, type: 'skill' }, // 高机动
+  { source: 'sombra', target: 'ana', strength: 3, type: 'skill' }, // 黑客
+  { source: 'widowmaker', target: 'ana', strength: 3, type: 'range' }, // 狙击
+  { source: 'venture', target: 'ana', strength: 3, type: 'skill' }, // 机动性
+  { source: 'hanzo', target: 'ana', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'genji', target: 'ana', strength: 3, type: 'skill' }, // 反弹
+  { source: 'kiriko', target: 'ana', strength: 3, type: 'skill' }, // 净化
+  { source: 'zenyatta', target: 'ana', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'vendetta', target: 'ana', strength: 3, type: 'skill' }, // 斩仇克制
+  { source: 'freja', target: 'ana', strength: 3, type: 'skill' }, // 芙蕾雅克制
   
   // 2. 生命之梭被克制
-  { source: 'mauga', target: 'lifeweaver', strength: 3 },
-  { source: 'junker_queen', target: 'lifeweaver', strength: 3 },
-  { source: 'sombra', target: 'lifeweaver', strength: 3 },
-  { source: 'echo', target: 'lifeweaver', strength: 3 },
-  { source: 'ashe', target: 'lifeweaver', strength: 3 },
-  { source: 'widowmaker', target: 'lifeweaver', strength: 3 },
-  { source: 'venture', target: 'lifeweaver', strength: 3 },
-  { source: 'pharah', target: 'lifeweaver', strength: 3 },
-  { source: 'ana', target: 'lifeweaver', strength: 3 },
-  { source: 'zenyatta', target: 'lifeweaver', strength: 3 },
+  { source: 'mauga', target: 'lifeweaver', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'junker_queen', target: 'lifeweaver', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'sombra', target: 'lifeweaver', strength: 3, type: 'skill' }, // 黑客
+  { source: 'echo', target: 'lifeweaver', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'ashe', target: 'lifeweaver', strength: 3, type: 'range' }, // 狙击
+  { source: 'widowmaker', target: 'lifeweaver', strength: 3, type: 'range' }, // 狙击
+  { source: 'venture', target: 'lifeweaver', strength: 3, type: 'skill' }, // 机动性
+  { source: 'pharah', target: 'lifeweaver', strength: 3, type: 'range' }, // 空中输出
+  { source: 'ana', target: 'lifeweaver', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'zenyatta', target: 'lifeweaver', strength: 3, type: 'numeric' }, // 增伤
   
   // 3. 巴蒂斯特被克制
-  { source: 'winston', target: 'baptiste', strength: 3 },
-  { source: 'hazard', target: 'baptiste', strength: 3 },
-  { source: 'junker_queen', target: 'baptiste', strength: 3 },
-  { source: 'genji', target: 'baptiste', strength: 3 },
-  { source: 'hanzo', target: 'baptiste', strength: 3 },
-  { source: 'widowmaker', target: 'baptiste', strength: 3 },
-  { source: 'sojourn', target: 'baptiste', strength: 3 },
-  { source: 'illari', target: 'baptiste', strength: 3 },
-  { source: 'ana', target: 'baptiste', strength: 3 },
-  { source: 'zenyatta', target: 'baptiste', strength: 3 },
-  { source: 'moira', target: 'baptiste', strength: 3 },
-  { source: 'freja', target: 'baptiste', strength: 3 }, // 补充：巴蒂斯特还被芙蕾雅克制
+  { source: 'winston', target: 'baptiste', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'hazard', target: 'baptiste', strength: 3, type: 'skill' }, // 毒素
+  { source: 'junker_queen', target: 'baptiste', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'genji', target: 'baptiste', strength: 3, type: 'skill' }, // 反弹
+  { source: 'hanzo', target: 'baptiste', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'widowmaker', target: 'baptiste', strength: 3, type: 'range' }, // 狙击
+  { source: 'sojourn', target: 'baptiste', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'illari', target: 'baptiste', strength: 3, type: 'range' }, // 远程输出
+  { source: 'ana', target: 'baptiste', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'zenyatta', target: 'baptiste', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'moira', target: 'baptiste', strength: 3, type: 'skill' }, // 光束
+  { source: 'freja', target: 'baptiste', strength: 3, type: 'skill' }, // 芙蕾雅克制
   
   // 4. 卢西奥被克制
-  { source: 'pharah', target: 'lucio', strength: 3 },
-  { source: 'sombra', target: 'lucio', strength: 3 },
-  { source: 'echo', target: 'lucio', strength: 3 },
-  { source: 'zenyatta', target: 'lucio', strength: 3 },
-  { source: 'illari', target: 'lucio', strength: 3 },
-  { source: 'juno', target: 'lucio', strength: 3 },
-  { source: 'ana', target: 'lucio', strength: 3 },
-  { source: 'baptiste', target: 'lucio', strength: 3 },
-  { source: 'sierra', target: 'lucio', strength: 3 }, // 补充：卢西奥被Sierra硬克制
+  { source: 'pharah', target: 'lucio', strength: 3, type: 'range' }, // 空中输出
+  { source: 'sombra', target: 'lucio', strength: 3, type: 'skill' }, // 黑客
+  { source: 'echo', target: 'lucio', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'zenyatta', target: 'lucio', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'illari', target: 'lucio', strength: 3, type: 'range' }, // 远程输出
+  { source: 'juno', target: 'lucio', strength: 3, type: 'skill' }, // 控制
+  { source: 'ana', target: 'lucio', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'baptiste', target: 'lucio', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'sierra', target: 'lucio', strength: 3, type: 'skill' }, // Sierra克制
   
   // 5. 布丽吉塔被克制
-  { source: 'hazard', target: 'brigitte', strength: 3 },
-  { source: 'ramattra', target: 'brigitte', strength: 3 },
-  { source: 'junker_queen', target: 'brigitte', strength: 3 },
-  { source: 'pharah', target: 'brigitte', strength: 3 },
-  { source: 'mei', target: 'brigitte', strength: 3 },
-  { source: 'widowmaker', target: 'brigitte', strength: 3 },
-  { source: 'echo', target: 'brigitte', strength: 3 },
-  { source: 'junkrat', target: 'brigitte', strength: 3 },
-  { source: 'torbjorn', target: 'brigitte', strength: 3 },
-  { source: 'symmetra', target: 'brigitte', strength: 3 },
-  { source: 'ashe', target: 'brigitte', strength: 3 },
-  { source: 'hanzo', target: 'brigitte', strength: 3 },
-  { source: 'bastion', target: 'brigitte', strength: 3 },
-  { source: 'illari', target: 'brigitte', strength: 3 },
-  { source: 'moira', target: 'brigitte', strength: 3 },
-  { source: 'zenyatta', target: 'brigitte', strength: 3 },
-  { source: 'ana', target: 'brigitte', strength: 3 },
-  { source: 'baptiste', target: 'brigitte', strength: 3 },
-  { source: 'wuyang', target: 'brigitte', strength: 3 }, // 补充：布丽吉塔还被无漾克制
+  { source: 'hazard', target: 'brigitte', strength: 3, type: 'skill' }, // 毒素
+  { source: 'ramattra', target: 'brigitte', strength: 3, type: 'skill' }, // 涅槃形态
+  { source: 'junker_queen', target: 'brigitte', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'pharah', target: 'brigitte', strength: 3, type: 'range' }, // 空中输出
+  { source: 'mei', target: 'brigitte', strength: 3, type: 'skill' }, // 冰冻
+  { source: 'widowmaker', target: 'brigitte', strength: 3, type: 'range' }, // 狙击
+  { source: 'echo', target: 'brigitte', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'junkrat', target: 'brigitte', strength: 3, type: 'numeric' }, // 炸弹
+  { source: 'torbjorn', target: 'brigitte', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'symmetra', target: 'brigitte', strength: 3, type: 'skill' }, // 光束
+  { source: 'ashe', target: 'brigitte', strength: 3, type: 'range' }, // 狙击
+  { source: 'hanzo', target: 'brigitte', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'bastion', target: 'brigitte', strength: 3, type: 'numeric' }, // 高DPS
+  { source: 'illari', target: 'brigitte', strength: 3, type: 'range' }, // 远程输出
+  { source: 'moira', target: 'brigitte', strength: 3, type: 'skill' }, // 光束
+  { source: 'zenyatta', target: 'brigitte', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'ana', target: 'brigitte', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'baptiste', target: 'brigitte', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'wuyang', target: 'brigitte', strength: 3, type: 'skill' }, // 水元素
   
   // 6. 天使被克制
-  { source: 'dva', target: 'mercy', strength: 3 },
-  { source: 'hazard', target: 'mercy', strength: 3 },
-  { source: 'mauga', target: 'mercy', strength: 3 },
-  { source: 'junker_queen', target: 'mercy', strength: 3 },
-  { source: 'wrecking_ball', target: 'mercy', strength: 3 },
-  { source: 'winston', target: 'mercy', strength: 3 },
-  { source: 'illari', target: 'mercy', strength: 3 },
-  { source: 'sombra', target: 'mercy', strength: 3 },
-  { source: 'echo', target: 'mercy', strength: 3 },
-  { source: 'ashe', target: 'mercy', strength: 3 },
-  { source: 'tracer', target: 'mercy', strength: 3 },
-  { source: 'soldier76', target: 'mercy', strength: 3 },
-  { source: 'sojourn', target: 'mercy', strength: 3 },
-  { source: 'juno', target: 'mercy', strength: 3 },
-  { source: 'ana', target: 'mercy', strength: 3 },
+  { source: 'dva', target: 'mercy', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'hazard', target: 'mercy', strength: 3, type: 'skill' }, // 毒素
+  { source: 'mauga', target: 'mercy', strength: 3, type: 'numeric' }, // 火力压制
+  { source: 'junker_queen', target: 'mercy', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'wrecking_ball', target: 'mercy', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'winston', target: 'mercy', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'illari', target: 'mercy', strength: 3, type: 'range' }, // 远程输出
+  { source: 'sombra', target: 'mercy', strength: 3, type: 'skill' }, // 黑客
+  { source: 'echo', target: 'mercy', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'ashe', target: 'mercy', strength: 3, type: 'range' }, // 狙击
+  { source: 'tracer', target: 'mercy', strength: 3, type: 'skill' }, // 高机动
+  { source: 'soldier76', target: 'mercy', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'sojourn', target: 'mercy', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'juno', target: 'mercy', strength: 3, type: 'skill' }, // 控制
+  { source: 'ana', target: 'mercy', strength: 3, type: 'skill' }, // 禁疗
   
   // 7. 雾子被克制
-  { source: 'pharah', target: 'kiriko', strength: 3 },
-  { source: 'tracer', target: 'kiriko', strength: 3 },
-  { source: 'sojourn', target: 'kiriko', strength: 3 },
-  { source: 'zenyatta', target: 'kiriko', strength: 3 },
-  { source: 'vendetta', target: 'kiriko', strength: 3 }, // 补充：雾子还被斩仇克制
+  { source: 'pharah', target: 'kiriko', strength: 3, type: 'range' }, // 空中输出
+  { source: 'tracer', target: 'kiriko', strength: 3, type: 'skill' }, // 高机动
+  { source: 'sojourn', target: 'kiriko', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'zenyatta', target: 'kiriko', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'vendetta', target: 'kiriko', strength: 3, type: 'skill' }, // 斩仇克制
   
   // 8. 朱诺被克制
-  { source: 'junker_queen', target: 'juno', strength: 3 },
-  { source: 'sombra', target: 'juno', strength: 3 },
-  { source: 'sojourn', target: 'juno', strength: 3 },
-  { source: 'illari', target: 'juno', strength: 3 },
-  { source: 'ana', target: 'juno', strength: 3 },
-  { source: 'zenyatta', target: 'juno', strength: 3 },
+  { source: 'junker_queen', target: 'juno', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'sombra', target: 'juno', strength: 3, type: 'skill' }, // 黑客
+  { source: 'sojourn', target: 'juno', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'illari', target: 'juno', strength: 3, type: 'range' }, // 远程输出
+  { source: 'ana', target: 'juno', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'zenyatta', target: 'juno', strength: 3, type: 'numeric' }, // 增伤
   
   // 9. 伊拉锐被克制
-  { source: 'winston', target: 'illari', strength: 3 },
-  { source: 'sigma', target: 'illari', strength: 3 },
-  { source: 'widowmaker', target: 'illari', strength: 3 },
-  { source: 'sojourn', target: 'illari', strength: 3 },
-  { source: 'ashe', target: 'illari', strength: 3 },
-  { source: 'zenyatta', target: 'illari', strength: 3 },
+  { source: 'winston', target: 'illari', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'sigma', target: 'illari', strength: 3, type: 'skill' }, // 动能捕获
+  { source: 'widowmaker', target: 'illari', strength: 3, type: 'range' }, // 狙击
+  { source: 'sojourn', target: 'illari', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'ashe', target: 'illari', strength: 3, type: 'range' }, // 狙击
+  { source: 'zenyatta', target: 'illari', strength: 3, type: 'numeric' }, // 增伤
   
   // 10. 莫伊拉被克制
-  { source: 'junker_queen', target: 'moira', strength: 3 },
-  { source: 'wrecking_ball', target: 'moira', strength: 3 },
-  { source: 'pharah', target: 'moira', strength: 3 },
-  { source: 'widowmaker', target: 'moira', strength: 3 },
-  { source: 'echo', target: 'moira', strength: 3 },
-  { source: 'tracer', target: 'moira', strength: 3 },
-  { source: 'torbjorn', target: 'moira', strength: 3 },
-  { source: 'ashe', target: 'moira', strength: 3 },
-  { source: 'zenyatta', target: 'moira', strength: 3 },
-  { source: 'juno', target: 'moira', strength: 3 },
-  { source: 'ana', target: 'moira', strength: 3 },
-  { source: 'baptiste', target: 'moira', strength: 3 },
+  { source: 'junker_queen', target: 'moira', strength: 3, type: 'skill' }, // 抗治疗
+  { source: 'wrecking_ball', target: 'moira', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'pharah', target: 'moira', strength: 3, type: 'range' }, // 空中输出
+  { source: 'widowmaker', target: 'moira', strength: 3, type: 'range' }, // 狙击
+  { source: 'echo', target: 'moira', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'tracer', target: 'moira', strength: 3, type: 'skill' }, // 高机动
+  { source: 'torbjorn', target: 'moira', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'ashe', target: 'moira', strength: 3, type: 'range' }, // 狙击
+  { source: 'zenyatta', target: 'moira', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'juno', target: 'moira', strength: 3, type: 'skill' }, // 控制
+  { source: 'ana', target: 'moira', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'baptiste', target: 'moira', strength: 3, type: 'skill' }, // 矩阵
   
   // 11. 禅雅塔被克制
-  { source: 'wrecking_ball', target: 'zenyatta', strength: 3 },
-  { source: 'doomfist', target: 'zenyatta', strength: 3 },
-  { source: 'winston', target: 'zenyatta', strength: 3 },
-  { source: 'genji', target: 'zenyatta', strength: 3 },
-  { source: 'hanzo', target: 'zenyatta', strength: 3 },
-  { source: 'venture', target: 'zenyatta', strength: 3 },
-  { source: 'widowmaker', target: 'zenyatta', strength: 3 },
-  { source: 'sombra', target: 'zenyatta', strength: 3 },
-  { source: 'echo', target: 'zenyatta', strength: 3 },
-  { source: 'tracer', target: 'zenyatta', strength: 3 },
-  { source: 'sojourn', target: 'zenyatta', strength: 3 },
-  { source: 'kiriko', target: 'zenyatta', strength: 3 },
-  { source: 'vendetta', target: 'zenyatta', strength: 3 }, // 补充：禅雅塔还被斩仇克制
-  { source: 'freja', target: 'zenyatta', strength: 3 }, // 补充：禅雅塔还被芙蕾雅克制
-  { source: 'anran', target: 'zenyatta', strength: 3 }, // 补充：禅雅塔还被安燃克制
+  { source: 'wrecking_ball', target: 'zenyatta', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'doomfist', target: 'zenyatta', strength: 3, type: 'skill' }, // 高机动
+  { source: 'winston', target: 'zenyatta', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'genji', target: 'zenyatta', strength: 3, type: 'skill' }, // 反弹
+  { source: 'hanzo', target: 'zenyatta', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'venture', target: 'zenyatta', strength: 3, type: 'skill' }, // 机动性
+  { source: 'widowmaker', target: 'zenyatta', strength: 3, type: 'range' }, // 狙击
+  { source: 'sombra', target: 'zenyatta', strength: 3, type: 'skill' }, // 黑客
+  { source: 'echo', target: 'zenyatta', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'tracer', target: 'zenyatta', strength: 3, type: 'skill' }, // 高机动
+  { source: 'sojourn', target: 'zenyatta', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'kiriko', target: 'zenyatta', strength: 3, type: 'skill' }, // 净化
+  { source: 'vendetta', target: 'zenyatta', strength: 3, type: 'skill' }, // 斩仇克制
+  { source: 'freja', target: 'zenyatta', strength: 3, type: 'skill' }, // 芙蕾雅克制
+  { source: 'anran', target: 'zenyatta', strength: 3, type: 'skill' }, // 安燃克制
    
    // ========== 斩仇（Vendetta）克制他人 ==========
    // 斩仇作为高机动近战刺客，克制缺乏自保能力的脆皮和机动性差的目标
@@ -840,111 +848,110 @@ export const counterRelations: CounterRelation[] = [
    
     
     // ========== 被安燃克制篇 ==========
-    { source: 'brigitte', target: 'anran', strength: 3 },
-    { source: 'ana', target: 'anran', strength: 3 },
-    { source: 'baptiste', target: 'anran', strength: 3 },
-    { source: 'dva', target: 'anran', strength: 2 },
-    { source: 'winston', target: 'anran', strength: 2 },
-    { source: 'doomfist', target: 'anran', strength: 2 },
-    { source: 'widowmaker', target: 'anran', strength: 1 },
-    { source: 'bastion', target: 'anran', strength: 2 },
-    { source: 'cassidy', target: 'anran', strength: 2 },
-    { source: 'soldier76', target: 'anran', strength: 2 },
-    { source: 'symmetra', target: 'anran', strength: 2 },
-     { source: 'torbjorn', target: 'anran', strength: 2 },
+    { source: 'brigitte', target: 'anran', strength: 3, type: 'skill' }, // 火焰克制
+    { source: 'ana', target: 'anran', strength: 3, type: 'skill' }, // 禁疗
+    { source: 'baptiste', target: 'anran', strength: 3, type: 'skill' }, // 矩阵
+    { source: 'dva', target: 'anran', strength: 2, type: 'skill' }, // 防御矩阵
+    { source: 'winston', target: 'anran', strength: 2, type: 'skill' }, // 跳脸
+    { source: 'doomfist', target: 'anran', strength: 2, type: 'skill' }, // 高机动
+    { source: 'widowmaker', target: 'anran', strength: 1, type: 'range' }, // 狙击
+    { source: 'bastion', target: 'anran', strength: 2, type: 'numeric' }, // 高DPS
+    { source: 'cassidy', target: 'anran', strength: 2, type: 'skill' }, // 闪光弹
+    { source: 'soldier76', target: 'anran', strength: 2, type: 'numeric' }, // 输出压制
+    { source: 'symmetra', target: 'anran', strength: 2, type: 'skill' }, // 光束
+     { source: 'torbjorn', target: 'anran', strength: 2, type: 'numeric' }, // 炮塔
   
   // ========== 新英雄克制关系 ==========
   // 一、金驭（Domina）被克制 - 完全修改
-  { source: 'winston', target: 'domina', strength: 3 },
-  { source: 'wrecking_ball', target: 'domina', strength: 3 },
-  { source: 'reaper', target: 'domina', strength: 3 },
-  { source: 'bastion', target: 'domina', strength: 3 },
-  { source: 'junkrat', target: 'domina', strength: 3 },
-  { source: 'sombra', target: 'domina', strength: 3 },
-  { source: 'dva', target: 'domina', strength: 3 },
-  { source: 'tracer', target: 'domina', strength: 3 },
-  { source: 'vendetta', target: 'domina', strength: 3 },
-  { source: 'wuyang', target: 'domina', strength: 3 },
-  { source: 'doomfist', target: 'domina', strength: 3 },
-  { source: 'reinhardt', target: 'domina', strength: 3 },
-  { source: 'sigma', target: 'domina', strength: 3 },
-  { source: 'ramattra', target: 'domina', strength: 3 },
+  { source: 'winston', target: 'domina', strength: 3, type: 'skill' }, // 跳脸
+  { source: 'wrecking_ball', target: 'domina', strength: 3, type: 'skill' }, // 机动骚扰
+  { source: 'reaper', target: 'domina', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'bastion', target: 'domina', strength: 3, type: 'numeric' }, // 高DPS
+  { source: 'junkrat', target: 'domina', strength: 3, type: 'numeric' }, // 炸弹
+  { source: 'sombra', target: 'domina', strength: 3, type: 'skill' }, // 黑客
+  { source: 'dva', target: 'domina', strength: 3, type: 'skill' }, // 防御矩阵
+  { source: 'tracer', target: 'domina', strength: 3, type: 'skill' }, // 高机动
+  { source: 'vendetta', target: 'domina', strength: 3, type: 'skill' }, // 斩仇克制
+  { source: 'wuyang', target: 'domina', strength: 3, type: 'skill' }, // 水元素
+  { source: 'doomfist', target: 'domina', strength: 3, type: 'skill' }, // 高机动
+  { source: 'reinhardt', target: 'domina', strength: 3, type: 'skill' }, // 举盾推进
+  { source: 'sigma', target: 'domina', strength: 3, type: 'skill' }, // 动能捕获
+  { source: 'ramattra', target: 'domina', strength: 3, type: 'skill' }, // 涅槃形态
   
   // 二、埃姆雷（Emrey）被克制 - 完全修改
-  { source: 'genji', target: 'emrey', strength: 3 },
-  { source: 'tracer', target: 'emrey', strength: 3 },
-  { source: 'roadhog', target: 'emrey', strength: 3 },
-  { source: 'domina', target: 'emrey', strength: 3 },
-  { source: 'anran', target: 'emrey', strength: 3 },
-  { source: 'ana', target: 'emrey', strength: 3 },
-  { source: 'reinhardt', target: 'emrey', strength: 3 },
-  { source: 'sigma', target: 'emrey', strength: 3 },
-  { source: 'hanzo', target: 'emrey', strength: 3 },
-  { source: 'widowmaker', target: 'emrey', strength: 3 },
-  { source: 'echo', target: 'emrey', strength: 3 }, // 补充：埃姆雷还被回声克制
-  { source: 'pharah', target: 'emrey', strength: 3 }, // 补充：埃姆雷还被法老之鹰克制
-  { source: 'cassidy', target: 'emrey', strength: 3 }, // 补充：埃姆雷还被卡西迪克制
+  { source: 'genji', target: 'emrey', strength: 3, type: 'skill' }, // 反弹
+  { source: 'tracer', target: 'emrey', strength: 3, type: 'skill' }, // 高机动
+  { source: 'roadhog', target: 'emrey', strength: 3, type: 'skill' }, // 钩子
+  { source: 'domina', target: 'emrey', strength: 3, type: 'skill' }, // 金驭克制
+  { source: 'anran', target: 'emrey', strength: 3, type: 'skill' }, // 安燃克制
+  { source: 'ana', target: 'emrey', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'reinhardt', target: 'emrey', strength: 3, type: 'skill' }, // 举盾推进
+  { source: 'sigma', target: 'emrey', strength: 3, type: 'skill' }, // 动能捕获
+  { source: 'hanzo', target: 'emrey', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'widowmaker', target: 'emrey', strength: 3, type: 'range' }, // 狙击
+  { source: 'echo', target: 'emrey', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'pharah', target: 'emrey', strength: 3, type: 'range' }, // 空中输出
+  { source: 'cassidy', target: 'emrey', strength: 3, type: 'skill' }, // 闪光弹
   
   // 三、安燃（Anran）被克制 - 完全修改
-  { source: 'roadhog', target: 'anran', strength: 3 },
-  { source: 'orisa', target: 'anran', strength: 3 },
-  { source: 'pharah', target: 'anran', strength: 3 },
-  { source: 'echo', target: 'anran', strength: 3 },
-  { source: 'cassidy', target: 'anran', strength: 3 },
-  { source: 'ana', target: 'anran', strength: 3 },
-  { source: 'zenyatta', target: 'anran', strength: 3 },
-  { source: 'moira', target: 'anran', strength: 3 },
-  { source: 'genji', target: 'anran', strength: 3 }, // 补充：安燃还被源氏克制
-  { source: 'reaper', target: 'anran', strength: 3 }, // 补充：安燃还被死神克制（死神克制安燃）
-  { source: 'junkrat', target: 'anran', strength: 3 }, // 补充：安燃还被狂鼠克制
-  { source: 'venture', target: 'anran', strength: 3 }, // 补充：安燃还被探奇克制
-  { source: 'mizuki', target: 'anran', strength: 3 }, // 补充：安燃还被瑞稀克制
+  { source: 'roadhog', target: 'anran', strength: 3, type: 'skill' }, // 钩子
+  { source: 'orisa', target: 'anran', strength: 3, type: 'skill' }, // 长矛
+  { source: 'pharah', target: 'anran', strength: 3, type: 'range' }, // 空中输出
+  { source: 'echo', target: 'anran', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'cassidy', target: 'anran', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'ana', target: 'anran', strength: 3, type: 'skill' }, // 禁疗
+  { source: 'zenyatta', target: 'anran', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'moira', target: 'anran', strength: 3, type: 'skill' }, // 光束
+  { source: 'genji', target: 'anran', strength: 3, type: 'skill' }, // 反弹
+  { source: 'reaper', target: 'anran', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'junkrat', target: 'anran', strength: 3, type: 'numeric' }, // 炸弹
+  { source: 'venture', target: 'anran', strength: 3, type: 'skill' }, // 机动性
+  { source: 'mizuki', target: 'anran', strength: 3, type: 'skill' }, // 护魂结界
   
   // 四、无漾（Wuyang）被克制 - 完全修改
-  { source: 'soldier76', target: 'wuyang', strength: 3 },
-  { source: 'cassidy', target: 'wuyang', strength: 3 },
-  { source: 'ashe', target: 'wuyang', strength: 3 },
-  { source: 'genji', target: 'wuyang', strength: 3 },
-  { source: 'tracer', target: 'wuyang', strength: 3 },
-  { source: 'reaper', target: 'wuyang', strength: 3 },
-  { source: 'moira', target: 'wuyang', strength: 3 },
-  { source: 'vendetta', target: 'wuyang', strength: 3 },
-  { source: 'anran', target: 'wuyang', strength: 3 },
-  { source: 'zenyatta', target: 'wuyang', strength: 3 },
-  { source: 'widowmaker', target: 'wuyang', strength: 3 }, // 补充：无漾还被黑百合克制
-  { source: 'sombra', target: 'wuyang', strength: 3 }, // 补充：无漾还被黑影克制
+  { source: 'soldier76', target: 'wuyang', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'cassidy', target: 'wuyang', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'ashe', target: 'wuyang', strength: 3, type: 'range' }, // 狙击
+  { source: 'genji', target: 'wuyang', strength: 3, type: 'skill' }, // 反弹
+  { source: 'tracer', target: 'wuyang', strength: 3, type: 'skill' }, // 高机动
+  { source: 'reaper', target: 'wuyang', strength: 3, type: 'numeric' }, // 近距离爆发
+  { source: 'moira', target: 'wuyang', strength: 3, type: 'skill' }, // 光束
+  { source: 'vendetta', target: 'wuyang', strength: 3, type: 'skill' }, // 斩仇克制
+  { source: 'anran', target: 'wuyang', strength: 3, type: 'skill' }, // 安燃克制
+  { source: 'zenyatta', target: 'wuyang', strength: 3, type: 'numeric' }, // 增伤
+  { source: 'widowmaker', target: 'wuyang', strength: 3, type: 'range' }, // 狙击
+  { source: 'sombra', target: 'wuyang', strength: 3, type: 'skill' }, // 黑客
   
   // 五、瑞稀（Ruixi）被克制 - 完全修改
-  { source: 'echo', target: 'mizuki', strength: 3 },
-  { source: 'pharah', target: 'mizuki', strength: 3 },
-  { source: 'cassidy', target: 'mizuki', strength: 3 },
-  { source: 'widowmaker', target: 'mizuki', strength: 3 },
-  { source: 'sojourn', target: 'mizuki', strength: 3 },
-  { source: 'sombra', target: 'mizuki', strength: 3 },
+  { source: 'echo', target: 'mizuki', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'pharah', target: 'mizuki', strength: 3, type: 'range' }, // 空中输出
+  { source: 'cassidy', target: 'mizuki', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'widowmaker', target: 'mizuki', strength: 3, type: 'range' }, // 狙击
+  { source: 'sojourn', target: 'mizuki', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'sombra', target: 'mizuki', strength: 3, type: 'skill' }, // 黑客
   
   // 六、飞天猫（Feitianmao）被克制 - 完全修改
-  { source: 'cassidy', target: 'feitianmao', strength: 3 },
-  { source: 'widowmaker', target: 'feitianmao', strength: 3 },
-  { source: 'ashe', target: 'feitianmao', strength: 3 },
-  { source: 'torbjorn', target: 'feitianmao', strength: 3 },
-  { source: 'sojourn', target: 'feitianmao', strength: 3 },
-  { source: 'soldier76', target: 'feitianmao', strength: 3 },
-  { source: 'sombra', target: 'feitianmao', strength: 3 },
-  { source: 'echo', target: 'feitianmao', strength: 3 },
-  { source: 'juno', target: 'feitianmao', strength: 3 },
-  { source: 'baptiste', target: 'feitianmao', strength: 3 },
-  { source: 'sierra', target: 'feitianmao', strength: 2 }, // 补充：飞天猫被Sierra强克制
-
-
+  { source: 'cassidy', target: 'feitianmao', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'widowmaker', target: 'feitianmao', strength: 3, type: 'range' }, // 狙击
+  { source: 'ashe', target: 'feitianmao', strength: 3, type: 'range' }, // 狙击
+  { source: 'torbjorn', target: 'feitianmao', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'sojourn', target: 'feitianmao', strength: 3, type: 'range' }, // 轨道炮
+  { source: 'soldier76', target: 'feitianmao', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'sombra', target: 'feitianmao', strength: 3, type: 'skill' }, // 黑客
+  { source: 'echo', target: 'feitianmao', strength: 3, type: 'range' }, // 飞行输出
+  { source: 'juno', target: 'feitianmao', strength: 3, type: 'skill' }, // 控制
+  { source: 'baptiste', target: 'feitianmao', strength: 3, type: 'skill' }, // 矩阵
+  { source: 'sierra', target: 'feitianmao', strength: 2, type: 'skill' }, // Sierra克制
+  
   // Sierra 被克制 - 硬克制（strength: 3）
-  { source: 'genji', target: 'sierra', strength: 3 }, // Sierra被源氏硬克制（反弹技能）
-  { source: 'widowmaker', target: 'sierra', strength: 3 }, // Sierra被黑百合硬克制
-  { source: 'cassidy', target: 'sierra', strength: 3 }, // Sierra被卡西迪硬克制
-  { source: 'ashe', target: 'sierra', strength: 3 }, // Sierra被艾什硬克制
+  { source: 'genji', target: 'sierra', strength: 3, type: 'skill' }, // 反弹技能
+  { source: 'widowmaker', target: 'sierra', strength: 3, type: 'range' }, // 狙击
+  { source: 'cassidy', target: 'sierra', strength: 3, type: 'skill' }, // 闪光弹
+  { source: 'ashe', target: 'sierra', strength: 3, type: 'range' }, // 狙击
   // Sierra 被克制 - 强克制（strength: 2）
-  { source: 'reaper', target: 'sierra', strength: 2 }, // Sierra被死神强克制
-  { source: 'winston', target: 'sierra', strength: 2 }, // Sierra被温斯顿强克制
-  { source: 'dva', target: 'sierra', strength: 2 }, // Sierra被D.Va强克制
+  { source: 'reaper', target: 'sierra', strength: 2, type: 'numeric' }, // 近距离爆发
+  { source: 'winston', target: 'sierra', strength: 2, type: 'skill' }, // 跳脸
+  { source: 'dva', target: 'sierra', strength: 2, type: 'skill' }, // 防御矩阵
 
 ];
 

@@ -266,14 +266,15 @@ const ForceGraph = ({
   }, [customSynergyRelations, deletedDefaultSynergyRelations]);
 
   // 关系查找 Map - O(1) 替代 20+ 处 O(n) 的 .find()
-  const {
-    counterMap: counterRelationMap,
-    synergyMap: synergyRelationMap,
-    getCounterStrength,
-    hasCounterRelation,
-    getSynergyStrength,
-    hasSynergyRelation,
-  } = useRelationMaps(mergedCounterRelations, mergedSynergyRelations);
+const {
+  counterMap: counterRelationMap,
+  synergyMap: synergyRelationMap,
+  getCounterStrength,
+  hasCounterRelation,
+  getCounterType,
+  getSynergyStrength,
+  hasSynergyRelation,
+} = useRelationMaps(mergedCounterRelations, mergedSynergyRelations);
 
   // O(1) 英雄查找
   const { getHero } = useMemoizedHeroes();
@@ -729,10 +730,31 @@ const ForceGraph = ({
       const relationSource = source || (swapSourceTarget ? hero.id : targetHeroIds[0]);
       const relationTarget = target || (swapSourceTarget ? targetHeroIds[0] : hero.id);
 
+      const counterType = getCounterType(relationSource as HeroId, relationTarget as HeroId);
+      const typeLabels: Record<string, string> = {
+        skill: t('counterTypeSkill'),
+        numeric: t('counterTypeNumeric'),
+        range: t('counterTypeRange'),
+        role: t('counterTypeRole'),
+      };
+      const typeColors: Record<string, string> = {
+        skill: 'bg-[#ef4444] text-white',
+        numeric: 'bg-[#3b82f6] text-white',
+        range: 'bg-[#f59e0b] text-white',
+        role: 'bg-[#8b5cf6] text-white',
+      };
+
       return (
         <div key={`${hero.id}-${s}`} className={`flex items-start gap-3 p-2 rounded-lg border backdrop-blur-sm mb-2 ${colorClass} group`}>
-          <div className={`w-10 h-10 rounded-full overflow-hidden bg-slate-800 flex-shrink-0 ring-2 ${colorClass.includes('red') ? 'ring-red-500/50' : 'ring-green-500/50'}`}>
-            <img src={hero.image} alt="" className="w-full h-full object-cover" />
+          <div className="flex flex-col items-center gap-1">
+            <div className={`w-10 h-10 rounded-full overflow-hidden bg-slate-800 flex-shrink-0 ring-2 ${colorClass.includes('red') ? 'ring-red-500/50' : 'ring-green-500/50'}`}>
+              <img src={hero.image} alt="" className="w-full h-full object-cover" />
+            </div>
+            {counterType && (
+              <span className={`text-[0.5rem] px-1.5 py-0.25 rounded font-medium ${typeColors[counterType]}`} style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>
+                {typeLabels[counterType]}
+              </span>
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-start gap-2">
@@ -751,7 +773,7 @@ const ForceGraph = ({
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 {selectedMap && mapRecommendedHeroes.includes(hero.id) && (
-                  <Badge variant="secondary" className="text-[0.5625rem] px-1 py-0 font-bold bg-cyan-400">
+                  <Badge variant="secondary" className="text-[0.5625rem] px-1 py-0 font-bold bg-slate-400 text-slate-900">
                     {t('mapRecommended')}
                   </Badge>
                 )}
@@ -965,19 +987,39 @@ const ForceGraph = ({
     const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
     const defs = svg.append('defs');
 
-    // Arrow defs
-    const redShades = [
-      { id: 'arrow-red-1', color: '#f87171', opacity: 0.4 },
-      { id: 'arrow-red-2', color: '#ef4444', opacity: 0.7 },
-      { id: 'arrow-red-3', color: '#b91c1c', opacity: 1.0 },
-    ];
-    redShades.forEach(shade => {
-      defs.append('marker').attr('id', shade.id).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 3).attr('markerHeight', 3).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', shade.color).attr('opacity', shade.opacity);
+    // Arrow defs for counter types
+    const counterTypeColors: Record<string, { dark: string; primary: string; light: string }> = {
+      skill: { dark: '#b91c1c', primary: '#ef4444', light: '#fca5a5' },
+      numeric: { dark: '#1d4ed8', primary: '#3b82f6', light: '#93c5fd' },
+      range: { dark: '#d97706', primary: '#f59e0b', light: '#fcd34d' },
+      role: { dark: '#7c3aed', primary: '#8b5cf6', light: '#c4b5fd' },
+    };
+
+    // Create arrow markers for each counter type and strength
+    Object.entries(counterTypeColors).forEach(([type, colors]) => {
+      [1, 2, 3].forEach(strength => {
+        const opacity = strength === 3 ? 0.8 : strength === 2 ? 0.5 : 0.25;
+        const color = strength === 3 ? colors.dark : strength === 2 ? colors.primary : colors.light;
+        defs.append('marker')
+          .attr('id', `arrow-${type}-${strength}`)
+          .attr('viewBox', '0 -5 10 10')
+          .attr('refX', 36)
+          .attr('refY', 0)
+          .attr('markerWidth', 3)
+          .attr('markerHeight', 3)
+          .attr('orient', 'auto')
+          .append('path')
+          .attr('d', 'M0,-5L10,0L0,5')
+          .attr('fill', color)
+          .attr('opacity', opacity);
+      });
     });
+
+    // Green arrows for counters (hero counters others)
     const greenShades = [
-      { id: 'arrow-green-1', color: '#86efac', opacity: 0.4 },
-      { id: 'arrow-green-2', color: '#22c55e', opacity: 0.7 },
-      { id: 'arrow-green-3', color: '#15803d', opacity: 1.0 },
+      { id: 'arrow-green-1', color: '#86efac', opacity: 0.25 },
+      { id: 'arrow-green-2', color: '#22c55e', opacity: 0.5 },
+      { id: 'arrow-green-3', color: '#15803d', opacity: 0.8 },
     ];
     greenShades.forEach(shade => {
       defs.append('marker').attr('id', shade.id).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 3).attr('markerHeight', 3).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', shade.color).attr('opacity', shade.opacity);
@@ -986,20 +1028,21 @@ const ForceGraph = ({
     // Purple arrow for synergy
     defs.append('marker').attr('id', 'arrow-purple-1').attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 3).attr('markerHeight', 3).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#a855f7').attr('opacity', 0.8);
 
-    // Animated arrow heads
-    ['red', 'green'].forEach(color => {
-      [1, 2, 3].forEach(s => {
-        defs.append('marker').attr('id', `arrow-${color}-${s}-anim`).attr('viewBox', '0 -5 10 10').attr('refX', 36).attr('refY', 0).attr('markerWidth', 3).attr('markerHeight', 3).attr('orient', 'auto').append('path')
-          .attr('d', 'M0,-5L10,0L0,5')
-          .attr('fill', color === 'red' ? (s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#f87171') : (s === 3 ? '#15803d' : s === 2 ? '#22c55e' : '#86efac'))
-          .attr('opacity', 0.9);
-      });
-    });
-
-    // Animated flowing circle markers
-    ['red', 'green'].forEach(color => {
-      [1, 2, 3].forEach(s => {
-        defs.append('marker').attr('id', `arrow-${color}-${s}-flow`).attr('viewBox', '0 -3 6 6').attr('refX', 3).attr('refY', 0).attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto').append('circle').attr('r', 2.5).attr('fill', color === 'red' ? (s === 3 ? '#ff6b6b' : s === 2 ? '#ff8a8a' : '#ffa8a8') : (s === 3 ? '#4ade80' : s === 2 ? '#6ee7a0' : '#a3f7bc'));
+    // Animated flowing circle markers for each counter type
+    Object.entries(counterTypeColors).forEach(([type, colors]) => {
+      [1, 2, 3].forEach(strength => {
+        const particleColor = strength === 3 ? colors.light : strength === 2 ? colors.primary : colors.light;
+        defs.append('marker')
+          .attr('id', `arrow-${type}-${strength}-flow`)
+          .attr('viewBox', '0 -3 6 6')
+          .attr('refX', 3)
+          .attr('refY', 0)
+          .attr('markerWidth', 6)
+          .attr('markerHeight', 6)
+          .attr('orient', 'auto')
+          .append('circle')
+          .attr('r', 2.5)
+          .attr('fill', particleColor);
       });
     });
 
@@ -1096,39 +1139,29 @@ const ForceGraph = ({
       .attr('fill', (d: LinkDatum) => {
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
-        // O(1) 替代 O(R) .find() (原代码此处调用了 2 次 find)
         const s = getCounterStrength(sourceId, targetId) ?? 1;
+        const counterType = getCounterType(sourceId, targetId);
 
-        // Synergy模式使用紫色系粒子
         if (activeCounterTab === 'synergy') {
           return s === 3 ? '#c084fc' : s === 2 ? '#d8b4fe' : '#e9d5ff';
         }
-        
-        // 统一粒子颜色逻辑：多选和单选使用相同的颜色规则
-        let color = 'red';
-        
-        if (isMultiSelect) {
-          // 多选模式：根据关系方向确定颜色
-          if (activeCounterTab === 'counteredBy') {
-            // 被克制关系：从共同被克制英雄流向选中英雄（红色）
-            color = commonRelatedIds.includes(sourceId) && selectedHeroes.includes(targetId) ? 'red' : 'green';
-          } else {
-            // 克制关系：从选中英雄流向共同克制英雄（绿色）
-            color = selectedHeroes.includes(sourceId) && commonRelatedIds.includes(targetId) ? 'green' : 'red';
-          }
-        } else {
-          // 单选模式：保持原有逻辑
-          color = activeCounterTab === 'counteredBy' ?
-            (targetId === selectedHeroes[0] ? 'red' : 'green') :
-            (sourceId === selectedHeroes[0] ? 'green' : 'red');
-        }
-        
-        // 使用与单选模式相同的粒子颜色
-        return s === 3 ? (color === 'red' ? '#ff6b6b' : '#4ade80') :
-          s === 2 ? (color === 'red' ? '#ff8a8a' : '#6ee7a0') :
-            (color === 'red' ? '#ffa8a8' : '#a3f7bc');
+
+        const typeColors: Record<string, { light: string; primary: string }> = {
+          skill: { light: '#ff6b6b', primary: '#fca5a5' },
+          numeric: { light: '#93c5fd', primary: '#60a5fa' },
+          range: { light: '#fcd34d', primary: '#fbbf24' },
+          role: { light: '#c4b5fd', primary: '#a78bfa' },
+        };
+
+        const colors = typeColors[counterType || 'skill'];
+        return s === 3 ? colors.light : s === 2 ? colors.primary : colors.light;
       })
-      .attr('opacity', 0);
+      .attr('opacity', (d: LinkDatum) => {
+        const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
+        const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+        const s = getCounterStrength(sourceId, targetId) ?? 1;
+        return s === 3 ? 1.0 : s === 2 ? 0.7 : 0.45;
+      });
 
     const nodeGroup = g.append('g').attr('class', 'nodes').selectAll('g').data(nodes).enter().append('g').attr('class', 'node-group').style('cursor', 'pointer').style('opacity', d => {
       if (!selectedHero) return 1;
@@ -1197,7 +1230,7 @@ const ForceGraph = ({
       .attr('width', 48)
       .attr('height', 14)
       .attr('rx', 4)
-      .attr('fill', '#22d3ee');
+      .attr('fill', '#94a3b8');
 
     mapLabelGroup.append('text')
       .attr('text-anchor', 'middle')
@@ -1206,6 +1239,32 @@ const ForceGraph = ({
       .attr('font-size', isTouchDevice ? '1.25rem' : '0.5625rem')
       .attr('font-weight', '800')
       .text(t('mapRecommended'));
+
+    const counterTypeLabelGroup = nodeGroup.append('g')
+      .attr('class', 'counter-type-label')
+      .style('opacity', 0)
+      .style('pointer-events', 'none');
+
+    counterTypeLabelGroup.append('rect')
+      .attr('x', d => -(d.radius - 6))
+      .attr('y', d => (d.radius - 8))
+      .attr('width', 28)
+      .attr('height', 14)
+      .attr('rx', 4)
+      .attr('fill', '#1e293b');
+
+    counterTypeLabelGroup.append('text')
+      .attr('text-anchor', 'middle')
+      .attr('x', d => -(d.radius - 6) + 14)
+      .attr('y', d => (d.radius))
+      .attr('fill', '#ffffff')
+      .attr('font-size', isTouchDevice ? '1rem' : '0.5rem')
+      .attr('font-weight', '700')
+      .attr('alignment-baseline', 'middle')
+      .attr('stroke', '#000000')
+      .attr('stroke-width', 1)
+      .attr('paint-order', 'stroke fill')
+      .text('');
 
     nodeGroup.on('click', (event, d) => { handleHeroClick(d.id, event); });
 
@@ -1469,6 +1528,59 @@ const ForceGraph = ({
           .duration(300)
           .style('opacity', labelOpacity)
           .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
+
+        let counterTypeOpacity = 0;
+        let counterType = '';
+        if (selectedHeroes.length === 1 && !selectedHeroes.includes(d.id)) {
+          const targetHero = selectedHeroes[0];
+          if (activeCounterTab === 'counteredBy') {
+            const type = getCounterType(d.id, targetHero);
+            if (type) {
+              counterType = type;
+              counterTypeOpacity = 1;
+            }
+          } else if (activeCounterTab === 'counters') {
+            const type = getCounterType(targetHero, d.id);
+            if (type) {
+              counterType = type;
+              counterTypeOpacity = 1;
+            }
+          }
+        }
+
+        const typeColors: Record<string, string> = {
+          skill: '#ef4444',
+          numeric: '#3b82f6',
+          range: '#f59e0b',
+          role: '#8b5cf6',
+        };
+        const typeLabels: Record<string, string> = {
+          skill: t('counterTypeSkill'),
+          numeric: t('counterTypeNumeric'),
+          range: t('counterTypeRange'),
+          role: t('counterTypeRole'),
+        };
+
+        group.select('.counter-type-label')
+          .transition()
+          .duration(300)
+          .style('opacity', counterTypeOpacity);
+
+        group.select('.counter-type-label rect')
+          .transition()
+          .duration(300)
+          .attr('x', -(imgR - 6))
+          .attr('y', imgR - 8)
+          .attr('width', 28)
+          .attr('height', 14)
+          .attr('fill', typeColors[counterType] || '#1e293b');
+
+        group.select('.counter-type-label text')
+          .transition()
+          .duration(300)
+          .attr('x', -(imgR - 6) + 14)
+          .attr('y', imgR)
+          .text(typeLabels[counterType] || '');
       });
 
       // 使用 selection.each 预计算一次，避免 5 个 attr 回调各自重复 .find()
@@ -1502,22 +1614,28 @@ const ForceGraph = ({
           }
         }
 
-        // 一次性设置所有属性（5 次 find → 1 次 Map.get）
+        const typeColors: Record<string, { dark: string; primary: string; light: string }> = {
+          skill: { dark: '#b91c1c', primary: '#ef4444', light: '#fca5a5' },
+          numeric: { dark: '#1d4ed8', primary: '#3b82f6', light: '#93c5fd' },
+          range: { dark: '#d97706', primary: '#f59e0b', light: '#fcd34d' },
+          role: { dark: '#7c3aed', primary: '#8b5cf6', light: '#c4b5fd' },
+        };
+
+        const counterType = getCounterType(sourceId, targetId);
+        const colors = typeColors[counterType || 'skill'];
+
         if (!isRelevant) {
           el.attr('stroke-opacity', 0.01).attr('stroke-width', 1).attr('stroke', '#334155').attr('marker-end', null);
         } else {
-          const opacity = s === 3 ? 1.0 : s === 2 ? 0.5 : 0.25;
+          const opacity = s === 3 ? 0.8 : s === 2 ? 0.5 : 0.25;
           const width = s === 3 ? 15 : s === 2 ? 9 : 4.5;
           if (activeCounterTab === 'synergy') {
             el.attr('stroke-opacity', opacity).attr('stroke-width', width).attr('stroke', '#a855f7').attr('marker-end', null);
-          } else if (activeCounterTab === 'counteredBy') {
-            el.attr('stroke-opacity', opacity).attr('stroke-width', width)
-              .attr('stroke', s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#fca5a5')
-              .attr('marker-end', `url(#arrow-red-${s})`);
           } else {
+            const color = s === 3 ? colors.dark : s === 2 ? colors.primary : colors.light;
             el.attr('stroke-opacity', opacity).attr('stroke-width', width)
-              .attr('stroke', s === 3 ? '#15803d' : s === 2 ? '#22c55e' : '#86efac')
-              .attr('marker-end', `url(#arrow-green-${s})`);
+              .attr('stroke', color)
+              .attr('marker-end', `url(#arrow-${counterType || 'skill'}-${s})`);
           }
         }
       });
@@ -1535,18 +1653,23 @@ const ForceGraph = ({
         group.select('.node-name').transition().duration(300).attr('dy', d.radius + 20);
 
         const isRecommended = selectedMap && mapRecommendedHeroes.includes(d.id);
-        // 无选中节点时，所有地图推荐英雄标签正常显示
         group.select('.map-strong-label')
           .transition()
           .duration(300)
           .style('opacity', isRecommended ? 1 : 0)
           .attr('transform', 'translate(0, 0)');
       });
-      // 无选中状态：使用 each 预计算，4 次 O(R) find → 1 次 O(1) Map.get
       linkSelection.each(function(d) {
         const el = d3.select(this);
         const sourceId = typeof d.source === 'string' ? d.source : d.source.id;
         const targetId = typeof d.target === 'string' ? d.target : d.target.id;
+
+        const typeColors: Record<string, { dark: string; primary: string; light: string }> = {
+          skill: { dark: '#b91c1c', primary: '#ef4444', light: '#fca5a5' },
+          numeric: { dark: '#1d4ed8', primary: '#3b82f6', light: '#93c5fd' },
+          range: { dark: '#d97706', primary: '#f59e0b', light: '#fcd34d' },
+          role: { dark: '#7c3aed', primary: '#8b5cf6', light: '#c4b5fd' },
+        };
 
         if (activeCounterTab === 'synergy') {
           const s = getSynergyStrength(sourceId, targetId) ?? 1;
@@ -1556,10 +1679,13 @@ const ForceGraph = ({
             .attr('marker-end', null);
         } else {
           const s = getCounterStrength(sourceId, targetId) ?? 1;
+          const counterType = getCounterType(sourceId, targetId);
+          const colors = typeColors[counterType || 'skill'];
+          const color = s === 3 ? colors.dark : s === 2 ? colors.primary : colors.light;
           el.attr('stroke-opacity', s === 3 ? 0.5 : s === 2 ? 0.15 : 0.05)
             .attr('stroke-width', s === 3 ? 4.5 : s === 2 ? 3 : 1.5)
-            .attr('stroke', s === 3 ? '#b91c1c' : s === 2 ? '#ef4444' : '#fca5a5')
-            .attr('marker-end', `url(#arrow-red-${s})`);
+            .attr('stroke', color)
+            .attr('marker-end', `url(#arrow-${counterType || 'skill'}-${s})`);
         }
       });
     }
