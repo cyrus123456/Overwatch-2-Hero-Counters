@@ -1246,8 +1246,8 @@ const {
       .style('pointer-events', 'none');
 
     counterTypeLabelGroup.append('rect')
-      .attr('x', d => -(d.radius - 6))
-      .attr('y', d => (d.radius - 8))
+      .attr('x', -14)
+      .attr('y', d => (d.radius - 3))
       .attr('width', 28)
       .attr('height', 14)
       .attr('rx', 4)
@@ -1255,8 +1255,8 @@ const {
 
     counterTypeLabelGroup.append('text')
       .attr('text-anchor', 'middle')
-      .attr('x', d => -(d.radius - 6) + 14)
-      .attr('y', d => (d.radius))
+      .attr('x', 0)
+      .attr('y', d => (d.radius + 5))
       .attr('fill', '#ffffff')
       .attr('font-size', isTouchDevice ? '1rem' : '0.5rem')
       .attr('font-weight', '700')
@@ -1531,19 +1531,24 @@ const {
 
         let counterTypeOpacity = 0;
         let counterType = '';
-        if (selectedHeroes.length === 1 && !selectedHeroes.includes(d.id)) {
-          const targetHero = selectedHeroes[0];
+        if (selectedHeroes.length > 0 && !selectedHeroes.includes(d.id)) {
           if (activeCounterTab === 'counteredBy') {
-            const type = getCounterType(d.id, targetHero);
-            if (type) {
-              counterType = type;
-              counterTypeOpacity = 1;
+            for (const targetHero of selectedHeroes) {
+              const type = getCounterType(d.id, targetHero);
+              if (type) {
+                counterType = type;
+                counterTypeOpacity = 1;
+                break;
+              }
             }
           } else if (activeCounterTab === 'counters') {
-            const type = getCounterType(targetHero, d.id);
-            if (type) {
-              counterType = type;
-              counterTypeOpacity = 1;
+            for (const targetHero of selectedHeroes) {
+              const type = getCounterType(targetHero, d.id);
+              if (type) {
+                counterType = type;
+                counterTypeOpacity = 1;
+                break;
+              }
             }
           }
         }
@@ -1569,8 +1574,8 @@ const {
         group.select('.counter-type-label rect')
           .transition()
           .duration(300)
-          .attr('x', -(imgR - 6))
-          .attr('y', imgR - 8)
+          .attr('x', -14)
+          .attr('y', imgR - 3)
           .attr('width', 28)
           .attr('height', 14)
           .attr('fill', typeColors[counterType] || '#1e293b');
@@ -1578,8 +1583,8 @@ const {
         group.select('.counter-type-label text')
           .transition()
           .duration(300)
-          .attr('x', -(imgR - 6) + 14)
-          .attr('y', imgR)
+          .attr('x', 0)
+          .attr('y', imgR + 5)
           .text(typeLabels[counterType] || '');
       });
 
@@ -1658,6 +1663,11 @@ const {
           .duration(300)
           .style('opacity', isRecommended ? 1 : 0)
           .attr('transform', 'translate(0, 0)');
+
+        group.select('.counter-type-label')
+          .transition()
+          .duration(300)
+          .style('opacity', 0);
       });
       linkSelection.each(function(d) {
         const el = d3.select(this);
