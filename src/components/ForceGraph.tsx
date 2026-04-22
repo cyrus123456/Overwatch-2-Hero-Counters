@@ -83,6 +83,7 @@ interface CustomCounterRelation {
   source: HeroId;
   target: HeroId;
   strength: RelationStrength;
+  type?: CounterType;
   isCustom: boolean;
 }
 
@@ -206,6 +207,7 @@ const ForceGraph = ({
   const [isAddingCustomRelation, setIsAddingCustomRelation] = useState(false);
   const [newRelationTarget, setNewRelationTarget] = useState<HeroId | ''>('');
   const [newRelationStrength, setNewRelationStrength] = useState<RelationStrength>(2);
+  const [newRelationCounterType, setNewRelationCounterType] = useState<CounterType>('skill');
   const addRelationFormRef = useRef<HTMLDivElement>(null);
 
   // 自定义协同关系状态
@@ -511,7 +513,6 @@ const {
   const addCustomCounterRelation = () => {
     if (!selectedHero || !newRelationTarget) return;
     
-    // 此时 selectedHero 和 newRelationTarget 都已被类型收窄为 HeroId
     const sourceHero: HeroId = activeCounterTab === 'counters' ? selectedHero : newRelationTarget;
     const targetHero: HeroId = activeCounterTab === 'counters' ? newRelationTarget : selectedHero;
 
@@ -519,6 +520,7 @@ const {
       source: sourceHero,
       target: targetHero,
       strength: newRelationStrength,
+      type: newRelationCounterType,
       isCustom: true
     };
 
@@ -528,6 +530,7 @@ const {
     setHasForceGraphUnsavedChanges(true);
     setNewRelationTarget('');
     setNewRelationStrength(2);
+    setNewRelationCounterType('skill');
     setIsAddingCustomRelation(false);
   };
 
@@ -2060,12 +2063,23 @@ const {
                                     <SelectItem value="1" className="text-white hover:bg-slate-700">{t('softCounter')} LV.1</SelectItem>
                                   </SelectContent>
                                 </Select>
+                                <Select value={newRelationCounterType} onValueChange={(v) => setNewRelationCounterType(v as CounterType)}>
+                                  <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                    <span className="text-white">{t('counterType' + newRelationCounterType.charAt(0).toUpperCase() + newRelationCounterType.slice(1))}</span>
+                                  </SelectTrigger>
+                                  <SelectContent position="popper" className="bg-slate-800 border-slate-600 z-[9999]">
+                                    <SelectItem value="skill" className="text-white hover:bg-slate-700">{t('counterTypeSkill')}</SelectItem>
+                                    <SelectItem value="numeric" className="text-white hover:bg-slate-700">{t('counterTypeNumeric')}</SelectItem>
+                                    <SelectItem value="range" className="text-white hover:bg-slate-700">{t('counterTypeRange')}</SelectItem>
+                                    <SelectItem value="role" className="text-white hover:bg-slate-700">{t('counterTypeRole')}</SelectItem>
+                                  </SelectContent>
+                                </Select>
                                 <div className="flex gap-2 justify-end">
                                   <Button
                                     variant="ghost"
                                     size="sm"
                                     className="h-7 px-2 text-xs text-slate-400 hover:text-white"
-                                    onClick={() => { setIsAddingCustomRelation(false); setNewRelationTarget(''); }}
+                                    onClick={() => { setIsAddingCustomRelation(false); setNewRelationTarget(''); setNewRelationCounterType('skill'); }}
                                   >
                                     <X className="w-3 h-3 mr-1" />
                                     {t('cancel')}
@@ -2143,12 +2157,23 @@ const {
                                     <SelectItem value="1" className="text-white hover:bg-slate-700">{t('softCounter')} LV.1</SelectItem>
                                   </SelectContent>
                                 </Select>
+                                <Select value={newRelationCounterType} onValueChange={(v) => setNewRelationCounterType(v as CounterType)}>
+                                  <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                    <span className="text-white">{t('counterType' + newRelationCounterType.charAt(0).toUpperCase() + newRelationCounterType.slice(1))}</span>
+                                  </SelectTrigger>
+                                  <SelectContent position="popper" className="bg-slate-800 border-slate-600 z-[9999]">
+                                    <SelectItem value="skill" className="text-white hover:bg-slate-700">{t('counterTypeSkill')}</SelectItem>
+                                    <SelectItem value="numeric" className="text-white hover:bg-slate-700">{t('counterTypeNumeric')}</SelectItem>
+                                    <SelectItem value="range" className="text-white hover:bg-slate-700">{t('counterTypeRange')}</SelectItem>
+                                    <SelectItem value="role" className="text-white hover:bg-slate-700">{t('counterTypeRole')}</SelectItem>
+                                  </SelectContent>
+                                </Select>
                                 <div className="flex gap-2 justify-end">
                                   <Button
                                     variant="ghost"
                                     size="sm"
                                     className="h-7 px-2 text-xs text-slate-400 hover:text-white"
-                                    onClick={() => { setIsAddingCustomRelation(false); setNewRelationTarget(''); }}
+                                    onClick={() => { setIsAddingCustomRelation(false); setNewRelationTarget(''); setNewRelationCounterType('skill'); }}
                                   >
                                     <X className="w-3 h-3 mr-1" />
                                     {t('cancel')}
