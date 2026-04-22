@@ -731,22 +731,23 @@ const {
       const relationTarget = target || (swapSourceTarget ? targetHeroIds[0] : hero.id);
 
       // 获取克制类型：多选模式下查找与任意选中英雄有关的克制类型
-      let counterType: CounterType | undefined;
+      const counterTypesSet = new Set<CounterType>();
       if (targetHeroIds.length > 1) {
         for (const targetId of targetHeroIds) {
-          // counteredBy: 列表英雄克制选中英雄 (列表英雄→选中英雄)
-          // counters: 选中英雄克制列表英雄 (选中英雄→列表英雄)
           const src = swapSourceTarget ? targetId : hero.id;
           const tgt = swapSourceTarget ? hero.id : targetId;
           const type = getCounterType(src as HeroId, tgt as HeroId);
           if (type) {
-            counterType = type;
-            break;
+            counterTypesSet.add(type);
           }
         }
       } else {
-        counterType = getCounterType(relationSource as HeroId, relationTarget as HeroId);
+        const singleType = getCounterType(relationSource as HeroId, relationTarget as HeroId);
+        if (singleType) {
+          counterTypesSet.add(singleType);
+        }
       }
+      const counterTypes = Array.from(counterTypesSet);
 
       const typeLabels: Record<string, string> = {
         skill: t('counterTypeSkill'),
@@ -767,10 +768,14 @@ const {
             <div className={`w-10 h-10 rounded-full overflow-hidden bg-slate-800 flex-shrink-0 ring-2 ${colorClass.includes('red') ? 'ring-red-500/50' : 'ring-green-500/50'}`}>
               <img src={hero.image} alt="" className="w-full h-full object-cover" />
             </div>
-            {counterType && (
-              <span className={`text-[0.5rem] px-1.5 py-0.25 rounded font-medium ${typeColors[counterType]}`} style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>
-                {typeLabels[counterType]}
-              </span>
+            {counterTypes.length > 0 && (
+              <div className="flex flex-wrap gap-0.5 justify-center max-w-10">
+                {counterTypes.map((counterType) => (
+                  <span key={counterType} className={`text-[0.5rem] px-1.5 py-0.25 rounded font-medium ${typeColors[counterType]}`} style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>
+                    {typeLabels[counterType]}
+                  </span>
+                ))}
+              </div>
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -1262,26 +1267,8 @@ const {
       .style('opacity', 0)
       .style('pointer-events', 'none');
 
-    counterTypeLabelGroup.append('rect')
-      .attr('x', -14)
-      .attr('y', d => (d.radius - 3))
-      .attr('width', 28)
-      .attr('height', 14)
-      .attr('rx', 4)
-      .attr('fill', '#1e293b');
-
-    counterTypeLabelGroup.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('x', 0)
-      .attr('y', d => (d.radius + 5))
-      .attr('fill', '#ffffff')
-      .attr('font-size', isTouchDevice ? '1rem' : '0.5rem')
-      .attr('font-weight', '700')
-      .attr('alignment-baseline', 'middle')
-      .attr('stroke', '#000000')
-      .attr('stroke-width', 1)
-      .attr('paint-order', 'stroke fill')
-      .text('');
+    counterTypeLabelGroup.append('g')
+      .attr('class', 'counter-type-labels-container');
 
     nodeGroup.on('click', (event, d) => { handleHeroClick(d.id, event); });
 
@@ -1546,29 +1533,25 @@ const {
           .style('opacity', labelOpacity)
           .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
 
-        let counterTypeOpacity = 0;
-        let counterType = '';
+        const counterTypesSet = new Set<CounterType>();
         if (selectedHeroes.length > 0 && !selectedHeroes.includes(d.id)) {
           if (activeCounterTab === 'counteredBy') {
             for (const targetHero of selectedHeroes) {
               const type = getCounterType(d.id, targetHero);
               if (type) {
-                counterType = type;
-                counterTypeOpacity = 1;
-                break;
+                counterTypesSet.add(type);
               }
             }
           } else if (activeCounterTab === 'counters') {
             for (const targetHero of selectedHeroes) {
               const type = getCounterType(targetHero, d.id);
               if (type) {
-                counterType = type;
-                counterTypeOpacity = 1;
-                break;
+                counterTypesSet.add(type);
               }
             }
           }
         }
+        const counterTypes = Array.from(counterTypesSet);
 
         const typeColors: Record<string, string> = {
           skill: '#ef4444',
@@ -1586,23 +1569,60 @@ const {
         group.select('.counter-type-label')
           .transition()
           .duration(300)
-          .style('opacity', counterTypeOpacity);
+          .style('opacity', counterTypes.length > 0 ? 1 : 0);
 
-        group.select('.counter-type-label rect')
+        const labelsContainer = group.select('.counter-type-labels-container');
+
+        const labelWidth = 28;
+        const labelGap = 4;
+        const totalWidth = counterTypes.length * labelWidth + Math.max(0, counterTypes.length - 1) * labelGap;
+        const startX = -totalWidth / 2;
+
+        const labelGroups = labelsContainer.selectAll<SVGGElement, CounterType>('.label-item')
+          .data(counterTypes, (_, i) => `label-${i}`);
+
+        const labelGroupsEnter = labelGroups.enter()
+          .append('g')
+          .attr('class', 'label-item');
+
+        labelGroupsEnter.append('rect')
+          .attr('rx', 4)
+          .attr('height', 14);
+
+        labelGroupsEnter.append('text')
+          .attr('text-anchor', 'middle')
+          .attr('fill', '#ffffff')
+          .attr('font-size', isTouchDevice ? '1rem' : '0.5rem')
+          .attr('font-weight', '700')
+          .attr('alignment-baseline', 'middle')
+          .attr('stroke', '#000000')
+          .attr('stroke-width', 1)
+          .attr('paint-order', 'stroke fill');
+
+        const labelGroupsMerge = labelGroupsEnter.merge(labelGroups);
+
+        labelGroupsMerge
           .transition()
           .duration(300)
-          .attr('x', -14)
-          .attr('y', imgR - 3)
-          .attr('width', 28)
-          .attr('height', 14)
-          .attr('fill', typeColors[counterType] || '#1e293b');
+          .attr('transform', (_counterType, i) => `translate(${startX + i * (labelWidth + labelGap)}, ${imgR - 3})`);
 
-        group.select('.counter-type-label text')
+        labelGroupsMerge.select('rect')
           .transition()
           .duration(300)
           .attr('x', 0)
-          .attr('y', imgR + 5)
-          .text(typeLabels[counterType] || '');
+          .attr('y', 0)
+          .attr('width', labelWidth)
+          .attr('height', 14)
+          .attr('fill', (counterType) => typeColors[counterType] || '#1e293b');
+
+        labelGroupsMerge.select('text')
+          .transition()
+          .duration(300)
+          .attr('x', labelWidth / 2)
+          .attr('y', 7)
+          .text((counterType) => typeLabels[counterType] || '');
+
+        labelGroups.exit().remove();
       });
 
       // 使用 selection.each 预计算一次，避免 5 个 attr 回调各自重复 .find()
@@ -1685,6 +1705,10 @@ const {
           .transition()
           .duration(300)
           .style('opacity', 0);
+        
+        group.select('.counter-type-labels-container')
+          .selectAll('.label-item')
+          .remove();
       });
       linkSelection.each(function(d) {
         const el = d3.select(this);
