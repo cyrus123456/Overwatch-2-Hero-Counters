@@ -2646,6 +2646,37 @@ const {
                   </div>
                 </div>
 
+                {/* 克制关系类型说明 */}
+                <div className="text-[0.6875rem] text-slate-200">
+                  <p className="text-[0.625rem] text-cyan-400 font-semibold uppercase tracking-wider mb-1 pt-4">{t('counterTypeDesc')}</p>
+                  <div className="space-y-1.5 mt-2">
+                    <div className="flex items-center gap-2 px-2">
+                      <span className="text-[0.5rem] px-1.5 py-0.25 rounded font-medium bg-[#ef4444] text-white" style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>
+                        {t('counterTypeSkill')}
+                      </span>
+                      <span className="text-slate-300 text-[0.625rem]">{t('counterTypeDescSkill')}</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-2">
+                      <span className="text-[0.5rem] px-1.5 py-0.25 rounded font-medium bg-[#3b82f6] text-white" style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>
+                        {t('counterTypeNumeric')}
+                      </span>
+                      <span className="text-slate-300 text-[0.625rem]">{t('counterTypeDescNumeric')}</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-2">
+                      <span className="text-[0.5rem] px-1.5 py-0.25 rounded font-medium bg-[#f59e0b] text-white" style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>
+                        {t('counterTypeRange')}
+                      </span>
+                      <span className="text-slate-300 text-[0.625rem]">{t('counterTypeDescRange')}</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-2">
+                      <span className="text-[0.5rem] px-1.5 py-0.25 rounded font-medium bg-[#8b5cf6] text-white" style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>
+                        {t('counterTypeRole')}
+                      </span>
+                      <span className="text-slate-300 text-[0.625rem]">{t('counterTypeDescRole')}</span>
+                    </div>
+                  </div>
+                </div>
+
                 {/* 地图优势因素说明 */}
                 <div className="text-[0.6875rem] text-slate-200">
                   <p className="text-[0.625rem] text-cyan-400 font-semibold uppercase tracking-wider mb-1 pt-4">{t('mapFactor')}</p>
