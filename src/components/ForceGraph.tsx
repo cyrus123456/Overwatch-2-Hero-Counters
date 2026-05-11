@@ -686,7 +686,7 @@ const {
     customCounterRelations.length > 0 || deletedDefaultRelations.length > 0 || customSynergyRelations.length > 0 || deletedDefaultSynergyRelations.length > 0
   );
 
-  const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroIds: string[], swapSourceTarget = false) => {
+  const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroIds: HeroId[], swapSourceTarget = false) => {
     const filtered = items.filter(i => i.strength === strength);
     const sorted = sortByRole(filtered);
     const isMulti = targetHeroIds.length > 1;

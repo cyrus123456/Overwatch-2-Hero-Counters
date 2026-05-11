@@ -1,3 +1,5 @@
+import type { HeroId } from './heroData';
+
 export type CounterLanguage = 'zh' | 'en' | 'ja' | 'ko' | 'zh-TW' | 'es' | 'fr' | 'de' | 'pt' | 'ru' | 'it';
 
 export interface CounterAbilityData {
@@ -28,7 +30,7 @@ export interface WeaknessData {
   weaknessIt?: string;
 }
 
-export const heroCounterAbilities: Record<string, CounterAbilityData> = {
+export const heroCounterAbilities: Record<HeroId, CounterAbilityData> = {
   // 坦克
   dva: {
     abilityZh: '防御矩阵吞噬大部分投射物但激光束除外并用推进追击',
@@ -79,8 +81,12 @@ export const heroCounterAbilities: Record<string, CounterAbilityData> = {
     abilityEn: 'High mobility disruption with hook combos and Minefield area denial'
   },
   zarya: {
-    abilityZh: '护盾吸收伤害充能并在高能量时输出更高',
-    abilityEn: 'Bubble absorbs damage to charge with higher damage at high energy'
+    abilityZh: "护盾吸收伤害充能并在高能量时输出更高",
+    abilityEn: "Bubble absorbs damage to charge with higher damage at high energy"
+  },
+  domina: {
+    abilityZh: "使用金饰技能控制战场，高机动性进行战术压制",
+    abilityEn: "Uses golden skills to control the battlefield with high mobility for tactical suppression"
   },
   // 输出
   ashe: {
@@ -168,8 +174,12 @@ export const heroCounterAbilities: Record<string, CounterAbilityData> = {
     abilityEn: 'Flame dash with invulnerable counter triggering burn passive'
   },
   emrey: {
-    abilityZh: '三连发步枪并用虹吸生命实现终极变身',
-    abilityEn: 'Burst rifle with life drain for ultimate transformation'
+    abilityZh: "三连发步枪并用虹吸生命实现终极变身",
+    abilityEn: "Burst rifle with life drain for ultimate transformation"
+  },
+  sierra: {
+    abilityZh: "使用高科技武器进行精准打击，高机动性进行战术转移",
+    abilityEn: "Uses high-tech weapons for precise strikes with high mobility for tactical repositioning"
   },
   // 支援
   ana: {
@@ -220,18 +230,18 @@ export const heroCounterAbilities: Record<string, CounterAbilityData> = {
     abilityZh: '水元素治疗并用节奏截断和位移技能',
     abilityEn: 'Water healing with rhythm interruption and mobility'
   },
-  ruixi: {
-    abilityZh: '治疗镰刃并用纸人位移加护魂结界和束缚锁链',
-    abilityEn: 'Healing scythe with paper dash plus spirit barrier and chain bind'
-  },
   feitianmao: {
-    abilityZh: '永久飞行并用扩散弹加救生索拖拽和击退治疗',
-    abilityEn: 'Permanent flight with spread shots plus lifeline drag and knockback heal'
+    abilityZh: "永久飞行并用扩散弹加救生索拖拽和击退治疗",
+    abilityEn: "Permanent flight with spread shots plus lifeline drag and knockback heal"
+  },
+  mizuki: {
+    abilityZh: "使用护魂结界保护队友，灵活的位移和控制技能",
+    abilityEn: "Uses spirit barrier to protect teammates with flexible mobility and control skills"
   },
 };
 
 // 被克制英雄的弱点描述（已优化融合所有括号内容，更自然流畅）
-export const heroWeaknesses: Record<string, WeaknessData> = {
+export const heroWeaknesses: Record<HeroId, WeaknessData> = {
   // 坦克
   dva: {
     weaknessZh: '机甲体积巨大易被集火同时惧怕黑客禁用防御矩阵或EMP',
@@ -282,12 +292,12 @@ export const heroWeaknesses: Record<string, WeaknessData> = {
     weaknessEn: 'Easily CC\'d out of momentum while mines are easily destroyed or hacked'
   },
   zarya: {
-    weaknessZh: '低能量时输出低同时护盾被骗则无力惧怕黑影EMP清空能量',
-    weaknessEn: 'Low damage at low charge while bubbles baited make her weak and fearing Sombra EMP clearing charge'
+    weaknessZh: "低能量时输出低同时护盾被骗则无力惧怕黑影EMP清空能量",
+    weaknessEn: "Low damage at low charge while bubbles baited make her weak and fearing Sombra EMP clearing charge"
   },
-  jinyu: {
-    weaknessZh: '腿短近战弱同时惧怕突脸狙击和EMP',
-    weaknessEn: 'Low mobility and weak in melee while vulnerable to dive snipers and EMP'
+  domina: {
+    weaknessZh: "技能冷却长被限制后无力，惧怕高机动突脸和控制技能",
+    weaknessEn: "Long skill cooldowns making her weak when disabled, fearing high mobility dive and CC"
   },
   // 输出
   ashe: {
@@ -371,8 +381,12 @@ export const heroWeaknesses: Record<string, WeaknessData> = {
     weaknessEn: 'Pure melee no range countered by flyers while vulnerable when overextended'
   },
   emrey: {
-    weaknessZh: '缺乏位移自保同时惧怕刺客突脸强控和长枪',
-    weaknessEn: 'No mobility while vulnerable to assassins CC and long-range'
+    weaknessZh: "缺乏位移自保同时惧怕刺客突脸强控和长枪",
+    weaknessEn: "No mobility while vulnerable to assassins CC and long-range"
+  },
+  sierra: {
+    weaknessZh: "被近距离突脸时无力，同时惧怕高机动英雄和持续控制技能",
+    weaknessEn: "Weak when dived at close range, fearing high mobility heroes and continuous CC"
   },
   // 支援
   ana: {
@@ -424,12 +438,12 @@ export const heroWeaknesses: Record<string, WeaknessData> = {
     weaknessEn: 'Extremely low HP no self-peel while fearing Genji dive or Sombra hack disabling Discord Orb'
   },
   wuyang: {
-    weaknessZh: '依赖技能生存同时惧怕黑客突脸和穿透伤害',
-    weaknessEn: 'Skill-dependent survival while vulnerable to hack dive and penetration'
+    weaknessZh: "依赖技能生存同时惧怕黑客突脸和穿透伤害",
+    weaknessEn: "Skill-dependent survival while vulnerable to hack dive and penetration"
   },
-  ruixi: {
-    weaknessZh: '机动性差无爬墙同时惧怕高台长枪和光束穿透',
-    weaknessEn: 'Low mobility no wall climb while vulnerable to high ground and beams'
+  mizuki: {
+    weaknessZh: "机动性差无爬墙同时惧怕高台长枪和光束穿透",
+    weaknessEn: "Low mobility no wall climb while vulnerable to high ground and beams"
   },
   feitianmao: {
     weaknessZh: '飞行速度慢血低同时惧怕即时命中EMP和空对空',
@@ -454,7 +468,7 @@ export const fallbackMessages: Record<SupportedLanguage, string> = {
   it: 'Relazione contro esiste',
 };
 
-export function getCounterReason(sourceId: string, targetId: string, language: SupportedLanguage): string {
+export function getCounterReason(sourceId: HeroId, targetId: HeroId, language: SupportedLanguage): string {
   const sourceAbility = heroCounterAbilities[sourceId];
   const targetWeakness = heroWeaknesses[targetId];
 

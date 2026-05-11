@@ -1,5 +1,6 @@
 // 最佳拍档理由数据 - 详细的、英雄特定的配合描述
 import type { CounterLanguage } from './counterReasons';
+import type { HeroId } from './heroData';
 
 // 拍档原因数据 - key 为 "source-target" 格式
 export interface SynergyReasonData {
@@ -290,15 +291,15 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   },
 
   // 金驭的最佳拍档
-  'kiriko-jinyu': { 
+  'kiriko-domina': { 
     reasonZh: '金驭需要前排治疗保障，雾子提供及时位移支援', 
     reasonEn: 'Kiriko provides mobile healing for Domina\'s front-line play' 
   },
-  'genji-jinyu': { 
+  'genji-domina': { 
     reasonZh: '高机动的Genji配合金驭的控制能快速建立优势', 
     reasonEn: 'High mobility Genji + Domina\'s control = quick advantages' 
   },
-  'cassidy-jinyu': { 
+  'cassidy-domina': { 
     reasonZh: '卡西迪的远程输出弥补金驭的输出空缺', 
     reasonEn: 'Cassidy covers Domina\'s damage gaps at range' 
   },
@@ -824,16 +825,16 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonEn: 'Hanzo reveals, Wuyang quickly follows up' 
   },
 
-  // 瑞稀的最佳拍档
-  'dva-ruixi': { 
+  // 瑞稀的最佳拍档 (mizuki)
+  'dva-mizuki': { 
     reasonZh: 'D.Va高机动配合瑞稀的位移，能快速转场', 
-    reasonEn: 'D.Va + Ruixi enables rapid rotation' 
+    reasonEn: 'D.Va + Mizuki enables rapid rotation' 
   },
-  'genji-ruixi': { 
+  'genji-mizuki': { 
     reasonZh: '源氏和瑞稀双切入，能快速秒杀后排', 
-    reasonEn: 'Genji + Ruixi double dive = quick backline picks' 
+    reasonEn: 'Genji + Mizuki double dive = quick backline picks' 
   },
-  'tracer-ruixi': { 
+  'tracer-mizuki': { 
     reasonZh: '猎空和瑞稀的高机动配合能建立人数优势', 
     reasonEn: 'High mobility duo - quick number advantage' 
   },
@@ -918,8 +919,8 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
  * @returns 拍档理由
  */
 export const getSynergyReason = (
-  sourceHeroId: string,
-  targetHeroId: string,
+  sourceHeroId: HeroId,
+  targetHeroId: HeroId,
   language: CounterLanguage = 'zh'
 ): string => {
   const key = `${sourceHeroId}-${targetHeroId}`;
