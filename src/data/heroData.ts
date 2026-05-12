@@ -694,6 +694,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'echo', target: 'vendetta', strength: 3, type: 'range' }, // 飞行输出
   { source: 'cassidy', target: 'vendetta', strength: 3, type: 'skill' }, // 闪光弹
   { source: 'moira', target: 'vendetta', strength: 3, type: 'skill' }, // 光束
+  { source: 'brigitte', target: 'vendetta', strength: 3, type: 'skill' }, // 盾击
   
   // ========== 辅助篇 ==========
   // 1. 安娜被克制
