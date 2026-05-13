@@ -271,7 +271,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ana', target: 'junker_queen', strength: 3, type: 'skill' }, // 禁疗
   { source: 'lucio', target: 'junker_queen', strength: 3, type: 'skill' }, // 加速拉扯
   { source: 'kiriko', target: 'junker_queen', strength: 3, type: 'skill' }, // 净化抗治疗
-  
+  { source: 'mizuki', target: 'junker_queen', strength: 3, type: 'skill' }, // 瑞稀克制
+
   // 7. 西格玛被克制
   { source: 'doomfist', target: 'sigma', strength: 3, type: 'skill' }, // 近战克制
   { source: 'winston', target: 'sigma', strength: 3, type: 'skill' }, // 跳脸
@@ -825,7 +826,8 @@ export const counterRelations: CounterRelation[] = [
   { source: 'juno', target: 'moira', strength: 3, type: 'skill' }, // 控制
   { source: 'ana', target: 'moira', strength: 3, type: 'skill' }, // 禁疗
   { source: 'baptiste', target: 'moira', strength: 3, type: 'skill' }, // 矩阵
-  
+  { source: 'mizuki', target: 'moira', strength: 3, type: 'skill' }, // 瑞稀克制
+
   // 11. 禅雅塔被克制
   { source: 'wrecking_ball', target: 'zenyatta', strength: 3, type: 'skill' }, // 机动骚扰
   { source: 'doomfist', target: 'zenyatta', strength: 3, type: 'skill' }, // 高机动
