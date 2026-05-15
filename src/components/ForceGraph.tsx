@@ -2793,7 +2793,7 @@ const {
 
       {/* 历史记录按钮 - 英雄克制面板左下角外侧 */}
       <div className={cn(
-        "absolute bottom-6 right-[25.625rem] z-10 flex flex-row gap-2 pointer-events-auto transition-transform duration-300",
+        "absolute bottom-6 right-[40.5rem] z-10 flex flex-row gap-2 pointer-events-auto transition-transform duration-300",
         isCounterPanelCollapsed ? "translate-x-80" : "translate-x-0"
       )}>
         <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
