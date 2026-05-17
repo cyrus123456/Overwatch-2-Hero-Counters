@@ -1,0 +1,17 @@
+{
+  "name": "ow2-hero-counters-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --config wrangler.toml",
+    "deploy": "wrangler deploy --config wrangler.toml",
+    "db:migrate": "wrangler d1 migrations apply ow2-hero-counters-db --config wrangler.toml",
+    "db:create": "wrangler d1 create ow2-hero-counters-db --config wrangler.toml",
+    "tail": "wrangler tail --config wrangler.toml"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "typescript": "^5.4.5",
+    "wrangler": "^3.57.0"
+  }
+}

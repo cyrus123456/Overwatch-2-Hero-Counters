@@ -14,10 +14,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { MapStatsDialog } from '@/components/StatsDialog';
 import {
+  BarChart3,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Cloud,
   Copy,
   Crosshair,
   Github,
@@ -30,6 +33,7 @@ import {
   Shield,
   Target,
   Trash2,
+  Users,
   X
 } from 'lucide-react';
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -39,6 +43,8 @@ import type { ActiveMapType, MapId } from '@/data/mapData';
 import { getMapName, getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
 import useDebounce from '@/hooks/useDebounce';
 import { sortByRole, useMemoizedHeroes } from '@/hooks/useMemoizedHeroes';
+import { useAutoUploadOnMount, uploadAllLocalData } from '@/hooks/useDataSync';
+import { useMapStats, getHeroNetCount } from '@/hooks/useMapStats';
 
 import type { Language } from '@/i18n';
 import { useI18n } from '@/i18n';
@@ -190,9 +196,19 @@ function AppContent() {
 const [isMapCopied, setIsMapCopied] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [hoverTimer, setHoverTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [mapStatsMapId, setMapStatsMapId] = useState<MapId | null>(null);
+  const [isMapStatsOpen, setIsMapStatsOpen] = useState(false);
 
   const [customMapHeroes, setCustomMapHeroes] = useState<Record<string, CustomMapHero[]>>({});
   const [deletedDefaultHeroes, setDeletedDefaultHeroes] = useState<Record<string, HeroId[]>>({});
+
+  // 自动上传本地数据到云端
+  const { uploadStatus } = useAutoUploadOnMount(customMapHeroes, deletedDefaultHeroes);
+
+  // 获取云端统计数据
+  const allMapIds = useMemo(() => maps.map(m => m.id), []);
+  const { mapStats } = useMapStats(allMapIds);
+
   const [newHeroId, setNewHeroId] = useState<HeroId | ''>('');
   const [newHeroReason, setNewHeroReason] = useState<string>('');
   const [addingHeroMapId, setAddingHeroMapId] = useState<string | null>(null);
@@ -298,6 +314,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
     setNewHeroId('');
     setNewHeroReason('');
     setAddingHeroMapId(null);
+    uploadAllLocalData();
   };
 
   const removeCustomHero = (mapId: string, index: number) => {
@@ -311,6 +328,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
       return updated;
     });
     setHasUnsavedChanges(true);
+    uploadAllLocalData();
   };
 
   const deleteDefaultHero = (mapId: string, heroId: HeroId) => {
@@ -323,6 +341,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
       return updated;
     });
     setHasUnsavedChanges(true);
+    uploadAllLocalData();
   };
 
   const resetMapToDefault = (mapId: string) => {
@@ -378,6 +397,8 @@ const [isMapCopied, setIsMapCopied] = useState(false);
         }
         setHasUnsavedChanges(false);
         alert(t('importSuccess'));
+        // 导入后上传到云端
+        uploadAllLocalData();
       } catch {
         alert(t('importError'));
       }
@@ -393,6 +414,8 @@ const [isMapCopied, setIsMapCopied] = useState(false);
       saveCustomMapHeroes({});
       saveDeletedDefaultHeroes({});
       setHasUnsavedChanges(false);
+      // 清除后上传到云端
+      uploadAllLocalData();
     }
   }, [t]);
 
@@ -570,6 +593,22 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                       </SelectContent>
                     </Select>
                   </div>
+                {/* 上传状态指示器 */}
+                {uploadStatus !== 'idle' && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-700 bg-slate-800/30 h-8">
+                    <Cloud className="w-3.5 h-3.5 text-cyan-400" />
+                    {uploadStatus === 'uploading' && (
+                      <div className="w-3 h-3 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin" />
+                    )}
+                    {uploadStatus === 'success' && (
+                      <div className="w-2 h-2 bg-green-400 rounded-full" />
+                    )}
+                    {uploadStatus === 'error' && (
+                      <div className="w-2 h-2 bg-red-400 rounded-full" />
+                    )}
+                  </div>
+                )}
+
                 <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={() => window.open('https://github.com/cyrus123456/Overwatch-2-Hero-Counters', '_blank')}>
                   <Github className="w-3.5 h-3.5" />
                   <span className="text-xs font-bold">{t('github')}</span>
@@ -702,6 +741,23 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                 <span className="text-base font-bold text-slate-100 truncate group-hover:text-cyan-400 transition-colors">
                                   {getMapName(map, language)}
                                 </span>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      className="flex items-center gap-1 p-1 rounded hover:bg-cyan-600/20 text-cyan-400 transition-colors"
+                                      onClick={(e) => { 
+                                        e.stopPropagation(); 
+                                        setMapStatsMapId(map.id);
+                                        setIsMapStatsOpen(true);
+                                      }}
+                                    >
+                                      <BarChart3 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="bg-slate-900 border-slate-700 p-2 z-[100]">
+                                    <p className="text-xs text-white">{t('viewMapStats')}</p>
+                                  </TooltipContent>
+                                </Tooltip>
                                 {selectedMap === map.id && (
                                   <Tooltip>
                                     <TooltipTrigger asChild>
@@ -833,6 +889,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   damage: t('damage'),
                                   support: t('support'),
                                 };
+                                const netCount = getHeroNetCount(mapStats, map.id, heroId);
                                 return (
                                   <div 
                                     key={heroId} 
@@ -848,6 +905,18 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                         <span className={`text-[0.625rem] px-1.5 py-0.5 rounded border font-medium ${roleColors[hero.role]}`}>
                                           {roleNames[hero.role]}
                                         </span>
+                                        {netCount !== null && (
+                                          <span className={`flex items-center gap-1 text-[0.625rem] px-1.5 py-0.5 rounded font-mono font-bold ${
+                                            netCount > 0 
+                                              ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                                              : netCount < 0 
+                                                ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                                : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+                                          }`}>
+                                            <Users className="w-3 h-3" />
+                                            {netCount > 0 ? `+${netCount}` : netCount}
+                                          </span>
+                                        )}
                                       </div>
                                       <p className="text-[0.6875rem] text-slate-300 leading-relaxed mt-1">{map.heroReasons[heroId]?.[language] || map.heroReasons[heroId]?.en || ''}</p>
                                     </div>
@@ -878,6 +947,7 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   damage: t('damage'),
                                   support: t('support'),
                                 };
+                                const netCount = getHeroNetCount(mapStats, map.id, heroId);
                                 return (
                                   <div
                                     key={`custom-${heroId}`}
@@ -896,6 +966,18 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                         <Badge variant="outline" className="text-[0.5625rem] px-1 py-0 text-white border-white/50 bg-white/10">
                                           {t('custom')}
                                         </Badge>
+                                        {netCount !== null && (
+                                          <span className={`flex items-center gap-1 text-[0.625rem] px-1.5 py-0.5 rounded font-mono font-bold ${
+                                            netCount > 0 
+                                              ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                                              : netCount < 0 
+                                                ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                                : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+                                          }`}>
+                                            <Users className="w-3 h-3" />
+                                            {netCount > 0 ? `+${netCount}` : netCount}
+                                          </span>
+                                        )}
                                       </div>
                                       <p className="text-[0.6875rem] text-slate-300 leading-relaxed mt-1">{customHero.reason}</p>
                                     </div>
@@ -1100,6 +1182,16 @@ const [isMapCopied, setIsMapCopied] = useState(false);
               </div>
             </Card>
           </div>
+        )}
+
+        {mapStatsMapId && (
+          <MapStatsDialog
+            mapId={mapStatsMapId}
+            mapName={getMapName(maps.find(m => m.id === mapStatsMapId), language)}
+            open={isMapStatsOpen}
+            onOpenChange={setIsMapStatsOpen}
+            language={language}
+          />
         )}
       </div>
     </TooltipProvider>

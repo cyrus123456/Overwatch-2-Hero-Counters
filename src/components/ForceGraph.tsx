@@ -20,18 +20,22 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { HeroRelationStatsDialog } from '@/components/StatsDialog';
 import { getCounterReason } from '@/data/counterReasons';
 import { counterRelations, getHeroName, getRoleName, heroes, type CounterType, type Hero, type HeroId, type RelationStrength, type Role } from '@/data/heroData';
 import { maps } from '@/data/mapData';
 import { getSynergyReason } from '@/data/synergyReasons';
 import { synergyRelations } from '@/data/synergyRelations';
 import useDebounce from '@/hooks/useDebounce';
+import { useHeroRelationStats } from '@/hooks/useHeroRelationStats';
 import { useMemoizedHeroes } from '@/hooks/useMemoizedHeroes';
 import { useRelationMaps } from '@/hooks/useRelationMaps';
+import { uploadAllLocalData } from '@/hooks/useDataSync';
 import { useI18n } from '@/i18n';
 import { cn } from '@/lib/utils';
 import * as d3 from 'd3';
 import {
+  BarChart3,
   Check,
   ChevronLeft,
   Copy,
@@ -179,8 +183,12 @@ const ForceGraph = ({
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isCounterPanelCollapsed, setIsCounterPanelCollapsed] = useState(false);
+  const [isHeroStatsOpen, setIsHeroStatsOpen] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const isMultiSelect = selectedHeroes.length > 1;
+
+  // 获取英雄关系统计数据
+  const { getNetCount: getHeroRelationNetCount } = useHeroRelationStats(selectedHero);
 
   // 自动保存英雄快照
   useEffect(() => {
@@ -532,6 +540,7 @@ const {
     setNewRelationStrength(2);
     setNewRelationCounterType('skill');
     setIsAddingCustomRelation(false);
+    uploadAllLocalData();
   };
 
   // 删除自定义克制关系
@@ -540,6 +549,7 @@ const {
     setCustomCounterRelations(updated);
     saveCustomCounterRelations(updated);
     setHasForceGraphUnsavedChanges(true);
+    uploadAllLocalData();
   };
 
   // 删除默认克制关系
@@ -549,6 +559,7 @@ const {
     setDeletedDefaultRelations(updated);
     saveDeletedDefaultRelations(updated);
     setHasForceGraphUnsavedChanges(true);
+    uploadAllLocalData();
   };
 
   // 添加自定义协同关系
@@ -569,6 +580,7 @@ const {
     setNewSynergyTarget('');
     setNewSynergyStrength(2);
     setIsAddingCustomSynergy(false);
+    uploadAllLocalData();
   };
 
   // 删除自定义协同关系
@@ -577,6 +589,7 @@ const {
     setCustomSynergyRelations(updated);
     saveCustomSynergyRelations(updated);
     setHasForceGraphUnsavedChanges(true);
+    uploadAllLocalData();
   };
 
   // 删除默认协同关系
@@ -586,6 +599,7 @@ const {
     setDeletedDefaultSynergyRelations(updated);
     saveDeletedDefaultSynergyRelations(updated);
     setHasForceGraphUnsavedChanges(true);
+    uploadAllLocalData();
   };
 
   // 导出自定义关系数据
@@ -630,6 +644,8 @@ const {
           setDeletedDefaultSynergyRelations(data.deletedDefaultSynergyRelations);
           saveDeletedDefaultSynergyRelations(data.deletedDefaultSynergyRelations);
         }
+        // 导入后上传到云端
+        uploadAllLocalData();
       } catch (error) {
         console.error('Failed to import data:', error);
       }
@@ -650,6 +666,8 @@ const {
       saveCustomSynergyRelations([]);
       saveDeletedDefaultSynergyRelations([]);
       setHasForceGraphUnsavedChanges(false);
+      // 清除后上传到云端
+      uploadAllLocalData();
     }
   };
 
@@ -686,7 +704,7 @@ const {
     customCounterRelations.length > 0 || deletedDefaultRelations.length > 0 || customSynergyRelations.length > 0 || deletedDefaultSynergyRelations.length > 0
   );
 
-  const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroIds: HeroId[], swapSourceTarget = false) => {
+  const renderHeroList = (items: typeof counteredBy, strength: number, colorClass: string, targetHeroIds: HeroId[], swapSourceTarget = false, relationType: 'counter' | 'counteredBy' | 'synergy' = 'counteredBy') => {
     const filtered = items.filter(i => i.strength === strength);
     const sorted = sortByRole(filtered);
     const isMulti = targetHeroIds.length > 1;
@@ -701,6 +719,9 @@ const {
       const isCustom = (item as { isCustom?: boolean }).isCustom ?? false;
       const source = (item as { source?: string }).source;
       const target = (item as { target?: string }).target;
+
+      // 获取云端统计数字
+      const netCount = getHeroRelationNetCount(hero.id, relationType);
 
       let formattedReason = '';
       const heroName = getHeroName(hero, language);
@@ -793,6 +814,18 @@ const {
                     <Badge variant="outline" className="text-[0.5625rem] px-1 py-0 text-white border-white/50 bg-white/10">
                       {t('custom')}
                     </Badge>
+                  )}
+                  {netCount !== null && (
+                    <span className={`flex items-center gap-1 text-[0.625rem] px-1.5 py-0.5 rounded font-mono font-bold ${
+                      netCount > 0 
+                        ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                        : netCount < 0 
+                          ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                          : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+                    }`}>
+                      <Users className="w-3 h-3" />
+                      {netCount > 0 ? `+${netCount}` : netCount}
+                    </span>
                   )}
                 </div>
               </div>
@@ -1932,6 +1965,19 @@ const {
                               <p>{t('restoreHeroRelations')}</p>
                             </TooltipContent>
                           </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => setIsHeroStatsOpen(true)}
+                                className="flex items-center gap-1 p-1.5 rounded hover:bg-cyan-600/20 text-cyan-400 transition-colors flex-shrink-0"
+                              >
+                                <BarChart3 className="w-3.5 h-3.5" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t('viewHeroStats')}</p>
+                            </TooltipContent>
+                          </Tooltip>
                         </div>
                         <p className="text-xs text-slate-200 leading-tight mt-0.5">{language === 'zh' ? displayedHero?.nameEn : displayedHero?.name}</p>
                       </div>
@@ -2012,9 +2058,9 @@ const {
                   <TabsContent value="counteredBy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-red-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
                     {selectedHeroes.length > 0 && (
                       <>
-                        {renderHeroList(counteredBy, 3, 'bg-red-900/30 border-red-700/50', selectedHeroes)}
-                        {renderHeroList(counteredBy, 2, 'bg-red-800/20 border-red-600/40', selectedHeroes)}
-                        {renderHeroList(counteredBy, 1, 'bg-red-700/10 border-red-500/30', selectedHeroes)}
+                        {renderHeroList(counteredBy, 3, 'bg-red-900/30 border-red-700/50', selectedHeroes, false, 'counteredBy')}
+                        {renderHeroList(counteredBy, 2, 'bg-red-800/20 border-red-600/40', selectedHeroes, false, 'counteredBy')}
+                        {renderHeroList(counteredBy, 1, 'bg-red-700/10 border-red-500/30', selectedHeroes, false, 'counteredBy')}
                         {!isMultiSelect && (
                           <>
                             {!isAddingCustomRelation ? (
@@ -2106,9 +2152,9 @@ const {
                   <TabsContent value="counters" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-green-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
                     {selectedHeroes.length > 0 && (
                       <>
-                        {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', selectedHeroes, true)}
-                        {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', selectedHeroes, true)}
-                        {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', selectedHeroes, true)}
+                        {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', selectedHeroes, true, 'counter')}
+                        {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', selectedHeroes, true, 'counter')}
+                        {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', selectedHeroes, true, 'counter')}
                         {!isMultiSelect && (
                           <>
                             {!isAddingCustomRelation ? (
@@ -2211,6 +2257,8 @@ const {
                               const target = (partner as { target?: string }).target;
                               const relationSource = source || hero.id;
                               const relationTarget = target || selectedHeroes[0];
+                              // 获取云端统计数字
+                              const synergyNetCount = getHeroRelationNetCount(hero.id, 'synergy');
                               return (
                                 <div key={hero.id} className="flex items-start gap-3 p-2 rounded-lg border bg-purple-900/20 border-purple-700/30 group">
                                   <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-purple-500/50 flex-shrink-0">
@@ -2228,6 +2276,18 @@ const {
                                             <Badge variant="outline" className="text-[0.5625rem] px-1 py-0 text-white border-white/50 bg-white/10">
                                               {t('custom')}
                                             </Badge>
+                                          )}
+                                          {synergyNetCount !== null && (
+                                            <span className={`flex items-center gap-1 text-[0.625rem] px-1.5 py-0.5 rounded font-mono font-bold ${
+                                              synergyNetCount > 0 
+                                                ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                                                : synergyNetCount < 0 
+                                                  ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                                  : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+                                            }`}>
+                                              <Users className="w-3 h-3" />
+                                              {synergyNetCount > 0 ? `+${synergyNetCount}` : synergyNetCount}
+                                            </span>
                                           )}
                                         </div>
                                       </div>
@@ -2899,6 +2959,16 @@ const {
           )}
         </div>
       </div>
+
+      {displayedHero && (
+        <HeroRelationStatsDialog
+          heroId={displayedHero.id}
+          heroName={getHeroName(displayedHero, language)}
+          open={isHeroStatsOpen}
+          onOpenChange={setIsHeroStatsOpen}
+          language={language}
+        />
+      )}
     </div>
   );
 

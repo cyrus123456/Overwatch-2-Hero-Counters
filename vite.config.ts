@@ -4,8 +4,6 @@ import path from "path";
 import { defineConfig } from "vite";
 import { VitePWA } from 'vite-plugin-pwa';
 
-import { cloudflare } from "@cloudflare/vite-plugin";
-
 // const deployTarget = process.env.VITE_DEPLOY_TARGET
 
 // https://vite.dev/config/
@@ -70,7 +68,7 @@ export default defineConfig({
     devOptions: {
       enabled: true
     }
-  }), cloudflare()],
+  })],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -80,5 +78,11 @@ export default defineConfig({
     sourcemap: 'hidden',
   },
   server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8787',
+        changeOrigin: true,
+      },
+    },
   },
 });
