@@ -68,7 +68,9 @@ function getAllowedOrigin(requestOrigin: string | null): string {
     'http://127.0.0.1:5173',
     'http://127.0.0.1:3000',
     'https://overwatch-herocounters.b8c72dzp5t.workers.dev',
+    'https://ow2-hero-counters.b8c72dzp5t.workers.dev',
     'https://overwatch-herocounters.pages.dev',
+    'https://cyrus123456.github.io',
   ];
   
   if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
