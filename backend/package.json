@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "wrangler dev --config wrangler.toml",
     "deploy": "wrangler deploy --config wrangler.toml",
-    "db:migrate": "wrangler d1 migrations apply ow2-hero-counters-db --config wrangler.toml",
+    "db:migrate": "wrangler d1 migrations apply ow2-hero-counters --config wrangler.toml --remote",
+    "db:migrate:local": "wrangler d1 migrations apply ow2-hero-counters --config wrangler.toml",
     "db:create": "wrangler d1 create ow2-hero-counters-db --config wrangler.toml",
     "tail": "wrangler tail --config wrangler.toml"
   },

@@ -4,7 +4,7 @@ compatibility_date = "2024-05-12"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "ow2-hero-counters-db"
+database_name = "ow2-hero-counters"
 database_id = "f10fff5d-d303-4d26-bb84-42d0af39d535"
 
 [vars]
