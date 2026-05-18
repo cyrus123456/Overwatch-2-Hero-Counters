@@ -7,7 +7,7 @@
 
 ## 在线演示
 
-[**GitHub Pages**](https://cyrus123456.github.io/Overwatch-2-Hero-Counters/) | [**Cloudflare Workers & Pages**](https://overwatch-herocounters.b8c72dzp5t.workers.dev/)
+[**GitHub Pages**](https://cyrus123456.github.io/Overwatch-2-Hero-Counters/) | [**Cloudflare Pages(国内可访问)**](https://overwatch-2-hero-counters.pages.dev/)
 
 直接访问上方链接即可体验完整功能！
 

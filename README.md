@@ -7,7 +7,7 @@ An interactive visualization application built with React + TypeScript + Vite to
 
 ## Live Demo
 
-[**GitHub Pages**](https://cyrus123456.github.io/Overwatch-2-Hero-Counters/) | [**Cloudflare Workers & Pages**](https://overwatch-herocounters.b8c72dzp5t.workers.dev/)
+[**GitHub Pages**](https://cyrus123456.github.io/Overwatch-2-Hero-Counters/) | [**Cloudflare Pages(国内可访问)**](https://overwatch-2-hero-counters.pages.dev/)
 
 You can access the links above directly to experience the full hero counter visualization without local installation!
 
