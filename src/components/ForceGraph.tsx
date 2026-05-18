@@ -30,7 +30,7 @@ import useDebounce from '@/hooks/useDebounce';
 import { useHeroRelationStats } from '@/hooks/useHeroRelationStats';
 import { useMemoizedHeroes } from '@/hooks/useMemoizedHeroes';
 import { useRelationMaps } from '@/hooks/useRelationMaps';
-import { uploadAllLocalData } from '@/hooks/useDataSync';
+import { uploadAllLocalData, deleteAllUserData } from '@/hooks/useDataSync';
 import { useI18n } from '@/i18n';
 import { cn } from '@/lib/utils';
 import * as d3 from 'd3';
@@ -666,8 +666,8 @@ const {
       saveCustomSynergyRelations([]);
       saveDeletedDefaultSynergyRelations([]);
       setHasForceGraphUnsavedChanges(false);
-      // 清除后上传到云端
-      uploadAllLocalData();
+      // 清除后从云端删除数据
+      deleteAllUserData();
     }
   };
 

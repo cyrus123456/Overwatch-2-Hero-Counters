@@ -84,10 +84,22 @@ export const api = {
     });
   },
 
+  async deleteMapHeroData(): Promise<{ success: boolean; message: string }> {
+    return fetchApi('/api/map-hero-data', {
+      method: 'DELETE',
+    });
+  },
+
   async saveHeroRelationData(data: HeroRelationData): Promise<{ success: boolean; message: string }> {
     return fetchApi('/api/hero-relation-data', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  },
+
+  async deleteHeroRelationData(): Promise<{ success: boolean; message: string }> {
+    return fetchApi('/api/hero-relation-data', {
+      method: 'DELETE',
     });
   },
 

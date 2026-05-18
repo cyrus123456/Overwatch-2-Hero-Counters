@@ -224,6 +224,17 @@ async function handleSaveMapHeroData(
   return jsonResponse({ success: true, message: 'Map hero data saved successfully' }, request);
 }
 
+async function handleDeleteMapHeroData(
+  db: D1Database,
+  user: User,
+  request: Request
+): Promise<Response> {
+  await db.prepare('DELETE FROM map_hero_customizations WHERE user_id = ?')
+    .bind(user.id).run();
+
+  return jsonResponse({ success: true, message: 'Map hero data deleted successfully' }, request);
+}
+
 async function handleSaveHeroRelationData(
   db: D1Database,
   user: User,
@@ -243,6 +254,17 @@ async function handleSaveHeroRelationData(
   }
 
   return jsonResponse({ success: true, message: 'Hero relation data saved successfully' }, request);
+}
+
+async function handleDeleteHeroRelationData(
+  db: D1Database,
+  user: User,
+  request: Request
+): Promise<Response> {
+  await db.prepare('DELETE FROM hero_relation_customizations WHERE user_id = ?')
+    .bind(user.id).run();
+
+  return jsonResponse({ success: true, message: 'Hero relation data deleted successfully' }, request);
 }
 
 async function handleGetMapStats(db: D1Database, mapId: string, request: Request): Promise<Response> {
@@ -443,10 +465,20 @@ export default {
         return await handleSaveMapHeroData(env.DB, user, data, request);
       }
 
+      if (path === '/api/map-hero-data' && request.method === 'DELETE') {
+        const user = await getOrCreateUser(env.DB, ip, userAgent);
+        return await handleDeleteMapHeroData(env.DB, user, request);
+      }
+
       if (path === '/api/hero-relation-data' && request.method === 'POST') {
         const user = await getOrCreateUser(env.DB, ip, userAgent);
         const data = await request.json() as HeroRelationData;
         return await handleSaveHeroRelationData(env.DB, user, data, request);
+      }
+
+      if (path === '/api/hero-relation-data' && request.method === 'DELETE') {
+        const user = await getOrCreateUser(env.DB, ip, userAgent);
+        return await handleDeleteHeroRelationData(env.DB, user, request);
       }
 
       if (path.startsWith('/api/stats/map/') && request.method === 'GET') {

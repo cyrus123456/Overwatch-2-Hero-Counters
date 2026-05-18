@@ -43,7 +43,7 @@ import type { ActiveMapType, MapId } from '@/data/mapData';
 import { getMapName, getMapTypeColor, getMapTypeName, maps } from '@/data/mapData';
 import useDebounce from '@/hooks/useDebounce';
 import { sortByRole, useMemoizedHeroes } from '@/hooks/useMemoizedHeroes';
-import { useAutoUploadOnMount, uploadAllLocalData } from '@/hooks/useDataSync';
+import { useAutoUploadOnMount, uploadAllLocalData, deleteAllUserData } from '@/hooks/useDataSync';
 import { useMapStats, getHeroNetCount } from '@/hooks/useMapStats';
 
 import type { Language } from '@/i18n';
@@ -414,8 +414,8 @@ const [isMapCopied, setIsMapCopied] = useState(false);
       saveCustomMapHeroes({});
       saveDeletedDefaultHeroes({});
       setHasUnsavedChanges(false);
-      // 清除后上传到云端
-      uploadAllLocalData();
+      // 清除后从云端删除数据
+      deleteAllUserData();
     }
   }, [t]);
 

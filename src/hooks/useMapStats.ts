@@ -18,15 +18,6 @@ interface UseMapStatsReturn {
   refreshStats: () => Promise<void>;
 }
 
-const MAP_STATS_CACHE_KEY = 'ow2-map-stats-cache';
-const MAP_STATS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-
-interface CachedMapStats {
-  data: MapStatsRecord;
-  timestamp: number;
-}
-
-// 全局刷新回调
 type RefreshCallback = () => void;
 const refreshCallbacks: Set<RefreshCallback> = new Set();
 
@@ -36,9 +27,6 @@ export function registerMapStatsRefresh(callback: RefreshCallback) {
 }
 
 export function triggerMapStatsRefresh() {
-  // 清除缓存
-  localStorage.removeItem(MAP_STATS_CACHE_KEY);
-  // 触发所有注册的刷新回调
   for (const callback of refreshCallbacks) {
     callback();
   }
@@ -75,13 +63,6 @@ export function useMapStats(mapIds: string[]): UseMapStatsReturn {
       }
 
       setMapStats(newStats);
-
-      // Cache the results
-      const cacheData: CachedMapStats = {
-        data: newStats,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(MAP_STATS_CACHE_KEY, JSON.stringify(cacheData));
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load stats';
       setError(message);
@@ -91,32 +72,17 @@ export function useMapStats(mapIds: string[]): UseMapStatsReturn {
     }
   }, [mapIds]);
 
-  // 注册全局刷新回调
   useEffect(() => {
     const handleRefresh = () => {
       setRefreshTrigger(prev => prev + 1);
     };
-    registerMapStatsRefresh(handleRefresh);
+    const unregister = registerMapStatsRefresh(handleRefresh);
     return () => {
-      // cleanup
+      unregister();
     };
   }, []);
 
   useEffect(() => {
-    // Try to load from cache first
-    try {
-      const cached = localStorage.getItem(MAP_STATS_CACHE_KEY);
-      if (cached) {
-        const parsed: CachedMapStats = JSON.parse(cached);
-        if (Date.now() - parsed.timestamp < MAP_STATS_CACHE_TTL) {
-          setMapStats(parsed.data);
-          return;
-        }
-      }
-    } catch {
-      // Ignore cache errors
-    }
-
     refreshStats();
   }, [refreshStats, refreshTrigger]);
 

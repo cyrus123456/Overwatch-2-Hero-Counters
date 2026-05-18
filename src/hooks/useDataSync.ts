@@ -144,6 +144,24 @@ export async function uploadAllLocalData(): Promise<boolean> {
   }
 }
 
+// 删除所有用户数据
+export async function deleteAllUserData(): Promise<boolean> {
+  try {
+    await api.deleteMapHeroData();
+    await api.deleteHeroRelationData();
+    
+    // 触发统计数据刷新
+    triggerMapStatsRefresh();
+    triggerHeroRelationStatsRefresh();
+    console.log('[Delete] All user data deleted successfully');
+    
+    return true;
+  } catch (error) {
+    console.error('[Delete] Failed to delete user data:', error);
+    return false;
+  }
+}
+
 interface UseDataSyncOptions {
   customMapHeroes: Record<string, CustomMapHero[]>;
   deletedDefaultHeroes: Record<string, string[]>;

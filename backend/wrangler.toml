@@ -6,6 +6,7 @@ compatibility_date = "2024-05-12"
 binding = "DB"
 database_name = "ow2-hero-counters"
 database_id = "f10fff5d-d303-4d26-bb84-42d0af39d535"
+preview_database_id = "local-ow2-hero-counters"
 
 [vars]
 ENVIRONMENT = "production"
@@ -13,3 +14,5 @@ ENVIRONMENT = "production"
 [dev]
 port = 8787
 local_protocol = "http"
+
+migrations_dir = "./migrations"
