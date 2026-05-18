@@ -4,7 +4,7 @@
 const isDevelopment = import.meta.env.DEV;
 const API_BASE_URL = isDevelopment 
   ? '' 
-  : import.meta.env.VITE_API_URL || 'https://ow2-hero-counters-api.b8c72dzp5t.workers.dev';
+  : import.meta.env.VITE_API_URL;
 
 export interface MapHeroData {
   customMapHeroes: Record<string, { heroId: string; reason: string }[]>;
