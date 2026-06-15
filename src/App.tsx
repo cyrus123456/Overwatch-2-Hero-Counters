@@ -641,9 +641,9 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                 <div className="flex items-center justify-between flex-shrink-0 gap-2">
                   <div className="flex items-center gap-3 min-w-0">
                     <MapPin className="w-6 h-6 text-cyan-400 flex-shrink-0" />
-                    <h3 className="text-xl font-bold text-slate-100 uppercase tracking-wide max-w-[10.625rem] break-words leading-tight">{t('mapRecommendations')}</h3>
+                    <h3 className="text-xl font-bold text-slate-100 uppercase tracking-wide max-w-[11.625rem] break-words leading-tight">{t('mapRecommendations')}</h3>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center gap-2 flex-shrink-0 hidden">
                     <a
                       href="https://wj.qq.com/s2/25861398/c38c/"
                       target="_blank"
@@ -656,6 +656,9 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                       {filteredMaps.length}
                     </Badge>
                   </div>
+                  <Badge variant="outline" className="text-xs border-slate-700 text-white font-mono px-3 flex-shrink-0">
+                    {filteredMaps.length}
+                  </Badge>
                 </div>
 
                 {/* 地图搜索与分类 */}
