@@ -878,6 +878,74 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                </Tooltip>
                              </div>
                               <div className="max-h-[50vh] overflow-y-auto pr-1 space-y-2">
+                              {addingHeroMapId === map.id ? (
+                                <div ref={addHeroFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-cyan-500/30">
+                                  <Select value={newHeroId} onValueChange={(value) => setNewHeroId(value as HeroId)}>
+                                    <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                      <span className={newHeroId ? 'text-white' : 'text-slate-400'}>
+                                        {newHeroId ? (language === 'zh' ? getHero(newHeroId)!.name : getHero(newHeroId)!.nameEn) : t('selectHero')}
+                                      </span>
+                                    </SelectTrigger>
+                                    <SelectContent position="popper" className="bg-slate-800 border-slate-600 max-h-60 z-[9999]">
+                                      {(() => {
+                                        const existingHeroIds = new Set([
+                                          ...map.recommendedHeroes.filter(id => !(deletedDefaultHeroes[map.id] || []).includes(id)),
+                                          ...(customMapHeroes[map.id] || []).map(ch => ch.heroId)
+                                        ]);
+                                        return heroes.filter(h => !existingHeroIds.has(h.id)).map(h => (
+                                          <SelectItem key={h.id} value={h.id} className="text-white hover:bg-slate-700">
+                                            <div className="flex items-center gap-2">
+                                            <img src={h.image} alt="" className="w-5 h-5 rounded-full" />
+                                            <span>{language === 'zh' ? h.name : h.nameEn}</span>
+                                          </div>
+                                        </SelectItem>
+                                      ));
+                                      })()}
+                                    </SelectContent>
+                                  </Select>
+                                  <Input
+                                    value={newHeroReason}
+                                    onChange={(e) => setNewHeroReason(e.target.value)}
+                                    placeholder={t('enterReason')}
+                                    className="h-8 bg-slate-800 border-slate-600 text-sm text-white placeholder:text-slate-400"
+                                  />
+                                  <div className="flex gap-2 justify-end">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-7 px-2 text-xs text-slate-400 hover:text-white"
+                                      onClick={(e) => { e.stopPropagation(); setAddingHeroMapId(null); setNewHeroId(''); setNewHeroReason(''); }}
+                                    >
+                                      <X className="w-3 h-3 mr-1" />
+                                      {t('cancel')}
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      className="h-7 px-2 text-xs bg-cyan-600 hover:bg-cyan-700"
+                                      onClick={(e) => { e.stopPropagation(); if (newHeroId) addCustomHero(map.id, newHeroId, newHeroReason); }}
+                                      disabled={!newHeroId}
+                                    >
+                                      <Plus className="w-3 h-3 mr-1" />
+                                      {t('add')}
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <button
+                                  className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-cyan-500 text-white hover:text-cyan-400 transition-all"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setAddingHeroMapId(map.id);
+                                    // 延迟滚动以确保 DOM 已更新
+                                    setTimeout(() => {
+                                      addHeroFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                    }, 50);
+                                  }}
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  <span className="text-xs">{t('addHero')}</span>
+                                </button>
+                              )}
                               {sortHeroesByRole(map.recommendedHeroes).filter(heroId => !(deletedDefaultHeroes[map.id] || []).includes(heroId)).map(heroId => {
                                 const hero = getHero(heroId);
                                 if (!hero) return null;
@@ -995,74 +1063,6 @@ const [isMapCopied, setIsMapCopied] = useState(false);
                                   </div>
                                 );
                               })}
-                              {addingHeroMapId === map.id ? (
-                                <div ref={addHeroFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-cyan-500/30">
-                                  <Select value={newHeroId} onValueChange={(value) => setNewHeroId(value as HeroId)}>
-                                    <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
-                                      <span className={newHeroId ? 'text-white' : 'text-slate-400'}>
-                                        {newHeroId ? (language === 'zh' ? getHero(newHeroId)!.name : getHero(newHeroId)!.nameEn) : t('selectHero')}
-                                      </span>
-                                    </SelectTrigger>
-                                    <SelectContent position="popper" className="bg-slate-800 border-slate-600 max-h-60 z-[9999]">
-                                      {(() => {
-                                        const existingHeroIds = new Set([
-                                          ...map.recommendedHeroes.filter(id => !(deletedDefaultHeroes[map.id] || []).includes(id)),
-                                          ...(customMapHeroes[map.id] || []).map(ch => ch.heroId)
-                                        ]);
-                                        return heroes.filter(h => !existingHeroIds.has(h.id)).map(h => (
-                                          <SelectItem key={h.id} value={h.id} className="text-white hover:bg-slate-700">
-                                            <div className="flex items-center gap-2">
-                                            <img src={h.image} alt="" className="w-5 h-5 rounded-full" />
-                                            <span>{language === 'zh' ? h.name : h.nameEn}</span>
-                                          </div>
-                                        </SelectItem>
-                                      ));
-                                      })()}
-                                    </SelectContent>
-                                  </Select>
-                                  <Input
-                                    value={newHeroReason}
-                                    onChange={(e) => setNewHeroReason(e.target.value)}
-                                    placeholder={t('enterReason')}
-                                    className="h-8 bg-slate-800 border-slate-600 text-sm text-white placeholder:text-slate-400"
-                                  />
-                                  <div className="flex gap-2 justify-end">
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-7 px-2 text-xs text-slate-400 hover:text-white"
-                                      onClick={(e) => { e.stopPropagation(); setAddingHeroMapId(null); setNewHeroId(''); setNewHeroReason(''); }}
-                                    >
-                                      <X className="w-3 h-3 mr-1" />
-                                      {t('cancel')}
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      className="h-7 px-2 text-xs bg-cyan-600 hover:bg-cyan-700"
-                                      onClick={(e) => { e.stopPropagation(); if (newHeroId) addCustomHero(map.id, newHeroId, newHeroReason); }}
-                                      disabled={!newHeroId}
-                                    >
-                                      <Plus className="w-3 h-3 mr-1" />
-                                      {t('add')}
-                                    </Button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <button
-                                  className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-cyan-500 text-white hover:text-cyan-400 transition-all"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setAddingHeroMapId(map.id);
-                                    // 延迟滚动以确保 DOM 已更新
-                                    setTimeout(() => {
-                                      addHeroFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                                    }, 50);
-                                  }}
-                                >
-                                  <Plus className="w-4 h-4" />
-                                  <span className="text-xs">{t('addHero')}</span>
-                                </button>
-                              )}
                               </div>
                           </div>
                         )}

@@ -16,6 +16,7 @@ build/
 # 编辑器和 IDE
 .vscode/
 .idea/
+.zed/
 *.suo
 *.ntvs*
 *.njsproj

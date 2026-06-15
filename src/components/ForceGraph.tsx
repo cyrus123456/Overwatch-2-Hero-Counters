@@ -2057,10 +2057,7 @@ const {
 
                   <TabsContent value="counteredBy" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-red-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
                     {selectedHeroes.length > 0 && (
-                      <>
-                        {renderHeroList(counteredBy, 3, 'bg-red-900/30 border-red-700/50', selectedHeroes, false, 'counteredBy')}
-                        {renderHeroList(counteredBy, 2, 'bg-red-800/20 border-red-600/40', selectedHeroes, false, 'counteredBy')}
-                        {renderHeroList(counteredBy, 1, 'bg-red-700/10 border-red-500/30', selectedHeroes, false, 'counteredBy')}
+                      <div className="space-y-2">
                         {!isMultiSelect && (
                           <>
                             {!isAddingCustomRelation ? (
@@ -2144,17 +2141,17 @@ const {
                             )}
                           </>
                         )}
-                      </>
+                        {renderHeroList(counteredBy, 3, 'bg-red-900/30 border-red-700/50', selectedHeroes, false, 'counteredBy')}
+                        {renderHeroList(counteredBy, 2, 'bg-red-800/20 border-red-600/40', selectedHeroes, false, 'counteredBy')}
+                        {renderHeroList(counteredBy, 1, 'bg-red-700/10 border-red-500/30', selectedHeroes, false, 'counteredBy')}
+                      </div>
                     )}
                     {counteredBy.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('notCounteredByAny')}</div>}
                   </TabsContent>
 
                   <TabsContent value="counters" className="flex-1 overflow-y-auto pr-2 custom-scrollbar rounded-lg bg-green-950/20 mt-0 data-[state=active]:flex data-[state=active]:flex-col min-h-0">
                     {selectedHeroes.length > 0 && (
-                      <>
-                        {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', selectedHeroes, true, 'counter')}
-                        {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', selectedHeroes, true, 'counter')}
-                        {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', selectedHeroes, true, 'counter')}
+                      <div className="space-y-2">
                         {!isMultiSelect && (
                           <>
                             {!isAddingCustomRelation ? (
@@ -2238,7 +2235,10 @@ const {
                             )}
                           </>
                         )}
-                      </>
+                        {renderHeroList(counters, 3, 'bg-green-900/30 border-green-700/50', selectedHeroes, true, 'counter')}
+                        {renderHeroList(counters, 2, 'bg-green-800/20 border-green-600/40', selectedHeroes, true, 'counter')}
+                        {renderHeroList(counters, 1, 'bg-green-700/10 border-green-500/30', selectedHeroes, true, 'counter')}
+                      </div>
                     )}
                     {counters.length === 0 && <div className="text-center py-6 text-slate-200 text-xs">{t('noCounters')}</div>}
                   </TabsContent>
@@ -2248,6 +2248,77 @@ const {
                       <>
                         {(synergyPartners.length > 0 || !isMultiSelect) && (
                           <div className="space-y-2">
+                            {!isMultiSelect && (
+                              <>
+                                {!isAddingCustomSynergy ? (
+                                  <button
+                                    className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-purple-500 text-slate-400 hover:text-purple-400 transition-all"
+                                    onClick={() => {
+                                      setIsAddingCustomSynergy(true);
+                                      setTimeout(() => {
+                                        addSynergyFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                      }, 50);
+                                    }}
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                    <span className="text-xs">{t('addCustomSynergy')}</span>
+                                  </button>
+                                ) : (
+                                  <div ref={addSynergyFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-purple-500/30">
+                                    <Select value={newSynergyTarget} onValueChange={(value) => setNewSynergyTarget(value as HeroId)}>
+                                      <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                        <span className={newSynergyTarget ? 'text-white' : 'text-slate-400'}>
+                                          {newSynergyTarget ? getHeroName(heroes.find(h => h.id === newSynergyTarget), language) : t('selectTargetHero')}
+                                        </span>
+                                      </SelectTrigger>
+                                      <SelectContent position="popper" className="bg-slate-800 border-slate-600 max-h-60 z-[9999]">
+                                        {heroes
+                                          .filter(h => h.id !== selectedHero && !synergyPartners.some(p => p.hero.id === h.id))
+                                          .sort((a, b) => roleOrder[a.role] - roleOrder[b.role])
+                                          .map(hero => (
+                                            <SelectItem key={hero.id} value={hero.id} className="text-white hover:bg-slate-700">
+                                              <div className="flex items-center gap-2">
+                                                <img src={hero.image} alt="" className="w-5 h-5 rounded-full" />
+                                                <span>{getHeroName(hero, language)}</span>
+                                              </div>
+                                            </SelectItem>
+                                          ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <Select value={String(newSynergyStrength)} onValueChange={(v) => setNewSynergyStrength(Number(v) as RelationStrength)}>
+                                      <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
+                                        <span className="text-white">{newSynergyStrength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : newSynergyStrength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{newSynergyStrength}</span>
+                                      </SelectTrigger>
+                                      <SelectContent position="popper" className="bg-slate-800 border-slate-600 z-[9999]">
+                                        <SelectItem value="3" className="text-white hover:bg-slate-700">{t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.3</SelectItem>
+                                        <SelectItem value="2" className="text-white hover:bg-slate-700">{t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.2</SelectItem>
+                                        <SelectItem value="1" className="text-white hover:bg-slate-700">{t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.1</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <div className="flex gap-2 justify-end">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 px-2 text-xs text-slate-400 hover:text-white"
+                                        onClick={() => { setIsAddingCustomSynergy(false); setNewSynergyTarget(''); }}
+                                      >
+                                        <X className="w-3 h-3 mr-1" />
+                                        {t('cancel')}
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        className="h-7 px-2 text-xs bg-purple-600 hover:bg-purple-700"
+                                        onClick={addCustomSynergyRelation}
+                                        disabled={!newSynergyTarget}
+                                      >
+                                        <Plus className="w-3 h-3 mr-1" />
+                                        {t('add')}
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            )}
                             {synergyPartners.map(partner => {
                               const hero = partner.hero;
                               if (!hero) return null;
@@ -2342,77 +2413,6 @@ const {
                                 </div>
                               );
                             })}
-                            {!isMultiSelect && (
-                              <>
-                                {!isAddingCustomSynergy ? (
-                                  <button
-                                    className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-slate-600 hover:border-purple-500 text-slate-400 hover:text-purple-400 transition-all"
-                                    onClick={() => {
-                                      setIsAddingCustomSynergy(true);
-                                      setTimeout(() => {
-                                        addSynergyFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                                      }, 50);
-                                    }}
-                                  >
-                                    <Plus className="w-4 h-4" />
-                                    <span className="text-xs">{t('addCustomSynergy')}</span>
-                                  </button>
-                                ) : (
-                                  <div ref={addSynergyFormRef} data-prevent-map-toggle className="flex flex-col gap-2 p-3 rounded-lg bg-slate-700/50 border border-purple-500/30">
-                                    <Select value={newSynergyTarget} onValueChange={(value) => setNewSynergyTarget(value as HeroId)}>
-                                      <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
-                                        <span className={newSynergyTarget ? 'text-white' : 'text-slate-400'}>
-                                          {newSynergyTarget ? getHeroName(heroes.find(h => h.id === newSynergyTarget), language) : t('selectTargetHero')}
-                                        </span>
-                                      </SelectTrigger>
-                                      <SelectContent position="popper" className="bg-slate-800 border-slate-600 max-h-60 z-[9999]">
-                                        {heroes
-                                          .filter(h => h.id !== selectedHero && !synergyPartners.some(p => p.hero.id === h.id))
-                                          .sort((a, b) => roleOrder[a.role] - roleOrder[b.role])
-                                          .map(hero => (
-                                            <SelectItem key={hero.id} value={hero.id} className="text-white hover:bg-slate-700">
-                                              <div className="flex items-center gap-2">
-                                                <img src={hero.image} alt="" className="w-5 h-5 rounded-full" />
-                                                <span>{getHeroName(hero, language)}</span>
-                                              </div>
-                                            </SelectItem>
-                                          ))}
-                                      </SelectContent>
-                                    </Select>
-                                    <Select value={String(newSynergyStrength)} onValueChange={(v) => setNewSynergyStrength(Number(v) as RelationStrength)}>
-                                      <SelectTrigger className="h-8 bg-slate-800 border-slate-600 text-sm w-full">
-                                        <span className="text-white">{newSynergyStrength === 3 ? t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合') : newSynergyStrength === 2 ? t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合') : t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.{newSynergyStrength}</span>
-                                      </SelectTrigger>
-                                      <SelectContent position="popper" className="bg-slate-800 border-slate-600 z-[9999]">
-                                        <SelectItem value="3" className="text-white hover:bg-slate-700">{t('hardCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.3</SelectItem>
-                                        <SelectItem value="2" className="text-white hover:bg-slate-700">{t('strongCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.2</SelectItem>
-                                        <SelectItem value="1" className="text-white hover:bg-slate-700">{t('softCounter').replace('Counter', 'Synergy').replace('克制', '契合')} LV.1</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                    <div className="flex gap-2 justify-end">
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-7 px-2 text-xs text-slate-400 hover:text-white"
-                                        onClick={() => { setIsAddingCustomSynergy(false); setNewSynergyTarget(''); }}
-                                      >
-                                        <X className="w-3 h-3 mr-1" />
-                                        {t('cancel')}
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        className="h-7 px-2 text-xs bg-purple-600 hover:bg-purple-700"
-                                        onClick={addCustomSynergyRelation}
-                                        disabled={!newSynergyTarget}
-                                      >
-                                        <Plus className="w-3 h-3 mr-1" />
-                                        {t('add')}
-                                      </Button>
-                                    </div>
-                                  </div>
-                                )}
-                              </>
-                            )}
                           </div>
                         )}
                       </>
