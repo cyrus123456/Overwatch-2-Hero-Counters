@@ -6,7 +6,7 @@ export type HeroId =
   | 'reinhardt' | 'roadhog' | 'sigma' | 'winston' | 'wrecking_ball' | 'zarya' | 'domina'
   | 'ashe' | 'bastion' | 'cassidy' | 'echo' | 'freja' | 'genji' | 'hanzo' | 'junkrat' 
   | 'mei' | 'pharah' | 'reaper' | 'sojourn' | 'soldier76' | 'sombra' | 'symmetra' 
-  | 'torbjorn' | 'tracer' | 'venture' | 'widowmaker' | 'vendetta' | 'anran' | 'emrey' | 'sierra'
+  | 'torbjorn' | 'tracer' | 'venture' | 'widowmaker' | 'vendetta' | 'anran' | 'emrey' | 'sierra' | 'shion'
   | 'ana' | 'baptiste' | 'brigitte' | 'illari' | 'juno' | 'kiriko' | 'lifeweaver' 
   | 'lucio' | 'mercy' | 'moira' | 'zenyatta' | 'wuyang' | 'mizuki' | 'feitianmao';
 
@@ -95,6 +95,7 @@ const heroImages: Record<HeroId, string> = {
   mizuki: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/a2c8dd2fdc10e5b5110062e2bd5dc3fc56e692a812f35f0fcea3b580fd01f578.png`,
   feitianmao: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/03a184cd0de27091e0099ac22635ad9615a8f6997881a5c25cc5f2444764f729.png`,
   sierra: 'https://d15f34w2p8l1cc.cloudfront.net/overwatch/4bfd3d8b95844231115cb5bf4db03344c71bc3e865189c52403b2dc51438e63a.png',
+  shion: 'https://d15f34w2p8l1cc.cloudfront.net/overwatch/070481cf871590a2b45a51d1335f9fe3d65eb4e4d361ecdd998b34fae2ed65d5.png',
 };
 
 // 英雄数据
@@ -139,6 +140,7 @@ export const heroes: Hero[] = [
   { id: 'anran', name: '安燃', nameEn: 'Anran', role: 'damage', color: '#ef4444', image: heroImages.anran },
   { id: 'emrey', name: '埃姆雷', nameEn: 'Emrey', role: 'damage', color: '#ef4444', image: heroImages.emrey },
   { id: 'sierra', name: '希拉', nameEn: 'Sierra', role: 'damage', color: '#ef4444', image: heroImages.sierra },
+  { id: 'shion', name: '死怨', nameEn: 'Shion', role: 'damage', color: '#ef4444', image: heroImages.shion },
 
   // 支援英雄
   { id: 'ana', name: '安娜', nameEn: 'Ana', nickname: '安娜奶奶', role: 'support', color: '#22c55e', image: heroImages.ana },
@@ -955,6 +957,58 @@ export const counterRelations: CounterRelation[] = [
   { source: 'reaper', target: 'sierra', strength: 2, type: 'numeric' }, // 近距离爆发
   { source: 'winston', target: 'sierra', strength: 2, type: 'skill' }, // 跳脸
   { source: 'dva', target: 'sierra', strength: 2, type: 'skill' }, // 防御矩阵
+
+  // ========== 死怨（Shion）被克制 ==========
+  // 死怨弱点：远距离能力弱、无硬控、临时生命值消失快、摩托车可被打断
+  // 坦克克制
+  { source: 'winston', target: 'shion', strength: 3, type: 'skill' }, // 跳脸压制，电击追踪高机动目标
+  { source: 'reinhardt', target: 'shion', strength: 3, type: 'skill' }, // 举盾挡伤害，冲锋打断摩托车
+  { source: 'roadhog', target: 'shion', strength: 3, type: 'skill' }, // 钩子抓冲刺/骑摩托的死怨
+  { source: 'orisa', target: 'shion', strength: 3, type: 'skill' }, // 长矛眩晕打断技能
+  { source: 'dva', target: 'shion', strength: 3, type: 'skill' }, // 防御矩阵吸收弹药
+  { source: 'sigma', target: 'shion', strength: 2, type: 'skill' }, // 动能捕获+护盾阻挡
+  { source: 'zarya', target: 'shion', strength: 2, type: 'numeric' }, // 高能量输出，护盾保护队友
+  // 输出克制
+  { source: 'widowmaker', target: 'shion', strength: 3, type: 'range' }, // 远程狙击，死怨射程不足
+  { source: 'ashe', target: 'shion', strength: 3, type: 'range' }, // 远程狙击克制
+  { source: 'hanzo', target: 'shion', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'pharah', target: 'shion', strength: 3, type: 'range' }, // 空中输出，死怨无法触及
+  { source: 'sombra', target: 'shion', strength: 3, type: 'skill' }, // 黑客禁用技能
+  { source: 'mei', target: 'shion', strength: 3, type: 'skill' }, // 冰冻限制机动性
+  { source: 'cassidy', target: 'shion', strength: 3, type: 'skill' }, // 闪光弹打断冲刺/摩托车
+  { source: 'sojourn', target: 'shion', strength: 2, type: 'range' }, // 远程轨道炮
+  { source: 'echo', target: 'shion', strength: 2, type: 'range' }, // 飞行输出
+  { source: 'soldier76', target: 'shion', strength: 2, type: 'numeric' }, // 远程输出压制
+  { source: 'torbjorn', target: 'shion', strength: 2, type: 'numeric' }, // 炮塔自动瞄准
+  { source: 'bastion', target: 'shion', strength: 2, type: 'numeric' }, // 高DPS压制
+  // 支援克制
+  { source: 'ana', target: 'shion', strength: 3, type: 'skill' }, // 睡眠针打断摩托车/冲刺，禁疗
+  { source: 'brigitte', target: 'shion', strength: 3, type: 'skill' }, // 盾击打断
+  { source: 'baptiste', target: 'shion', strength: 2, type: 'skill' }, // 矩阵保护队友
+  { source: 'zenyatta', target: 'shion', strength: 2, type: 'numeric' }, // 增伤标记使死怨更脆
+
+  // ========== 死怨（Shion）克制他人 ==========
+  // 死怨优势：右键散弹近距离高爆发、全方向冲刺追击、摩托车高机动切入
+  // 输出被死怨克制
+  { source: 'shion', target: 'tracer', strength: 3, type: 'skill' }, // 全方向冲刺追击，右键散弹爆发秒杀
+  { source: 'shion', target: 'genji', strength: 2, type: 'skill' }, // 右键散弹惩罚源氏突进
+  { source: 'shion', target: 'echo', strength: 2, type: 'skill' }, // 冲刺追击回声
+  { source: 'shion', target: 'widowmaker', strength: 2, type: 'skill' }, // 冲刺接近狙击手
+  { source: 'shion', target: 'hanzo', strength: 2, type: 'skill' }, // 冲刺接近半藏
+  { source: 'shion', target: 'bastion', strength: 2, type: 'skill' }, // 侧翼突袭背后爆发
+  { source: 'shion', target: 'junkrat', strength: 2, type: 'skill' }, // 冲刺绕过陷阱，近身爆发
+  { source: 'shion', target: 'mei', strength: 2, type: 'skill' }, // 高机动绕过冰冻
+  { source: 'shion', target: 'reaper', strength: 2, type: 'skill' }, // 冲刺机动优势，右键对拼
+  // 支援被死怨克制
+  { source: 'shion', target: 'zenyatta', strength: 3, type: 'skill' }, // 冲刺切入，近身爆发秒杀
+  { source: 'shion', target: 'mercy', strength: 3, type: 'skill' }, // 冲刺追击天使
+  { source: 'shion', target: 'ana', strength: 2, type: 'skill' }, // 冲刺切入后排（互克关系）
+  { source: 'shion', target: 'lifeweaver', strength: 2, type: 'skill' }, // 冲刺追击
+  { source: 'shion', target: 'illari', strength: 2, type: 'skill' }, // 冲刺切入
+  { source: 'shion', target: 'moira', strength: 2, type: 'skill' }, // 冲刺追击莫伊拉
+  { source: 'shion', target: 'baptiste', strength: 2, type: 'skill' }, // 冲刺切入后排爆发
+  { source: 'shion', target: 'kiriko', strength: 2, type: 'skill' }, // 冲刺追击雾子
+  { source: 'shion', target: 'juno', strength: 2, type: 'skill' }, // 冲刺追击朱诺
 
 ];
 

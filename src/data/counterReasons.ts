@@ -181,6 +181,10 @@ export const heroCounterAbilities: Record<HeroId, CounterAbilityData> = {
     abilityZh: "使用高科技武器进行精准打击，高机动性进行战术转移",
     abilityEn: "Uses high-tech weapons for precise strikes with high mobility for tactical repositioning"
   },
+  shion: {
+    abilityZh: '右键X形散弹近距离高爆发并用全方向闪避追击目标同时摩托车高机动切入后排',
+    abilityEn: 'Right-click X-spread shotgun burst at close range with full-directional Evade dash to chase targets while using motorcycle for high-mobility dive into backline'
+  },
   // 支援
   ana: {
     abilityZh: '睡眠针控制并用狙击加纳米释放生化手雷禁疗',
@@ -388,6 +392,10 @@ export const heroWeaknesses: Record<HeroId, WeaknessData> = {
     weaknessZh: "被近距离突脸时无力，同时惧怕高机动英雄和持续控制技能",
     weaknessEn: "Weak when dived at close range, fearing high mobility heroes and continuous CC"
   },
+  shion: {
+    weaknessZh: '左键伤害偏软且远程无力同时闪避临时生命值光速消失、摩托车可被睡针或冲锋等硬控打断、250血无甲无自保技能易被集火秒杀',
+    weaknessEn: 'Left-click damage is weak and no ranged threat while Evade temp HP decays instantly, motorcycle can be interrupted by Sleep Dart or Charge etc, 250HP no armor no self-peel making her easy to focus down'
+  },
   // 支援
   ana: {
     weaknessZh: '无位移技能同时惧怕源氏或黑影突脸睡眠针CD后无力',
@@ -490,5 +498,3 @@ export function getCounterReason(sourceId: HeroId, targetId: HeroId, language: S
       return `${abilityEn} → ${weaknessEn}`;
   }
 }
-
-
