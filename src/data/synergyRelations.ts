@@ -332,4 +332,19 @@ export const synergyRelations: SynergyRelation[] = [
   { source: 'dva', target: 'mizuki', strength: 2 },
   { source: 'zarya', target: 'mizuki', strength: 2 },
   { source: 'genji', target: 'mizuki', strength: 2 },
+
+  // 死怨 - 高机动近战爆发DPS，需切入后排，250血无自保
+  { source: 'kiriko', target: 'shion', strength: 3 },     // 铃铛保护切入+传送跟随
+  { source: 'ana', target: 'shion', strength: 3 },        // 纳米强化切入后排毁天灭地
+  { source: 'winston', target: 'shion', strength: 3 },    // 双跳切入后排，电击+散弹秒支援
+  { source: 'tracer', target: 'shion', strength: 3 },     // 双刺客切入后排，猎空骚扰+死怨爆发
+  { source: 'zenyatta', target: 'shion', strength: 2 },   // 不和之珠增伤使散弹爆发更致命
+  { source: 'dva', target: 'shion', strength: 2 },        // 矩阵掩护切入，双机动组合
+  { source: 'zarya', target: 'shion', strength: 2 },      // 粒子屏障保护切入的死怨
+  { source: 'lucio', target: 'shion', strength: 2 },      // 加速帮助死怨快速近身
+  { source: 'genji', target: 'shion', strength: 2 },      // 双切入组合压制后排
+  { source: 'sombra', target: 'shion', strength: 2 },     // EMP+切入combo
+  { source: 'baptiste', target: 'shion', strength: 2 },   // 不死力场保人+跳跃提供角度
+  { source: 'echo', target: 'shion', strength: 2 },       // 双高机动切入
+  { source: 'juno', target: 'shion', strength: 2 },       // 加速环帮助死怨近身
 ];

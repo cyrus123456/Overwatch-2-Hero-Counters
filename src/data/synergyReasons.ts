@@ -909,6 +909,60 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonEn: 'Genji follows Feitianmao for double dive' 
   },
 
+  // 死怨的最佳拍档
+  'kiriko-shion': {
+    reasonZh: '雾子铃铛保护死怨切入时免控免伤，传送可跟随深入后排持续治疗',
+    reasonEn: 'Kiriko Suzu protects Shion from CC during dive, Swift Step follows for sustained healing in backline'
+  },
+  'ana-shion': {
+    reasonZh: '安娜纳米强化让250血死怨变肉坦，散弹爆发伤害翻倍，切入后排毁天灭地',
+    reasonEn: 'Ana Nano turns 250HP Shion into a tank, doubling shotgun burst damage for devastating backline dives'
+  },
+  'winston-shion': {
+    reasonZh: '温斯顿跳入电击吸引火力，死怨跟进右键散弹收割残血支援，双切入后排无法招架',
+    reasonEn: 'Winston dives drawing aggro with Tesla, Shion follows with shotgun burst to finish supports - double dive overwhelms backline'
+  },
+  'tracer-shion': {
+    reasonZh: '猎空闪烁骚扰吸引注意，死怨摩托车切入右键散弹收割，双刺客后排无人生还',
+    reasonEn: 'Tracer blinks to distract, Shion motorcycle dives with shotgun burst to clean up - dual assassin backline wipe'
+  },
+  'zenyatta-shion': {
+    reasonZh: '禅雅塔不和之珠增伤让死怨右键散弹爆发更致命，250血目标一喷即杀',
+    reasonEn: 'Zenyatta Discord makes Shion\'s shotgun burst even more lethal, one-shotting 250HP targets'
+  },
+  'dva-shion': {
+    reasonZh: 'D.Va矩阵掩护死怨摩托车切入路线，双高机动组合快速转场压制',
+    reasonEn: 'D.Va matrix covers Shion\'s motorcycle dive path, dual mobility for rapid rotation and pressure'
+  },
+  'zarya-shion': {
+    reasonZh: '查莉娅粒子屏障保护切入中的死怨不被秒杀，高能量配合散弹收割前排',
+    reasonEn: 'Zarya bubble protects diving Shion from being burst down, high energy pairs with shotgun for frontline kills'
+  },
+  'lucio-shion': {
+    reasonZh: '卢西奥加速帮助死怨快速近身发挥散弹威力，贴脸输出效率拉满',
+    reasonEn: 'Lucio speed boost helps Shion close distance for devastating shotgun damage, maximizing close-range efficiency'
+  },
+  'genji-shion': {
+    reasonZh: '源氏和死怨双切入组合压制后排，源氏龙刃+死怨散弹让支援无处可逃',
+    reasonEn: 'Genji + Shion double dive crushes backline, Dragonblade + shotgun burst leaves supports nowhere to hide'
+  },
+  'sombra-shion': {
+    reasonZh: '黑影EMP先手禁用技能，死怨趁机摩托车切入散弹收割，被黑的敌人无法还手',
+    reasonEn: 'Sombra EMP disables abilities first, Shion dives in with shotgun to clean up - hacked enemies can\'t fight back'
+  },
+  'baptiste-shion': {
+    reasonZh: '巴蒂斯特不死力场保护死怨切入后的生存，跳跃高台提供散弹输出角度',
+    reasonEn: 'Baptiste Immortality Field saves diving Shion, Exo Boots provide high ground angles for shotgun damage'
+  },
+  'echo-shion': {
+    reasonZh: '回声和死怨双高机动切入，空中+地面同时施压让敌方防不胜防',
+    reasonEn: 'Echo + Shion dual high-mobility dive, aerial + ground pressure overwhelms enemy defenses'
+  },
+  'juno-shion': {
+    reasonZh: '朱诺加速环帮助死怨快速近身，散弹贴脸输出效率最大化',
+    reasonEn: 'Juno speed ring helps Shion close distance quickly, maximizing point-blank shotgun efficiency'
+  },
+
 };
 
 /**
