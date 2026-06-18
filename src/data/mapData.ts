@@ -8,7 +8,7 @@ export type MapDimensionHeight = 'high' | 'medium' | 'low';
 
 export type MapId =
   | 'busan' | 'ilios' | 'lijiang' | 'nepal' | 'samoa' | 'oasis'
-  | 'blizzard_world' | 'eichenwalde' | 'hollywood' | 'kings_row' | 'midtown' | 'numbani' | 'paraiso'
+  | 'blizzard_world' | 'eichenwalde' | 'hollywood' | 'kings_row' | 'midtown' | 'numbani' | 'paraiso' | 'neon_junction'
   | 'circuit_royal' | 'dorado' | 'havana' | 'junkertown' | 'rialto' | 'route_66' | 'gibraltar' | 'shambali_monastery'
   | 'runasapi' | 'colosseo' | 'esperanca' | 'new_queen_street'
   | 'antarctic_peninsula' | 'new_junk_city' | 'suravasa' | 'aatlis';
@@ -22,6 +22,8 @@ export interface MapDimensions {
   width: MapDimensionWidth;
   height: MapDimensionHeight;
   isOutdoor: boolean;
+  hasHighSecondFloor: boolean;
+  hasHighWalls: boolean;
 }
 
 export interface Map {
@@ -59,7 +61,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       name: '釜山',
       nameEn: 'Busan',
       type: 'control',
-      dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false },
+      dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: true, hasHighWalls: false },
       recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'orisa', 'wrecking_ball', 'doomfist', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn'],
       heroReasons: {
         reinhardt: { zh: '狭窄走廊举盾推进优势大，室内地推首选', en: 'Shield push strong in narrow corridors, top brawl pick indoors' },
@@ -97,7 +99,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       name: '伊利奥斯',
       nameEn: 'Ilios',
       type: 'control',
-      dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true },
+      dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
       recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'wrecking_ball', 'doomfist', 'lucio', 'lifeweaver', 'hanzo', 'ashe', 'ana', 'illari'],
       heroReasons: {
         pharah: { zh: '短距离窄通道高空间，空中压制优势巨大', en: 'Short distance narrow high space, huge aerial suppression advantage' },
@@ -130,7 +132,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       name: '漓江塔',
       nameEn: 'Lijiang Tower',
       type: 'control',
-      dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false },
+      dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
       recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'hazard', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'mercy'],
       heroReasons: {
         reinhardt: { zh: '狭窄室内举盾推进优势大，室内地推首选', en: 'Shield push strong in narrow indoor, top brawl pick indoors' },
@@ -167,7 +169,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       name: '尼泊尔',
       nameEn: 'Nepal',
       type: 'control',
-      dimensions: { length: 'medium', width: 'narrow', height: 'medium', isOutdoor: false },
+      dimensions: { length: 'medium', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
       recommendedHeroes: ['reinhardt', 'mauga', 'zarya', 'ramattra', 'winston', 'wrecking_ball', 'dva', 'doomfist', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'tracer', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'cassidy'],
       heroReasons: {
         reinhardt: { zh: '狭窄走廊举盾推进优势大', en: 'Shield push strong in narrow corridors' },
@@ -204,7 +206,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       name: '萨摩亚·火山',
       nameEn: 'Samoa',
       type: 'control',
-      dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true },
+      dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
       recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'wrecking_ball', 'doomfist', 'lucio', 'sigma', 'orisa', 'hanzo', 'ashe'],
       heroReasons: {
         pharah: { zh: '短距离窄通道高空间，火山区域空中压制优势巨大', en: 'Short distance narrow high space, huge aerial suppression advantage in volcanic area' },
@@ -236,7 +238,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       name: '绿洲城',
       nameEn: 'Oasis',
       type: 'control',
-      dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true },
+      dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
       recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'lucio', 'kiriko', 'ramattra', 'sigma', 'orisa', 'hanzo', 'ashe'],
       heroReasons: {
         pharah: { zh: '短距离窄通道高空间，绿洲区域空中压制优势巨大', en: 'Short distance narrow high space, huge aerial suppression advantage in oasis area' },
@@ -272,7 +274,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '暴雪世界',
     nameEn: 'Blizzard World',
     type: 'hybrid',
-    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true },
+    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true, hasHighSecondFloor: true, hasHighWalls: true },
     recommendedHeroes: ['widowmaker', 'ashe', 'sojourn', 'soldier76', 'ana', 'illari', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'baptiste', 'zenyatta', 'reinhardt', 'orisa', 'sigma', 'junker_queen', 'zarya', 'roadhog', 'reaper', 'mei', 'junkrat', 'torbjorn', 'cassidy', 'brigitte', 'moira', 'mauga', 'bastion'],
     heroReasons: {
       widowmaker: { zh: '长视线远程狙击优势巨大，室外高地视野开阔', en: 'Huge sniping advantage on long sightlines, open outdoor high ground' },
@@ -316,7 +318,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '艾兴瓦尔德',
     nameEn: 'Eichenwalde',
     type: 'hybrid',
-    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false },
+    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'junker_queen', 'roadhog', 'ramattra', 'mauga', 'hazard', 'reaper', 'mei', 'symmetra', 'junkrat', 'bastion', 'cassidy', 'ashe', 'brigitte', 'moira', 'lucio', 'lifeweaver', 'mizuki', 'zarya', 'torbjorn'],
     heroReasons: {
       reinhardt: { zh: '桥下窒息点举盾推进，低屋顶室内地推首选', en: 'Shield push through bridge chokes, top brawl pick in low ceiling indoor' },
@@ -350,7 +352,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '好莱坞',
     nameEn: 'Hollywood',
     type: 'hybrid',
-    dimensions: { length: 'medium', width: 'medium', height: 'medium', isOutdoor: false },
+    dimensions: { length: 'medium', width: 'medium', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'junkrat', 'torbjorn', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'widowmaker', 'sojourn', 'ashe', 'hanzo', 'ana', 'illari', 'soldier76', 'baptiste', 'zenyatta', 'mercy', 'orisa', 'sigma', 'zarya', 'junker_queen', 'domina', 'pharah'],
     heroReasons: {
       orisa: { zh: '高地A点强控能力强', en: 'Strong CC at high ground point A' },
@@ -389,7 +391,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '国王大道',
     nameEn: "King's Row",
     type: 'hybrid',
-    dimensions: { length: 'medium', width: 'narrow', height: 'medium', isOutdoor: false },
+    dimensions: { length: 'medium', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'ramattra', 'mauga', 'junker_queen', 'roadhog', 'hazard', 'zarya', 'reaper', 'mei', 'symmetra', 'junkrat', 'torbjorn', 'bastion', 'cassidy', 'genji', 'tracer', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sombra', 'brigitte', 'moira', 'lucio', 'lifeweaver', 'mizuki', 'kiriko'],
     heroReasons: {
       reinhardt: { zh: '中等距离窄通道室内地推首选，举盾推进优势大', en: 'Top brawl pick on medium narrow indoor path, shield push strong' },
@@ -431,7 +433,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '中城',
     nameEn: 'Midtown',
     type: 'hybrid',
-    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: false },
+    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['widowmaker', 'sojourn', 'soldier76', 'ana', 'illari', 'ashe', 'hanzo', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'baptiste', 'zenyatta', 'lucio', 'kiriko', 'lifeweaver'],
     heroReasons: {
       widowmaker: { zh: '长距离中等宽度高空间，远程狙击优势', en: 'Long medium high space, sniping advantage' },
@@ -470,7 +472,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '努巴尼',
     nameEn: 'Numbani',
     type: 'hybrid',
-    dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true },
+    dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'domina', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe'],
     heroReasons: {
       pharah: { zh: '短距离窄通道高空间，室外飞行轰炸优势巨大', en: 'Short distance narrow high space, huge outdoor flight bombardment advantage' },
@@ -506,7 +508,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '帕拉伊苏',
     nameEn: 'Paraíso',
     type: 'hybrid',
-    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false },
+    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'mauga', 'junker_queen', 'roadhog', 'zarya', 'ramattra', 'hazard', 'reaper', 'mei', 'symmetra', 'junkrat', 'torbjorn', 'bastion', 'cassidy', 'sombra', 'genji', 'venture', 'tracer', 'brigitte', 'moira', 'kiriko', 'lucio', 'lifeweaver'],
     heroReasons: {
       reinhardt: { zh: '狭窄小巷举盾推进优势大', en: 'Shield push strong in narrow alleys' },
@@ -538,13 +540,52 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       en: 'Short sightlines·Narrow alleys·Medium height·Indoor | Narrow alleys suit shield/large hitbox heroes, many paths for wall ride, short range advantage, flank opportunities',
     },
   },
+  {
+    id: 'neon_junction',
+    name: '霓虹枢纽',
+    nameEn: 'Neon Junction',
+    type: 'hybrid',
+    dimensions: { length: 'short', width: 'narrow', height: 'low', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
+    recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'roadhog', 'reaper', 'mei', 'symmetra', 'junkrat', 'bastion', 'torbjorn', 'cassidy', 'brigitte', 'moira', 'lucio', 'kiriko', 'tracer', 'genji', 'venture', 'sombra', 'doomfist', 'winston', 'dva', 'wrecking_ball'],
+    heroReasons: {
+      reinhardt: { zh: '短距离窄通道低屋顶，举盾推进优势大，室内地推首选', en: 'Short narrow low ceiling, shield push strong, top brawl pick indoors' },
+      junker_queen: { zh: '狭窄通道近战输出强', en: 'Strong melee damage in narrow passages' },
+      ramattra: { zh: '天罚形态在狭窄低屋顶区域威力大', en: 'Nemesis Form powerful in narrow low ceiling areas' },
+      mauga: { zh: '狭窄通道双枪火力压制，大体积子弹伤害高', en: 'Dual gun suppression in narrow passages, large hitbox damage' },
+      zarya: { zh: '狭窄通道护盾价值高', en: 'Bubbles high value in narrow passages' },
+      roadhog: { zh: '狭窄通道钩子威胁大', en: 'Hook threat significant in narrow passages' },
+      reaper: { zh: '狭窄通道贴脸输出强，低屋顶短射程优势', en: 'Strong close range in narrow passages, low ceiling short range advantage' },
+      mei: { zh: '狭窄通道冰墙分割，低屋顶短射程优势', en: 'Ice Wall divides narrow passages, low ceiling short range advantage' },
+      symmetra: { zh: '狭窄通道传送门价值高，短射程优势', en: 'Teleporter high value in narrow passages, short range advantage' },
+      junkrat: { zh: '狭窄通道榴弹弹跳伤害高，大体积子弹优势', en: 'High grenade bounce damage in narrow passages, large hitbox advantage' },
+      bastion: { zh: '狭窄通道架点输出，大体积子弹伤害高', en: 'Sentry damage in narrow passages, large hitbox damage' },
+      torbjorn: { zh: '狭窄通道炮台防守', en: 'Turret defense in narrow passages' },
+      cassidy: { zh: '中近距离在狭窄通道作战强', en: 'Strong mid-close range in narrow passages' },
+      brigitte: { zh: '地推阵容核心，狭窄区域近战支援', en: 'Core of brawl comp, melee support in narrow areas' },
+      moira: { zh: '狭窄区域治疗球价值高，短射程优势', en: 'Healing Orb high value in narrow areas, short range advantage' },
+      lucio: { zh: '音障配合地推，墙骑利用地形', en: 'Sound Barrier for brawl, wall ride terrain' },
+      kiriko: { zh: '瞬快速支援狭窄通道', en: 'Swift Step for fast support in narrow passages' },
+      tracer: { zh: '闪现穿梭狭窄通道', en: 'Blink weaving through narrow passages' },
+      genji: { zh: '机动性强，但低屋顶限制爬墙空间', en: 'High mobility, but low ceiling limits wall climb space' },
+      venture: { zh: '穿越地形侧翼进攻', en: 'Terrain traversal for flanking' },
+      sombra: { zh: '绕后骚扰', en: 'Flank and harass' },
+      doomfist: { zh: '低屋顶限制垂直位移，但狭窄通道火箭拳威胁', en: 'Low ceiling limits vertical mobility, but Rocket Punch threat in narrow passages' },
+      winston: { zh: '机动性强，快速转点', en: 'High mobility, fast rotations' },
+      dva: { zh: '推进器机动控制', en: 'Boosters for mobile control' },
+      wrecking_ball: { zh: '低屋顶限制机动空间', en: 'Low ceiling limits mobility space' },
+    },
+    description: {
+      zh: '短视线·窄通道·低屋顶·室内 | 狭窄低屋顶适合盾牌/大体积子弹英雄，地推阵容首选，短射程英雄优势大，低屋顶限制飞行和爬墙英雄',
+      en: 'Short sightlines·Narrow corridors·Low ceiling·Indoor | Narrow low ceiling suits shield/large hitbox heroes, top brawl pick, short range advantage, low ceiling limits flight and wall climb heroes',
+    },
+  },
   // 运载目标地图
   {
     id: 'circuit_royal',
     name: '皇家赛道',
     nameEn: 'Circuit Royal',
     type: 'escort',
-    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true },
+    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['widowmaker', 'sojourn', 'soldier76', 'ana', 'illari', 'ashe', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'baptiste', 'zenyatta', 'orisa', 'sigma', 'domina', 'reinhardt', 'junker_queen', 'zarya'],
     heroReasons: {
       widowmaker: { zh: '长视线远程狙击优势巨大，室外高地视野开阔', en: 'Huge sniping advantage on long sightlines, open outdoor high ground' },
@@ -579,7 +620,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '多拉多',
     nameEn: 'Dorado',
     type: 'escort',
-    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: true },
+    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
     heroReasons: {
       reinhardt: { zh: '短距离窄通道举盾推进', en: 'Shield push through short narrow passages' },
@@ -620,7 +661,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '哈瓦那',
     nameEn: 'Havana',
     type: 'escort',
-    dimensions: { length: 'long', width: 'medium', height: 'medium', isOutdoor: false },
+    dimensions: { length: 'long', width: 'medium', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['widowmaker', 'sojourn', 'soldier76', 'ana', 'illari', 'ashe', 'hanzo', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'baptiste', 'zenyatta', 'lucio', 'lifeweaver', 'kiriko'],
     heroReasons: {
       widowmaker: { zh: '长距离中等宽度中等高度，远程狙击优势', en: 'Long medium medium space, sniping advantage' },
@@ -654,7 +695,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '渣客镇',
     nameEn: 'Junkertown',
     type: 'escort',
-    dimensions: { length: 'long', width: 'narrow', height: 'medium', isOutdoor: true },
+    dimensions: { length: 'long', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
     heroReasons: {
       reinhardt: { zh: '长距离窄通道举盾推进', en: 'Shield push through long narrow passages' },
@@ -695,7 +736,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '里阿尔托',
     nameEn: 'Rialto',
     type: 'escort',
-    dimensions: { length: 'medium', width: 'narrow', height: 'medium', isOutdoor: true },
+    dimensions: { length: 'medium', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'sombra', 'genji', 'venture', 'tracer', 'sojourn', 'ashe', 'lucio', 'lifeweaver', 'kiriko'],
     heroReasons: {
       reinhardt: { zh: '狭窄水道举盾推进', en: 'Shield push through narrow waterway' },
@@ -734,7 +775,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '66号公路',
     nameEn: 'Route 66',
     type: 'escort',
-    dimensions: { length: 'long', width: 'narrow', height: 'high', isOutdoor: true },
+    dimensions: { length: 'long', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe'],
     heroReasons: {
       pharah: { zh: '长距离窄通道高空间，室外飞行轰炸优势巨大', en: 'Long narrow high space, huge outdoor flight bombardment advantage' },
@@ -769,7 +810,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '直布罗陀',
     nameEn: 'Watchpoint: Gibraltar',
     type: 'escort',
-    dimensions: { length: 'medium', width: 'narrow', height: 'high', isOutdoor: true },
+    dimensions: { length: 'medium', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe'],
     heroReasons: {
       pharah: { zh: '中等距离窄通道高空间，室外飞行轰炸优势巨大', en: 'Medium narrow high space, huge outdoor flight bombardment advantage' },
@@ -804,7 +845,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '香巴里寺院',
     nameEn: 'Shambali Monastery',
     type: 'escort',
-    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true },
+    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true, hasHighSecondFloor: true, hasHighWalls: true },
     recommendedHeroes: ['widowmaker', 'sojourn', 'soldier76', 'ana', 'illari', 'ashe', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'baptiste', 'zenyatta', 'winston', 'wrecking_ball', 'doomfist', 'sigma', 'orisa', 'mauga', 'lucio'],
     heroReasons: {
       sigma: { zh: '高垂直寺庙掩体消耗', en: 'Poke from high vertical monastery cover' },
@@ -836,7 +877,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '鲁纳塞彼',
     nameEn: 'Runasapi',
     type: 'push',
-    dimensions: { length: 'long', width: 'wide', height: 'high', isOutdoor: true },
+    dimensions: { length: 'long', width: 'wide', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['widowmaker', 'sojourn', 'soldier76', 'ana', 'illari', 'ashe', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'wrecking_ball', 'doomfist', 'baptiste', 'zenyatta', 'lucio', 'kiriko', 'lifeweaver'],
     heroReasons: {
       widowmaker: { zh: '长距离宽通道高空间，远程狙击优势巨大', en: 'Long wide high space, huge sniping advantage' },
@@ -876,7 +917,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '斗兽场',
     nameEn: 'Colosseo',
     type: 'push',
-    dimensions: { length: 'medium', width: 'narrow', height: 'high', isOutdoor: false },
+    dimensions: { length: 'medium', width: 'narrow', height: 'high', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe'],
     heroReasons: {
       pharah: { zh: '中等距离窄通道高空间，飞行轰炸优势巨大', en: 'Medium narrow high space, huge flight bombardment advantage' },
@@ -911,7 +952,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '埃斯佩兰萨',
     nameEn: 'Esperança',
     type: 'push',
-    dimensions: { length: 'long', width: 'wide', height: 'high', isOutdoor: true },
+    dimensions: { length: 'long', width: 'wide', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['widowmaker', 'sojourn', 'soldier76', 'ana', 'illari', 'ashe', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'wrecking_ball', 'doomfist', 'baptiste', 'zenyatta', 'lucio', 'lifeweaver', 'kiriko', 'orisa', 'domina'],
     heroReasons: {
       winston: { zh: '出生走廊机动推进，宽大地图快速转点', en: 'Mobile push through spawn corridor, fast rotations on wide map' },
@@ -952,7 +993,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '新皇后街',
     nameEn: 'New Queen Street',
     type: 'push',
-    dimensions: { length: 'long', width: 'narrow', height: 'medium', isOutdoor: false },
+    dimensions: { length: 'long', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
     heroReasons: {
       reinhardt: { zh: '长距离窄通道举盾推进', en: 'Shield push through long narrow passages' },
@@ -995,7 +1036,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '南极半岛',
     nameEn: 'Antarctic Peninsula',
     type: 'flashpoint',
-    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false },
+    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'junkrat', 'torbjorn', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'junker_queen', 'roadhog', 'zarya', 'ramattra', 'hazard', 'tracer', 'genji', 'sombra', 'venture', 'kiriko', 'lucio'],
     heroReasons: {
       junker_queen: { zh: '狭窄小巷近战优势，短射程优势', en: 'Melee advantage in narrow alleys, short range advantage' },
@@ -1033,7 +1074,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '新渣客城',
     nameEn: 'New Junk City',
     type: 'flashpoint',
-    dimensions: { length: 'medium', width: 'medium', height: 'medium', isOutdoor: true },
+    dimensions: { length: 'medium', width: 'medium', height: 'medium', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['widowmaker', 'sojourn', 'soldier76', 'ana', 'illari', 'ashe', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'wrecking_ball', 'doomfist', 'baptiste', 'zenyatta', 'lucio', 'kiriko', 'lifeweaver'],
     heroReasons: {
       widowmaker: { zh: '中等距离中等宽度中等高度，远程狙击优势', en: 'Medium wide medium space, sniping advantage' },
@@ -1073,7 +1114,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '苏拉瓦萨',
     nameEn: 'Suravasa',
     type: 'flashpoint',
-    dimensions: { length: 'short', width: 'narrow', height: 'low', isOutdoor: true },
+    dimensions: { length: 'short', width: 'narrow', height: 'low', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
     heroReasons: {
       reinhardt: { zh: '短距离窄通道低高度，举盾推进', en: 'Short narrow low space, shield push' },
@@ -1114,7 +1155,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     name: '阿特利斯',
     nameEn: 'Aatlis',
     type: 'flashpoint',
-    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: true },
+    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
     recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
     heroReasons: {
       reinhardt: { zh: '短距离窄通道中等高度，举盾推进', en: 'Short narrow medium space, shield push' },
