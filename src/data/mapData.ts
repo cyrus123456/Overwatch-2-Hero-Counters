@@ -64,7 +64,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       pinyin: 'fu shan',
       type: 'control',
       dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: true, hasHighWalls: false },
-      recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'orisa', 'wrecking_ball', 'doomfist', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn'],
+      recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'orisa', 'wrecking_ball', 'doomfist', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'widowmaker', 'ashe', 'soldier76', 'ana', 'illari'],
       heroReasons: {
         reinhardt: { zh: '狭窄走廊举盾推进优势大，室内地推首选', en: 'Shield push strong in narrow corridors, top brawl pick indoors' },
         junker_queen: { zh: '狭窄走廊近战输出强', en: 'Strong melee damage in narrow corridors' },
@@ -90,10 +90,15 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         brigitte: { zh: '狭窄走廊近战支援优势大', en: 'Melee support advantage in narrow corridors' },
         bastion: { zh: '狭窄走廊架点输出，大体积子弹伤害高', en: 'Sentry damage in narrow corridors, large hitbox damage' },
         torbjorn: { zh: '狭窄走廊炮台防守', en: 'Turret defense in narrow corridors' },
+        widowmaker: { zh: 'MEKA基地指挥室/市区天桥/圣堂神龛等二楼高台提供狙击位', en: 'MEKA Base command room/Downtown catwalks/Sanctuary shrine 2F platforms provide sniper positions' },
+        ashe: { zh: '市区天桥和圣堂上层二楼高台消耗狙击优势', en: 'Downtown catwalk and Sanctuary upper 2F high ground poke sniper advantage' },
+        soldier76: { zh: '二楼高台持续远程输出，战术眼镜追踪高台目标', en: '2F high ground steady ranged damage, Tactical Visor tracks elevated targets' },
+        ana: { zh: '二楼高台远程治疗和睡眠针优势', en: '2F high ground ranged heals and Sleep Dart advantage' },
+        illari: { zh: '二楼高台太阳能光束俯视优势', en: '2F high ground solar rifle overlooking advantage' },
       },
       description: {
-        zh: '短视线·窄通道·中等高度·室内为主 | 狭窄走廊适合盾牌/大体积子弹英雄，高地平台(MEKA基地)可利用，墙骑机会多，短射程英雄优势',
-        en: 'Short sightlines·Narrow corridors·Medium height·Indoor | Narrow passages suit shield/large hitbox heroes, high platforms (MEKA Base) usable, wall ride opportunities, short range advantage',
+        zh: '短视线·窄通道·中等高度·室内为主 | 二楼高台覆盖广（MEKA基地指挥室/市区天桥/圣堂神龛），狙击英雄二楼优势明显，狭窄走廊适合盾牌/大体积子弹英雄，墙骑机会多，短射程英雄优势',
+        en: 'Short sightlines·Narrow corridors·Medium height·Indoor | Extensive 2F high ground (MEKA command room/Downtown catwalks/Sanctuary shrine), snipers have clear 2F advantage, narrow passages suit shield/large hitbox heroes, wall ride opportunities, short range advantage',
       },
     },
     {
@@ -126,8 +131,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         illari: { zh: '短距离太阳能光束', en: 'Short distance Solar Rifle' },
       },
       description: {
-        zh: '短视线·窄通道·高空间·室外 | 高空间飞行英雄优势巨大，短距离快速交战，窄通道适合机动性英雄，易击落(Well/Ruins)',
-        en: 'Short sightlines·Narrow corridors·High space·Outdoor | High space flight heroes huge advantage, short distance quick engagements, narrow corridors suit mobile heroes, knock-offs (Well/Ruins)',
+        zh: '短视线·窄通道·高空间·室外 | 高墙悬崖地形（陷阱井/废墟/灯塔），飞行英雄在高墙空间优势极大，短距离快速交战，窄通道适合机动英雄，坠落击杀是关键',
+        en: 'Short sightlines·Narrow corridors·High space·Outdoor | Tall cliff/wall terrain (Well/Ruins/Lighthouse), flight heroes dominate in tall-wall high space, short distance quick engagements, narrow corridors suit mobile heroes, knockoff kills crucial',
       },
     },
     {
@@ -136,8 +141,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       nameEn: 'Lijiang Tower',
       pinyin: 'li jiang ta',
       type: 'control',
-      dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
-      recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'hazard', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'mercy'],
+      dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: true, hasHighWalls: false },
+      recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'hazard', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'mercy', 'widowmaker', 'ashe', 'soldier76', 'ana', 'illari'],
       heroReasons: {
         reinhardt: { zh: '狭窄室内举盾推进优势大，室内地推首选', en: 'Shield push strong in narrow indoor, top brawl pick indoors' },
         junker_queen: { zh: '高地连接室适合近战输出', en: 'High ground connection rooms suit melee' },
@@ -162,10 +167,15 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         bastion: { zh: '狭窄走廊架点输出，大体积子弹伤害高', en: 'Sentry damage in narrow corridors, large hitbox damage' },
         torbjorn: { zh: '狭窄走廊炮台防守', en: 'Turret defense in narrow corridors' },
         mercy: { zh: '高天花板适合飞行支援', en: 'High ceiling allows flight support' },
+        widowmaker: { zh: '控制室天桥和夜市阳台二楼高台提供极佳狙击位', en: 'Control Center catwalk and Night Market balcony 2F platforms provide excellent sniper positions' },
+        ashe: { zh: '夜市二楼阳台消耗狙击优势', en: 'Night Market 2F balcony poke sniper advantage' },
+        soldier76: { zh: '二楼高台持续远程输出稳定', en: 'Steady ranged damage from 2F high ground' },
+        ana: { zh: '控制室/夜市二楼高台远程治疗和睡眠针优势', en: 'Control Center/Night Market 2F high ground ranged heals and Sleep Dart advantage' },
+        illari: { zh: '二楼高台太阳能光束俯视优势', en: '2F high ground solar rifle overlooking advantage' },
       },
       description: {
-        zh: '短视线·窄通道·中等高度·室内为主 | 狭窄走廊适合盾牌/大体积子弹英雄，高地连接室可利用，墙骑机会多，短射程英雄优势',
-        en: 'Short sightlines·Narrow corridors·Medium height·Indoor | Narrow passages suit shield/large hitbox heroes, high ground connection rooms usable, wall ride opportunities, short range advantage',
+        zh: '短视线·窄通道·中等高度·室内为主 | 二楼高台覆盖广（控制室天桥/夜市阳台），狙击英雄二楼位置优势明显，狭窄走廊适合盾牌/大体积子弹英雄，墙骑机会多，短射程英雄优势',
+        en: 'Short sightlines·Narrow corridors·Medium height·Indoor | Extensive 2F high ground (Control Center catwalks/Night Market balconies), snipers have clear 2F position advantage, narrow passages suit shield/large hitbox heroes, wall ride opportunities, short range advantage',
       },
     },
     {
@@ -235,8 +245,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         ashe: { zh: '短距离高地点位狙击', en: 'Short distance high ground sniping' },
       },
       description: {
-        zh: '短视线·窄通道·高空间·室外 | 高空间飞行英雄优势巨大，短距离快速交战，窄通道适合机动性英雄，火山区域击落机会多',
-        en: 'Short sightlines·Narrow corridors·High space·Outdoor | High space flight heroes huge advantage, short distance quick engagements, narrow corridors suit mobile heroes, many knock-off opportunities in volcanic area',
+        zh: '短视线·窄通道·高空间·室外 | 火山岩石高墙地形，飞行英雄在高墙空间优势极大，短距离快速交战，窄通道适合机动英雄，坠落击杀机制重要',
+        en: 'Short sightlines·Narrow corridors·High space·Outdoor | Volcanic rock tall wall terrain, flight heroes dominate in tall-wall high space, short distance quick engagements, narrow corridors suit mobile heroes, knockoff mechanic important',
       },
     },
     {
@@ -270,8 +280,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         ashe: { zh: '短距离高地点位狙击', en: 'Short distance high ground sniping' },
       },
       description: {
-        zh: '短视线·窄通道·高空间·室外 | 高空间飞行英雄优势巨大，短距离快速交战，窄通道适合机动性英雄，弹跳台可利用',
-        en: 'Short sightlines·Narrow corridors·High space·Outdoor | High space flight heroes huge advantage, short distance quick engagements, narrow corridors suit mobile heroes, jump pads usable',
+        zh: '短视线·窄通道·高空间·室外 | 现代城市高墙建筑，飞行英雄在高墙空间优势极大，短距离快速交战，窄通道适合机动英雄，弹跳台可利用',
+        en: 'Short sightlines·Narrow corridors·High space·Outdoor | Modern city tall wall buildings, flight heroes dominate in tall-wall high space, short distance quick engagements, narrow corridors suit mobile heroes, jump pads usable',
       },
     },
 
@@ -282,7 +292,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Blizzard World',
     pinyin: 'bao xue shi jie',
     type: 'hybrid',
-    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true, hasHighSecondFloor: true, hasHighWalls: true },
+    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['widowmaker', 'ashe', 'sojourn', 'soldier76', 'ana', 'illari', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'baptiste', 'zenyatta', 'reinhardt', 'orisa', 'sigma', 'junker_queen', 'zarya', 'roadhog', 'reaper', 'mei', 'junkrat', 'torbjorn', 'cassidy', 'brigitte', 'moira', 'mauga', 'bastion'],
     heroReasons: {
       widowmaker: { zh: '长视线远程狙击优势巨大，室外高地视野开阔', en: 'Huge sniping advantage on long sightlines, open outdoor high ground' },
@@ -317,8 +327,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       bastion: { zh: '狭窄通道架点输出，大体积子弹伤害高', en: 'Sentry damage in narrow passages, large hitbox damage' },
     },
     description: {
-      zh: '长视线·中等宽度·高空间·室外为主 | 长视线适合狙击/长枪英雄，室外高空间飞行英雄优势明显，高地平台/多个窒息点适合盾牌/大体积子弹英雄，短射程英雄在狭窄区域优势',
-      en: 'Long sightlines·Medium width·High·Outdoor | Long sightlines suit snipers/hitscan, flight advantage in high outdoor space, high platforms/multiple chokes suit shield/large hitbox heroes, short range advantage in narrow areas',
+      zh: '长视线·中等宽度·高空间·室外为主 | 二楼高台覆盖广（城堡/主题公园建筑），高墙建筑视野开阔，长视线适合狙击/长枪英雄，室外高空间飞行英雄优势明显，高台控制权重要',
+      en: 'Long sightlines·Medium width·High·Outdoor | Extensive 2F high ground (castle/theme park buildings), tall wall buildings open sightlines, long sightlines suit snipers/hitscan, flight advantage in high outdoor space, high ground control important',
     },
   },
   {
@@ -327,8 +337,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Eichenwalde',
     pinyin: 'ai xing wa er de',
     type: 'hybrid',
-    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
-    recommendedHeroes: ['reinhardt', 'junker_queen', 'roadhog', 'ramattra', 'mauga', 'hazard', 'reaper', 'mei', 'symmetra', 'junkrat', 'bastion', 'cassidy', 'ashe', 'brigitte', 'moira', 'lucio', 'lifeweaver', 'mizuki', 'zarya', 'torbjorn'],
+    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: true, hasHighWalls: false },
+    recommendedHeroes: ['reinhardt', 'junker_queen', 'roadhog', 'ramattra', 'mauga', 'hazard', 'reaper', 'mei', 'symmetra', 'junkrat', 'bastion', 'cassidy', 'ashe', 'brigitte', 'moira', 'lucio', 'lifeweaver', 'mizuki', 'zarya', 'torbjorn', 'widowmaker', 'hanzo', 'soldier76', 'ana', 'illari', 'genji', 'tracer', 'winston', 'dva', 'doomfist', 'venture', 'kiriko', 'sombra'],
     heroReasons: {
       reinhardt: { zh: '桥下窒息点举盾推进，低屋顶室内地推首选', en: 'Shield push through bridge chokes, top brawl pick in low ceiling indoor' },
       junker_queen: { zh: '狭窄区域适合近战输出', en: 'Narrow areas suit melee' },
@@ -350,10 +360,23 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       mizuki: { zh: '支援地推阵容', en: 'Supports brawl composition' },
       zarya: { zh: '狭窄通道护盾价值高', en: 'Bubbles high value in narrow passages' },
       torbjorn: { zh: '狭窄通道炮台防守', en: 'Turret defense in narrow passages' },
+      widowmaker: { zh: '城堡二楼高台绝佳狙击位，覆盖前院关键区域', en: 'Castle 2F high ground excellent sniper position covering key courtyard areas' },
+      hanzo: { zh: '城堡二楼高台弓箭狙击，龙可覆盖城堡走廊', en: 'Castle 2F high ground arrow sniping, Dragonstrike covers castle corridors' },
+      soldier76: { zh: '城堡二楼高台持续远程输出稳定', en: 'Steady ranged damage from castle 2F high platforms' },
+      ana: { zh: '城堡二楼高台远程治疗和睡眠针优势', en: 'Castle 2F high ground ranged heals and Sleep Dart advantage' },
+      illari: { zh: '城堡二楼高台太阳能光束俯视优势', en: 'Castle 2F high ground solar rifle overlooking advantage' },
+      genji: { zh: '爬墙快速抢占城堡二楼高台，高台侧翼机动', en: 'Wall climb to quickly reach castle 2F high ground, high ground flank mobility' },
+      tracer: { zh: '闪现到城堡高台侧翼骚扰', en: 'Blink to castle high ground for flank harassment' },
+      winston: { zh: '从城堡二楼高台俯冲切入后排', en: 'Dive from castle 2F high ground into backline' },
+      dva: { zh: '推进器飞跃至城堡二楼高台，高台机动控制', en: 'Boosters fly to castle 2F high ground, high ground mobile control' },
+      doomfist: { zh: '城堡高台火箭拳从高处击飞对手', en: 'Castle high ground Rocket Punch knocks opponents down from above' },
+      venture: { zh: '可从地下钻至城堡高台，侧翼灵活', en: 'Can tunnel up to castle high ground, flexible flanking' },
+      kiriko: { zh: '瞬快速支援城堡高台队友', en: 'Swift Step quickly supports teammates on castle high ground' },
+      sombra: { zh: '城堡高台侧翼骚扰敌方后排', en: 'Castle high ground flanking to harass enemy backline' },
     },
     description: {
-      zh: '短视线·窄通道·低屋顶·室内为主 | 狭窄通道适合盾牌/大体积子弹英雄，低屋顶地推首选，桥下窒息点，有限侧翼，城堡高地可利用，短射程英雄优势',
-      en: 'Short sightlines·Narrow passages·Low ceiling·Indoor | Narrow passages suit shield/large hitbox heroes, top brawl in low ceiling, bridge chokes, limited flanks, castle high ground usable, short range advantage',
+      zh: '短视线·窄通道·中等高度·室内/室外混合 | 城堡段二楼高台覆盖率高，狙击英雄城堡高地优势显著，桥下窒息点和窄通道适合盾牌/大体积子弹英雄，机动英雄可垂直位移抢占高台',
+      en: 'Short sightlines·Narrow passages·Medium height·Mixed indoor/outdoor | High 2F coverage in castle section, snipers dominate castle heights, bridge chokes and narrow passages suit shield/large hitbox heroes, mobile heroes use vertical mobility to reach high ground',
     },
   },
   {
@@ -475,8 +498,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lifeweaver: { zh: '生命平台利用高地', en: 'Life Platform uses high ground' },
     },
     description: {
-      zh: '长视线·中等宽度·高空间·室内为主 | 长距离中等宽度适合狙击/长枪英雄，高空间飞行英雄优势明显，机动性英雄快速转点',
-      en: 'Long sightlines·Medium width·High space·Indoor | Long medium space suits snipers/hitscan, flight advantage in high space, mobile heroes quick rotations',
+      zh: '长视线·中等宽度·高空间·室内为主 | 高墙摩天楼建筑（中央车站/办公楼群），飞行英雄在高墙空间优势明显，长距离中等宽度适合狙击/长枪英雄，机动性英雄快速转点',
+      en: 'Long sightlines·Medium width·High space·Indoor | Tall wall skyscraper buildings (Grand Central/office complex), flight heroes notable advantage in tall-wall high space, long medium space suits snipers/hitscan, mobile heroes quick rotations',
     },
   },
   {
@@ -485,8 +508,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Numbani',
     pinyin: 'nu ba ni',
     type: 'hybrid',
-    dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
-    recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'domina', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe'],
+    dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: true, hasHighWalls: true },
+    recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'domina', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe', 'widowmaker', 'soldier76', 'ana', 'illari'],
     heroReasons: {
       pharah: { zh: '短距离窄通道高空间，室外飞行轰炸优势巨大', en: 'Short distance narrow high space, huge outdoor flight bombardment advantage' },
       echo: { zh: '高空间飞行机动输出，短距离快速交战', en: 'High space flight mobile damage, short distance quick engagements' },
@@ -510,10 +533,14 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lifeweaver: { zh: '生命平台可以利用高地优势', en: 'Life Platform can utilize high ground advantage' },
       hanzo: { zh: '短距离龙覆盖窄通道', en: 'Short distance Dragonstrike covers narrow corridors' },
       ashe: { zh: '短距离高地点位狙击', en: 'Short distance high ground sniping' },
+      widowmaker: { zh: '博物馆/机场二楼高台和高墙建筑提供极佳狙击位', en: 'Museum/airport 2F high ground and tall wall buildings provide excellent sniper positions' },
+      soldier76: { zh: '二楼高台结合高墙建筑持续远程输出', en: 'Steady ranged damage from 2F high ground with tall wall buildings' },
+      ana: { zh: '博物馆二楼高台远程治疗和睡眠针优势', en: 'Museum 2F high ground ranged heals and Sleep Dart advantage' },
+      illari: { zh: '二楼高台太阳能光束俯视优势，高墙建筑提供炮台位置', en: '2F high ground solar rifle overlooking advantage, tall walls provide turret positions' },
     },
     description: {
-      zh: '短视线·窄通道·高空间·室外 | 高空间飞行英雄优势巨大，短距离快速交战，窄通道适合机动性英雄，高地两侧可利用',
-      en: 'Short sightlines·Narrow corridors·High space·Outdoor | High space flight heroes huge advantage, short distance quick engagements, narrow corridors suit mobile heroes, high ground both sides usable',
+      zh: '短视线·窄通道·高空间·室外 | 二楼高台覆盖广（博物馆/机场阳台），高墙建筑提供垂直空间，飞行和狙击英雄优势巨大，机动英雄可快速抢占高台',
+      en: 'Short sightlines·Narrow corridors·High space·Outdoor | Extensive 2F high ground (museum/airport balconies), tall wall buildings provide vertical space, flight and sniper heroes huge advantage, mobile heroes can quickly reach high ground',
     },
   },
   {
@@ -601,7 +628,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Circuit Royal',
     pinyin: 'huang jia sai dao',
     type: 'escort',
-    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
+    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true, hasHighSecondFloor: true, hasHighWalls: true },
     recommendedHeroes: ['widowmaker', 'sojourn', 'soldier76', 'ana', 'illari', 'ashe', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'baptiste', 'zenyatta', 'orisa', 'sigma', 'domina', 'reinhardt', 'junker_queen', 'zarya'],
     heroReasons: {
       widowmaker: { zh: '长视线远程狙击优势巨大，室外高地视野开阔', en: 'Huge sniping advantage on long sightlines, open outdoor high ground' },
@@ -627,8 +654,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       zarya: { zh: '护盾保护队友', en: 'Bubble protection for teammates' },
     },
     description: {
-      zh: '长视线·中等宽度·高空间·室外 | 长视线适合狙击/长枪英雄，室外高空间飞行英雄优势明显，狭窄起点高地咖啡馆可利用，弯道窒息点',
-      en: 'Long sightlines·Medium width·High·Outdoor | Long sightlines suit snipers/hitscan, flight advantage in high outdoor space, narrow start high ground cafe usable, curve chokes',
+      zh: '长视线·中等宽度·高空间·室外 | 二楼高台覆盖广沿赛道连续分布，高墙建筑视野开阔，长视线适合狙击/长枪英雄，室外高空间飞行英雄优势明显，高台控制权决定防守强度',
+      en: 'Long sightlines·Medium width·High·Outdoor | 2F high platforms continuously distributed along racecourse, tall wall buildings open sightlines, long sightlines suit snipers/hitscan, flight advantage in high outdoor space, high ground control determines defense strength',
     },
   },
   {
@@ -637,8 +664,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Dorado',
     pinyin: 'duo la duo',
     type: 'escort',
-    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
-    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
+    dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: true, hasHighWalls: false },
+    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko', 'widowmaker', 'ashe', 'hanzo', 'soldier76', 'ana', 'illari', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy'],
     heroReasons: {
       reinhardt: { zh: '短距离窄通道举盾推进', en: 'Shield push through short narrow passages' },
       mauga: { zh: '短距离窄通道双枪火力压制，大体积子弹伤害高', en: 'Dual gun suppression in short narrow passages, large hitbox damage' },
@@ -667,10 +694,22 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lucio: { zh: '加速推进通过短窄路段，墙骑利用地形', en: 'Speed boost through short narrow sections, wall ride terrain' },
       lifeweaver: { zh: '生命平台支援推进', en: 'Life Platform supports push' },
       kiriko: { zh: '瞬快速支援短距离窄通道', en: 'Swift Step for fast support in short narrow passages' },
+        widowmaker: { zh: '多拉多全程屋顶和二楼阳台提供极佳狙击位', en: 'Dorado rooftops and 2F balconies throughout provide excellent sniper positions' },
+        ashe: { zh: '二楼屋顶和阳台消耗狙击优势明显', en: 'Clear 2F rooftop and balcony poke sniper advantage' },
+        hanzo: { zh: '二楼高台视野优势，龙可覆盖下方窄通道', en: '2F high ground vision advantage, Dragonstrike covers narrow passages below' },
+        soldier76: { zh: '二楼屋顶持续远程输出稳定', en: 'Steady ranged damage from 2F rooftops' },
+        ana: { zh: '二楼屋顶远程治疗和睡眠针优势', en: '2F rooftop ranged heals and Sleep Dart advantage' },
+        illari: { zh: '二楼高台太阳能光束俯视优势', en: '2F high ground solar rifle overlooking advantage' },
+        pharah: { zh: '二楼屋顶提供飞行起跳点，空中轰炸优势', en: '2F rooftops provide flight launch points, aerial bombardment advantage' },
+        echo: { zh: '飞行机动配合二楼高台消耗', en: 'Flight mobility with 2F high ground poke' },
+        juno: { zh: '飞行支援配合二楼高台覆盖', en: 'Flight support with 2F high ground coverage' },
+        feitianmao: { zh: '飞行支援机动性强，利用二楼高台', en: 'Flight support with high mobility, utilizes 2F high ground' },
+        freja: { zh: '垂直机动输出利用屋顶高台', en: 'Vertical mobile damage utilizing rooftop platforms' },
+        mercy: { zh: '飞行配合空中输出队友', en: 'Flight supports aerial damage allies' },
     },
     description: {
-      zh: '短视线·窄通道·中等高度·室外 | 短距离窄通道适合盾牌/大体积子弹英雄，地推阵容优势，短射程英雄优势',
-      en: 'Short sightlines·Narrow corridors·Medium height·Outdoor | Short narrow passages suit shield/large hitbox heroes, brawl comp advantage, short range advantage',
+      zh: '短视线·窄通道·中等高度·室外 | 二楼高台覆盖广（屋顶/阳台），高台控制权决定推进速度，狙击和飞行英雄优势明显，短距离窄通道适合盾牌/大体积子弹英雄',
+      en: 'Short sightlines·Narrow corridors·Medium height·Outdoor | Extensive 2F high ground (rooftops/balconies), high ground control determines push speed, snipers and flight heroes at clear advantage, short narrow passages suit shield/large hitbox heroes',
     },
   },
   {
@@ -756,8 +795,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Rialto',
     pinyin: 'li a er tuo',
     type: 'escort',
-    dimensions: { length: 'medium', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
-    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'sombra', 'genji', 'venture', 'tracer', 'sojourn', 'ashe', 'lucio', 'lifeweaver', 'kiriko'],
+    dimensions: { length: 'medium', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: true, hasHighWalls: false },
+    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'sombra', 'genji', 'venture', 'tracer', 'sojourn', 'ashe', 'lucio', 'lifeweaver', 'kiriko', 'widowmaker', 'hanzo', 'soldier76', 'ana', 'illari', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy'],
     heroReasons: {
       reinhardt: { zh: '狭窄水道举盾推进', en: 'Shield push through narrow waterway' },
       mauga: { zh: '狭窄水道双枪火力压制，大体积子弹伤害高', en: 'Dual gun suppression in narrow waterway, large hitbox damage' },
@@ -784,10 +823,21 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lucio: { zh: '音障推进，墙骑利用地形', en: 'Sound Barrier for push, wall ride terrain' },
       lifeweaver: { zh: '生命平台支援', en: 'Life Platform support' },
       kiriko: { zh: '瞬快速支援狭窄水道', en: 'Swift Step supports narrow waterway' },
+      widowmaker: { zh: '威尼斯桥梁和二楼阳台提供极佳狙击位', en: 'Venice bridges and 2F balconies provide excellent sniper positions' },
+      hanzo: { zh: '二楼桥梁和阳台视野优势，龙覆盖水道', en: '2F bridges and balconies vision advantage, Dragonstrike covers waterways' },
+      soldier76: { zh: '二楼建筑和桥梁持续远程输出稳定', en: 'Steady ranged damage from 2F buildings and bridges' },
+      ana: { zh: '二楼建筑远程治疗和睡眠针优势', en: '2F building ranged heals and Sleep Dart advantage' },
+      illari: { zh: '二楼高台太阳能光束俯视优势', en: '2F high ground solar rifle overlooking advantage' },
+      pharah: { zh: '威尼斯二楼建筑和水面上方飞行轰炸优势', en: 'Venice 2F buildings and flight bombardment above waterways advantage' },
+      echo: { zh: '飞行机动配合二楼高台消耗', en: 'Flight mobility with 2F high ground poke' },
+      juno: { zh: '飞行支援配合二楼高台覆盖', en: 'Flight support with 2F high ground coverage' },
+      feitianmao: { zh: '飞行支援机动性强', en: 'Flight support with high mobility' },
+      freja: { zh: '垂直机动输出利用桥梁高台', en: 'Vertical mobile damage utilizing bridge platforms' },
+      mercy: { zh: '飞行配合空中输出队友', en: 'Flight supports aerial damage allies' },
     },
     description: {
-      zh: '中视线·窄通道·中等高度·室外 | 狭窄水道适合盾牌/大体积子弹英雄，多侧翼路径后排易破，水道掩体消耗，短射程英雄在狭窄通道优势',
-      en: 'Medium sightlines·Narrow passages·Medium height·Outdoor | Narrow waterway suits shield/large hitbox heroes, multiple flank paths vulnerable backline, waterway cover poke, short range advantage in narrow passages',
+      zh: '中视线·窄通道·中等高度·室外 | 二楼高台覆盖广（威尼斯桥梁/建筑阳台），狙击和飞行英雄二楼优势明显，窄水道适合盾牌/大体积子弹英雄，多路侧翼风险',
+      en: 'Medium sightlines·Narrow passages·Medium height·Outdoor | Extensive 2F high ground (Venice bridges/building balconies), snipers and flight heroes clear 2F advantage, narrow waterway suits shield/large hitbox heroes, multiple flank risks',
     },
   },
   {
@@ -822,8 +872,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       ashe: { zh: '高地点位狙击', en: 'High ground point sniping' },
     },
     description: {
-      zh: '长视线·窄通道·高空间·室外 | 高空间飞行英雄优势巨大，长距离快速交战，窄通道适合机动性英雄',
-      en: 'Long sightlines·Narrow corridors·High space·Outdoor | High space flight heroes huge advantage, long distance quick engagements, narrow corridors suit mobile heroes',
+      zh: '长视线·窄通道·高空间·室外 | 峡谷高墙岩石地形，飞行英雄在高墙空间优势巨大，长距离窄通道适合机动性英雄，高墙为飞行英雄提供掩护',
+      en: 'Long sightlines·Narrow corridors·High space·Outdoor | Canyon tall wall rock terrain, flight heroes huge advantage in tall-wall high space, long narrow passages suit mobile heroes, tall walls provide cover for flight heroes',
     },
   },
   {
@@ -832,8 +882,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Watchpoint: Gibraltar',
     pinyin: 'zhi bu luo tuo',
     type: 'escort',
-    dimensions: { length: 'medium', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
-    recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe'],
+    dimensions: { length: 'medium', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: true, hasHighWalls: true },
+    recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe', 'widowmaker', 'sojourn', 'soldier76', 'ana', 'illari'],
     heroReasons: {
       pharah: { zh: '中等距离窄通道高空间，室外飞行轰炸优势巨大', en: 'Medium narrow high space, huge outdoor flight bombardment advantage' },
       echo: { zh: '高空间飞行机动输出', en: 'High space flight mobile damage' },
@@ -856,10 +906,15 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lifeweaver: { zh: '生命平台利用高地', en: 'Life Platform uses high ground' },
       hanzo: { zh: '龙覆盖窄通道', en: 'Dragonstrike covers narrow corridors' },
       ashe: { zh: '高地点位狙击', en: 'High ground point sniping' },
+        widowmaker: { zh: '全游戏最立体地图之一，三层结构提供极佳狙击位', en: 'One of the most vertical maps in game, 3-tier structure provides excellent sniper positions' },
+        sojourn: { zh: '高台加高墙建筑超频输出优势极大', en: 'High platforms plus tall walls Overclock damage extreme advantage' },
+        soldier76: { zh: '三层立体结构多个高台持续输出稳定', en: 'Steady ranged damage from multiple platforms in 3-tier structure' },
+        ana: { zh: '高台远程治疗和睡眠针，三层立体结构中优势极大', en: 'High ground ranged heals and Sleep Dart, extreme advantage in 3-tier structure' },
+        illari: { zh: '高台太阳能光束俯视优势，高墙提供炮台架设位置', en: 'High ground solar rifle overlooking advantage, tall walls provide turret placement positions' },
     },
     description: {
-      zh: '中视线·窄通道·高空间·室外 | 高空间飞行英雄优势巨大，中等距离快速交战，窄通道适合机动性英雄',
-      en: 'Medium sightlines·Narrow corridors·High space·Outdoor | High space flight heroes huge advantage, medium distance quick engagements, narrow corridors suit mobile heroes',
+      zh: '中视线·窄通道·高空间·室外 | 全游戏最强立体地图，二楼/三楼高台覆盖率90%+，高墙建筑提供垂直空间，狙击和飞行英雄优势极大，高台控制权几乎决定胜败',
+      en: 'Medium sightlines·Narrow corridors·High space·Outdoor | Most vertical map in game, 2F/3F high ground coverage 90%+, tall wall buildings provide vertical space, snipers and flight heroes extreme advantage, high ground control nearly decides match outcome',
     },
   },
   {
@@ -868,7 +923,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     nameEn: 'Shambali Monastery',
     pinyin: 'xiang ba li si yuan',
     type: 'escort',
-    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true, hasHighSecondFloor: true, hasHighWalls: true },
+    dimensions: { length: 'long', width: 'medium', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
     recommendedHeroes: ['widowmaker', 'sojourn', 'soldier76', 'ana', 'illari', 'ashe', 'hanzo', 'pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'baptiste', 'zenyatta', 'winston', 'wrecking_ball', 'doomfist', 'sigma', 'orisa', 'mauga', 'lucio'],
     heroReasons: {
       sigma: { zh: '高垂直寺庙掩体消耗', en: 'Poke from high vertical monastery cover' },
@@ -890,8 +945,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       baptiste: { zh: '增幅矩阵覆盖', en: 'Amplification Matrix coverage' },
     },
     description: {
-      zh: '长视线·中等宽度·高空间·室外 | 长视线适合狙击/长枪英雄，室外高空间飞行英雄优势明显，高垂直寺庙可利用，狭窄路段火力压制',
-      en: 'Long sightlines·Medium width·High·Outdoor | Long sightlines suit snipers/hitscan, flight advantage in high outdoor space, high vertical monastery usable, fire suppression in narrow sections',
+      zh: '长视线·中等宽度·高空间·室外 | 寺院二楼高台和多层台阶全程覆盖，高墙寺庙建筑，长视线适合狙击/长枪英雄，飞行英雄高空间优势明显，二楼高台控制权决定胜败',
+      en: 'Long sightlines·Medium width·High·Outdoor | Monastery 2F platforms and multi-tier steps throughout, tall wall temple buildings, long sightlines suit snipers/hitscan, flight heroes notable high space advantage, 2F high ground control decisive',
     },
   },
   // 推进模式地图
@@ -932,8 +987,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lifeweaver: { zh: '生命平台利用高地', en: 'Life Platform uses high ground' },
     },
     description: {
-      zh: '长视线·宽通道·高空间·室外 | 长距离宽通道适合狙击/长枪英雄，室外高空间飞行英雄优势巨大，机动性英雄快速转点',
-      en: 'Long sightlines·Wide corridors·High space·Outdoor | Long wide space suits snipers/hitscan, huge flight advantage in high outdoor space, mobile heroes quick rotations',
+      zh: '长视线·宽通道·高空间·室外 | 古代遗迹高墙石构，宽广高空间飞行和狙击英雄优势巨大，长视线宽通道适合各类远程英雄',
+      en: 'Long sightlines·Wide corridors·High space·Outdoor | Ancient ruins tall wall stone structures, wide high space flight and sniper heroes huge advantage, long wide passages suit various ranged heroes',
     },
   },
   {
@@ -968,8 +1023,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       ashe: { zh: '高地点位狙击', en: 'High ground point sniping' },
     },
     description: {
-      zh: '中视线·窄通道·高空间·室内为主 | 高空间飞行英雄优势巨大，中等距离快速交战，窄通道适合机动性英雄',
-      en: 'Medium sightlines·Narrow corridors·High space·Indoor | High space flight heroes huge advantage, medium distance quick engagements, narrow corridors suit mobile heroes',
+      zh: '中视线·窄通道·高空间·室内为主 | 古罗马斗兽场高墙，飞行英雄在高墙空间优势巨大，中等距离窄通道适合机动性英雄，高墙限制地面英雄视野',
+      en: 'Medium sightlines·Narrow corridors·High space·Indoor | Roman Colosseum tall walls, flight heroes huge advantage in tall-wall high space, medium narrow passages suit mobile heroes, tall walls limit ground heroes sightlines',
     },
   },
   {
@@ -1010,8 +1065,8 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       soldier76: { zh: '长视线持续远程输出', en: 'Sustained ranged damage on long sightlines' },
     },
     description: {
-      zh: '长视线·宽大·高空间·室外 | 长视线适合狙击/长枪英雄，室外高空间飞行英雄优势巨大，出生走廊机动推进，塔侧翼快速转点，宽大地图机动英雄快速转点',
-      en: 'Long sightlines·Wide·High·Outdoor | Long sightlines suit snipers/hitscan, huge flight advantage in high outdoor space, spawn corridor mobile push, tower flanks fast rotations, mobile heroes fast rotations on wide map',
+      zh: '长视线·宽通道·高空间·室外 | 葡萄牙海滨城市高墙建筑，宽广高空间飞行和狙击英雄优势巨大，长视线宽通道适合各类远程英雄',
+      en: 'Long sightlines·Wide corridors·High space·Outdoor | Portuguese coastal city tall wall buildings, wide high space flight and sniper heroes huge advantage, long wide passages suit various ranged heroes',
     },
   },
   {
