@@ -229,13 +229,21 @@ const ForceGraph = ({
   // 计算搜索匹配的英雄 ID
   const matchedHeroIds = useMemo(() => {
     if (!debouncedSearchQuery) return [];
-    const searchLower = debouncedSearchQuery.toLowerCase();
+    const searchLower = debouncedSearchQuery.toLowerCase().replace(/\s/g, '');
     return heroes
-      .filter(hero => 
-        hero.name.toLowerCase().includes(searchLower) ||
-        hero.nameEn.toLowerCase().includes(searchLower) ||
-        (hero.nickname && hero.nickname.toLowerCase().includes(searchLower))
-      )
+      .filter(hero => {
+        if (
+          hero.name.toLowerCase().includes(searchLower) ||
+          hero.nameEn.toLowerCase().includes(searchLower) ||
+          (hero.nickname && hero.nickname.toLowerCase().includes(searchLower))
+        ) return true;
+        if (hero.pinyin) {
+          const pinyinNoSpace = hero.pinyin.replace(/\s/g, '');
+          const initials = hero.pinyin.split(/\s+/).map(s => s[0]).join('');
+          return pinyinNoSpace.includes(searchLower) || initials.includes(searchLower);
+        }
+        return false;
+      })
       .map(hero => hero.id);
   }, [debouncedSearchQuery]);
 

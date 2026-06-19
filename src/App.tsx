@@ -500,11 +500,16 @@ const [isMapCopied, setIsMapCopied] = useState(false);
       result = result.filter(m => m.type === activeMapType);
     }
     if (debouncedMapSearch) {
-      const search = debouncedMapSearch.toLowerCase();
-      result = result.filter(m => 
-        m.name.toLowerCase().includes(search) || 
-        m.nameEn.toLowerCase().includes(search)
-      );
+      const search = debouncedMapSearch.toLowerCase().replace(/\s/g, '');
+      result = result.filter(m => {
+        if (m.name.toLowerCase().includes(search) || m.nameEn.toLowerCase().includes(search)) return true;
+        if (m.pinyin) {
+          const pinyinNoSpace = m.pinyin.replace(/\s/g, '');
+          const initials = m.pinyin.split(/\s+/).map(s => s[0]).join('');
+          return pinyinNoSpace.includes(search) || initials.includes(search);
+        }
+        return false;
+      });
     }
     return result;
   }, [debouncedMapSearch, activeMapType]);
