@@ -44,6 +44,7 @@ import {
   History,
   Info,
   MonitorDown,
+  Pin,
   Plus,
   RotateCcw,
   Save,
@@ -1957,11 +1958,15 @@ const {
               onMouseLeave={handleCounterPanelMouseLeave}
               className="absolute -left-[2.375rem] top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
             >
-              <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isCounterPanelCollapsed ? '' : 'rotate-180'}`} />
+              {isCounterPanelPinnedCollapsed && !isCounterPanelCollapsed ? (
+                <Pin className="w-4 h-4 text-cyan-400" />
+              ) : (
+                <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isCounterPanelCollapsed ? '' : 'rotate-180'}`} />
+              )}
             </button>
           </TooltipTrigger>
           <TooltipContent side="left">
-            <p>{isCounterPanelPinnedCollapsed ? '展开面板' : '收起面板'}</p>
+            <p>{isCounterPanelPinnedCollapsed && !isCounterPanelCollapsed ? '点击固定展开' : isCounterPanelPinnedCollapsed ? '展开面板' : '收起面板'}</p>
           </TooltipContent>
         </Tooltip>
         <div

@@ -27,6 +27,7 @@ import {
   Globe,
   Heart,
   MapPin,
+  Pin,
   Plus,
   RotateCcw,
   Search,
@@ -678,11 +679,15 @@ const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(() => {
                   onMouseLeave={handleDrawerMouseLeave}
                   className="absolute -right-[2.375rem] top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
                 >
-                  <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isDrawerOpen ? '' : 'rotate-180'}`} />
+                  {!isDrawerPinnedOpen && isDrawerOpen ? (
+                    <Pin className="w-4 h-4 text-cyan-400" />
+                  ) : (
+                    <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isDrawerOpen ? '' : 'rotate-180'}`} />
+                  )}
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{isDrawerPinnedOpen ? '收起面板' : '展开面板'}</p>
+                <p>{!isDrawerPinnedOpen && isDrawerOpen ? '点击固定展开' : isDrawerPinnedOpen ? '收起面板' : '展开面板'}</p>
               </TooltipContent>
             </Tooltip>
             <div
