@@ -195,6 +195,7 @@ function AppContent() {
   const [activeMapType, setActiveMapType] = useState<ActiveMapType>('all');
 const [isMapCopied, setIsMapCopied] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [isDrawerPinnedOpen, setIsDrawerPinnedOpen] = useState(true);
   const [hoverTimer, setHoverTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [mapStatsMapId, setMapStatsMapId] = useState<MapId | null>(null);
   const [isMapStatsOpen, setIsMapStatsOpen] = useState(false);
@@ -289,6 +290,18 @@ const [isMapCopied, setIsMapCopied] = useState(false);
 
   const handleDismissMobileDialog = () => {
     setShowMobileDialog(false);
+  };
+
+  const handleDrawerMouseEnter = () => {
+    if (!isDrawerPinnedOpen) {
+      setIsDrawerOpen(true);
+    }
+  };
+
+  const handleDrawerMouseLeave = () => {
+    if (!isDrawerPinnedOpen) {
+      setIsDrawerOpen(false);
+    }
   };
 
   useEffect(() => {
@@ -631,17 +644,27 @@ const [isMapCopied, setIsMapCopied] = useState(false);
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+                  onClick={() => {
+                    const next = !isDrawerPinnedOpen;
+                    setIsDrawerPinnedOpen(next);
+                    setIsDrawerOpen(next);
+                  }}
+                  onMouseEnter={handleDrawerMouseEnter}
+                  onMouseLeave={handleDrawerMouseLeave}
                   className="absolute -right-[2.375rem] top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
                 >
                   <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isDrawerOpen ? '' : 'rotate-180'}`} />
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{isDrawerOpen ? '收起面板' : '展开面板'}</p>
+                <p>{isDrawerPinnedOpen ? '收起面板' : '展开面板'}</p>
               </TooltipContent>
             </Tooltip>
-            <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
+            <div
+              className="flex-1 overflow-hidden pointer-events-auto h-full relative"
+              onMouseEnter={handleDrawerMouseEnter}
+              onMouseLeave={handleDrawerMouseLeave}
+            >
               <Card className="p-3 bg-slate-800/60 border-slate-700 backdrop-blur-md shadow-xl h-full flex flex-col gap-1 rounded-xl border">
                 <div className="flex items-center justify-between flex-shrink-0 gap-2">
                   <div className="flex items-center gap-3 min-w-0">

@@ -183,6 +183,7 @@ const ForceGraph = ({
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isCounterPanelCollapsed, setIsCounterPanelCollapsed] = useState(false);
+  const [isCounterPanelPinnedCollapsed, setIsCounterPanelPinnedCollapsed] = useState(false);
   const [isHeroStatsOpen, setIsHeroStatsOpen] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const isMultiSelect = selectedHeroes.length > 1;
@@ -1792,6 +1793,18 @@ const {
     updateGraphVisuals();
   }, [selectedHeroes, activeCounterTab, isMultiSelect, commonRelatedIds, matchedHeroIds, updateGraphVisuals]);
 
+  const handleCounterPanelMouseEnter = () => {
+    if (isCounterPanelPinnedCollapsed) {
+      setIsCounterPanelCollapsed(false);
+    }
+  };
+
+  const handleCounterPanelMouseLeave = () => {
+    if (isCounterPanelPinnedCollapsed) {
+      setIsCounterPanelCollapsed(true);
+    }
+  };
+
   const handleZoomIn = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 1.3);
   const handleZoomOut = () => svgRef.current && d3.select(svgRef.current).transition().duration(300).call(zoomRef.current!.scaleBy, 0.7);
   const handleReset = () => { if (svgRef.current) d3.select(svgRef.current).transition().duration(500).call(zoomRef.current!.transform, d3.zoomIdentity); onHeroSelect([]); };
@@ -1910,17 +1923,27 @@ const {
         <Tooltip>
           <TooltipTrigger asChild>
             <button
-              onClick={() => setIsCounterPanelCollapsed(!isCounterPanelCollapsed)}
+              onClick={() => {
+                const next = !isCounterPanelPinnedCollapsed;
+                setIsCounterPanelPinnedCollapsed(next);
+                setIsCounterPanelCollapsed(next);
+              }}
+              onMouseEnter={handleCounterPanelMouseEnter}
+              onMouseLeave={handleCounterPanelMouseLeave}
               className="absolute -left-[2.375rem] top-1/2 -translate-y-1/2 z-20 w-7 h-14 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 rounded-lg flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 group pointer-events-auto"
             >
               <ChevronLeft className={`w-4 h-4 text-slate-300 group-hover:text-cyan-400 transition-transform duration-200 ${isCounterPanelCollapsed ? '' : 'rotate-180'}`} />
             </button>
           </TooltipTrigger>
           <TooltipContent side="left">
-            <p>{isCounterPanelCollapsed ? '展开面板' : '收起面板'}</p>
+            <p>{isCounterPanelPinnedCollapsed ? '展开面板' : '收起面板'}</p>
           </TooltipContent>
         </Tooltip>
-        <div className="flex-1 overflow-hidden pointer-events-auto h-full relative">
+        <div
+          className="flex-1 overflow-hidden pointer-events-auto h-full relative"
+          onMouseEnter={handleCounterPanelMouseEnter}
+          onMouseLeave={handleCounterPanelMouseLeave}
+        >
           <Card className="p-3 bg-slate-800/60 border-slate-700 backdrop-blur-md shadow-xl h-full flex flex-col gap-1">
             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-700/50 flex-shrink-0">
               <ShieldAlert className="w-5 h-5 text-cyan-400 flex-shrink-0" />
