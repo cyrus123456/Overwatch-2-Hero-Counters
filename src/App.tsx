@@ -812,7 +812,8 @@ const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(() => {
                                         setIsMapStatsOpen(true);
                                       }}
                                     >
-                                      <BarChart3 className="w-3.5 h-3.5" />
+                                      <BarChart3 className="w-3.5 h-3.5 flex-shrink-0" />
+                                      <span className="text-xs max-w-20 truncate">{t('viewMapStats')}</span>
                                     </button>
                                   </TooltipTrigger>
                                   <TooltipContent side="top" className="bg-slate-900 border-slate-700 p-2 z-[100]">
@@ -827,7 +828,6 @@ const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(() => {
                                         onClick={(e) => { e.stopPropagation(); resetMapToDefault(map.id); }}
                                       >
                                         <RotateCcw className="w-3.5 h-3.5 text-slate-400 hover:text-cyan-400" />
-                                        <span className="text-xs text-slate-400 hover:text-cyan-400">{t('resetMapDefault')}</span>
                                       </button>
                                     </TooltipTrigger>
                                     <TooltipContent side="top" className="bg-slate-900 border-slate-700 p-2 z-[100]">

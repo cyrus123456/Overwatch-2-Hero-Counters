@@ -2018,7 +2018,8 @@ const {
                                 onClick={() => setIsHeroStatsOpen(true)}
                                 className="flex items-center gap-1 p-1.5 rounded hover:bg-cyan-600/20 text-cyan-400 transition-colors flex-shrink-0"
                               >
-                                <BarChart3 className="w-3.5 h-3.5" />
+                                <BarChart3 className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span className="text-xs max-w-20 truncate">{t('viewHeroStats')}</span>
                               </button>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -2032,7 +2033,6 @@ const {
                                 className="flex items-center gap-1 p-1 rounded hover:bg-slate-600/50 text-slate-500 hover:text-cyan-400 transition-colors flex-shrink-0"
                               >
                                 <RotateCcw className="w-3.5 h-3.5" />
-                                <span className="text-xs hover:text-cyan-400 max-w-[5.625rem]">{t('restoreHeroRelations')}</span>
                               </button>
                             </TooltipTrigger>
                             <TooltipContent>

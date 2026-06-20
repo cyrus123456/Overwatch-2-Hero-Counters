@@ -172,8 +172,8 @@ const translations: Record<Language, Record<string, string>> = {
     heroRelationStatsTitle: '英雄关系统计',
     noStatsAvailable: '暂无统计数据',
     statsDisclaimer: '统计数据来自玩家自定义数据，仅供参考',
-    viewMapStats: '查看地图统计',
-    viewHeroStats: '查看英雄统计',
+    viewMapStats: '查看玩家投票统计数据',
+    viewHeroStats: '查看玩家投票统计数据',
     cloudSyncEnabled: '云端同步已启用',
     cloudSyncDisabled: '云端同步已禁用',
     enableCloudSync: '启用云端同步',
@@ -347,8 +347,8 @@ const translations: Record<Language, Record<string, string>> = {
     heroRelationStatsTitle: 'Hero Relation Stats',
     noStatsAvailable: 'No stats available',
     statsDisclaimer: 'Stats are from player custom data, for reference only',
-    viewMapStats: 'View Map Stats',
-    viewHeroStats: 'View Hero Stats',
+    viewMapStats: 'View Player Voting Stats',
+    viewHeroStats: 'View Player Voting Stats',
     cloudSyncEnabled: 'Cloud Sync Enabled',
     cloudSyncDisabled: 'Cloud Sync Disabled',
     enableCloudSync: 'Enable Cloud Sync',
@@ -470,6 +470,8 @@ const translations: Record<Language, Record<string, string>> = {
     mobilePwaDesc: 'このページをホーム画面に追加すると、ブラウザのツールバーなしでアプリのような体験ができます。（英雄の検索ボックスは画面下部にあります）',
     mobileFullscreenTitle: 'フルスクリーンモード',
     mobileFullscreenDesc: '下のボタンをタップしてフルスクリーンにし、より快適に閲覧しましょう。（英雄の検索ボックスは画面下部にあります）',
+    viewMapStats: 'プレイヤー投票統計を表示',
+    viewHeroStats: 'プレイヤー投票統計を表示',
   },
   ko: {
     title: '오버워치 2 영웅 상성도',
@@ -591,6 +593,8 @@ const translations: Record<Language, Record<string, string>> = {
     mobilePwaDesc: '이 페이지를 홈 화면에 저장하면 브라우저 도구모음 없이 앱 같은 경험을 할 수 있습니다. (영웅 검색창은 화면 하단에 있습니다)',
     mobileFullscreenTitle: '전체화면 모드',
     mobileFullscreenDesc: '아래 버튼을 탭하여 전체화면으로 전환하고 더 나은 보기 환경을 누리세요. (영웅 검색창은 화면 하단에 있습니다)',
+    viewMapStats: '플레이어 투표 통계 보기',
+    viewHeroStats: '플레이어 투표 통계 보기',
   },
   'zh-TW': {
     title: '鬥陣特攻英雄被剋制關係圖',
@@ -712,6 +716,8 @@ const translations: Record<Language, Record<string, string>> = {
     mobilePwaDesc: '將此網頁儲存至主畫面，即可獲得類似 App 的完整體驗，隱藏瀏覽器工具列。（英雄快速搜尋框位於畫面底部）',
     mobileFullscreenTitle: '全螢幕瀏覽',
     mobileFullscreenDesc: '點擊下方按鈕進入全螢幕模式，獲得更好的瀏覽體驗。（英雄快速搜尋框位於畫面底部）',
+    viewMapStats: '查看玩家投票統計數據',
+    viewHeroStats: '查看玩家投票統計數據',
   },
   es: {
     title: 'Sobrecarga de Contadores de Héroes de Overwatch 2',
@@ -807,6 +813,8 @@ const translations: Record<Language, Record<string, string>> = {
     mobilePwaDesc: 'Guarda esta página en tu pantalla de inicio para una experiencia tipo app sin la barra del navegador. (La barra de búsqueda está en la parte inferior)',
     mobileFullscreenTitle: 'Modo Pantalla Completa',
     mobileFullscreenDesc: 'Toca el botón abajo para activar pantalla completa y una mejor experiencia de visualización. (La barra de búsqueda está en la parte inferior)',
+    viewMapStats: 'Ver estadísticas de votos de jugadores',
+    viewHeroStats: 'Ver estadísticas de votos de jugadores',
   },
   fr: {
     title: 'Relations de Contre des Héros Overwatch 2',
@@ -922,6 +930,8 @@ const translations: Record<Language, Record<string, string>> = {
     mobilePwaDesc: 'Enregistrez cette page sur votre écran d\'accueil pour une expérience type application sans la barre du navigateur. (La barre de recherche est en bas)',
     mobileFullscreenTitle: 'Mode Plein Écran',
     mobileFullscreenDesc: 'Appuyez sur le bouton ci-dessous pour passer en plein écran et profiter d\'une meilleure expérience. (La barre de recherche est en bas)',
+    viewMapStats: 'Voir les statistiques de vote des joueurs',
+    viewHeroStats: 'Voir les statistiques de vote des joueurs',
   },
   de: {
     title: 'Overwatch 2 Helden Gegenbeziehungen',
@@ -1042,6 +1052,8 @@ const translations: Record<Language, Record<string, string>> = {
     mobilePwaDesc: 'Speichere diese Seite auf deinem Startbildschiff für eine App-ähnliche Erfahrung ohne Browser-Leiste. (Die Suchleiste befindet sich unten)',
     mobileFullscreenTitle: 'Vollbild-Modus',
     mobileFullscreenDesc: 'Tippe unten auf den Button, um in den Vollbildmodus zu wechseln und ein besseres Erlebnis zu genießen. (Die Suchleiste befindet sich unten)',
+    viewMapStats: 'Spieler-Abstimmungsstatistiken anzeigen',
+    viewHeroStats: 'Spieler-Abstimmungsstatistiken anzeigen',
   },
   pt: {
     title: 'Relações de Contra de Heróis Overwatch 2',
@@ -1162,6 +1174,8 @@ const translations: Record<Language, Record<string, string>> = {
     mobilePwaDesc: 'Salve esta página na sua tela inicial para uma experiência similar a um aplicativo sem a barra do navegador. (A barra de pesquisa está na parte inferior)',
     mobileFullscreenTitle: 'Modo Tela Cheia',
     mobileFullscreenDesc: 'Toque no botão abaixo para ativar a tela cheia e ter uma melhor experiência de visualização. (A barra de pesquisa está na parte inferior)',
+    viewMapStats: 'Ver estatísticas de votos dos jogadores',
+    viewHeroStats: 'Ver estatísticas de votos dos jogadores',
   },
   ru: {
     title: 'Отношения Контроу Героев Overwatch 2',
@@ -1282,6 +1296,8 @@ const translations: Record<Language, Record<string, string>> = {
     mobilePwaDesc: 'Сохраните эту страницу на главный экран для опыта, похожего на приложение, без панели браузера. (Панель поиска находится внизу)',
     mobileFullscreenTitle: 'Полноэкранный режим',
     mobileFullscreenDesc: 'Нажмите кнопку ниже для перехода в полноэкранный режим и лучшего просмотра. (Панель поиска находится внизу)',
+    viewMapStats: 'Статистика голосований игроков',
+    viewHeroStats: 'Статистика голосований игроков',
   },
   it: {
     title: 'Relazioni di Contro degli Eroi Overwatch 2',
@@ -1382,6 +1398,8 @@ const translations: Record<Language, Record<string, string>> = {
     mobilePwaDesc: 'Salva questa pagina nella schermata principale per un\'esperienza simile a un\'app senza la barra del browser. (La barra di ricerca è in basso)',
     mobileFullscreenTitle: 'Modalità Schermo Intero',
     mobileFullscreenDesc: 'Premi il pulsante sotto per passare a schermo intero e godere di una migliore esperienza di visualizzazione. (La barra di ricerca è in basso)',
+    viewMapStats: 'Visualizza statistiche voto giocatori',
+    viewHeroStats: 'Visualizza statistiche voto giocatori',
   },
 };
 
