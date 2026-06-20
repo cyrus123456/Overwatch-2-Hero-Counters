@@ -194,8 +194,15 @@ function AppContent() {
   const debouncedMapSearch = useDebounce(mapSearch, 300);
   const [activeMapType, setActiveMapType] = useState<ActiveMapType>('all');
 const [isMapCopied, setIsMapCopied] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
-  const [isDrawerPinnedOpen, setIsDrawerPinnedOpen] = useState(true);
+const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(() => {
+  const stored = localStorage.getItem('ow2-drawer-pinned-open');
+  return stored !== null ? stored === 'true' : true;
+});
+  const drawerHoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isDrawerPinnedOpen, setIsDrawerPinnedOpen] = useState<boolean>(() => {
+    const stored = localStorage.getItem('ow2-drawer-pinned-open');
+    return stored !== null ? stored === 'true' : true;
+  });
   const [hoverTimer, setHoverTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [mapStatsMapId, setMapStatsMapId] = useState<MapId | null>(null);
   const [isMapStatsOpen, setIsMapStatsOpen] = useState(false);
@@ -294,15 +301,33 @@ const [isMapCopied, setIsMapCopied] = useState(false);
 
   const handleDrawerMouseEnter = () => {
     if (!isDrawerPinnedOpen) {
-      setIsDrawerOpen(true);
+      if (drawerHoverTimerRef.current) {
+        clearTimeout(drawerHoverTimerRef.current);
+        drawerHoverTimerRef.current = null;
+      }
+      drawerHoverTimerRef.current = setTimeout(() => {
+        setIsDrawerOpen(true);
+        drawerHoverTimerRef.current = null;
+      }, 150);
     }
   };
 
   const handleDrawerMouseLeave = () => {
     if (!isDrawerPinnedOpen) {
-      setIsDrawerOpen(false);
+      if (drawerHoverTimerRef.current) {
+        clearTimeout(drawerHoverTimerRef.current);
+        drawerHoverTimerRef.current = null;
+      }
+      drawerHoverTimerRef.current = setTimeout(() => {
+        setIsDrawerOpen(false);
+        drawerHoverTimerRef.current = null;
+      }, 150);
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem('ow2-drawer-pinned-open', String(isDrawerPinnedOpen));
+  }, [isDrawerPinnedOpen]);
 
   useEffect(() => {
     const loaded = loadCustomMapHeroes();

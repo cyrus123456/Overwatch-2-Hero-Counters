@@ -170,7 +170,7 @@ const ForceGraph = ({
   const currentSelectedHeroRef = useRef<string | null>(null);
   const currentMergedCounterRef = useRef<typeof mergedCounterRelations>([]);
   const currentMergedSynergyRef = useRef<typeof mergedSynergyRelations>([]);
-  
+
   selectedHeroesRef.current = selectedHeroes;
   onHeroSelectRef.current = onHeroSelect;
 
@@ -182,14 +182,25 @@ const ForceGraph = ({
   const [heroSnapshots, setHeroSnapshots] = useState<{ id: string; heroIds: HeroId[]; timestamp: number }[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isCounterPanelCollapsed, setIsCounterPanelCollapsed] = useState(false);
-  const [isCounterPanelPinnedCollapsed, setIsCounterPanelPinnedCollapsed] = useState(false);
+  const [isCounterPanelCollapsed, setIsCounterPanelCollapsed] = useState<boolean>(() => {
+    const stored = localStorage.getItem('ow2-counter-panel-pinned-collapsed');
+    return stored !== null ? stored === 'true' : false;
+  });
+  const counterPanelHoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isCounterPanelPinnedCollapsed, setIsCounterPanelPinnedCollapsed] = useState<boolean>(() => {
+    const stored = localStorage.getItem('ow2-counter-panel-pinned-collapsed');
+    return stored !== null ? stored === 'true' : false;
+  });
   const [isHeroStatsOpen, setIsHeroStatsOpen] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const isMultiSelect = selectedHeroes.length > 1;
 
   // 获取英雄关系统计数据
   const { getNetCount: getHeroRelationNetCount } = useHeroRelationStats(selectedHero);
+
+  useEffect(() => {
+    localStorage.setItem('ow2-counter-panel-pinned-collapsed', String(isCounterPanelPinnedCollapsed));
+  }, [isCounterPanelPinnedCollapsed]);
 
   // 自动保存英雄快照
   useEffect(() => {
@@ -529,7 +540,7 @@ const {
   // 添加自定义克制关系
   const addCustomCounterRelation = () => {
     if (!selectedHero || !newRelationTarget) return;
-    
+
     const sourceHero: HeroId = activeCounterTab === 'counters' ? selectedHero : newRelationTarget;
     const targetHero: HeroId = activeCounterTab === 'counters' ? newRelationTarget : selectedHero;
 
@@ -826,9 +837,9 @@ const {
                   )}
                   {netCount !== null && (
                     <span className={`flex items-center gap-1 text-[0.625rem] px-1.5 py-0.5 rounded font-mono font-bold ${
-                      netCount > 0 
-                        ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                        : netCount < 0 
+                      netCount > 0
+                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                        : netCount < 0
                           ? 'bg-red-500/20 text-red-400 border border-red-500/30'
                           : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
                     }`}>
@@ -1006,9 +1017,9 @@ const {
         .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target))
         .map(l => ({ source: l.source, target: l.target }));
     }
-    
+
     const visibleSelectedHeroes = selectedHeroes.filter(id => nodeIds.has(id));
-    
+
     if (isMultiSelect && visibleSelectedHeroes.length > 1) {
       const visibleCommonIds = commonRelatedIds.filter(id => nodeIds.has(id));
       if (activeCounterTab === 'synergy' || activeCounterTab === 'counteredBy') {
@@ -1254,7 +1265,7 @@ const {
       .attr('class', 'search-highlight');
     nodeGroup.append('image').attr('xlink:href', d => d.image).attr('x', d => -(d.radius - 2)).attr('y', d => -(d.radius - 2)).attr('width', d => (d.radius - 2) * 2).attr('height', d => (d.radius - 2) * 2).attr('clip-path', d => `url(#clip-${d.id})`).attr('preserveAspectRatio', 'xMidYMid slice').style('pointer-events', 'none');
     nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', isTouchDevice ? '2.25rem' : '0.75rem').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 0.0625rem 0.1875rem rgba(0,0,0,0.8)').style('opacity', '1');
-    
+
     // Add selection indicator (checkbox) at bottom right of the node image
     const checkGroup = nodeGroup.append('g')
       .attr('class', 'selection-indicator')
@@ -1320,7 +1331,7 @@ const {
     // Pre-compute link indices for O(1) lookup in animation
     const linkIndexMap = new Map<LinkDatum, number>();
     links.forEach((link, i) => linkIndexMap.set(link, i));
-    
+
     // computeIsRelevant reads from refs so it always uses the latest state
     const computeIsRelevant = (sourceId: HeroId, targetId: HeroId): boolean => {
       const currentSelectedHeroes = currentSelectedHeroesRef.current;
@@ -1329,16 +1340,16 @@ const {
       const currentIsMultiSelect = currentIsMultiSelectRef.current;
       const selectedHeroesSet = new Set(currentSelectedHeroes);
       if (currentIsMultiSelect) {
-        return currentActiveCounterTab === 'counteredBy' 
+        return currentActiveCounterTab === 'counteredBy'
           ? (selectedHeroesSet.has(targetId) && currentCommonRelatedIds.has(sourceId))
           : (selectedHeroesSet.has(sourceId) && currentCommonRelatedIds.has(targetId));
       } else {
         const targetHero = currentSelectedHeroes[0];
         if (!targetHero) return false;
-        return currentActiveCounterTab === 'synergy' 
+        return currentActiveCounterTab === 'synergy'
           ? (targetId === targetHero || sourceId === targetHero)
-          : currentActiveCounterTab === 'counteredBy' 
-            ? targetId === targetHero 
+          : currentActiveCounterTab === 'counteredBy'
+            ? targetId === targetHero
             : sourceId === targetHero;
       }
     };
@@ -1376,9 +1387,9 @@ const {
             const target = d.target as NodeDatum;
             const sourceId = source.id;
             const targetId = target.id;
-            
+
             if (!computeIsRelevant(sourceId, targetId)) return 0;
-            
+
             const dx = (target.x || 0) - (source.x || 0);
             const linkIndex = linkIndexMap.get(d) ?? 0;
             const pos = ((particleProgress + (linkIndex * 0.1)) % 1);
@@ -1389,9 +1400,9 @@ const {
             const target = d.target as NodeDatum;
             const sourceId = source.id;
             const targetId = target.id;
-            
+
             if (!computeIsRelevant(sourceId, targetId)) return 0;
-            
+
             const dy = (target.y || 0) - (source.y || 0);
             const linkIndex = linkIndexMap.get(d) ?? 0;
             const pos = ((particleProgress + (linkIndex * 0.1)) % 1);
@@ -1443,7 +1454,7 @@ const {
         savePositionTimerRef.current = null;
       }, 1000);
     };
-    
+
     simulation.on('end', debouncedSaveNodePositions);
 
     // Trigger initial visual update after SVG is built
@@ -1456,8 +1467,8 @@ const {
 
     svg.on('click', () => onHeroSelectRef.current([]));
 
-    return () => { 
-      simulation.stop(); 
+    return () => {
+      simulation.stop();
       if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
@@ -1535,11 +1546,11 @@ const {
             relation = { strength: str };
           }
         }
-        
+
         let scale = 0.8;
         if (selectedHeroes.includes(d.id)) scale = 1.5;
         else if (relation) scale = relation.strength === 3 ? 1.3 : relation.strength === 2 ? 1.1 : 1.0;
-        
+
         const r = d.radius * scale;
         const imgR = (d.radius - 2) * scale;
         group.select('.node-circle').transition().duration(300).attr('r', r);
@@ -1547,7 +1558,7 @@ const {
         group.select('image').transition().duration(300).attr('x', -imgR).attr('y', -imgR).attr('width', imgR * 2).attr('height', imgR * 2);
         d3.select(`#clip-${d.id} circle`).transition().duration(300).attr('r', imgR);
         group.select('.node-name').transition().duration(300).attr('dy', r + 20);
-        
+
         // Update selection indicator
         group.select('.selection-indicator')
           .transition()
@@ -1750,7 +1761,7 @@ const {
           .transition()
           .duration(300)
           .style('opacity', 0);
-        
+
         group.select('.counter-type-labels-container')
           .selectAll('.label-item')
           .remove();
@@ -1795,13 +1806,27 @@ const {
 
   const handleCounterPanelMouseEnter = () => {
     if (isCounterPanelPinnedCollapsed) {
-      setIsCounterPanelCollapsed(false);
+      if (counterPanelHoverTimerRef.current) {
+        clearTimeout(counterPanelHoverTimerRef.current);
+        counterPanelHoverTimerRef.current = null;
+      }
+      counterPanelHoverTimerRef.current = setTimeout(() => {
+        setIsCounterPanelCollapsed(false);
+        counterPanelHoverTimerRef.current = null;
+      }, 150);
     }
   };
 
   const handleCounterPanelMouseLeave = () => {
     if (isCounterPanelPinnedCollapsed) {
-      setIsCounterPanelCollapsed(true);
+      if (counterPanelHoverTimerRef.current) {
+        clearTimeout(counterPanelHoverTimerRef.current);
+        counterPanelHoverTimerRef.current = null;
+      }
+      counterPanelHoverTimerRef.current = setTimeout(() => {
+        setIsCounterPanelCollapsed(true);
+        counterPanelHoverTimerRef.current = null;
+      }, 150);
     }
   };
 
@@ -1918,7 +1943,7 @@ const {
       <div className={cn(
         "absolute z-10 w-96 flex flex-col transition-transform duration-300",
         isCounterPanelCollapsed ? "translate-x-80" : "translate-x-0"
-      )} style={{ top: '1rem', right: '1rem', bottom: '1rem' }}>
+        )} style={{ top: '1rem', right: '1rem', bottom: '1rem' }}>
         {/* 折叠按钮 - 放在面板左侧外面 */}
         <Tooltip>
           <TooltipTrigger asChild>
@@ -2381,9 +2406,9 @@ const {
                                           )}
                                           {synergyNetCount !== null && (
                                             <span className={`flex items-center gap-1 text-[0.625rem] px-1.5 py-0.5 rounded font-mono font-bold ${
-                                              synergyNetCount > 0 
-                                                ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                                                : synergyNetCount < 0 
+                                              synergyNetCount > 0
+                                                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                                                : synergyNetCount < 0
                                                   ? 'bg-red-500/20 text-red-400 border border-red-500/30'
                                                   : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
                                             }`}>
@@ -2426,7 +2451,7 @@ const {
                                       </div>
                                     </div>
                                     <p className="text-[0.6875rem] text-purple-300 leading-relaxed mt-1">
-                                      {!isMultiSelect 
+                                      {!isMultiSelect
                                         ? getSynergyReason(hero.id, selectedHeroes[0], language)
                                         : (() => {
                                             const targetHeroNames = selectedHeroes.map(id => {
@@ -2434,7 +2459,7 @@ const {
                                               return h ? getHeroName(h, language) : '';
                                             }).filter(name => name).join(t('listSeparator'));
                                             const currentHeroName = getHeroName(hero, language);
-                                            
+
                                             return language === 'zh'
                                               ? `${currentHeroName} 与 ${targetHeroNames} 形成${hero.role === 'tank' ? '前排保护' : hero.role === 'damage' ? '火力压制' : '治疗支援'}的完美协同，${partner.strength === 3 ? '极大提升' : partner.strength === 2 ? '有效增强' : '适当补充'}团队作战能力`
                                               : `${currentHeroName} synergizes perfectly with ${targetHeroNames} for ${hero.role === 'tank' ? 'frontline protection' : hero.role === 'damage' ? 'firepower suppression' : 'healing support'}, ${partner.strength === 3 ? 'significantly boosting' : partner.strength === 2 ? 'effectively enhancing' : 'appropriately supplementing'} team combat capabilities`;
@@ -2464,13 +2489,13 @@ const {
                         let text = '';
                         const commonHeroesNames = (activeCounterTab === 'synergy' ? synergyPartners : (activeCounterTab === 'counteredBy' ? counteredBy : counters))
                           .map(p => getHeroName(p.hero, language)).join(', ');
-                        
+
                         if (isMultiSelect) {
                           const selectedHeroNames = selectedHeroes.map(id => {
                             const h = heroes.find(hero => hero.id === id);
                             return h ? getHeroName(h, language) : '';
                           }).filter(name => name).join(', ');
-                          
+
                           if (activeCounterTab === 'synergy') {
                             text = `${selectedHeroNames} ${t('commonSynergy')} ${t('heroes')} ${commonHeroesNames}`;
                           } else {
@@ -2486,8 +2511,8 @@ const {
                             const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
                             const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
                             const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
-                            const header = activeCounterTab === 'counteredBy' 
-                              ? `${selectedHeroNames}${t('commonCounteredBy')}` 
+                            const header = activeCounterTab === 'counteredBy'
+                              ? `${selectedHeroNames}${t('commonCounteredBy')}`
                               : `${selectedHeroNames}${t('commonCounters')}`;
                             text = `${header} ${groups}`;
                           }
@@ -2532,7 +2557,7 @@ const {
                           const h = heroes.find(hero => hero.id === id);
                           return h ? getHeroName(h, language) : '';
                         }).filter(name => name).join(', ');
-                        
+
                         if (activeCounterTab === 'synergy') {
                           text = `${selectedHeroNames} ${t('commonSynergy')} ${t('heroes')} ${commonHeroesNames}`;
                         } else {
@@ -2549,8 +2574,8 @@ const {
                             const strong2 = formatGroup(grouped[2], t('strength2') + ': ');
                             const strong1 = formatGroup(grouped[1], t('strength1') + ': ');
                             const groups = [strong3, strong2, strong1].filter(Boolean).join(' | ');
-                            const header = activeCounterTab === 'counteredBy' 
-                              ? `${selectedHeroNames}${t('commonCounteredBy')}` 
+                            const header = activeCounterTab === 'counteredBy'
+                              ? `${selectedHeroNames}${t('commonCounteredBy')}`
                               : `${selectedHeroNames}${t('commonCounters')}`;
                             text = `${header} ${groups}`;
                           }
@@ -2594,14 +2619,14 @@ const {
                             }
                             return name;
                           }).join(t('listSeparator'));
-                          
+
                           const selectedHeroNames = selectedHeroes.map(id => {
                             const h = heroes.find(hero => hero.id === id);
                             return h ? getHeroName(h, language) : '';
                           }).filter(name => name).join(t('listSeparator'));
-                          
+
                           const hNameWithNickname = isMultiSelect ? selectedHeroNames : (
-                            language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : 
+                            language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` :
                             getHeroName(displayedHero, language)
                           );
                           return <><div className="text-white font-bold text-2xl">{hNameWithNickname}</div><div className="my-1 font-bold text-white flex items-center gap-1"><span className="text-lg">●</span><span>{isMultiSelect ? t('commonSynergy') : t('synergy')}</span><span className="text-2xl tracking-widest font-bold text-white">→→</span></div><div className="text-purple-300 font-medium">{partnerNames}</div></>;
@@ -2620,17 +2645,17 @@ const {
                             }
                             return name;
                           }).join(t('listSeparator'))}</div> : null;
-                        
+
                         const selectedHeroNames = selectedHeroes.map(id => {
                           const h = heroes.find(hero => hero.id === id);
                           return h ? getHeroName(h, language) : '';
                         }).filter(name => name).join(t('listSeparator'));
-                        
+
                         const hNameWithNickname = isMultiSelect ? selectedHeroNames : (
-                          language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` : 
+                          language === 'zh' && displayedHero?.nickname ? `${displayedHero.name}（${displayedHero.nickname}）` :
                           getHeroName(displayedHero, language)
                         );
-                        
+
                         if (isMultiSelect) {
                           if (activeCounterTab === 'counteredBy') {
                             // Countered By关系保持不变：被克制英雄 → 选择的英雄
@@ -2811,7 +2836,7 @@ const {
                 <div className="text-[0.6875rem] text-slate-200">
                   <p className="text-[0.625rem] text-cyan-400 font-semibold uppercase tracking-wider mb-1">{t('interactionGuide')}</p>
                   <div className="space-y-1.5 mt-2">
-                    
+
                     <div className="text-amber-300 flex items-start gap-2 bg-amber-900/20 p-2 rounded-lg border border-amber-800/30">
                       <span className="w-1 h-1 bg-amber-500 rounded-full mt-1 flex-shrink-0"></span>
                       <span>
@@ -2848,7 +2873,7 @@ const {
                       <span className="w-1 h-1 bg-slate-600 rounded-full mt-1 flex-shrink-0"></span>
                       <span><span className="font-medium">{splitDesc(t('dragDesc')).title}</span><span className="text-slate-400"> {splitDesc(t('dragDesc')).content}</span></span>
                     </div>
-                      
+
                   </div>
                 </div>
               </div>
@@ -2899,8 +2924,8 @@ const {
               <History className="w-4 h-4 text-yellow-400" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent 
-            side="top" 
+          <PopoverContent
+            side="top"
             align="end"
             sideOffset={8}
             className="p-0 border-none bg-transparent shadow-none mb-3"
