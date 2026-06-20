@@ -2908,20 +2908,17 @@ const {
       <svg ref={svgRef} className="w-full h-full cursor-move force-graph-container" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
 
       {/* 历史记录按钮 - 英雄克制面板左下角外侧 */}
-      <div className={cn(
-        "absolute bottom-6 right-[40.5rem] z-10 flex flex-row gap-2 pointer-events-auto transition-transform duration-300",
-        isCounterPanelCollapsed ? "translate-x-80" : "translate-x-0"
-      )}>
+      <div className="absolute bottom-6 right-[33.5rem] z-10 flex flex-row gap-2 pointer-events-auto">
         <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="secondary"
-              size="icon"
-              className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg w-9 h-9"
+              className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg h-9 gap-2 px-3"
               disabled={heroSnapshots.length === 0}
               onMouseEnter={() => setIsHistoryOpen(true)}
             >
               <History className="w-4 h-4 text-yellow-400" />
+              <span className="text-xs text-slate-200">{t('historySnapshotShort')}</span>
             </Button>
           </PopoverTrigger>
           <PopoverContent
