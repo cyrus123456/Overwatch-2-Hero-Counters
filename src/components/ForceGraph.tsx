@@ -2907,9 +2907,28 @@ const {
 
       <svg ref={svgRef} className="w-full h-full cursor-move force-graph-container" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
 
-      {/* 历史记录按钮 - 英雄克制面板左下角外侧 */}
-      <div className="absolute bottom-6 right-[33.5rem] z-10 flex flex-row gap-2 pointer-events-auto">
-        <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+      {/* 搜索框 + 历史记录按钮 - 整体居中，按钮在搜索框右侧 */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 pointer-events-none">
+        <div className="relative w-80 pointer-events-auto">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white z-10" />
+          <Input
+            type="text"
+            placeholder={t('searchHeroesPlaceholder')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-10 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-white placeholder:text-white focus:border-cyan-500 focus:ring-cyan-500/20"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        <div className="pointer-events-auto">
+          <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="secondary"
@@ -2989,27 +3008,7 @@ const {
               </ScrollArea>
             </Card>
           </PopoverContent>
-        </Popover>
-      </div>
-
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 w-80 pointer-events-auto">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white z-10" />
-          <Input
-            type="text"
-            placeholder={t('searchHeroesPlaceholder')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-10 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-white placeholder:text-white focus:border-cyan-500 focus:ring-cyan-500/20"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
+          </Popover>
         </div>
       </div>
 
