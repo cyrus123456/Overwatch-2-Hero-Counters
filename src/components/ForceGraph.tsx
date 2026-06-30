@@ -180,6 +180,9 @@ const ForceGraph = ({
   const [activeCounterTab, setActiveCounterTab] = useState<'counteredBy' | 'counters' | 'synergy'>('counteredBy');
   const [isCopied, setIsCopied] = useState(false);
   const [isIntroOpen, setIsIntroOpen] = useState(false);
+  // 多选提示元素的可见状态与倒计时计时器
+  const [isMultiSelectHintVisible, setIsMultiSelectHintVisible] = useState(false);
+  const multiSelectHintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [heroSnapshots, setHeroSnapshots] = useState<{ id: string; heroIds: HeroId[]; timestamp: number }[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -221,6 +224,37 @@ const ForceGraph = ({
       });
     }
   }, [selectedHeroes]);
+
+  // 多选提示：当有英雄被选中时，从下向上滑入显示；3秒后再向下滑出到搜索框后隐藏
+  // 依赖选中英雄ID列表的JSON字符串，切换不同英雄时即使数量仍为1也会重新触发动画
+  const selectedHeroesKey = JSON.stringify(selectedHeroes);
+  useEffect(() => {
+    // 清理上一个计时器，避免内存泄漏与重复触发
+    if (multiSelectHintTimerRef.current) {
+      clearTimeout(multiSelectHintTimerRef.current);
+      multiSelectHintTimerRef.current = null;
+    }
+
+    if (selectedHeroes.length === 1) {
+      // 触发位移动画：从下向上
+      setIsMultiSelectHintVisible(true);
+      // 倒计时3秒后隐藏
+      multiSelectHintTimerRef.current = setTimeout(() => {
+        setIsMultiSelectHintVisible(false);
+        multiSelectHintTimerRef.current = null;
+      }, 3000);
+    } else {
+      setIsMultiSelectHintVisible(false);
+    }
+
+    // 组件卸载或依赖变化时销毁计时器
+    return () => {
+      if (multiSelectHintTimerRef.current) {
+        clearTimeout(multiSelectHintTimerRef.current);
+        multiSelectHintTimerRef.current = null;
+      }
+    };
+  }, [selectedHeroesKey, selectedHeroes.length]);
 
   // 自定义克制关系状态
   const [customCounterRelations, setCustomCounterRelations] = useState<CustomCounterRelation[]>([]);
@@ -2913,107 +2947,122 @@ const {
       <svg ref={svgRef} className="w-full h-full cursor-move force-graph-container" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
 
       {/* 搜索框 + 历史记录按钮 - 整体居中，按钮在搜索框右侧 */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 pointer-events-none">
-        <div className="relative w-80 pointer-events-auto">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white z-10" />
-          <Input
-            type="text"
-            placeholder={t('searchHeroesPlaceholder')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-10 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-white placeholder:text-white focus:border-cyan-500 focus:ring-cyan-500/20"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none">
+        <div
+          className={cn(
+            "text-[0.625rem] text-yellow-400 bg-slate-800/60 backdrop-blur-md px-2 py-1 rounded border border-slate-700 whitespace-nowrap shadow-lg pointer-events-auto transition-all duration-500 ease-out",
+            // 位移动画：从下向上滑入显示；3秒后向下滑出隐藏（藏到搜索框后面）
+            selectedHeroes.length === 1
+              ? (isMultiSelectHintVisible
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-8 opacity-0 pointer-events-none")
+              : "hidden"
           )}
+        >
+          {t('multiSelectHint')}
         </div>
-        <div className="pointer-events-auto">
-          <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="secondary"
-              className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg h-9 gap-2 px-3"
-              disabled={heroSnapshots.length === 0}
-              onMouseEnter={() => setIsHistoryOpen(true)}
-            >
-              <History className="w-4 h-4 text-yellow-400" />
-              <span className="text-xs text-slate-200">{t('historySnapshotShort')}</span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            side="top"
-            align="end"
-            sideOffset={8}
-            className="p-0 border-none bg-transparent shadow-none mb-3"
-            onMouseEnter={() => setIsHistoryOpen(true)}
-            onMouseLeave={() => setIsHistoryOpen(false)}
-          >
-            <Card className="p-5 bg-slate-800/60 backdrop-blur-md border border-slate-700 shadow-2xl rounded-2xl w-80 text-left">
-              <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-base font-black text-slate-200 uppercase tracking-widest">{t('historySnapshots')}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setHeroSnapshots([])}
-                    className="text-slate-400 hover:text-slate-200 transition-colors p-1 hover:text-red-400"
-                    title={t('clearHistory')}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <ScrollArea className="max-h-72 overflow-y-auto">
-                {heroSnapshots.length === 0 ? (
-                  <div className="p-4 text-center text-slate-500 text-sm">
-                    {t('noHistorySnapshots')}
+        <div className="flex items-center gap-2 relative z-10">
+          <div className="relative w-80 pointer-events-auto">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white z-10" />
+            <Input
+              type="text"
+              placeholder={t('searchHeroesPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10 bg-slate-800/80 backdrop-blur-md border border-slate-700 text-white placeholder:text-white focus:border-cyan-500 focus:ring-cyan-500/20"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <div className="pointer-events-auto">
+            <Popover open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="secondary"
+                  className="bg-slate-800/60 backdrop-blur-md hover:bg-slate-700 border border-slate-700 shadow-lg h-9 gap-2 px-3"
+                  disabled={heroSnapshots.length === 0}
+                  onMouseEnter={() => setIsHistoryOpen(true)}
+                >
+                  <History className="w-4 h-4 text-yellow-400" />
+                  <span className="text-xs text-slate-200">{t('historySnapshotShort')}</span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                side="top"
+                align="end"
+                sideOffset={8}
+                className="p-0 border-none bg-transparent shadow-none mb-3"
+                onMouseEnter={() => setIsHistoryOpen(true)}
+                onMouseLeave={() => setIsHistoryOpen(false)}
+              >
+                <Card className="p-5 bg-slate-800/60 backdrop-blur-md border border-slate-700 shadow-2xl rounded-2xl w-80 text-left">
+                  <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base font-black text-slate-200 uppercase tracking-widest">{t('historySnapshots')}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setHeroSnapshots([])}
+                        className="text-slate-400 hover:text-slate-200 transition-colors p-1 hover:text-red-400"
+                        title={t('clearHistory')}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
-                ) : (
-                  <div className="p-2 space-y-1">
-                    {heroSnapshots.map(snapshot => {
-                      const snapshotHeroes = snapshot.heroIds.map(id => heroes.find(h => h.id === id)).filter(Boolean);
-                      const heroNames = snapshotHeroes.map(h => getHeroName(h, language)).join(', ');
-                      const date = new Date(snapshot.timestamp);
-                      const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                  <ScrollArea className="max-h-72 overflow-y-auto">
+                    {heroSnapshots.length === 0 ? (
+                      <div className="p-4 text-center text-slate-500 text-sm">
+                        {t('noHistorySnapshots')}
+                      </div>
+                    ) : (
+                      <div className="p-2 space-y-1">
+                        {heroSnapshots.map(snapshot => {
+                          const snapshotHeroes = snapshot.heroIds.map(id => heroes.find(h => h.id === id)).filter(Boolean);
+                          const heroNames = snapshotHeroes.map(h => getHeroName(h, language)).join(', ');
+                          const date = new Date(snapshot.timestamp);
+                          const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 
-                      return (
-                        <div
-                          key={snapshot.id}
-                          className="group flex items-center justify-between p-2 rounded-md bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer"
-                          onClick={() => {
-                            onHeroSelect(snapshot.heroIds);
-                            setIsHistoryOpen(false);
-                          }}
-                        >
-                          <div className="flex-1 min-w-0">
-                            <div className="text-xs text-slate-400 mb-1">{timeStr}</div>
-                            <div className="text-sm text-slate-200 truncate">{heroNames}</div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setHeroSnapshots(prev => prev.filter(s => s.id !== snapshot.id));
-                            }}
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-400"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </ScrollArea>
-            </Card>
-          </PopoverContent>
-          </Popover>
+                          return (
+                            <div
+                              key={snapshot.id}
+                              className="group flex items-center justify-between p-2 rounded-md bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer"
+                              onClick={() => {
+                                onHeroSelect(snapshot.heroIds);
+                                setIsHistoryOpen(false);
+                              }}
+                            >
+                              <div className="flex-1 min-w-0">
+                                <div className="text-xs text-slate-400 mb-1">{timeStr}</div>
+                                <div className="text-sm text-slate-200 truncate">{heroNames}</div>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setHeroSnapshots(prev => prev.filter(s => s.id !== snapshot.id));
+                                }}
+                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-400"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </ScrollArea>
+                </Card>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
       </div>
 
