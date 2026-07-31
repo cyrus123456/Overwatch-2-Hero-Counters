@@ -418,6 +418,10 @@ export function useAutoUploadOnMount(
         hasUploadedRef.current = true;
 
         console.log('[AutoUpload] All local data uploaded successfully');
+
+        setTimeout(() => {
+          setUploadStatus('idle');
+        }, 3000);
       } catch (error) {
         const err = error instanceof Error ? error : new Error('Upload failed');
         setUploadStatus('error');
