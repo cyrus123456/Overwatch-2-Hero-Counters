@@ -1,3 +1,8 @@
+> [全局规则引用] c:\Users\73476\.config\opencode\AGENTS.md
+> [全局规则引用] C:\Users\73476\.gemini\GEMINI.md
+> [全局规则引用] C:\Users\73476\.codex\AGENTS.md
+> [全局规则引用] C:\Users\73476\.claude\CLAUDE.md
+
 # AGENTS.md - Developer Guide for Overwatch-2-Hero-Counters
 
 This file provides guidance for AI agents working in this repository.
