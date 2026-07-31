@@ -1615,7 +1615,7 @@ const {
           .attr('transform', `translate(${(scale - 1) * d.radius}, ${(scale - 1) * d.radius})`);
 
         const isRecommended = selectedMap && mapRecommendedHeroes.includes(d.id);
-        // 判断是否与选中节点有关系
+
         let hasRelation = false;
         if (selectedHeroes.length > 0) {
           if (isMultiSelect) {
@@ -1629,6 +1629,7 @@ const {
                 : (hasCounterRelation(targetHero, d.id) || d.id === targetHero);
           }
         }
+
         // 有关系时完全不透明，无关系时半透明
         // const labelOpacity = isRecommended ? (hasRelation ? 1 : 0.5) : 0;
         // group.select('.map-strong-label')
@@ -1637,7 +1638,7 @@ const {
         //   .style('opacity', labelOpacity)
         //   .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
 
-        const glowOpacity = isRecommended ? 0.7 : 0;
+        const glowOpacity = isRecommended ? (hasRelation ? 0.7 : 0.35) : 0;
         group.select('.map-glow-ring')
           .transition()
           .duration(300)
