@@ -1294,7 +1294,7 @@ const {
     nodeGroupRef.current = nodeGroup;
 
     nodeGroup.append('circle').attr('r', d => d.radius + 4).attr('fill', 'none').attr('stroke', d => d.color).attr('stroke-width', 2).attr('opacity', 0.3).attr('class', 'glow-ring');
-    nodeGroup.append('circle').attr('r', d => d.radius + 10).attr('fill', 'none').attr('stroke', '#ffffff88').attr('stroke-width', 3).attr('opacity', 0).attr('class', 'map-glow-ring').attr('filter', 'url(#map-glow)');
+    nodeGroup.append('circle').attr('r', d => d.radius + 10).attr('fill', 'none').attr('stroke', '#ffffff').attr('stroke-width', 3).attr('opacity', 0).attr('class', 'map-glow-ring').attr('filter', 'url(#map-glow)');
     nodeGroup.append('circle').attr('r', d => d.radius).attr('fill', '#1a1a2e').attr('stroke', d => d.color).attr('stroke-width', 3).attr('class', 'node-circle');
 
     // 添加搜索匹配的闪烁效果圆环
@@ -1638,7 +1638,7 @@ const {
         //   .style('opacity', labelOpacity)
         //   .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
 
-        const glowOpacity = isRecommended ? (hasRelation ? 0.7 : 0.35) : 0;
+        const glowOpacity = isRecommended ? (hasRelation ? 0.6 : 0.4) : 0;
         group.select('.map-glow-ring')
           .transition()
           .duration(300)
