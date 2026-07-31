@@ -1165,6 +1165,12 @@ const {
     feMerge.append('feMergeNode').attr('in', 'coloredBlur');
     feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
 
+    const mapGlowFilter = defs.append('filter').attr('id', 'map-glow').attr('x', '-80%').attr('y', '-80%').attr('width', '260%').attr('height', '260%');
+    mapGlowFilter.append('feGaussianBlur').attr('stdDeviation', '6').attr('result', 'mapBlur');
+    const mapFeMerge = mapGlowFilter.append('feMerge');
+    mapFeMerge.append('feMergeNode').attr('in', 'mapBlur');
+    mapFeMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+
     const g = svg.append('g');
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.3, 3])
@@ -1288,6 +1294,7 @@ const {
     nodeGroupRef.current = nodeGroup;
 
     nodeGroup.append('circle').attr('r', d => d.radius + 4).attr('fill', 'none').attr('stroke', d => d.color).attr('stroke-width', 2).attr('opacity', 0.3).attr('class', 'glow-ring');
+    nodeGroup.append('circle').attr('r', d => d.radius + 10).attr('fill', 'none').attr('stroke', '#ffffff88').attr('stroke-width', 3).attr('opacity', 0).attr('class', 'map-glow-ring').attr('filter', 'url(#map-glow)');
     nodeGroup.append('circle').attr('r', d => d.radius).attr('fill', '#1a1a2e').attr('stroke', d => d.color).attr('stroke-width', 3).attr('class', 'node-circle');
 
     // 添加搜索匹配的闪烁效果圆环
@@ -1534,6 +1541,12 @@ const {
     const commonRelatedIds = currentCommonRelatedIdsRef.current;
     const mapRecommendedHeroes = currentMapRecommendedHeroesRef.current;
 
+    const mapGlowExtraRadius = 6;
+    simulation.force('collision', d3.forceCollide<NodeDatum>().radius(d => {
+      const isMapRecommended = mapRecommendedHeroes.includes(d.id);
+      return d.radius + 20 + (isMapRecommended ? mapGlowExtraRadius : 0);
+    }));
+
     if (selectedHeroes.length > 0) {
       simulation.alpha(0.1).restart();
 
@@ -1623,6 +1636,13 @@ const {
           .duration(300)
           .style('opacity', labelOpacity)
           .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
+
+        const glowOpacity = isRecommended ? 0.7 : 0;
+        group.select('.map-glow-ring')
+          .transition()
+          .duration(300)
+          .style('opacity', glowOpacity)
+          .attr('r', r + 10);
 
         const counterTypesSet = new Set<CounterType>();
         if (selectedHeroes.length > 0 && !selectedHeroes.includes(d.id)) {
@@ -1791,6 +1811,12 @@ const {
           .duration(300)
           .style('opacity', isRecommended ? 1 : 0)
           .attr('transform', 'translate(0, 0)');
+
+        group.select('.map-glow-ring')
+          .transition()
+          .duration(300)
+          .style('opacity', isRecommended ? 0.7 : 0)
+          .attr('r', d.radius + 10);
 
         group.select('.counter-type-label')
           .transition()
