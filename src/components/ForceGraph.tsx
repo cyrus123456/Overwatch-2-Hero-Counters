@@ -1338,27 +1338,27 @@ const {
       .attr('stroke-linecap', 'round')
       .attr('stroke-linejoin', 'round');
 
-    // Add "Map Strong" label above nodes
-    const mapLabelGroup = nodeGroup.append('g')
-      .attr('class', 'map-strong-label')
-      .style('opacity', 0)
-      .style('pointer-events', 'none');
+    // Add "Map Strong" label above nodes (disabled - replaced by map-glow-ring)
+    // const mapLabelGroup = nodeGroup.append('g')
+    //   .attr('class', 'map-strong-label')
+    //   .style('opacity', 0)
+    //   .style('pointer-events', 'none');
 
-    mapLabelGroup.append('rect')
-      .attr('x', -24)
-      .attr('y', d => -(d.radius + 10))
-      .attr('width', 48)
-      .attr('height', 14)
-      .attr('rx', 4)
-      .attr('fill', '#94a3b8');
+    // mapLabelGroup.append('rect')
+    //   .attr('x', -24)
+    //   .attr('y', d => -(d.radius + 10))
+    //   .attr('width', 48)
+    //   .attr('height', 14)
+    //   .attr('rx', 4)
+    //   .attr('fill', '#94a3b8');
 
-    mapLabelGroup.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dy', d => -(d.radius))
-      .attr('fill', '#0f172a')
-      .attr('font-size', isTouchDevice ? '1.25rem' : '0.5625rem')
-      .attr('font-weight', '800')
-      .text(t('mapRecommended'));
+    // mapLabelGroup.append('text')
+    //   .attr('text-anchor', 'middle')
+    //   .attr('dy', d => -(d.radius))
+    //   .attr('fill', '#0f172a')
+    //   .attr('font-size', isTouchDevice ? '1.25rem' : '0.5625rem')
+    //   .attr('font-weight', '800')
+    //   .text(t('mapRecommended'));
 
     const counterTypeLabelGroup = nodeGroup.append('g')
       .attr('class', 'counter-type-label')
@@ -1630,12 +1630,12 @@ const {
           }
         }
         // 有关系时完全不透明，无关系时半透明
-        const labelOpacity = isRecommended ? (hasRelation ? 1 : 0.5) : 0;
-        group.select('.map-strong-label')
-          .transition()
-          .duration(300)
-          .style('opacity', labelOpacity)
-          .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
+        // const labelOpacity = isRecommended ? (hasRelation ? 1 : 0.5) : 0;
+        // group.select('.map-strong-label')
+        //   .transition()
+        //   .duration(300)
+        //   .style('opacity', labelOpacity)
+        //   .attr('transform', `translate(0, ${-(scale - 1) * d.radius})`);
 
         const glowOpacity = isRecommended ? 0.7 : 0;
         group.select('.map-glow-ring')
@@ -1806,11 +1806,11 @@ const {
         group.select('.node-name').transition().duration(300).attr('dy', d.radius + 20);
 
         const isRecommended = selectedMap && mapRecommendedHeroes.includes(d.id);
-        group.select('.map-strong-label')
-          .transition()
-          .duration(300)
-          .style('opacity', isRecommended ? 1 : 0)
-          .attr('transform', 'translate(0, 0)');
+        // group.select('.map-strong-label')
+        //   .transition()
+        //   .duration(300)
+        //   .style('opacity', isRecommended ? 1 : 0)
+        //   .attr('transform', 'translate(0, 0)');
 
         group.select('.map-glow-ring')
           .transition()
