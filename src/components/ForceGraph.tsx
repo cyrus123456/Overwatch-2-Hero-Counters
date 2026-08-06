@@ -270,6 +270,13 @@ const ForceGraph = ({
     }
   }, [selectedHeroes]);
 
+  // 当没有节点被选中时，自动弹出历史快照弹窗
+  useEffect(() => {
+    if (selectedHeroes.length === 0 && heroSnapshots.length > 0) {
+      setIsHistoryOpen(true);
+    }
+  }, [selectedHeroes.length, heroSnapshots.length]);
+
   // 多选提示：当有英雄被选中时，从下向上滑入显示；3秒后再向下滑出到搜索框后隐藏
   // 依赖选中英雄ID列表的JSON字符串，切换不同英雄时即使数量仍为1也会重新触发动画
   const selectedHeroesKey = JSON.stringify(selectedHeroes);
