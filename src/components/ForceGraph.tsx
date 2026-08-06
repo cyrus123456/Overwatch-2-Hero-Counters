@@ -116,6 +116,51 @@ interface ForceGraphProps {
   };
 }
 
+// Custom D3 force: extra downward repulsion to prevent text labels from being covered by nodes below.
+// Only applies Y-direction push when nodes are vertically separated and horizontally overlapping.
+// The push is asymmetric: the lower node is pushed down more, the upper node pushed up less,
+// keeping left/right/top repulsion effectively unchanged.
+function createTextPaddingForce(padding: number) {
+  let nodes: NodeDatum[] = [];
+
+  const force = ((_alpha: number) => {
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i];
+        const b = nodes[j];
+        const ax = a.x;
+        const ay = a.y;
+        const bx = b.x;
+        const by = b.y;
+        if (ax == null || ay == null || bx == null || by == null) continue;
+        const dx = bx - ax;
+        const dy = by - ay;
+        // Only when nodes overlap horizontally
+        if (Math.abs(dx) > a.radius + b.radius) continue;
+        // Only when vertically separated (not directly overlapping)
+        if (Math.abs(dy) < a.radius + b.radius) continue;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const target = a.radius + b.radius + 20 + padding;
+        if (dist >= target || dist === 0) continue;
+        const overlap = target - dist;
+        if (dy > 0) {
+          a.y = ay - overlap * 0.15;
+          b.y = by + overlap * 0.35;
+        } else {
+          b.y = by - overlap * 0.15;
+          a.y = ay + overlap * 0.35;
+        }
+      }
+    }
+  }) as d3.Force<NodeDatum, undefined>;
+
+  force.initialize = (n: NodeDatum[]) => {
+    nodes = n;
+  };
+
+  return force;
+}
+
 const ForceGraph = ({
   selectedRole,
   selectedHeroes,
@@ -1223,6 +1268,7 @@ const {
       .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(d => (d as NodeDatum).radius + 20))
+      .force('textPadding', createTextPaddingForce(14))
       .force('x', d3.forceX<NodeDatum>().x(d => {
         if (selectedRole && selectedRole !== 'all') return width / 2;
         const centerX = width / 2;
@@ -1306,7 +1352,7 @@ const {
       .attr('opacity', 0)
       .attr('class', 'search-highlight');
     nodeGroup.append('image').attr('xlink:href', d => d.image).attr('x', d => -(d.radius - 2)).attr('y', d => -(d.radius - 2)).attr('width', d => (d.radius - 2) * 2).attr('height', d => (d.radius - 2) * 2).attr('clip-path', d => `url(#clip-${d.id})`).attr('preserveAspectRatio', 'xMidYMid slice').style('pointer-events', 'none');
-    nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('font-size', isTouchDevice ? '2.25rem' : '0.75rem').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 0.0625rem 0.1875rem rgba(0,0,0,0.8)').style('opacity', '1');
+    nodeGroup.append('text').attr('class', 'node-name').attr('text-anchor', 'middle').attr('dy', d => d.radius + 20).attr('fill', '#e2e8f0').attr('stroke', '#000').attr('stroke-width', '2').attr('paint-order', 'stroke').attr('font-size', isTouchDevice ? '2.25rem' : '0.75rem').attr('font-weight', '700').text(d => language === 'zh' ? d.name : d.nameEn).style('pointer-events', 'none').style('text-shadow', '0 0.0625rem 0.1875rem rgba(0,0,0,0.8)').style('opacity', '1');
 
     // Add selection indicator (checkbox) at bottom right of the node image
     const checkGroup = nodeGroup.append('g')
