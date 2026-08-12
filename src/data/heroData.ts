@@ -3,7 +3,7 @@
 // 英雄ID联合类型
 export type HeroId = 
   | 'dva' | 'doomfist' | 'hazard' | 'junker_queen' | 'mauga' | 'orisa' | 'ramattra' 
-  | 'reinhardt' | 'roadhog' | 'sigma' | 'winston' | 'wrecking_ball' | 'zarya' | 'domina'
+  | 'reinhardt' | 'roadhog' | 'sigma' | 'winston' | 'wrecking_ball' | 'zarya' | 'domina' | 'dmon'
   | 'ashe' | 'bastion' | 'cassidy' | 'echo' | 'freja' | 'genji' | 'hanzo' | 'junkrat' 
   | 'mei' | 'pharah' | 'reaper' | 'sojourn' | 'soldier76' | 'sombra' | 'symmetra' 
   | 'torbjorn' | 'tracer' | 'venture' | 'widowmaker' | 'vendetta' | 'anran' | 'emrey' | 'sierra' | 'shion'
@@ -54,6 +54,7 @@ const heroImages: Record<HeroId, string> = {
   wrecking_ball: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/5c18e39ce567ee8a84078f775b9f76a2ba891de601c059a3d2b46b61ae4afb42.png`,
   zarya: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/8819ba85823136640d8eba2af6fd7b19d46b9ee8ab192a4e06f396d1e5231f7a.png`,
   domina: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/1161c112292c56c052c0ae711792fcde06e3251b98bc9709e582dd7585b5dcd6.png`,
+  dmon: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/a46c60b8562fdbd0b8308396d0808f7606fba208bc67cccf3f82fe56d2c73b9d.png`,
 
   
   // 输出
@@ -116,6 +117,8 @@ export const heroes: Hero[] = [
   { id: 'wrecking_ball', name: '破坏球', nameEn: 'Wrecking Ball', nickname: '球', pinyin: 'po huai qiu', role: 'tank', color: '#f59e0b', image: heroImages.wrecking_ball },
   { id: 'zarya', name: '查莉娅', nameEn: 'Zarya', nickname: '毛妹', pinyin: 'zha li ya', role: 'tank', color: '#f59e0b', image: heroImages.zarya },
   { id: 'domina', name: '金驭', nameEn: 'Domina', pinyin: 'jin yu', role: 'tank', color: '#f59e0b', image: heroImages.domina },
+  { id: 'dmon', name: 'D.mon', nameEn: 'D.mon', pinyin: 'di mon', role: 'tank', color: '#f59e0b', image: heroImages.dmon },
+  
   
   // 输出英雄
   { id: 'ashe', name: '艾什', nameEn: 'Ashe', pinyin: 'ai shi', role: 'damage', color: '#ef4444', image: heroImages.ashe },
@@ -501,7 +504,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'winston', target: 'echo', strength: 3, type: 'skill' }, // 跳脸
   { source: 'zarya', target: 'echo', strength: 3, type: 'numeric' }, // 高能量
   { source: 'ashe', target: 'echo', strength: 3, type: 'range' }, // 狙击
-  { source: 'soldier76', target: 'echo', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'soldier76', target: 'echo', strength: 3, type: 'range' }, // 即时命中克制飞行
   { source: 'widowmaker', target: 'echo', strength: 3, type: 'range' }, // 狙击
   { source: 'ana', target: 'echo', strength: 3, type: 'skill' }, // 禁疗
   { source: 'baptiste', target: 'echo', strength: 3, type: 'skill' }, // 矩阵
@@ -656,7 +659,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'wrecking_ball', target: 'pharah', strength: 3, type: 'skill' }, // 机动骚扰
   { source: 'ashe', target: 'pharah', strength: 3, type: 'range' }, // 狙击
   { source: 'echo', target: 'pharah', strength: 3, type: 'range' }, // 飞行输出
-  { source: 'soldier76', target: 'pharah', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'soldier76', target: 'pharah', strength: 3, type: 'range' }, // 即时命中克制飞行
   { source: 'widowmaker', target: 'pharah', strength: 3, type: 'range' }, // 狙击
   { source: 'baptiste', target: 'pharah', strength: 3, type: 'skill' }, // 矩阵
   { source: 'illari', target: 'pharah', strength: 3, type: 'range' }, // 远程输出
@@ -676,7 +679,7 @@ export const counterRelations: CounterRelation[] = [
   // 3. 即时命中长枪（针对滞空）
   { source: 'widowmaker', target: 'freja', strength: 3, type: 'range' }, // 狙击
   { source: 'ashe', target: 'freja', strength: 3, type: 'range' }, // 狙击
-  { source: 'soldier76', target: 'freja', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'soldier76', target: 'freja', strength: 3, type: 'range' }, // 即时命中克制滞空
   { source: 'cassidy', target: 'freja', strength: 3, type: 'skill' }, // 闪光弹
 
   // 4. 其他克制
@@ -942,7 +945,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'ashe', target: 'feitianmao', strength: 3, type: 'range' }, // 狙击
   { source: 'torbjorn', target: 'feitianmao', strength: 3, type: 'numeric' }, // 炮塔
   { source: 'sojourn', target: 'feitianmao', strength: 3, type: 'range' }, // 轨道炮
-  { source: 'soldier76', target: 'feitianmao', strength: 3, type: 'numeric' }, // 输出压制
+  { source: 'soldier76', target: 'feitianmao', strength: 3, type: 'range' }, // 即时命中克制飞行
   { source: 'sombra', target: 'feitianmao', strength: 3, type: 'skill' }, // 黑客
   { source: 'echo', target: 'feitianmao', strength: 3, type: 'range' }, // 飞行输出
   { source: 'juno', target: 'feitianmao', strength: 3, type: 'skill' }, // 控制
@@ -979,7 +982,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'cassidy', target: 'shion', strength: 3, type: 'skill' }, // 闪光弹打断冲刺/摩托车
   { source: 'sojourn', target: 'shion', strength: 2, type: 'range' }, // 远程轨道炮
   { source: 'echo', target: 'shion', strength: 2, type: 'range' }, // 飞行输出
-  { source: 'soldier76', target: 'shion', strength: 2, type: 'numeric' }, // 远程输出压制
+  { source: 'soldier76', target: 'shion', strength: 2, type: 'range' }, // 远程输出压制
   { source: 'torbjorn', target: 'shion', strength: 2, type: 'numeric' }, // 炮塔自动瞄准
   { source: 'bastion', target: 'shion', strength: 2, type: 'numeric' }, // 高DPS压制
   // 支援克制
@@ -996,12 +999,12 @@ export const counterRelations: CounterRelation[] = [
   { source: 'shion', target: 'echo', strength: 2, type: 'skill' }, // 冲刺追击回声
   { source: 'shion', target: 'widowmaker', strength: 2, type: 'skill' }, // 冲刺接近狙击手
   { source: 'shion', target: 'hanzo', strength: 2, type: 'skill' }, // 冲刺接近半藏
-  { source: 'shion', target: 'bastion', strength: 2, type: 'skill' }, // 侧翼突袭背后爆发
+  { source: 'shion', target: 'bastion', strength: 2, type: 'numeric' }, // 侧翼突袭背后爆发
   { source: 'shion', target: 'junkrat', strength: 2, type: 'skill' }, // 冲刺绕过陷阱，近身爆发
   { source: 'shion', target: 'mei', strength: 2, type: 'skill' }, // 高机动绕过冰冻
   { source: 'shion', target: 'reaper', strength: 2, type: 'skill' }, // 冲刺机动优势，右键对拼
   // 支援被死怨克制
-  { source: 'shion', target: 'zenyatta', strength: 3, type: 'skill' }, // 冲刺切入，近身爆发秒杀
+  { source: 'shion', target: 'zenyatta', strength: 3, type: 'numeric' }, // 冲刺切入，近身爆发秒杀
   { source: 'shion', target: 'mercy', strength: 3, type: 'skill' }, // 冲刺追击天使
   { source: 'shion', target: 'ana', strength: 2, type: 'skill' }, // 冲刺切入后排（互克关系）
   { source: 'shion', target: 'lifeweaver', strength: 2, type: 'skill' }, // 冲刺追击
@@ -1010,6 +1013,40 @@ export const counterRelations: CounterRelation[] = [
   { source: 'shion', target: 'baptiste', strength: 2, type: 'skill' }, // 冲刺切入后排爆发
   { source: 'shion', target: 'kiriko', strength: 2, type: 'skill' }, // 冲刺追击雾子
   { source: 'shion', target: 'juno', strength: 2, type: 'skill' }, // 冲刺追击朱诺
+
+  // ========== D.mon篇 ==========
+  // D.mon被克制
+  { source: 'sombra', target: 'dmon', strength: 3, type: 'skill' }, // 黑客禁用突进技能
+  { source: 'ana', target: 'dmon', strength: 3, type: 'skill' }, // 禁疗+睡眠针打断突进
+  { source: 'zenyatta', target: 'dmon', strength: 3, type: 'numeric' }, // 增伤标记使护甲形同虚设
+  { source: 'reaper', target: 'dmon', strength: 3, type: 'numeric' }, // 近距离爆发穿透护甲
+  { source: 'bastion', target: 'dmon', strength: 3, type: 'numeric' }, // 高DPS撕碎护甲
+  { source: 'junker_queen', target: 'dmon', strength: 3, type: 'skill' }, // 抗治疗克制突进坦克
+  { source: 'sigma', target: 'dmon', strength: 3, type: 'skill' }, // 动能捕获吸收突进
+  { source: 'mei', target: 'dmon', strength: 3, type: 'skill' }, // 冰冻限制机动性
+  { source: 'cassidy', target: 'dmon', strength: 3, type: 'skill' }, // 闪光弹打断突进
+  { source: 'brigitte', target: 'dmon', strength: 3, type: 'skill' }, // 盾击打断近战
+  { source: 'pharah', target: 'dmon', strength: 3, type: 'range' }, // 空中输出克制近战
+  { source: 'echo', target: 'dmon', strength: 3, type: 'range' }, // 飞行输出克制地面
+  { source: 'widowmaker', target: 'dmon', strength: 3, type: 'range' }, // 狙击穿透护甲
+  { source: 'hanzo', target: 'dmon', strength: 3, type: 'range' }, // 远程爆发
+  { source: 'sojourn', target: 'dmon', strength: 3, type: 'range' }, // 轨道炮穿透护甲
+  { source: 'baptiste', target: 'dmon', strength: 3, type: 'skill' }, // 矩阵保护队友
+  { source: 'winston', target: 'dmon', strength: 2, type: 'skill' }, // 跳脸电击克制近战
+
+  // D.mon克制
+  { source: 'dmon', target: 'genji', strength: 3, type: 'numeric' }, // 护甲压制近战刺客
+  { source: 'dmon', target: 'tracer', strength: 3, type: 'numeric' }, // 护甲克制低血量高机动
+  { source: 'dmon', target: 'sombra', strength: 2, type: 'numeric' }, // 突进秒杀脆皮
+  { source: 'dmon', target: 'widowmaker', strength: 2, type: 'skill' }, // 冲刺接近狙击手
+  { source: 'dmon', target: 'hanzo', strength: 2, type: 'skill' }, // 冲刺接近半藏
+  { source: 'dmon', target: 'zenyatta', strength: 3, type: 'numeric' }, // 突进爆发秒杀脆皮
+  { source: 'dmon', target: 'mercy', strength: 2, type: 'skill' }, // 冲刺追击天使
+  { source: 'dmon', target: 'ana', strength: 2, type: 'skill' }, // 冲刺切入后排
+  { source: 'dmon', target: 'lucio', strength: 2, type: 'skill' }, // 冲刺追击卢西奥
+  { source: 'dmon', target: 'kiriko', strength: 2, type: 'skill' }, // 突进压制雾子
+  { source: 'dmon', target: 'cassidy', strength: 2, type: 'skill' }, // 突进压制卡西迪
+  { source: 'dmon', target: 'illari', strength: 2, type: 'skill' }, // 冲刺切入后排
 
 ];
 

@@ -88,6 +88,10 @@ export const heroCounterAbilities: Record<HeroId, CounterAbilityData> = {
     abilityZh: "使用金饰技能控制战场，高机动性进行战术压制",
     abilityEn: "Uses golden skills to control the battlefield with high mobility for tactical suppression"
   },
+  dmon: {
+    abilityZh: "高机动重装战士，利用护甲与位移技能突进压制",
+    abilityEn: "High-mobility heavy assault using armor and dash skills to dive and suppress"
+  },
   // 输出
   ashe: {
     abilityZh: '远程高爆发并用狙击加散弹配合炸弹击退',
@@ -302,6 +306,10 @@ export const heroWeaknesses: Record<HeroId, WeaknessData> = {
   domina: {
     weaknessZh: "技能冷却长被限制后无力，惧怕高机动突脸和控制技能",
     weaknessEn: "Long skill cooldowns making her weak when disabled, fearing high mobility dive and CC"
+  },
+  dmon: {
+    weaknessZh: "护甲被穿透后生存能力骤降，惧怕禁疗与远程风筝",
+    weaknessEn: "Survival drops sharply when armor is pierced, fearing anti-heal and long-range kiting"
   },
   // 输出
   ashe: {

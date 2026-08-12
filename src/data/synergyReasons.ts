@@ -963,6 +963,44 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonEn: 'Juno speed ring helps Shion close distance quickly, maximizing point-blank shotgun efficiency'
   },
 
+  // D.mon的最佳拍档
+  'kiriko-dmon': {
+    reasonZh: '雾子的铃铛净化和瞬移能保护D.mon突进后的生存，容错率极高',
+    reasonEn: 'Kiriko\'s Suzu and teleport protect D.mon after diving, providing high survivability'
+  },
+  'ana-dmon': {
+    reasonZh: '安娜的纳米激素强化D.mon的突进伤害，大招配合击杀效率极高',
+    reasonEn: 'Ana\'s Nano Boost amplifies D.mon\'s dive damage for lethal combos'
+  },
+  'zarya-dmon': {
+    reasonZh: '查莉娅的粒子屏障保护D.mon突进时免受集火，双坦克前排组合',
+    reasonEn: 'Zarya\'s bubble protects D.mon during dives, forming a strong dual-tank frontline'
+  },
+  'baptiste-dmon': {
+    reasonZh: '巴蒂斯特的不死力场保护D.mon突进后不会被秒杀',
+    reasonEn: 'Baptiste\'s immortality field prevents D.mon from being bursted after diving'
+  },
+  'reaper-dmon': {
+    reasonZh: 'D.mon先手突进开团，死神跟进近距离爆发收割，双近战组合',
+    reasonEn: 'D.mon dives in first, Reaper follows up with close-range burst - dual melee combo'
+  },
+  'genji-dmon': {
+    reasonZh: 'D.mon前排突进吸引火力，源氏侧翼切入收割，双机动压制',
+    reasonEn: 'D.mon draws aggro upfront while Genji flanks - dual mobility pressure'
+  },
+  'tracer-dmon': {
+    reasonZh: 'D.mon正面粉碎前排，猎空骚扰后排，双方向同时施压',
+    reasonEn: 'D.mon breaks the frontline while Tracer harasses the backline - dual pressure'
+  },
+  'lucio-dmon': {
+    reasonZh: '卢西奥的加速帮助D.mon快速近身，护甲+速度让突进势不可挡',
+    reasonEn: 'Lúcio\'s speed boost helps D.mon close distance, armor + speed makes dives unstoppable'
+  },
+  'zenyatta-dmon': {
+    reasonZh: '禅雅塔的不和之珠使D.mon的突进爆发更加致命',
+    reasonEn: 'Zenyatta\'s Discord orb makes D.mon\'s dive burst even more lethal'
+  },
+
 };
 
 /**

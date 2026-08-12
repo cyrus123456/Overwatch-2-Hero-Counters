@@ -347,4 +347,15 @@ export const synergyRelations: SynergyRelation[] = [
   { source: 'baptiste', target: 'shion', strength: 2 },   // 不死力场保人+跳跃提供角度
   { source: 'echo', target: 'shion', strength: 2 },       // 双高机动切入
   { source: 'juno', target: 'shion', strength: 2 },       // 加速环帮助死怨近身
+
+  // D.mon - 高机动重装突进坦克，护甲+位移技能
+  { source: 'kiriko', target: 'dmon', strength: 3 },      // 铃铛保护突进+传送跟随
+  { source: 'ana', target: 'dmon', strength: 3 },         // 纳米强化突进毁天灭地
+  { source: 'zarya', target: 'dmon', strength: 2 },       // 粒子屏障保护突进的D.mon
+  { source: 'baptiste', target: 'dmon', strength: 2 },    // 不死力场保护突进后生存
+  { source: 'reaper', target: 'dmon', strength: 2 },      // 双突进近战爆发组合
+  { source: 'genji', target: 'dmon', strength: 2 },       // 双机动切入组合
+  { source: 'tracer', target: 'dmon', strength: 2 },     // 双机动骚扰后排
+  { source: 'lucio', target: 'dmon', strength: 2 },       // 加速帮助D.mon快速近身
+  { source: 'zenyatta', target: 'dmon', strength: 2 },    // 增伤使突进爆发更致命
 ];
