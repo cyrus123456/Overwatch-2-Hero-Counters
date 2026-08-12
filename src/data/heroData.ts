@@ -515,7 +515,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'winston', target: 'sombra', strength: 3, type: 'skill' }, // 跳脸
   { source: 'zarya', target: 'sombra', strength: 3, type: 'numeric' }, // 高能量
   { source: 'dva', target: 'sombra', strength: 3, type: 'skill' }, // 防御矩阵
-  { source: 'torbjorn', target: 'sombra', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'torbjorn', target: 'sombra', strength: 3, type: 'skill' }, // 炮塔自动追踪限制潜行骚扰
   { source: 'tracer', target: 'sombra', strength: 3, type: 'skill' }, // 高机动
   { source: 'soldier76', target: 'sombra', strength: 3, type: 'numeric' }, // 输出压制
   { source: 'sojourn', target: 'sombra', strength: 3, type: 'range' }, // 轨道炮
@@ -543,7 +543,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'zarya', target: 'genji', strength: 3, type: 'numeric' }, // 高能量
   { source: 'pharah', target: 'genji', strength: 3, type: 'range' }, // 空中输出
   { source: 'echo', target: 'genji', strength: 3, type: 'range' }, // 飞行输出
-  { source: 'torbjorn', target: 'genji', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'torbjorn', target: 'genji', strength: 3, type: 'skill' }, // 炮塔持续射击无视反弹
   { source: 'cassidy', target: 'genji', strength: 3, type: 'skill' }, // 闪光弹
   { source: 'brigitte', target: 'genji', strength: 3, type: 'skill' }, // 盾击
   { source: 'zenyatta', target: 'genji', strength: 3, type: 'numeric' }, // 增伤
@@ -589,7 +589,7 @@ export const counterRelations: CounterRelation[] = [
   // 13. 猎空被克制
   { source: 'dva', target: 'tracer', strength: 3, type: 'skill' }, // 防御矩阵
   { source: 'cassidy', target: 'tracer', strength: 3, type: 'skill' }, // 闪光弹
-  { source: 'torbjorn', target: 'tracer', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'torbjorn', target: 'tracer', strength: 3, type: 'skill' }, // 炮塔自动追踪闪现
   { source: 'baptiste', target: 'tracer', strength: 3, type: 'skill' }, // 矩阵
   { source: 'brigitte', target: 'tracer', strength: 3, type: 'skill' }, // 盾击
   { source: 'illari', target: 'tracer', strength: 3, type: 'range' }, // 远程输出
@@ -943,7 +943,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'cassidy', target: 'feitianmao', strength: 3, type: 'skill' }, // 闪光弹
   { source: 'widowmaker', target: 'feitianmao', strength: 3, type: 'range' }, // 狙击
   { source: 'ashe', target: 'feitianmao', strength: 3, type: 'range' }, // 狙击
-  { source: 'torbjorn', target: 'feitianmao', strength: 3, type: 'numeric' }, // 炮塔
+  { source: 'torbjorn', target: 'feitianmao', strength: 3, type: 'skill' }, // 炮塔自动追踪飞行
   { source: 'sojourn', target: 'feitianmao', strength: 3, type: 'range' }, // 轨道炮
   { source: 'soldier76', target: 'feitianmao', strength: 3, type: 'range' }, // 即时命中克制飞行
   { source: 'sombra', target: 'feitianmao', strength: 3, type: 'skill' }, // 黑客
@@ -983,7 +983,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'sojourn', target: 'shion', strength: 2, type: 'range' }, // 远程轨道炮
   { source: 'echo', target: 'shion', strength: 2, type: 'range' }, // 飞行输出
   { source: 'soldier76', target: 'shion', strength: 2, type: 'range' }, // 远程输出压制
-  { source: 'torbjorn', target: 'shion', strength: 2, type: 'numeric' }, // 炮塔自动瞄准
+  { source: 'torbjorn', target: 'shion', strength: 2, type: 'skill' }, // 炮塔自动追踪冲刺
   { source: 'bastion', target: 'shion', strength: 2, type: 'numeric' }, // 高DPS压制
   // 支援克制
   { source: 'ana', target: 'shion', strength: 3, type: 'skill' }, // 睡眠针打断摩托车/冲刺，禁疗
