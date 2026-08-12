@@ -618,8 +618,12 @@ const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(() => {
                 </div>
               </div>
                
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
+                  <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={() => window.open('https://ow.blizzard.cn/herolist/#/', '_blank')}>
+                    <BarChart3 className="w-3.5 h-3.5 text-orange-400" />
+                    <span className="text-xs font-bold">{t('heroRanking')}</span>
+                  </Button>
+                  <div className="flex items-center gap-2">
                     <span className="text-xs text-slate-400 whitespace-nowrap">{t('selectLanguage')}</span>
                     <Select value={language} onValueChange={(v) => setLanguage(v as Language)}>
                       <SelectTrigger className="border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-white h-8 px-3 rounded-full transition-all data-[state=open]:bg-slate-700 flex items-center gap-2 min-w-[6.25rem]">
