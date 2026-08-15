@@ -618,8 +618,11 @@ const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(() => {
                 </div>
               </div>
                
-              <div className="flex items-center gap-3">
-                  <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={() => window.open('https://ow.blizzard.cn/herolist/#/', '_blank')}>
+<div className="flex items-center gap-3">
+        <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={() => window.open('https://dd.163.com/', '_blank')}>
+          <span className="text-xs font-bold">{t('highlightAutoRecord')}</span>
+        </Button>
+      <Button variant="outline" size="sm" className="border-slate-700 bg-slate-800/30 hover:bg-slate-800 text-white hover:text-white gap-2 h-8 px-3 rounded-full transition-all" onClick={() => window.open('https://ow.blizzard.cn/herolist/#/', '_blank')}>
                     <BarChart3 className="w-3.5 h-3.5 text-orange-400" />
                     <span className="text-xs font-bold">{t('heroRanking')}</span>
                   </Button>
