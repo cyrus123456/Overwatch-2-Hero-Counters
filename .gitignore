@@ -17,6 +17,7 @@ build/
 .vscode/
 .idea/
 .zed/
+.omo/
 *.suo
 *.ntvs*
 *.njsproj
