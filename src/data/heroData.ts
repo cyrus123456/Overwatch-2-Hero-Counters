@@ -610,6 +610,7 @@ export const counterRelations: CounterRelation[] = [
   { source: 'domina', target: 'junkrat', strength: 3, type: 'skill' }, // 金驭克制狂鼠：金驭克制
   
   // 15. 探奇被克制
+  { source: 'hazard', target: 'venture', strength: 3, type: 'skill' }, // 骇灾克制探奇：毒素+墙体限制钻地
   { source: 'roadhog', target: 'venture', strength: 3, type: 'skill' }, // 路霸克制探奇：钩子
   { source: 'doomfist', target: 'venture', strength: 3, type: 'skill' }, // 末日铁拳克制探奇：高机动
   { source: 'orisa', target: 'venture', strength: 3, type: 'skill' }, // 奥丽莎克制探奇：长矛
@@ -924,6 +925,12 @@ export const counterRelations: CounterRelation[] = [
   { source: 'junkrat', target: 'anran', strength: 3, type: 'numeric' }, // 狂鼠克制安燃：炸弹
   { source: 'venture', target: 'anran', strength: 3, type: 'skill' }, // 探奇克制安燃：机动性
   { source: 'mizuki', target: 'anran', strength: 3, type: 'skill' }, // 瑞稀克制安燃：护魂结界
+  { source: 'wrecking_ball', target: 'anran', strength: 3, type: 'skill' }, // 破坏球克制安燃：机动骚扰
+
+  // ========== 安燃（Anran）克制他人 ==========
+  // 安燃近战爆发，克制无位移脆皮与辅助（counterwatch: Genji +8.4 最强 / Ana / Illari）
+  { source: 'anran', target: 'genji', strength: 3, type: 'skill' }, // 安燃克制源氏：近战对拼压制
+  { source: 'anran', target: 'ana', strength: 3, type: 'skill' }, // 安燃克制安娜：突进切入后排
   { source: 'anran', target: 'illari', strength: 3, type: 'skill' }, // 安燃克制伊拉锐：突进切辅助
   { source: 'anran', target: 'baptiste', strength: 2, type: 'skill' }, // 安燃克制巴蒂斯特：突进压制
   // 四、无漾（Wuyang）被克制 - 完全修改
@@ -940,6 +947,13 @@ export const counterRelations: CounterRelation[] = [
   { source: 'widowmaker', target: 'wuyang', strength: 3, type: 'range' }, // 黑百合克制无漾：狙击
   { source: 'sombra', target: 'wuyang', strength: 3, type: 'skill' }, // 黑影克制无漾：黑客
 
+  // 社区数据补充（counterwatch: Wrecking Ball +11.3 最强 / Winston / Lúcio / Juno）
+  { source: 'wrecking_ball', target: 'wuyang', strength: 3, type: 'skill' }, // 破坏球克制无漾：机动骚扰
+  { source: 'winston', target: 'wuyang', strength: 3, type: 'skill' }, // 温斯顿克制无漾：跳脸电击
+  { source: 'lucio', target: 'wuyang', strength: 2, type: 'skill' }, // 卢西奥克制无漾：加速拉扯
+  { source: 'feitianmao', target: 'wuyang', strength: 2, type: 'range' }, // 飞天猫克制无漾：空中压制
+  { source: 'juno', target: 'wuyang', strength: 2, type: 'skill' }, // 朱诺克制无漾：控制
+
   // ========== 无漾（Wuyang）克制他人 ==========
   // 无漾水元素拉扯，克制固定目标（counterwatch: Torbjörn +8.1 最强 / Zenyatta / Symmetra）
   { source: 'wuyang', target: 'torbjorn', strength: 3, type: 'skill' }, // 无漾克制托比昂：水元素压制炮塔
@@ -949,6 +963,15 @@ export const counterRelations: CounterRelation[] = [
   { source: 'wuyang', target: 'cassidy', strength: 2, type: 'skill' }, // 无漾克制卡西迪：拉扯压制
 
   // 五、瑞稀（Ruixi）被克制 - 完全修改
+  { source: 'echo', target: 'mizuki', strength: 3, type: 'range' }, // 回声克制瑞稀：飞行输出
+  { source: 'pharah', target: 'mizuki', strength: 3, type: 'range' }, // 法老之鹰克制瑞稀：空中输出
+  { source: 'cassidy', target: 'mizuki', strength: 3, type: 'skill' }, // 卡西迪克制瑞稀：闪光弹
+  { source: 'widowmaker', target: 'mizuki', strength: 3, type: 'range' }, // 黑百合克制瑞稀：狙击
+  { source: 'sojourn', target: 'mizuki', strength: 3, type: 'range' }, // 索杰恩克制瑞稀：轨道炮
+  { source: 'sombra', target: 'mizuki', strength: 3, type: 'skill' }, // 黑影克制瑞稀：黑客
+
+  // 社区数据补充（counterwatch: Genji / Jetpack Cat / Hanzo 最强克制）
+  { source: 'hanzo', target: 'mizuki', strength: 3, type: 'range' }, // 半藏克制瑞稀：远程爆发
   // ========== 瑞稀（Mizuki）克制他人 ==========
   // 瑞稀护魂结界/锁链控制，克制重装与突进（counterwatch: Mauga +7.9 最强 / Hazard / Domina）
   { source: 'mizuki', target: 'mauga', strength: 3, type: 'skill' }, // 瑞稀克制毛加：护魂结界限制重装
@@ -985,6 +1008,13 @@ export const counterRelations: CounterRelation[] = [
   { source: 'winston', target: 'sierra', strength: 2, type: 'skill' }, // 温斯顿克制希拉：跳脸
   { source: 'dva', target: 'sierra', strength: 2, type: 'skill' }, // D.Va克制希拉：防御矩阵
 
+  // 社区数据补充（counterwatch: Genji +6.6 最强克制 / Moira / Anran）
+  { source: 'moira', target: 'sierra', strength: 2, type: 'skill' }, // 莫伊拉克制希拉：光束追踪压制
+  { source: 'anran', target: 'sierra', strength: 2, type: 'skill' }, // 安燃克制希拉：近战爆发切入
+
+  { source: 'sierra', target: 'domina', strength: 2, type: 'skill' }, // 希拉克制金驭：机动绕后
+  { source: 'sierra', target: 'torbjorn', strength: 2, type: 'numeric' }, // 希拉克制托比昂：快速拆炮塔
+
   // ========== 死怨（Shion）被克制 ==========
   // 死怨弱点：远距离能力弱、无硬控、临时生命值消失快、摩托车可被打断
   // 坦克克制
@@ -1013,6 +1043,11 @@ export const counterRelations: CounterRelation[] = [
   { source: 'brigitte', target: 'shion', strength: 3, type: 'skill' }, // 布丽吉塔克制死怨：盾击打断
   { source: 'baptiste', target: 'shion', strength: 2, type: 'skill' }, // 巴蒂斯特克制死怨：矩阵保护队友
   { source: 'zenyatta', target: 'shion', strength: 2, type: 'numeric' }, // 禅雅塔克制死怨：增伤标记使死怨更脆
+
+  // 社区数据补充（counterwatch: D.Va +19.8 最强克制 / Venture / Anran / Vendetta）
+  { source: 'venture', target: 'shion', strength: 3, type: 'skill' }, // 探奇克制死怨：钻地伏击爆发
+  { source: 'anran', target: 'shion', strength: 2, type: 'skill' }, // 安燃克制死怨：近战对拼压制
+  { source: 'vendetta', target: 'shion', strength: 2, type: 'skill' }, // 斩仇克制死怨：突进切入压制
 
   // ========== 死怨（Shion）克制他人 ==========
   // 死怨优势：右键散弹近距离高爆发、全方向冲刺追击、摩托车高机动切入
