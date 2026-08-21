@@ -1606,19 +1606,27 @@ const {
       nodeGroup.transition().duration(300).style('opacity', d => {
         if (selectedHeroes.includes(d.id)) return 0.85;
 
-        let isRelated;
         if (isMultiSelect) {
-          isRelated = commonRelatedIds.has(d.id);
-        } else {
-          const targetHero: HeroId = selectedHeroes[0];
-          if (activeCounterTab === 'synergy') {
-            isRelated = hasSynergyRelation(d.id, targetHero);
-          } else {
-            isRelated = activeCounterTab === 'counteredBy'
-              ? hasCounterRelation(d.id, targetHero)
-              : hasCounterRelation(targetHero, d.id);
+          // 与全部选中英雄都有关系 → 完全醒目
+          if (commonRelatedIds.has(d.id)) return 1;
+          // 仅与其中一个选中英雄（而非全部）有关系 → 稍微提高
+          for (const targetHero of selectedHeroes) {
+            const isRelated = activeCounterTab === 'synergy'
+              ? hasSynergyRelation(d.id, targetHero)
+              : activeCounterTab === 'counteredBy'
+                ? hasCounterRelation(d.id, targetHero)
+                : hasCounterRelation(targetHero, d.id);
+            if (isRelated) return 0.9;
           }
+          return 0.7;
         }
+
+        const targetHero: HeroId = selectedHeroes[0];
+        const isRelated = activeCounterTab === 'synergy'
+          ? hasSynergyRelation(d.id, targetHero)
+          : activeCounterTab === 'counteredBy'
+            ? hasCounterRelation(d.id, targetHero)
+            : hasCounterRelation(targetHero, d.id);
         return isRelated ? 1 : 0.7;
       });
 
