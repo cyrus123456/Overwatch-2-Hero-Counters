@@ -277,8 +277,9 @@ const ForceGraph = ({
     }
   }, [selectedHeroes.length, heroSnapshots.length]);
 
-  // 多选提示：当有英雄被选中时，从下向上滑入显示；3秒后再向下滑出到搜索框后隐藏
-  // 依赖选中英雄ID列表的JSON字符串，切换不同英雄时即使数量仍为1也会重新触发动画
+  // 多选提示：只选中1个英雄时，从下向上滑入显示并一直展示（不自动倒计时隐藏）
+  // 当多选英雄（数量>1）后，倒计时3秒再向下滑出到搜索框后隐藏；取消到0个时立即隐藏
+  // 依赖选中英雄ID列表的JSON字符串，切换不同英雄时即使数量仍为1也会重新触发
   const selectedHeroesKey = JSON.stringify(selectedHeroes);
   useEffect(() => {
     // 清理上一个计时器，避免内存泄漏与重复触发
@@ -288,9 +289,10 @@ const ForceGraph = ({
     }
 
     if (selectedHeroes.length === 1) {
-      // 触发位移动画：从下向上
+      // 触发位移动画：从下向上，一直展示不倒计时
       setIsMultiSelectHintVisible(true);
-      // 倒计时3秒后隐藏
+    } else if (selectedHeroes.length > 1) {
+      // 多选后倒计时3秒隐藏
       multiSelectHintTimerRef.current = setTimeout(() => {
         setIsMultiSelectHintVisible(false);
         multiSelectHintTimerRef.current = null;
@@ -3039,12 +3041,12 @@ const {
         <div
           className={cn(
             "text-[0.625rem] text-yellow-400 bg-slate-800/60 backdrop-blur-md px-2 py-1 rounded border border-slate-700 whitespace-nowrap shadow-lg pointer-events-auto transition-all duration-500 ease-out",
-            // 位移动画：从下向上滑入显示；3秒后向下滑出隐藏（藏到搜索框后面）
-            selectedHeroes.length === 1
-              ? (isMultiSelectHintVisible
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-8 opacity-0 pointer-events-none")
-              : "hidden"
+            // 显示/隐藏全部走过渡动画：滑入显示，向下滑出隐藏（藏到搜索框后面）
+            // 不使用 hidden（display:none 会跳过过渡导致突然消失）
+            // 显示时附加黄色外发光呼吸效果
+            isMultiSelectHintVisible
+              ? "translate-y-0 opacity-100 hint-breathe"
+              : "translate-y-8 opacity-0 pointer-events-none"
           )}
         >
           {t('multiSelectHint')}

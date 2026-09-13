@@ -73,3 +73,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 多选提示窗：黄色外发光+内发光呼吸动画（只动 box-shadow，避免与滑入/滑出的 translate/opacity 过渡冲突） */
+/* 内阴影宽度比外发光小，避免边缘被边框裁切的不适感 */
+@keyframes hint-glow-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(250, 204, 21, 0),
+      inset 0 0 0 0 rgba(250, 204, 21, 0);
+  }
+  50% {
+    box-shadow:
+      0 0 14px 3px rgba(250, 204, 21, 0.55),
+      inset 0 0 6px 1px rgba(250, 204, 21, 0.55);
+  }
+}
+
+.hint-breathe {
+  animation: hint-glow-breathe 2s ease-in-out infinite;
+}
