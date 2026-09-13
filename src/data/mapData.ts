@@ -188,7 +188,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       pinyin: 'ni bo er',
       type: 'control',
       dimensions: { length: 'medium', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
-      recommendedHeroes: ['reinhardt', 'mauga', 'zarya', 'ramattra', 'winston', 'wrecking_ball', 'dva', 'doomfist', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'tracer', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'cassidy'],
+      recommendedHeroes: ['reinhardt', 'mauga', 'zarya', 'ramattra', 'winston', 'wrecking_ball', 'dva', 'doomfist', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'tracer', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'cassidy', 'doctrine'],
       heroReasons: {
         reinhardt: { zh: '狭窄走廊举盾推进优势大', en: 'Shield push strong in narrow corridors' },
         mauga: { zh: '狭窄走廊双枪火力压制，大体积子弹伤害高', en: 'Dual gun suppression in narrow corridors, large hitbox damage' },
@@ -213,6 +213,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         bastion: { zh: '狭窄走廊架点输出，大体积子弹伤害高', en: 'Sentry damage in narrow corridors, large hitbox damage' },
         torbjorn: { zh: '狭窄走廊炮台防守', en: 'Turret defense in narrow corridors' },
         cassidy: { zh: '中近距离在狭窄走廊作战强', en: 'Mid-close range strong in narrow corridors' },
+        doctrine: { zh: '室内窄走廊团战权杖治疗续航强，迅影疾行自保应对绕后', en: 'Scepter sustain excels in indoor corridor fights, Swift Dash self-peels flanks' },
       },
       description: {
         zh: '中视线·窄通道·中等高度·室内为主 | 狭窄走廊适合盾牌/大体积子弹英雄，侧翼掩体多，垂直跳跃可利用，墙骑机会多，短射程英雄优势',
@@ -876,6 +877,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lifeweaver: { zh: '生命平台利用高地', en: 'Life Platform uses high ground' },
       hanzo: { zh: '龙覆盖窄通道', en: 'Dragonstrike covers narrow corridors' },
       ashe: { zh: '高地点位狙击', en: 'High ground point sniping' },
+      doctrine: { zh: '迅影疾行自保应对高墙跳脸，无人机增益机动切入，大招削减重装血量助推进', en: 'Swift Dash peels high-wall dives, drone buffs mobile dives, ult shreds tank HP for pushes' },
     },
     description: {
       zh: '长视线·窄通道·高空间·室外 | 峡谷高墙岩石地形，飞行英雄在高墙空间优势巨大，长距离窄通道适合机动性英雄，高墙为飞行英雄提供掩护',
@@ -1027,6 +1029,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lifeweaver: { zh: '生命平台利用高地', en: 'Life Platform uses high ground' },
       hanzo: { zh: '龙覆盖窄通道', en: 'Dragonstrike covers narrow corridors' },
       ashe: { zh: '高地点位狙击', en: 'High ground point sniping' },
+      doctrine: { zh: '迅影疾行自保应对高墙跳脸，无人机增益机动切入，大招削减重装血量助推进', en: 'Swift Dash peels high-wall dives, drone buffs mobile dives, ult shreds tank HP for pushes' },
     },
     description: {
       zh: '中视线·窄通道·高空间·室内为主 | 古罗马斗兽场高墙，飞行英雄在高墙空间优势巨大，中等距离窄通道适合机动性英雄，高墙限制地面英雄视野',
@@ -1236,6 +1239,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lucio: { zh: '加速推进通过短窄路段，墙骑利用地形', en: 'Speed boost through short narrow sections, wall ride terrain' },
       lifeweaver: { zh: '生命平台支援推进', en: 'Life Platform supports push' },
       kiriko: { zh: '瞬快速支援短距离窄通道', en: 'Swift Step for fast support in short narrow passages' },
+      doctrine: { zh: '短窄通道团战权杖治疗续航强，大招削减敌方重装血量助推进', en: 'Scepter sustain wins short narrow-teamfights, ult shreds enemy tank HP for pushes' },
     },
     description: {
       zh: '短视线·窄通道·低高度·室外 | 短距离窄通道适合盾牌/大体积子弹英雄，地推阵容优势，短射程英雄优势',
@@ -1278,6 +1282,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lucio: { zh: '加速推进通过短窄路段，墙骑利用地形', en: 'Speed boost through short narrow sections, wall ride terrain' },
       lifeweaver: { zh: '生命平台支援推进', en: 'Life Platform supports push' },
       kiriko: { zh: '瞬快速支援短距离窄通道', en: 'Swift Step for fast support in short narrow passages' },
+      doctrine: { zh: '短窄通道团战权杖治疗续航强，大招削减敌方重装血量助推进', en: 'Scepter sustain wins short narrow-teamfights, ult shreds enemy tank HP for pushes' },
     },
     description: {
       zh: '短视线·窄通道·中等高度·室外 | 短距离窄通道适合盾牌/大体积子弹英雄，地推阵容优势，短射程英雄优势',
