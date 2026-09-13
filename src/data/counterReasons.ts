@@ -246,6 +246,10 @@ export const heroCounterAbilities: Record<HeroId, CounterAbilityData> = {
     abilityZh: "使用护魂结界保护队友，灵活的位移和控制技能",
     abilityEn: "Uses spirit barrier to protect teammates with flexible mobility and control skills"
   },
+  doctrine: {
+    abilityZh: '中距离权杖治疗输出并用灌注强化迅影疾行自由飞行，焕生无人机加速治疗，大招无人机群削减敌方最大生命值并提供过量生命',
+    abilityEn: 'Mid-range scepter heal/damage with Infused Swift Dash free flight, Vitalizing Drone attack-speed heal, ult drone swarm reduces enemy max HP and overheals allies'
+  },
 };
 
 // 被克制英雄的弱点描述（已优化融合所有括号内容，更自然流畅）
@@ -464,6 +468,10 @@ export const heroWeaknesses: Record<HeroId, WeaknessData> = {
   feitianmao: {
     weaknessZh: '飞行速度慢血低同时惧怕即时命中EMP和空对空',
     weaknessEn: 'Slow flight low HP while vulnerable to hitscan EMP and aerial combat'
+  },
+  doctrine: {
+    weaknessZh: '中距离手短惧怕长枪狙击同时依赖位移与被动回血生存，被禁疗冰冻或黑客禁用技能后脆弱，大招需无人机命中才生效',
+    weaknessEn: 'Mid-range scepter weak to snipers while survival depends on dash and regen passive, fragile when anti-healed frozen or hacked, ult requires drone contact'
   },
 
 };

@@ -358,4 +358,14 @@ export const synergyRelations: SynergyRelation[] = [
   { source: 'tracer', target: 'dmon', strength: 2 },     // 双机动骚扰后排
   { source: 'lucio', target: 'dmon', strength: 2 },       // 加速帮助D.mon快速近身
   { source: 'zenyatta', target: 'dmon', strength: 2 },    // 增伤使突进爆发更致命
+
+  // 血律 Doctrine - 高机动产出型支援，无人机攻速增益+大招削减最大生命值
+  { source: 'genji', target: 'doctrine', strength: 3 },   // 攻速无人机放大源氏近战输出，双机动切入
+  { source: 'tracer', target: 'doctrine', strength: 3 },  // 双高机动组合，无人机加速点射收割
+  { source: 'reaper', target: 'doctrine', strength: 3 },  // 过量治疗+禁疗保护近身爆发
+  { source: 'winston', target: 'doctrine', strength: 2 }, // 跳脸开团，大招削减敌方重装血量
+  { source: 'dva', target: 'doctrine', strength: 2 },     // 矩阵掩护中距离权杖输出
+  { source: 'zarya', target: 'doctrine', strength: 2 },   // 粒子屏障保护高机动支援
+  { source: 'venture', target: 'doctrine', strength: 2 }, // 钻地伏击+削减最大生命值集火秒杀
+  { source: 'baptiste', target: 'doctrine', strength: 2 },// 双治疗续航，不死力场互补
 ];

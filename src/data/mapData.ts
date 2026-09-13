@@ -64,7 +64,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       pinyin: 'fu shan',
       type: 'control',
       dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: true, hasHighWalls: false },
-      recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'orisa', 'wrecking_ball', 'doomfist', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'widowmaker', 'ashe', 'soldier76', 'ana', 'illari'],
+      recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'orisa', 'wrecking_ball', 'doomfist', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'widowmaker', 'ashe', 'soldier76', 'ana', 'illari', 'doctrine'],
       heroReasons: {
         reinhardt: { zh: '狭窄走廊举盾推进优势大，室内地推首选', en: 'Shield push strong in narrow corridors, top brawl pick indoors' },
         junker_queen: { zh: '狭窄走廊近战输出强', en: 'Strong melee damage in narrow corridors' },
@@ -95,6 +95,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         soldier76: { zh: '二楼高台持续远程输出，战术眼镜追踪高台目标', en: '2F high ground steady ranged damage, Tactical Visor tracks elevated targets' },
         ana: { zh: '二楼高台远程治疗和睡眠针优势', en: '2F high ground ranged heals and Sleep Dart advantage' },
         illari: { zh: '二楼高台太阳能光束俯视优势', en: '2F high ground solar rifle overlooking advantage' },
+        doctrine: { zh: '室内地推权杖治疗续航强，迅影疾行自保应对绕后，大招削减重装血量助推进', en: 'Scepter sustain excels in indoor brawl, Swift Dash self-peels flanks, ult shreds tank HP for pushes' },
       },
       description: {
         zh: '短视线·窄通道·中等高度·室内为主 | 二楼高台覆盖广（MEKA基地指挥室/市区天桥/圣堂神龛），狙击英雄二楼优势明显，狭窄走廊适合盾牌/大体积子弹英雄，墙骑机会多，短射程英雄优势',
@@ -108,7 +109,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       pinyin: 'yi li ao si',
       type: 'control',
       dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
-      recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'wrecking_ball', 'doomfist', 'lucio', 'lifeweaver', 'hanzo', 'ashe', 'ana', 'illari'],
+      recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'wrecking_ball', 'doomfist', 'lucio', 'lifeweaver', 'hanzo', 'ashe', 'ana', 'illari', 'doctrine'],
       heroReasons: {
         pharah: { zh: '短距离窄通道高空间，空中压制优势巨大', en: 'Short distance narrow high space, huge aerial suppression advantage' },
         echo: { zh: '高空间飞行机动输出，短距离快速交战', en: 'High space flight mobile damage, short distance quick engagements' },
@@ -129,6 +130,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         ashe: { zh: '短距离高地点位狙击', en: 'Short distance high ground sniping' },
         ana: { zh: '短距离睡眠针控制点位', en: 'Short distance Sleep Dart controls points' },
         illari: { zh: '短距离太阳能光束', en: 'Short distance Solar Rifle' },
+        doctrine: { zh: '迅影疾行机动应对高墙跳脸，无人机攻速增益配合切入阵容，大招削减血量利于悬崖击杀', en: 'Swift Dash handles high-wall dives, drone attack-speed buff boosts dive comps, ult HP reduction enables knockoff kills' },
       },
       description: {
         zh: '短视线·窄通道·高空间·室外 | 高墙悬崖地形（陷阱井/废墟/灯塔），飞行英雄在高墙空间优势极大，短距离快速交战，窄通道适合机动英雄，坠落击杀是关键',
@@ -142,7 +144,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       pinyin: 'li jiang ta',
       type: 'control',
       dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: true, hasHighWalls: false },
-      recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'hazard', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'mercy', 'widowmaker', 'ashe', 'soldier76', 'ana', 'illari'],
+      recommendedHeroes: ['reinhardt', 'junker_queen', 'ramattra', 'mauga', 'zarya', 'dva', 'winston', 'hazard', 'reaper', 'mei', 'symmetra', 'junkrat', 'genji', 'hanzo', 'cassidy', 'venture', 'lucio', 'kiriko', 'moira', 'brigitte', 'bastion', 'torbjorn', 'mercy', 'widowmaker', 'ashe', 'soldier76', 'ana', 'illari', 'doctrine'],
       heroReasons: {
         reinhardt: { zh: '狭窄室内举盾推进优势大，室内地推首选', en: 'Shield push strong in narrow indoor, top brawl pick indoors' },
         junker_queen: { zh: '高地连接室适合近战输出', en: 'High ground connection rooms suit melee' },
@@ -172,6 +174,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         soldier76: { zh: '二楼高台持续远程输出稳定', en: 'Steady ranged damage from 2F high ground' },
         ana: { zh: '控制室/夜市二楼高台远程治疗和睡眠针优势', en: 'Control Center/Night Market 2F high ground ranged heals and Sleep Dart advantage' },
         illari: { zh: '二楼高台太阳能光束俯视优势', en: '2F high ground solar rifle overlooking advantage' },
+        doctrine: { zh: '狭窄室内团战权杖治疗续航强，无人机增益源氏猎空切入，迅影疾行穿越复杂地形', en: 'Scepter sustain strong in tight indoor fights, drone buffs Genji/Tracer dives, Swift Dash traverses complex terrain' },
       },
       description: {
         zh: '短视线·窄通道·中等高度·室内为主 | 二楼高台覆盖广（控制室天桥/夜市阳台），狙击英雄二楼位置优势明显，狭窄走廊适合盾牌/大体积子弹英雄，墙骑机会多，短射程英雄优势',
@@ -223,7 +226,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       pinyin: 'sa mo ya huo shan',
       type: 'control',
       dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
-      recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'wrecking_ball', 'doomfist', 'lucio', 'sigma', 'orisa', 'hanzo', 'ashe'],
+      recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'wrecking_ball', 'doomfist', 'lucio', 'sigma', 'orisa', 'hanzo', 'ashe', 'doctrine'],
       heroReasons: {
         pharah: { zh: '短距离窄通道高空间，火山区域空中压制优势巨大', en: 'Short distance narrow high space, huge aerial suppression advantage in volcanic area' },
         echo: { zh: '高空间飞行机动输出，短距离快速交战', en: 'High space flight mobile damage, short distance quick engagements' },
@@ -243,6 +246,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         orisa: { zh: '火山区域点位控制', en: 'Point control in volcanic area' },
         hanzo: { zh: '短距离龙覆盖窄通道', en: 'Short distance Dragonstrike covers narrow corridors' },
         ashe: { zh: '短距离高地点位狙击', en: 'Short distance high ground sniping' },
+        doctrine: { zh: '迅影疾行自保应对火山跳脸，无人机攻速增益切入阵容，大招削减血量利于边缘击杀', en: 'Swift Dash self-peels volcano dives, drone buff boosts dive comps, ult HP reduction aids edge kills' },
       },
       description: {
         zh: '短视线·窄通道·高空间·室外 | 火山岩石高墙地形，飞行英雄在高墙空间优势极大，短距离快速交战，窄通道适合机动英雄，坠落击杀机制重要',
@@ -256,7 +260,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       pinyin: 'lu zhou cheng',
       type: 'control',
       dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
-      recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'lucio', 'kiriko', 'ramattra', 'sigma', 'orisa', 'hanzo', 'ashe'],
+      recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'lucio', 'kiriko', 'ramattra', 'sigma', 'orisa', 'hanzo', 'ashe', 'doctrine'],
       heroReasons: {
         pharah: { zh: '短距离窄通道高空间，绿洲区域空中压制优势巨大', en: 'Short distance narrow high space, huge aerial suppression advantage in oasis area' },
         echo: { zh: '高空间飞行机动输出，短距离快速交战', en: 'High space flight mobile damage, short distance quick engagements' },
@@ -278,6 +282,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
         orisa: { zh: '绿洲区域点位控制', en: 'Point control in oasis area' },
         hanzo: { zh: '短距离龙覆盖窄通道', en: 'Short distance Dragonstrike covers narrow corridors' },
         ashe: { zh: '短距离高地点位狙击', en: 'Short distance high ground sniping' },
+        doctrine: { zh: '迅影疾行应对跳脸，无人机增益机动切入阵容，大招削减血量助站点争夺', en: 'Swift Dash peels dives, drone buffs mobile dives, ult HP reduction wins point fights' },
       },
       description: {
         zh: '短视线·窄通道·高空间·室外 | 现代城市高墙建筑，飞行英雄在高墙空间优势极大，短距离快速交战，窄通道适合机动英雄，弹跳台可利用',
@@ -754,7 +759,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     pinyin: 'zha ke zhen',
     type: 'escort',
     dimensions: { length: 'long', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
-    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
+    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko', 'doctrine'],
     heroReasons: {
       reinhardt: { zh: '长距离窄通道举盾推进', en: 'Shield push through long narrow passages' },
       mauga: { zh: '长距离窄通道双枪火力压制，大体积子弹伤害高', en: 'Dual gun suppression in long narrow passages, large hitbox damage' },
@@ -783,6 +788,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lucio: { zh: '加速推进通过长窄路段，墙骑利用地形', en: 'Speed boost through long narrow sections, wall ride terrain' },
       lifeweaver: { zh: '生命平台支援推进', en: 'Life Platform supports push' },
       kiriko: { zh: '瞬快速支援长距离窄通道', en: 'Swift Step for fast support in long narrow passages' },
+      doctrine: { zh: '地推阵容权杖治疗续航强，大招削减敌方重装血量助推车争夺', en: 'Scepter sustain fits brawl comps, ult shreds enemy tank HP for cart fights' },
     },
     description: {
       zh: '长视线·窄通道·中等高度·室外 | 长距离窄通道适合盾牌/大体积子弹英雄，地推阵容优势，短射程英雄优势',
@@ -847,7 +853,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     pinyin: 'liu liu hao gong lu',
     type: 'escort',
     dimensions: { length: 'long', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
-    recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe'],
+    recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe', 'doctrine'],
     heroReasons: {
       pharah: { zh: '长距离窄通道高空间，室外飞行轰炸优势巨大', en: 'Long narrow high space, huge outdoor flight bombardment advantage' },
       echo: { zh: '高空间飞行机动输出', en: 'High space flight mobile damage' },
@@ -998,7 +1004,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     pinyin: 'dou shou chang',
     type: 'push',
     dimensions: { length: 'medium', width: 'narrow', height: 'high', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: true },
-    recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe'],
+    recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'dva', 'doomfist', 'wrecking_ball', 'sigma', 'orisa', 'lucio', 'kiriko', 'lifeweaver', 'hanzo', 'ashe', 'doctrine'],
     heroReasons: {
       pharah: { zh: '中等距离窄通道高空间，飞行轰炸优势巨大', en: 'Medium narrow high space, huge flight bombardment advantage' },
       echo: { zh: '高空间飞行机动输出', en: 'High space flight mobile damage' },
@@ -1076,7 +1082,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     pinyin: 'xin huang hou jie',
     type: 'push',
     dimensions: { length: 'long', width: 'narrow', height: 'medium', isOutdoor: false, hasHighSecondFloor: false, hasHighWalls: false },
-    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
+    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko', 'doctrine'],
     heroReasons: {
       reinhardt: { zh: '长距离窄通道举盾推进', en: 'Shield push through long narrow passages' },
       mauga: { zh: '长距离窄通道双枪火力压制，大体积子弹伤害高', en: 'Dual gun suppression in long narrow passages, large hitbox damage' },
@@ -1105,6 +1111,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
       lucio: { zh: '加速推进通过长窄路段，墙骑利用地形', en: 'Speed boost through long narrow sections, wall ride terrain' },
       lifeweaver: { zh: '生命平台支援推进', en: 'Life Platform supports push' },
       kiriko: { zh: '瞬快速支援长距离窄通道', en: 'Swift Step for fast support in long narrow passages' },
+      doctrine: { zh: '室内窄通道权杖治疗续航强，迅影疾行规避绕后，大招削减重装血量', en: 'Scepter sustain strong in indoor narrow lanes, Swift Dash dodges flanks, ult shreds tank HP' },
     },
     description: {
       zh: '长视线·窄通道·中等高度·室内为主 | 长距离窄通道适合盾牌/大体积子弹英雄，地推阵容优势，短射程英雄优势',
@@ -1200,7 +1207,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     pinyin: 'su la wa sa',
     type: 'flashpoint',
     dimensions: { length: 'short', width: 'narrow', height: 'low', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
-    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
+    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko', 'doctrine'],
     heroReasons: {
       reinhardt: { zh: '短距离窄通道低高度，举盾推进', en: 'Short narrow low space, shield push' },
       mauga: { zh: '短距离窄通道低高度，双枪火力压制，大体积子弹伤害高', en: 'Short narrow low space, dual gun suppression, large hitbox damage' },
@@ -1242,7 +1249,7 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     pinyin: 'a te li si',
     type: 'flashpoint',
     dimensions: { length: 'short', width: 'narrow', height: 'medium', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: false },
-    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko'],
+    recommendedHeroes: ['reinhardt', 'mauga', 'bastion', 'torbjorn', 'junkrat', 'reaper', 'mei', 'symmetra', 'cassidy', 'moira', 'brigitte', 'ramattra', 'junker_queen', 'roadhog', 'zarya', 'hazard', 'tracer', 'genji', 'venture', 'sombra', 'dva', 'winston', 'doomfist', 'wrecking_ball', 'lucio', 'lifeweaver', 'kiriko', 'doctrine'],
     heroReasons: {
       reinhardt: { zh: '短距离窄通道中等高度，举盾推进', en: 'Short narrow medium space, shield push' },
       mauga: { zh: '短距离窄通道中等高度，双枪火力压制，大体积子弹伤害高', en: 'Short narrow medium space, dual gun suppression, large hitbox damage' },

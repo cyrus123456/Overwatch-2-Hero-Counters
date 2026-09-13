@@ -1001,6 +1001,40 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
     reasonEn: 'Zenyatta\'s Discord orb makes D.mon\'s dive burst even more lethal'
   },
 
+  // 血律的最佳拍档
+  'genji-doctrine': {
+    reasonZh: '血律的焕生无人机加快源氏挥刀攻速，双高机动组合切入后排难以被限制',
+    reasonEn: 'Doctrine\'s Vitalizing Drone boosts Genji\'s swing speed; the dual-mobility dive is hard to pin down'
+  },
+  'tracer-doctrine': {
+    reasonZh: '无人机攻速增益放大猎空高频点射，两者高机动互相掩护骚扰后排',
+    reasonEn: 'The drone attack-speed buff amplifies Tracer\'s rapid fire while both mobility profiles cover each other'
+  },
+  'reaper-doctrine': {
+    reasonZh: '血律大招削减敌方最大生命值，配合死神近身爆发轻松收割，过量治疗保障换血',
+    reasonEn: 'Doctrine\'s ult shreds enemy max HP for Reaper\'s close-range execution while overheal sustains trades'
+  },
+  'winston-doctrine': {
+    reasonZh: '温斯顿跳脸开团，血律迅影疾行跟随切入并用大招压制敌方重装血量',
+    reasonEn: 'Winston dives to open fights while Doctrine dashes in and reduces enemy tank HP with the ult'
+  },
+  'dva-doctrine': {
+    reasonZh: 'D.Va矩阵掩护血律的中距离权杖输出，双机动组合灵活转点',
+    reasonEn: 'D.Va\'s matrix covers Doctrine\'s mid-range scepter pressure; both reposition freely'
+  },
+  'zarya-doctrine': {
+    reasonZh: '查莉娅粒子屏障保护血律的突进治疗，减少其对位移技能的依赖',
+    reasonEn: 'Zarya\'s bubble protects Doctrine during pushes, reducing reliance on dash cooldowns'
+  },
+  'venture-doctrine': {
+    reasonZh: '探奇钻地伏击配合血律大招削减最大生命值，集火瞬间秒杀目标',
+    reasonEn: 'Venture\'s burrow ambush plus Doctrine\'s max-HP reduction deletes focused targets instantly'
+  },
+  'baptiste-doctrine': {
+    reasonZh: '双治疗续航组合，巴蒂斯特力场与血律过量治疗互补保护突进阵容',
+    reasonEn: 'A double-heal sustain combo: Baptiste\'s field and Doctrine\'s overheal protect dive comps'
+  },
+
 };
 
 /**

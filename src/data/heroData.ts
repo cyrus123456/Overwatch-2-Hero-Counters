@@ -8,7 +8,7 @@ export type HeroId =
   | 'mei' | 'pharah' | 'reaper' | 'sojourn' | 'soldier76' | 'sombra' | 'symmetra' 
   | 'torbjorn' | 'tracer' | 'venture' | 'widowmaker' | 'vendetta' | 'anran' | 'emrey' | 'sierra' | 'shion'
   | 'ana' | 'baptiste' | 'brigitte' | 'illari' | 'juno' | 'kiriko' | 'lifeweaver' 
-  | 'lucio' | 'mercy' | 'moira' | 'zenyatta' | 'wuyang' | 'mizuki' | 'feitianmao';
+  | 'lucio' | 'mercy' | 'moira' | 'zenyatta' | 'wuyang' | 'mizuki' | 'feitianmao' | 'doctrine';
 
 export type Role = 'tank' | 'damage' | 'support';
 
@@ -98,6 +98,7 @@ const heroImages: Record<HeroId, string> = {
   feitianmao: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/03a184cd0de27091e0099ac22635ad9615a8f6997881a5c25cc5f2444764f729.png`,
   sierra: 'https://d15f34w2p8l1cc.cloudfront.net/overwatch/4bfd3d8b95844231115cb5bf4db03344c71bc3e865189c52403b2dc51438e63a.png',
   shion: 'https://d15f34w2p8l1cc.cloudfront.net/overwatch/070481cf871590a2b45a51d1335f9fe3d65eb4e4d361ecdd998b34fae2ed65d5.png',
+  doctrine: './favicon.svg', // 血律 - 暂无官方头像图，临时使用守望先锋LOGO
 };
 
 // 英雄数据
@@ -161,6 +162,7 @@ export const heroes: Hero[] = [
   { id: 'wuyang', name: '无漾', nameEn: 'Wuyang', pinyin: 'wu yang', role: 'support', color: '#22c55e', image: heroImages.wuyang },
   { id: 'mizuki', name: '瑞稀', nameEn: 'Mizuki', pinyin: 'rui xi', role: 'support', color: '#22c55e', image: heroImages.mizuki },
   { id: 'feitianmao', name: '飞天猫', nameEn: 'Jetpack Cat', pinyin: 'fei tian mao', role: 'support', color: '#22c55e', image: heroImages.feitianmao },
+  { id: 'doctrine', name: '血律', nameEn: 'Doctrine', pinyin: 'xue lü', role: 'support', color: '#22c55e', image: heroImages.doctrine },
 ];
 
 // 被克制关系数据 - 基于参考图片整理
@@ -1103,6 +1105,34 @@ export const counterRelations: CounterRelation[] = [
   { source: 'dmon', target: 'sigma', strength: 3, type: 'skill' }, // D.mon克制西格玛：近战对拼压制
   { source: 'dmon', target: 'zenyatta', strength: 3, type: 'numeric' }, // D.mon克制禅雅塔：突进爆发秒杀脆皮
   { source: 'dmon', target: 'tracer', strength: 2, type: 'numeric' }, // D.mon克制猎空：护甲克制低血量高机动
+
+  // ========== 血律（Doctrine）篇 ==========
+  // 血律定位：中距离治疗/输出权杖 + 迅影疾行位移减伤 + 焕生无人机 + 移动被动回血 + 大招削减敌方最大生命值
+  // 弱点：中距离手短、依赖位移与被动回血生存、大招需近身无人机命中
+  // 血律被克制
+  { source: 'widowmaker', target: 'doctrine', strength: 3, type: 'range' }, // 黑百合克制血律：远程狙击压制中距离权杖
+  { source: 'hanzo', target: 'doctrine', strength: 3, type: 'range' }, // 半藏克制血律：远程爆发，位移难以拉近距离
+  { source: 'sojourn', target: 'doctrine', strength: 3, type: 'range' }, // 索杰恩克制血律：轨道炮远程秒杀
+  { source: 'pharah', target: 'doctrine', strength: 3, type: 'range' }, // 法老之鹰克制血律：空中输出，中距离权杖难以触及
+  { source: 'echo', target: 'doctrine', strength: 2, type: 'range' }, // 回声克制血律：飞行输出
+  { source: 'sombra', target: 'doctrine', strength: 3, type: 'skill' }, // 黑影克制血律：黑客禁用无人机与灌注，EMP打断
+  { source: 'ana', target: 'doctrine', strength: 3, type: 'skill' }, // 安娜克制血律：睡眠针+禁疗克制过量治疗与被动回血
+  { source: 'junker_queen', target: 'doctrine', strength: 3, type: 'skill' }, // 渣客女王克制血律：抗治疗克制移动被动回血
+  { source: 'reaper', target: 'doctrine', strength: 2, type: 'numeric' }, // 死神克制血律：近距离爆发压过回血
+  { source: 'doomfist', target: 'doctrine', strength: 2, type: 'skill' }, // 末日铁拳克制血律：连续突进控制打断位移
+  { source: 'winston', target: 'doctrine', strength: 2, type: 'skill' }, // 温斯顿克制血律：跳脸压制脆皮支援
+  { source: 'mei', target: 'doctrine', strength: 3, type: 'skill' }, // 美克制血律：冰冻限制迅影疾行机动
+  { source: 'symmetra', target: 'doctrine', strength: 2, type: 'skill' }, // 秩序之光克制血律：光束无法被规避
+  { source: 'moira', target: 'doctrine', strength: 2, type: 'skill' }, // 莫伊拉克制血律：锁定光束持续压制
+  { source: 'vendetta', target: 'doctrine', strength: 2, type: 'skill' }, // 斩仇克制血律：突进切入后排
+  { source: 'shion', target: 'doctrine', strength: 2, type: 'skill' }, // 死怨克制血律：全方向冲刺追击脆皮支援
+
+  // 血律克制他人（大招削减最大生命值，克制高血量重装；无人机攻速增益）
+  { source: 'doctrine', target: 'reinhardt', strength: 2, type: 'numeric' }, // 血律克制莱因哈特：削减最大生命值压制高血量重装
+  { source: 'doctrine', target: 'mauga', strength: 2, type: 'numeric' }, // 血律克制毛加：削减最大生命值
+  { source: 'doctrine', target: 'zarya', strength: 2, type: 'numeric' }, // 血律克制查莉娅：削减最大生命值压制护盾血量
+  { source: 'doctrine', target: 'wrecking_ball', strength: 2, type: 'numeric' }, // 血律克制破坏球：削减最大生命值
+  { source: 'doctrine', target: 'winston', strength: 1, type: 'numeric' }, // 血律克制温斯顿：削减最大生命值削弱跳脸血量优势
 
 ];
 
