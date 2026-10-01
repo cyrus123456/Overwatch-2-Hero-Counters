@@ -1083,7 +1083,10 @@ const {
 
   const isTouchDevice = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || (window.matchMedia?.('(pointer: coarse)')?.matches ?? false);
+    // 注意：不能用 'ontouchstart' in window 或 maxTouchPoints 判断，
+    // 触屏笔记本/一体机上这些条件也为 true，会把桌面端误判为移动端。
+    // pointer:coarse 表示主指针是手指，hover:none 表示无悬停能力，两者同时满足才是真移动设备。
+    return window.matchMedia?.('(pointer: coarse)')?.matches === true && window.matchMedia?.('(hover: none)')?.matches === true;
   }, []);
 
   const prepareBaseNodes = useCallback((): NodeDatum[] => {
