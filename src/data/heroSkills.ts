@@ -107,11 +107,11 @@ export const heroSkills: Record<HeroId, HeroSkillData> = {
   roadhog: {
     source: 'https://ow.blizzard.cn/heroes/roadhog/',
     skills: [
-      { name: '爆裂枪', desc: '近距离散射武器' },
+      { name: '爆裂枪', desc: '近距离二连发霰弹枪' },
+      { name: '鸡飞狗跳', desc: '对面前的敌人造成伤害并将他们击退' },
+      { name: '废品压缩器', desc: '吸收敌方射弹，压缩成一发废品爆裂弹' },
       { name: '链钩', desc: '将一个目标拉向身边' },
       { name: '呼吸器', desc: '治疗自己并降低受到的伤害' },
-      { name: '拴猪圈', desc: '扔出一枚陷阱，减速并伤害附近敌人' },
-      { name: '鸡飞狗跳', desc: '对面前的敌人造成伤害并将他们击退' },
     ],
   },
   sigma: {
@@ -306,16 +306,6 @@ export const heroSkills: Record<HeroId, HeroSkillData> = {
       { name: '生物力场', desc: '部署一个可以治疗自己和盟友的力场' },
       { name: '螺旋飞弹', desc: '射出一连串高爆飞弹' },
       { name: '战术目镜', desc: '自动瞄准视野范围内的敌人' },
-    ],
-  },
-  sombra: {
-    source: 'https://ow.blizzard.cn/heroes/sombra/',
-    skills: [
-      { name: '自动手枪', desc: '近距离自动武器' },
-      { name: '黑客入侵', desc: '长按后侵入目标。被侵入的敌人无法使用技能且隔墙可见。被侵入的急救包刷新速度更快且无法被敌人使用。受到伤害会打断侵入过程' },
-      { name: '位移传动', desc: '扔出一个信标并传送至信标位置。传送完成片刻后进入隐身状态' },
-      { name: '病毒侵染', desc: '用一枚智能体侵染敌人，造成持续伤害。病毒对被侵入的敌人造成伤害更快' },
-      { name: '电磁脉冲', desc: '对周围所有敌人造成相当于其当前生命值一定比例的伤害，侵入敌人并摧毁附近的敌方屏障' },
     ],
   },
   symmetra: {
@@ -563,10 +553,26 @@ export const heroSkills: Record<HeroId, HeroSkillData> = {
       { name: '猫猫劫', desc: '冲向地面位置，击倒敌人并拴锁离你最近的敌人' },
     ],
   },
+  sombra: {
+    // 黑影已改为支援英雄，技能组全新（黑客入侵/病毒侵染已移除）
+    source: 'https://ow.blizzard.cn/heroes/sombra/',
+    skills: [
+      { name: '自动手枪', desc: '近距离自动武器' },
+      { name: '电磁脉冲', desc: '对周围所有敌人造成相当于其当前生命值一定比例的伤害，侵入敌人并摧毁附近的敌方屏障' },
+      { name: '在线修复', desc: '为一名盟友持续治疗定量生命值。还可随意侵入急救包和大部分敌方可部署物' },
+      { name: '赛博空间', desc: '扔出一枚智能体，击中时爆炸并生成一片赛博空间，削弱其中的敌人，治疗其中的盟友' },
+      { name: '位移传动', desc: '扔出一个信标并传送至信标位置。传送完成后隐身，隐身状态持续片刻' },
+    ],
+  },
   doctrine: {
-    // 官网暂未收录该英雄详情页，技能数据待官网更新后补充
-    source: '',
-    skills: [],
+    source: 'https://ow.blizzard.cn/heroes/doctrine/',
+    skills: [
+      { name: '永生权杖', desc: '可以治疗盟友并对敌人造成伤害的中距离武器' },
+      { name: '救赎恩典', desc: '发射无人机群，降低敌人的最大生命值，并为盟友提供过量生命值' },
+      { name: '灌注', desc: '为你的下个技能增加强大的效果' },
+      { name: '迅影疾行', desc: '沿水平方向疾行，获得受伤减免。灌注：获得自由飞行' },
+      { name: '焕生无人机', desc: '按住在前方展开一道能量屏障' },
+    ],
   },
 };
 

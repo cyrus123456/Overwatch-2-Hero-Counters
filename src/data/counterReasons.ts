@@ -74,8 +74,8 @@ export const heroCounterAbilities: Record<HeroId, CounterAbilityData> = {
   },
   // 路霸
   roadhog: {
-    abilityZh: '钩子拉人秒杀并用自愈保持高生存',
-    abilityEn: 'Hook combo kills with self-heal for high survivability'
+    abilityZh: '链钩拉人接爆裂枪二连发秒杀，废品压缩器吸收射弹压缩反击，呼吸器自愈保生存',
+    abilityEn: 'Hook into Scrap Gun double-barrel combo kills, Scrap Compactor absorbs projectiles for return fire, Take a Breather self-heal'
   },
   // 西格玛
   sigma: {
@@ -173,10 +173,10 @@ export const heroCounterAbilities: Record<HeroId, CounterAbilityData> = {
     abilityZh: '稳定远程输出并用自愈加冲刺发射螺旋飞弹',
     abilityEn: 'Consistent hitscan with self-heal plus sprint and Helix burst'
   },
-  // 黑影
+  // 黑影（支援）
   sombra: {
-    abilityZh: '黑客入侵禁用技能并隔墙显形，病毒侵染持续伤害，EMP按比例削血并摧毁屏障',
-    abilityEn: 'Hack disables abilities and reveals through walls, Virus damage over time, EMP proportional damage destroying barriers'
+    abilityZh: '电磁脉冲按比例削血并摧毁屏障，赛博空间削弱敌人治疗盟友，在线修复治疗队友并侵入急救包与敌方部署物',
+    abilityEn: 'EMP proportional damage destroying barriers, Cyberspace weakens enemies and heals allies, Online Repair heals and hacks packs and enemy deployables'
   },
   // 秩序之光
   symmetra: {
@@ -301,8 +301,8 @@ export const heroCounterAbilities: Record<HeroId, CounterAbilityData> = {
   },
   // 血律
   doctrine: {
-    abilityZh: '中距离权杖治疗输出并用灌注强化迅影疾行自由飞行，焕生无人机加速治疗，大招无人机群削减敌方最大生命值并提供过量生命',
-    abilityEn: 'Mid-range scepter heal/damage with Infused Swift Dash free flight, Vitalizing Drone attack-speed heal, ult drone swarm reduces enemy max HP and overheals allies'
+    abilityZh: '永生权杖中距离治疗输出，灌注强化迅影疾行获得自由飞行，焕生无人机展开屏障辅助，救赎恩典无人机群削减敌方最大生命值并为盟友提供过量生命',
+    abilityEn: 'Immortal Scepter mid-range heal/damage, Empower grants Infused Swift Dash free flight, Vitalizing Drone deploys barrier support, ult drone swarm reduces enemy max HP and overheals allies'
   },
 };
 
@@ -351,8 +351,8 @@ export const heroWeaknesses: Record<HeroId, WeaknessData> = {
   },
   // 路霸
   roadhog: {
-    weaknessZh: '体型大容易上大招同时钩子被闪避后无力惧怕源氏反弹钩子',
-    weaknessEn: 'Big hitbox charges enemy ults while weak if hook dodged and fearing Genji deflecting hook'
+    weaknessZh: '体型大容易上大招，链钩被闪避后只能依赖废品压缩器自保，惧怕源氏反弹钩子',
+    weaknessEn: 'Big hitbox charges enemy ults, weak when hook dodged and relying on Scrap Compactor, fearing Genji deflecting hook'
   },
   // 西格玛
   sigma: {
@@ -450,10 +450,10 @@ export const heroWeaknesses: Record<HeroId, WeaknessData> = {
     weaknessZh: '被控制后无力同时惧怕黑影黑客禁用螺旋飞弹或源氏反弹',
     weaknessEn: 'Weak when CC\'d while fearing Sombra hack disabling Helix or Genji deflect'
   },
-  // 黑影
+  // 黑影（支援）
   sombra: {
-    weaknessZh: '被发现后脆弱同时惧怕禅雅塔不和之珠增伤或秩序之光炮塔探测',
-    weaknessEn: 'Fragile when revealed while fearing Zenyatta Discord Orb or Symmetra turrets detecting'
+    weaknessZh: '血量低依赖位移传动隐身脱身，赛博空间与在线修复冷却期间脆弱惧怕集火',
+    weaknessEn: 'Low HP relying on Translocator invisibility to escape, fragile during Cyberspace and Online Repair cooldowns when focused'
   },
   // 秩序之光
   symmetra: {
@@ -578,8 +578,8 @@ export const heroWeaknesses: Record<HeroId, WeaknessData> = {
   },
   // 血律
   doctrine: {
-    weaknessZh: '中距离手短惧怕长枪狙击同时依赖位移与被动回血生存，被禁疗冰冻或黑客禁用技能后脆弱，大招需无人机命中才生效',
-    weaknessEn: 'Mid-range scepter weak to snipers while survival depends on dash and regen passive, fragile when anti-healed frozen or hacked, ult requires drone contact'
+    weaknessZh: '中距离手短惧怕长枪狙击，依赖迅影疾行位移与被动回血生存，被禁疗冰冻后脆弱，救赎恩典需无人机群命中才生效',
+    weaknessEn: 'Mid-range scepter weak to snipers while survival depends on Swift Dash and regen passive, fragile when anti-healed or frozen, ult requires drone swarm contact'
   },
 
 };

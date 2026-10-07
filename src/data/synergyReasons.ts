@@ -1027,12 +1027,12 @@ export const synergyReasons: Record<string, SynergyReasonData> = {
   // 黑影的最佳拍档
   // 查莉娅 → 黑影
   'zarya-sombra': {
-    reasonZh: '查莉娅重力喷涌配合黑影黑客入侵能快速击杀',
+    reasonZh: '查莉娅重力喷涌配合黑影电磁脉冲削血能快速击杀',
     reasonEn: 'Zarya + Sombra hack = quick eliminations'
   },
   // 源氏 → 黑影
   'genji-sombra': {
-    reasonZh: '源氏配合黑影的黑客入侵能形成双重威胁',
+    reasonZh: '源氏配合黑影赛博空间削弱敌人能形成双重威胁',
     reasonEn: 'Genji + Sombra double threat'
   },
   // 猎空 → 黑影

@@ -136,7 +136,6 @@ export const heroes: Hero[] = [
   { id: 'reaper', name: '死神', nameEn: 'Reaper', nickname: '活神', pinyin: 'si shen', role: 'damage', color: '#ef4444', image: heroImages.reaper },
   { id: 'sojourn', name: '索杰恩', nameEn: 'Sojourn', pinyin: 'suo jie en', role: 'damage', color: '#ef4444', image: heroImages.sojourn },
   { id: 'soldier76', name: '士兵:76', nameEn: 'Soldier: 76', pinyin: 'shi bing', role: 'damage', color: '#ef4444', image: heroImages.soldier76 },
-  { id: 'sombra', name: '黑影', nameEn: 'Sombra', pinyin: 'hei ying', role: 'damage', color: '#ef4444', image: heroImages.sombra },
   { id: 'symmetra', name: '秩序之光', nameEn: 'Symmetra', nickname: '阿三', pinyin: 'zhi xu zhi guang', role: 'damage', color: '#ef4444', image: heroImages.symmetra },
   { id: 'torbjorn', name: '托比昂', nameEn: 'Torbjörn', nickname: '炮台', pinyin: 'tuo bi ang', role: 'damage', color: '#ef4444', image: heroImages.torbjorn },
   { id: 'tracer', name: '猎空', nameEn: 'Tracer', nickname: '闪光', pinyin: 'lie kong', role: 'damage', color: '#ef4444', image: heroImages.tracer },
@@ -149,6 +148,7 @@ export const heroes: Hero[] = [
   { id: 'shion', name: '死怨', nameEn: 'Shion', pinyin: 'si yuan', role: 'damage', color: '#ef4444', image: heroImages.shion },
 
   // 支援英雄
+  { id: 'sombra', name: '黑影', nameEn: 'Sombra', pinyin: 'hei ying', role: 'support', color: '#22c55e', image: heroImages.sombra },
   { id: 'ana', name: '安娜', nameEn: 'Ana', nickname: '安娜奶奶', pinyin: 'an na', role: 'support', color: '#22c55e', image: heroImages.ana },
   { id: 'baptiste', name: '巴蒂斯特', nameEn: 'Baptiste', pinyin: 'ba di si te', role: 'support', color: '#22c55e', image: heroImages.baptiste },
   { id: 'brigitte', name: '布丽吉塔', nameEn: 'Brigitte', pinyin: 'bu li ji ta', role: 'support', color: '#22c55e', image: heroImages.brigitte },
