@@ -98,7 +98,8 @@ const heroImages: Record<HeroId, string> = {
   feitianmao: `https://d15f34w2p8l1cc.cloudfront.net/overwatch/03a184cd0de27091e0099ac22635ad9615a8f6997881a5c25cc5f2444764f729.png`,
   sierra: 'https://d15f34w2p8l1cc.cloudfront.net/overwatch/4bfd3d8b95844231115cb5bf4db03344c71bc3e865189c52403b2dc51438e63a.png',
   shion: 'https://d15f34w2p8l1cc.cloudfront.net/overwatch/070481cf871590a2b45a51d1335f9fe3d65eb4e4d361ecdd998b34fae2ed65d5.png',
-  doctrine: './favicon.svg', // 血律 - 暂无官方头像图，临时使用守望先锋LOGO
+  doctrine: 'https://d15f34w2p8l1cc.cloudfront.net/overwatch/2492a15c575c12314907d0d77501ec337b4d56796bc7f03e5dfb50d415612bae.png', // 血律 
+  // doctrine: './favicon.svg', // 血律 - 暂无官方头像图，临时使用守望先锋LOGO
 };
 
 // 英雄数据
