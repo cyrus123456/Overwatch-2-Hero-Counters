@@ -23,7 +23,7 @@ import {
 import { HeroRelationStatsDialog } from '@/components/StatsDialog';
 import { getCounterReason } from '@/data/counterReasons';
 import { counterRelations, getHeroName, getRoleName, heroes, type CounterType, type Hero, type HeroId, type RelationStrength, type Role } from '@/data/heroData';
-import { maps } from '@/data/mapData';
+import { maps, getMapImage } from '@/data/mapData';
 import { getSynergyReason } from '@/data/synergyReasons';
 import { synergyRelations } from '@/data/synergyRelations';
 import useDebounce from '@/hooks/useDebounce';
@@ -3037,7 +3037,19 @@ const {
 
       </div>
 
-      <svg ref={svgRef} className="w-full h-full cursor-move force-graph-container" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
+      {/* 地图横版背景图：地图推荐面板选中地图时透明显示，取消选择后淡出 */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-500 ease-out"
+        style={{
+          opacity: selectedMapData ? 0.18 : 0,
+          backgroundImage: selectedMapData ? `url(${getMapImage(selectedMapData)})` : undefined,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+        aria-hidden
+      />
+
+      <svg ref={svgRef} className="relative z-[1] w-full h-full cursor-move force-graph-container" style={{ background: 'transparent' }} onWheel={(e) => e.stopPropagation()} onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); } }} />
 
       {/* 搜索框 + 历史记录按钮 - 整体居中，按钮在搜索框右侧 */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none">

@@ -54,6 +54,19 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
   return language === 'zh' ? map.name : map.nameEn;
 };
 
+// 本地地图横版图片目录约定：public/assets/maps/<id>.png
+// 若某地图暂无本地图片，把其 MapId 加入此名单，将回退到按维度特征生成的风格化横幅图
+const mapsWithoutLocalImage: MapId[] = [];
+
+// 地图横版背景图（16:9）：优先本地官方截图，缺失时回退 AI 生成风格图
+export const getMapImage = (map: Map): string => {
+  if (!mapsWithoutLocalImage.includes(map.id)) {
+    return `./assets/maps/${map.id}.png`;
+  }
+  const prompt = `Overwatch game map ${map.nameEn}, cinematic wide landscape banner, ${map.dimensions.isOutdoor ? 'outdoor' : 'indoor'} scene, ${map.dimensions.length} sightlines, ${map.dimensions.width} corridors, ${map.dimensions.height} vertical space, volcanic crater with lava rivers, tall rock walls, game concept art, muted dark tones, no text, no watermark`;
+  return `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=landscape_16_9`;
+};
+
   // 地图数据
   export const maps: Map[] = [
     // 占领要点地图

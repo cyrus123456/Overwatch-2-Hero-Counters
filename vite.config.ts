@@ -48,7 +48,23 @@ export default defineConfig({
     },
     workbox: {
       globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+      // 地图背景图体积大且按需使用，排除出 precache，改走 runtimeCaching
+      globIgnores: ['**/assets/maps/**'],
       runtimeCaching: [
+        {
+          urlPattern: /\/assets\/maps\/[^/]+\.png$/i,
+          handler: 'StaleWhileRevalidate',
+          options: {
+            cacheName: 'map-images-cache',
+            expiration: {
+              maxEntries: 60,
+              maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+            },
+            cacheableResponse: {
+              statuses: [0, 200]
+            }
+          }
+        },
         {
           urlPattern: /^https:\/\/api\.ipapi\.co\/.*/i,
           handler: 'CacheFirst',
