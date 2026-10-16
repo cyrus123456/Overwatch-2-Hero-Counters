@@ -7,7 +7,7 @@ export type MapDimensionWidth = 'wide' | 'medium' | 'narrow';
 export type MapDimensionHeight = 'high' | 'medium' | 'low';
 
 export type MapId =
-  | 'busan' | 'ilios' | 'lijiang' | 'nepal' | 'samoa' | 'oasis'
+  | 'busan' | 'ilios' | 'lijiang' | 'nepal' | 'samoa' | 'grim_volcano' | 'oasis'
   | 'blizzard_world' | 'eichenwalde' | 'hollywood' | 'kings_row' | 'midtown' | 'numbani' | 'paraiso' | 'neon_junction'
   | 'circuit_royal' | 'dorado' | 'havana' | 'junkertown' | 'rialto' | 'route_66' | 'gibraltar' | 'shambali_monastery'
   | 'runasapi' | 'colosseo' | 'esperanca' | 'new_queen_street'
@@ -628,6 +628,40 @@ export const getMapName = (map: Map | undefined | null, language: MapLanguage = 
     },
   },
   // 运载目标地图
+  {
+    id: 'grim_volcano',
+    name: '格里姆火山',
+    nameEn: 'Grim Volcano',
+    pinyin: 'ge li mu huo shan',
+    type: 'escort',
+    dimensions: { length: 'short', width: 'narrow', height: 'high', isOutdoor: true, hasHighSecondFloor: false, hasHighWalls: true },
+    recommendedHeroes: ['pharah', 'echo', 'juno', 'feitianmao', 'freja', 'mercy', 'tracer', 'genji', 'sombra', 'venture', 'winston', 'wrecking_ball', 'doomfist', 'lucio', 'sigma', 'orisa', 'hanzo', 'ashe', 'doctrine'],
+    heroReasons: {
+      pharah: { zh: '短距离窄通道高空间，火山口上空空中压制优势巨大', en: 'Short distance narrow high space, huge aerial suppression advantage over the crater' },
+      echo: { zh: '高空间飞行机动输出，短距离快速交战', en: 'High space flight mobile damage, short distance quick engagements' },
+      juno: { zh: '室外高空间飞行支援，超能控制狭窄路段', en: 'High outdoor space flight support, Supernova controls narrow route sections' },
+      feitianmao: { zh: '高空间飞行支援，机动性强', en: 'High space flight support, strong mobility' },
+      freja: { zh: '高空间垂直机动输出', en: 'High space vertical mobile damage' },
+      mercy: { zh: '飞行配合空中输出', en: 'Flight supports aerial damage' },
+      tracer: { zh: '短距离窄通道闪现穿梭', en: 'Short distance narrow corridor blink weaving' },
+      genji: { zh: '短距离高机动性，墙骑利用地形', en: 'Short distance high mobility, wall climb uses terrain' },
+      sombra: { zh: '短距离绕后骚扰', en: 'Short distance flanking harassment' },
+      venture: { zh: '短距离穿越地形机动', en: 'Short distance terrain traversal mobility' },
+      winston: { zh: '短距离高机动性，快速突进开团', en: 'Short distance high mobility, quick dive to open fights' },
+      wrecking_ball: { zh: '高空间机动骚扰，利用火山岩高低差', en: 'High space mobile harassment, uses volcanic elevation' },
+      doomfist: { zh: '高空间垂直位移，狭窄路段突击', en: 'High space vertical mobility, narrow route assaults' },
+      lucio: { zh: '音波推落熔岩边缘，滑行快速跟车转点', en: 'Soundwave knock-offs into lava edges, skating to keep pace with the cart' },
+      sigma: { zh: '火山岩石掩体消耗', en: 'Cover poke behind volcanic rocks' },
+      orisa: { zh: '火山口狭窄路段控场', en: 'Area control on narrow crater-rim sections' },
+      hanzo: { zh: '短距离龙覆盖窄通道', en: 'Short distance Dragonstrike covers narrow corridors' },
+      ashe: { zh: '短距离高地点位狙击', en: 'Short distance high ground sniping' },
+      doctrine: { zh: '迅影疾行自保应对火山跳脸，无人机攻速增益切入阵容，大招削减血量利于边缘击杀', en: 'Swift Dash self-peels volcano dives, drone buff boosts dive comps, ult HP reduction aids edge kills' },
+    },
+    description: {
+      zh: '短视线·窄通道·高空间·室外 | 格里姆火山高墙岩壁地形，飞行英雄在高墙空间优势极大，短距离快速交战，窄通道适合机动英雄，推落熔岩/坠落击杀机制重要',
+      en: 'Short sightlines·Narrow corridors·High space·Outdoor | Grim Volcano tall rock wall terrain, flight heroes dominate in tall-wall high space, short distance quick engagements, narrow corridors suit mobile heroes, lava knockoff mechanic important',
+    },
+  },
   {
     id: 'circuit_royal',
     name: '皇家赛道',
